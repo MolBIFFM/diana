@@ -12,7 +12,6 @@ import zipfile
 from concurrent import futures
 from copy import deepcopy
 
-import matplotlib.pyplot as plt
 import networkx as nx
 import numpy as np
 import pandas as pd
@@ -407,7 +406,6 @@ class PPINetwork(object):
                 databases.append(database_name)
                 database = InteractionDatabase(
                     database_name, configuration["PPI DATABASES"][database_name])
-                database.plot_score_distribution(score_histograms)
 
                 # transfer interactions from database-specific dictionary
                 # to general dictionary
@@ -474,29 +472,13 @@ class PPINetwork(object):
                                                            exist_ok=True)
         nx.write_graphml(self.graph, file_name)
 
-    def sample(self, k, s=25):
-        """
-        return a PPINetwork resembling the largest connected component 
-        from a subgraph induced by k randomly sampled nodes,
-        making s attempts to maximize this components' size
-        """
-        connected_components = []
-        for _ in range(s):
-            nodes = np.random.choice(self.graph.nodes, k, replace=False)
-            if not nx.is_connected(self.graph.subgraph(nodes)):
-                connected_components.append(max(nx.connected_components(self.graph.subgraph(nodes)), key=len))
-            else:
-                return self.induced_subgraph(nodes, self.cluster_id)
-        else:
-            return self.induced_subgraph(max(connected_components, key=len), self.cluster_id)
-
-    def partition(self,
+    def topological_clustering(self,
                   search_bound=None,
                   num_communities=None,
+                  output=None,
                   weight=1.0,
                   use_density=False,
-                  num_processes=1,
-                  dendrogram_file_name=None):
+                  num_processes=1):
         """cluster the network using the Girvan-Newman algorithm"""
         if not self.graph.edges:
             return
@@ -504,7 +486,6 @@ class PPINetwork(object):
         # tuples of node sets representing successive decompositions
         # convert to hash value of node set for memory efficiency
         initial_components = [component for component in nx.connected_components(self.graph)]
-        decomposition = [[hash(frozenset(component)) for component in initial_components]]
         opt_decomposition = initial_components
 
         # modularities of each partition
@@ -517,7 +498,6 @@ class PPINetwork(object):
 
         # largest modularity marking the optimal decomposition
         max_modularity = modularities[0]
-        max_index = 0
 
         # number of divisions of connected components
         # without improving/increasing modularity
@@ -541,9 +521,6 @@ class PPINetwork(object):
         # once a connected component is divided by the removal of edges
         for i, communities in enumerate(self.girvan_newman(num_processes), len(initial_components)):
             bar.update(i+1)
-            # append node partition implied by connected components of modifed graph
-            decomposition.append(
-                [hash(frozenset(community)) for community in communities])
 
             # use either modularity or modularity density
             if use_density:
@@ -589,45 +566,17 @@ class PPINetwork(object):
         if not num_communities and iter_no_imp_mod < search_bound:
             bar.finish()
 
-        # take only decompositions prior to the optimal one
-        # to construct dendrogram from
-        decomposition = decomposition[:max_index + 1]
-
         if self.logger:
             # report to log file the number of modules obtained by clustering
             self.logger.info("NETWORK PARTITIONED INTO {} COMMUNITIES".format(
                 len(opt_decomposition)))
 
-        n = len(opt_decomposition)
-
-        # scipy.cluster.hierachy.dendrogram requires
-        # a single root
-        if nx.is_connected(self.graph) and dendrogram_file_name:
-            # determine export order from dendrogram yielded
-            # by sequence decompositions
-            order = scipy.cluster.hierarchy.dendrogram(
-                self.linkage_matrix(decomposition),
-                color_threshold=0,
-                above_threshold_color="k",
-                labels=np.arange(1, n + 1),
-                distance_sort=True)["ivl"]
-
-            # export dendrogram
-            plt.tick_params(axis='y', which='both', left=False, labelleft=False)
-            plt.tick_params(axis='x', which='both', bottom=False)
-            plt.box(False)
-
-            plt.tight_layout()
-            plt.savefig(dendrogram_file_name, dpi=DPI)
-            plt.close()
-        else:
-            order = [i+1 for i in range(n)]
-
         # yield individual modules as PPINetwork objects
-        for i, index in enumerate(order, 1):
-            for protein in opt_decomposition[index - 1]:
-                self.graph.nodes[protein]["CLUSTER_ID"] = index
-            yield self.induced_subgraph(opt_decomposition[index - 1], index)
+        for i in range(len(opt_decomposition)):
+            for protein in opt_decomposition[i]:
+                self.graph.nodes[protein]["CLUSTER_ID"] = i+1
+            if output:
+                self.induced_subgraph(opt_decomposition[i], i+1).export(output)
 
     def induced_subgraph(self, nodes, cluster_id=None):
         """return a PPINetwork resembling a subgraph induced by nodes"""
@@ -635,93 +584,6 @@ class PPINetwork(object):
             cluster_id = self.cluster_id
         return PPINetwork(subgraph=self.graph.subgraph(nodes).copy(),
                           cluster_id=cluster_id)
-
-    def linkage_matrix(self, decomposition):
-        """
-        return a SciPy linkage matrix corresponding 
-        to the progressive divisions of node sets in decomposition
-        """
-        n = len(decomposition)
-
-        # initialize of linkage matrix
-        lm = [[0.0 for j in range(4)] for i in range(n - 1)]
-
-        # associate consecutive indices with each of the final modules
-        index = {decomposition[-1][j]: j for j in range(len(decomposition[-1]))}
-
-        # initialize list mapping cluster indices and number of modules in a cluster
-        size = [1 for community in decomposition[-1]]
-
-        for i in range(n - 1, 0, -1):
-            # determine indices of child node sets separated at the (i-1)th iteration
-            merged = [
-                not decomposition[i][j] in decomposition[i - 1]
-                for j in range(len(decomposition[i]))
-            ]
-            merged_indices = [i for i, x in enumerate(merged) if x]
-
-            # determine size of aggregate cluster
-            aggregate_size = size[index[decomposition[i][merged_indices[
-                0]]]] + size[index[decomposition[i][merged_indices[1]]]]
-
-            # fill in row of SciPy linkage matrix
-            lm[n - 1 - i][0] = index[decomposition[i][merged_indices[0]]]
-            lm[n - 1 - i][1] = index[decomposition[i][merged_indices[1]]]
-            lm[n - 1 - i][2] = n - i
-            lm[n - 1 - i][3] = aggregate_size
-
-            # determine index of parent node set separated at the (i-1)th iteration
-            merged = [
-                not decomposition[i - 1][j] in decomposition[i]
-                for j in range(len(decomposition[i - 1]))
-            ]
-
-            merged_indices = [i for i, x in enumerate(merged) if x]
-
-            # if more than one parent node set was determined, a hash collision occurred
-            # hashes of node sets are used to reduce memory usage
-            if len(merged_indices) > 1:
-                if self.logger:
-                    self.logger.critical(
-                        "HASH COLLISION DURING MERGE {}: ORDER INVALID".format(
-                            n - i))
-            # assign index, proceed with arbitrary option in case of collision
-            merged_index = merged_indices[0]
-
-            # assign index to parent node set
-            index[decomposition[i - 1][merged_index]] = 2 * n - i - 1
-            size.append(aggregate_size)
-
-        return np.array(
-            [np.array([np.float(j) for j in lm[i]]) for i in range(n - 1)])
-
-    def associate_clusters(self, num_processes=1):
-        """
-        execute Girvan-Newman algorithm without output
-        such that nodes are associated with IDs of separated modules
-        """
-        [None for _ in self.partition(num_processes=num_processes)]
-
-    def community_partitioning(self,
-                               search_bound=None,
-                               num_communities=None,
-                               output=None,
-                               weight=1.0,
-                               use_density=False,
-                               num_processes=1,
-                               dendrogram_file_name=None):
-        """
-        execute the Girvan-Newman algorithm 
-        exporting PPINetwork objects resembling the obtained modules
-        """
-
-        for i, community in enumerate(
-                self.partition(search_bound, num_communities, weight,
-                               use_density, num_processes,
-                               dendrogram_file_name)):
-            if output:
-                # export the community to GraphML
-                community.export(output)
 
     def girvan_newman(self, num_processes=1):
         """
@@ -833,14 +695,3 @@ class PPINetwork(object):
                         deg -= 2 * (1 - w)
             D += deg / len(community)
         return D
-
-    def aggregate_ptm(self, func=np.median):
-        data = {}
-        for time_step in self.time_steps:
-            values = {ptm: [self.graph.nodes[node]["{}_M_{}".format(ptm, time_step)]
-                            for node in self.graph.nodes
-                                if not math.isnan(self.graph.nodes[node]["{}_M_{}".format(ptm, time_step)])] 
-                        for ptm in ("P", "U")}
-            data[time_step] = {ptm: func(values[ptm]) if values[ptm] else float("nan")
-                                    for ptm in ("P", "U")} 
-        return data

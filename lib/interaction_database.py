@@ -9,14 +9,10 @@ import re
 import zipfile
 from urllib.parse import urlparse
 
-import matplotlib
-import matplotlib.pylab as pl
-import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
 import progressbar
 import requests
-from matplotlib import ticker
 from scipy import stats
 
 DPI = 300
@@ -389,17 +385,7 @@ class InteractionDatabase(object):
                 self.num_interactions += 1
                 bar.update(i + 1)
             bar.finish()
-
-    def plot_score_distribution(self, file_name):
-        """
-        Employ the specialized class "Score" 
-        to export a histogram of the confidence score distribution
-        to file_name
-        """
-        if self.scores and file_name:
-            self.scores.plot(self.name, file_name,
-                             self.configuration.get("SCORE", 0.0))
-
+            
     def download(self, url, file_name, chunk_size=1048576):
         """
         Download a file from a specified URL and save it at file_name
@@ -540,45 +526,3 @@ class InteractionDatabase(object):
             """Add multiple individual scores to distribution"""
             for value in values:
                 self.add(value)
-
-        def plot(self, name, file_name, score_threshold, num_plot_bins=20):
-            """
-            Export a histogram of the represented distribution to file_name.
-            """
-            plot_bin_width = self.range / num_plot_bins
-            plt.xlabel(r"{} score".format(name))
-            plt.ylabel(r"interactions [%]")
-            plt.xticks(np.arange(0.0, 1.1, 0.1))
-            plt.yticks([
-                self.n * s
-                for s in np.arange(self.min, self.max +
-                                   self.range * 0.2, self.range * 0.2)
-            ])
-            plt.gca().yaxis.set_major_formatter(
-                ticker.PercentFormatter(decimals=0,
-                                        symbol=None,
-                                        xmax=self.n,
-                                        is_latex=True))
-            plt.xlim(self.min - 0.5 * plot_bin_width,
-                     self.max + 0.5 * plot_bin_width)
-            plt.ylim(0, self.n)
-            plt.hist(np.arange(self.min, self.max + self.bin_width,
-                               self.bin_width),
-                     weights=self.bins,
-                     bins=np.arange(self.min + plot_bin_width, self.max +
-                                    2 * plot_bin_width, plot_bin_width) - 0.5 *
-                     (plot_bin_width),
-                     edgecolor="k",
-                     linewidth=1.0,
-                     color="w")
-
-            if score_threshold:
-                # plot a vertical line indicating the confidence score threshold applied to the data
-                plt.gca().axvline(score_threshold,
-                                  color="k",
-                                  linestyle="dashed",
-                                  linewidth=1.0)
-            plt.savefig("{0}.{2}{1}".format(*os.path.splitext(file_name),
-                                            name.lower()),
-                        dpi=DPI)
-            plt.close()

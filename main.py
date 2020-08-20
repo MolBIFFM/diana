@@ -73,19 +73,6 @@ def main():
         default=1,
         help=
         "Topological clustering: number of processes to use for edge betweenness centrality computation")
-    parser.add_argument(
-        "--histogram",
-        type=str,
-        default=None,
-        help=
-        "base file destination for histograms of confidence score distributions of protein-protein interaction databases, complemented by database names"
-    )
-    parser.add_argument(
-        "--dendrogram",
-        type=str,
-        default=None,
-        help="Topological clustering: file destination for dendrogram of topological clustering")
-
     args = parser.parse_args()
 
     if args.log:
@@ -113,19 +100,14 @@ def main():
     if args.input:
         network = PPINetwork(graphml=args.input)
     elif args.configuration:
-        network = PPINetwork(configuration=config,
-                             score_histograms=args.histogram)
+        network = PPINetwork(configuration=config)
 
     if args.output:
         network.export(args.output)
 
-    if args.sample:
-        network = network.sample(args.sample)
-
     if args.girvan_newman:
-        network.community_partitioning(args.bound, args.communities,
-                                       args.output, args.weight, args.density,
-                                       args.processes, args.dendrogram)
+        network.topological_clustering(args.bound, args.communities, args.output, 
+            args.weight, args.density, args.processes)
 
         if args.output:
             network.export(args.output)

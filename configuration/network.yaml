@@ -1,7 +1,8 @@
+
 PPI DATABASES:
   BioGRID:
-    URL: https://downloads.thebiogrid.org/Download/BioGRID/Release-Archive/BIOGRID-3.5.180/BIOGRID-ORGANISM-3.5.180.mitab.zip
-    FILE: data/BIOGRID-ORGANISM-Homo_sapiens-3.5.180.mitab.txt
+    URL: https://downloads.thebiogrid.org/Download/BioGRID/Release-Archive/BIOGRID-3.5.188/BIOGRID-ORGANISM-3.5.188.mitab.zip
+    FILE: data/BIOGRID-ORGANISM-Homo_sapiens-3.5.188.mitab.txt
     ID MAP: 
       URL: ftp://ftp.uniprot.org/pub/databases/uniprot/current_release/knowledgebase/idmapping/by_organism/HUMAN_9606_idmapping.dat.gz
       FILE: data/HUMAN_9606_idmapping.dat
@@ -9,6 +10,7 @@ PPI DATABASES:
     ID PREFIX: biogrid
     DETECTION METHOD: [
       "MI:0004", # affinity chromatography technology
+      "MI:0018", # two hybrid
       "MI:0401", # biochemical
       "MI:0096", # pull down
       "MI:0415", # enzymatic study
@@ -51,14 +53,12 @@ PPI DATABASES:
       URL: ftp://ftp.uniprot.org/pub/databases/uniprot/current_release/knowledgebase/idmapping/by_organism/HUMAN_9606_idmapping.dat.gz
       FILE: data/HUMAN_9606_idmapping.dat
       ID: STRING
-    SCORE: 0.9
+    SCORE: 0.7
     COLUMNS:
       ID INTERACTOR A: protein1
       ID INTERACTOR B: protein2
       SCORE: combined_score  
     SCORES:
-      - COLUMN: database
-        THRESHOLD: 0.7
       - COLUMN: experiments
         THRESHOLD: 0.7
     CELL DELIMITER: " "  
@@ -95,7 +95,7 @@ POST-TRANSLATIONAL MODIFICATION DATA:
     TIME STEPS: [15, 60, 120]
     ID: U
     CHART POSITION: R
-    REPLICATES: 1
+    REPLICATES: 2
     COLUMNS:
       PROTEIN: Protein
       POSITION: Positions within proteins
