@@ -28,11 +28,6 @@ def main():
                         type=str,
                         default=None,
                         help="file destination of log file")
-    parser.add_argument("-s",
-                        "--sample",
-                        type=int,
-                        default=0,
-                        help="sample size to induce a network from a sample of nodes and extract its largest connected component")
     parser.add_argument(
         "-g",
         "--girvan-newman",
