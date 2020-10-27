@@ -20,3 +20,5 @@ for t, col in [(15, "wt15minvscontrolratio"), (60, "wt60minvscontrolratio"),
         position_format=lambda x: x.split("_")[0],
         replicates=[col],
         convert_measurement=lambda x: math.log10(x) / math.log10(2.0))
+
+ppin.add_interactions_from_STRING(combined_score=0.7)
