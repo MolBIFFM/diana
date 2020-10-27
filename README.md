@@ -1,2 +1,2 @@
-# ppi
-protein-protein interaction network assembly
+# pipeline
+automated protein-protein interaction network assembly
