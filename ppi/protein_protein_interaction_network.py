@@ -90,7 +90,7 @@ class ProteinProteinInteractionNetwork(nx.Graph):
                 "experiments": experiments,
                 "experiments_transferred": experiments_transferred,
                 "database": database,
-                "database": database_transferred,
+                "database_transferred": database_transferred,
                 "textmining": textmining,
                 "textmining_transferred": textmining_transferred,
                 "combined_score": combined_score
@@ -107,4 +107,3 @@ class ProteinProteinInteractionNetwork(nx.Graph):
                             for column in thresholds)):
                 self.add_edge(protein_ids[row["protein1"]],
                               protein_ids[row["protein2"]])
-                              
