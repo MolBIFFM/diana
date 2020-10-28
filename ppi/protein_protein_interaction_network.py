@@ -73,9 +73,16 @@ class ProteinProteinInteractionNetwork(nx.Graph):
                                      textmining_transferred=0.0,
                                      combined_score=0.0):
         protein_ids = {}
+        for _, row in ppi.utilities.get_tabular_data(ppi.data.UNIPROT_ID_MAP,
+                                                     delimiter="\t",
+                                                     usecols=[0, 1, 2]):
+            if row[1] == "STRING" and row[0] in self.nodes:
+                protein_ids[row[2]] = row[0]
+
         for _, row in ppi.utilities.get_tabular_data(ppi.data.STRING_ID_MAP,
                                                      usecols=[1, 2]):
-            protein_ids[row[2]] = row[1].split("|")[0]
+            if row[1].split("|")[0] in self.nodes:
+                protein_ids[row[2]] = row[1].split("|")[0]
 
         thresholds = {
             column: threshold
@@ -99,10 +106,11 @@ class ProteinProteinInteractionNetwork(nx.Graph):
 
         for _, row in ppi.utilities.get_tabular_data(
                 ppi.data.STRING,
+                delimiter=" ",
                 header=0,
                 usecols=["protein1", "protein2"] + list(thresholds.keys())):
-            if (protein_ids.get(row["protein1"]) in self.nodes
-                    and protein_ids.get(row["protein2"]) in self.nodes
+            if (protein_ids.get(row["protein1"])
+                    and protein_ids.get(row["protein2"])
                     and all(row[column] / 1000 >= thresholds[column]
                             for column in thresholds)):
                 self.add_edge(protein_ids[row["protein1"]],

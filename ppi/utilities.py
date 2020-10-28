@@ -25,7 +25,7 @@ def download_gzip_file(url):
     return file.name
 
 
-def get_tabular_data(url, header=None, usecols=[]):
+def get_tabular_data(url, delimiter="", header=None, usecols=[]):
     file_name = pathlib.PurePosixPath(urllib.parse.urlparse(url).path)
 
     if file_name.suffix == ".gz":
@@ -44,12 +44,8 @@ def get_tabular_data(url, header=None, usecols=[]):
         delimiter = ","
     elif delimiter_extension == ".tsv":
         delimiter = "\t"
-    else:
-        delimiter = " "
 
     return pd.read_csv(local_file_name,
                        sep=delimiter,
-                       engine="c",
                        header=header,
-                       usecols=usecols,
-                       memory_map=True).iterrows()
+                       usecols=usecols).iterrows()
