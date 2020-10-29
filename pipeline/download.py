@@ -49,7 +49,7 @@ def download_zip_file(url):
     return pathlib.PurePosixPath(file.name)
 
 
-def iterate_tabular_data(url, delimiter="", header=None, usecols=[]):
+def iterate_tabular_data(url, delimiter=None, header=None, usecols=[]):
     file_name = pathlib.PurePosixPath(urllib.parse.urlparse(url).path)
 
     if file_name.suffix == ".gz":
