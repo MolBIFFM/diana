@@ -125,6 +125,17 @@ class ProteinProteinInteractionNetwork(nx.Graph):
                 uniprot_id[row[2]] = row[0]
         for _, row in pipeline.download.iterate_tabular_data(
                 pipeline.data.BIOGRID,
+                delimiter="\t",
                 header=0,
-                usecols=["#BioGRID Interaction ID"]):
-            print(row["#BioGRID Interaction ID"])
+                usecols=["BioGRID ID Interactor A",
+                         "BioGRID ID Interactor B"]):
+            print(row["BioGRID ID Interactor A"],
+                  row["BioGRID ID Interactor B"])
+
+    def add_interactions_from_IntAct(self):
+        for _, row in pipeline.download.iterate_tabular_data(
+                pipeline.data.INTACT,
+                delimiter="\t",
+                header=0,
+                usecols=["#ID(s) interactor A", "ID(s) interactor B"]):
+            print(row["#ID(s) interactor A"], row["ID(s) interactor B"])
