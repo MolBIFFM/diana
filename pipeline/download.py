@@ -7,23 +7,20 @@ import zipfile
 
 import pandas as pd
 
-import pipeline.configuration
-
-
 def download_file(url):
     remote_file_name = os.path.split(urllib.parse.urlparse(url).path)[1]
     local_file_name = os.path.join(tempfile.gettempdir(), remote_file_name)
 
     if not os.path.exists(local_file_name):
         request = urllib.request.Request(
-            url, headers={"User-Agent": pipeline.configuration.USER_AGENT})
+            url, headers={"User-Agent": "https://github.com/lucasfein/pipeline"})
 
         with urllib.request.urlopen(request) as response:
             with open(local_file_name, "wb") as local_file:
-                chunk = response.read(pipeline.configuration.CHUNK_SIZE)
+                chunk = response.read(1048576)
                 while chunk:
                     local_file.write(chunk)
-                    chunk = response.read(pipeline.configuration.CHUNK_SIZE)
+                    chunk = response.read(1048576)
 
     return local_file_name
 
@@ -34,10 +31,10 @@ def download_gzip_file(url):
 
     with gzip.open(compressed_file_name, "rb") as compressed_file:
         with open(decompressed_file_name, "wb") as decompressed_file:
-            chunk = compressed_file.read(pipeline.configuration.CHUNK_SIZE)
+            chunk = compressed_file.read(1048576)
             while chunk:
                 decompressed_file.write(chunk)
-                chunk = compressed_file.read(pipeline.configuration.CHUNK_SIZE)
+                chunk = compressed_file.read(1048576)
 
     os.remove(compressed_file_name)
 

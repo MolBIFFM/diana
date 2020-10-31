@@ -138,4 +138,5 @@ class ProteinProteinInteractionNetwork(nx.Graph):
                 delimiter="\t",
                 header=0,
                 usecols=["#ID(s) interactor A", "ID(s) interactor B"]):
-            print(row["#ID(s) interactor A"], row["ID(s) interactor B"])
+            print(row["#ID(s) interactor A"], 
+                  row["ID(s) interactor B"])
