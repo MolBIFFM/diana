@@ -1,2 +1,2 @@
 # pipeline
-automated protein-protein interaction network assembly
+protein-protein interaction network assembly
