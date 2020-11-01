@@ -7,13 +7,15 @@ import zipfile
 
 import pandas as pd
 
+
 def download_file(url):
     remote_file_name = os.path.split(urllib.parse.urlparse(url).path)[1]
     local_file_name = os.path.join(tempfile.gettempdir(), remote_file_name)
 
     if not os.path.exists(local_file_name):
         request = urllib.request.Request(
-            url, headers={"User-Agent": "https://github.com/lucasfein/pipeline"})
+            url,
+            headers={"User-Agent": "https://github.com/lucasfein/pipeline"})
 
         with urllib.request.urlopen(request) as response:
             with open(local_file_name, "wb") as local_file:
@@ -29,12 +31,13 @@ def download_gzip_file(url):
     compressed_file_name = download_file(url)
     decompressed_file_name = os.path.splitext(compressed_file_name)[0]
 
-    with gzip.open(compressed_file_name, "rb") as compressed_file:
-        with open(decompressed_file_name, "wb") as decompressed_file:
-            chunk = compressed_file.read(1048576)
-            while chunk:
-                decompressed_file.write(chunk)
+    if not os.path.exists(decompressed_file_name):
+        with gzip.open(compressed_file_name, "rb") as compressed_file:
+            with open(decompressed_file_name, "wb") as decompressed_file:
                 chunk = compressed_file.read(1048576)
+                while chunk:
+                    decompressed_file.write(chunk)
+                    chunk = compressed_file.read(1048576)
 
     os.remove(compressed_file_name)
 
@@ -45,8 +48,11 @@ def download_zip_file(url):
     compressed_file_name = download_file(url)
 
     with zipfile.ZipFile(compressed_file_name) as archive:
-        decompressed_file_name = archive.extract(archive.namelist()[0],
-                                                 path=tempfile.gettempdir())
+        if not os.path.exists(
+                os.path.join(tempfile.gettempdir(),
+                             archive.namelist()[0])):
+            decompressed_file_name = archive.extract(
+                archive.namelist()[0], path=tempfile.gettempdir())
 
     os.remove(compressed_file_name)
 
