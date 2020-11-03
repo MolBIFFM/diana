@@ -97,7 +97,7 @@ class ProteinProteinInteractionNetwork(nx.Graph):
                     and row["Experimental System Type"] == "physical"
                     and row["Organism ID Interactor A"] == 9606
                     and row["Organism ID Interactor B"] == 9606
-                    and all(tp in throughput
+                    and any(tp in throughput
                             for tp in row["Throughput"].split("|"))):
                 self.add_edge(uniprot[row["BioGRID ID Interactor A"]],
                               uniprot[row["BioGRID ID Interactor B"]])
