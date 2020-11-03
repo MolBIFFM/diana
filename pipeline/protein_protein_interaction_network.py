@@ -4,8 +4,8 @@ import statistics
 import networkx as nx
 import pandas as pd
 
-from pipeline import url
-from pipeline import utilities
+from configuration import configuration
+from utilities import utilities
 
 
 class ProteinProteinInteractionNetwork(nx.Graph):
@@ -74,14 +74,14 @@ class ProteinProteinInteractionNetwork(nx.Graph):
             experimental_system_type="physical"):
 
         uniprot = {}
-        for _, row in utilities.read_tabular_data(url.UNIPROT_ID_MAP,
+        for _, row in utilities.read_tabular_data(configuration.UNIPROT_ID_MAP,
                                                   delimiter="\t",
                                                   usecols=[0, 1, 2]):
             if row[1] == "BioGRID" and row[0] in self.nodes:
                 uniprot[int(row[2])] = row[0]
 
         for _, row in utilities.read_tabular_data(
-                url.BIOGRID,
+                configuration.BIOGRID,
                 delimiter="\t",
                 header=0,
                 usecols=[
@@ -101,7 +101,7 @@ class ProteinProteinInteractionNetwork(nx.Graph):
 
     def add_interactions_from_IntAct(self):
         for _, row in utilities.read_tabular_data(
-                url.INTACT,
+                configuration.INTACT,
                 delimiter="\t",
                 header=0,
                 usecols=["#ID(s) interactor A", "ID(s) interactor B"]):
@@ -124,13 +124,13 @@ class ProteinProteinInteractionNetwork(nx.Graph):
                                      combined_score=0.7):
 
         uniprot = {}
-        for _, row in utilities.read_tabular_data(url.UNIPROT_ID_MAP,
+        for _, row in utilities.read_tabular_data(configuration.UNIPROT_ID_MAP,
                                                   delimiter="\t",
                                                   usecols=[0, 1, 2]):
             if row[1] == "STRING" and row[0] in self.nodes:
                 uniprot[row[2]] = row[0]
 
-        for _, row in utilities.read_tabular_data(url.STRING_ID_MAP,
+        for _, row in utilities.read_tabular_data(configuration.STRING_ID_MAP,
                                                   usecols=[1, 2]):
             if row[1].split("|")[0] in self.nodes:
                 uniprot[row[2]] = row[1].split("|")[0]
@@ -156,7 +156,7 @@ class ProteinProteinInteractionNetwork(nx.Graph):
         }
 
         for _, row in utilities.read_tabular_data(
-                url.STRING,
+                configuration.STRING,
                 delimiter=" ",
                 header=0,
                 usecols=["protein1", "protein2"] + list(thresholds.keys())):
