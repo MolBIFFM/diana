@@ -4,8 +4,8 @@ import statistics
 import networkx as nx
 import pandas as pd
 
-from configuration import configuration
-from utilities import utilities
+from pipeline.configuration import interaction_data
+from pipeline.utilities import fetch_data
 
 
 class ProteinProteinInteractionNetwork(nx.Graph):
@@ -71,17 +71,18 @@ class ProteinProteinInteractionNetwork(nx.Graph):
                 "Biochemical Activity", "Co-crystal Structure", "FRET", "PCA",
                 "Two-hybrid"
             ],
-            experimental_system_type="physical"):
+            throughput=["Low Throughput", "High Throughput"]):
 
         uniprot = {}
-        for _, row in utilities.read_tabular_data(configuration.UNIPROT_ID_MAP,
-                                                  delimiter="\t",
-                                                  usecols=[0, 1, 2]):
+        for _, row in fetch_data.read_tabular_data(
+                interaction_data.UNIPROT_ID_MAP, delimiter="\t",
+                usecols=[0, 1, 2]):
             if row[1] == "BioGRID" and row[0] in self.nodes:
                 uniprot[int(row[2])] = row[0]
 
-        for _, row in utilities.read_tabular_data(
-                configuration.BIOGRID,
+        for _, row in fetch_data.read_tabular_data(
+                interaction_data.BIOGRID_ARCHIVE,
+                file=interaction_data.BIOGRID_FILE,
                 delimiter="\t",
                 header=0,
                 usecols=[
@@ -92,20 +93,95 @@ class ProteinProteinInteractionNetwork(nx.Graph):
                 ]):
             if (uniprot.get(row["BioGRID ID Interactor A"])
                     and uniprot.get(row["BioGRID ID Interactor B"])
-                    and row["Experimental System"] in experimental_system 
-                    and row["Experimental System Type"] == experimental_system_type
+                    and row["Experimental System"] in experimental_system
+                    and row["Experimental System Type"] == "physical"
                     and row["Organism ID Interactor A"] == 9606
-                    and row["Organism ID Interactor B"] == 9606):
+                    and row["Organism ID Interactor B"] == 9606
+                    and all(tp in throughput
+                            for tp in row["Throughput"].split("|"))):
                 self.add_edge(uniprot[row["BioGRID ID Interactor A"]],
                               uniprot[row["BioGRID ID Interactor B"]])
 
-    def add_interactions_from_IntAct(self):
-        for _, row in utilities.read_tabular_data(
-                configuration.INTACT,
+    def add_interactions_from_IntAct(self, miscore=0.27):
+        for _, row in fetch_data.read_tabular_data(
+                interaction_data.INTACT_ARCHIVE,
+                file=interaction_data.INTACT_FILE,
                 delimiter="\t",
                 header=0,
-                usecols=["#ID(s) interactor A", "ID(s) interactor B"]):
-            print(row["#ID(s) interactor A"], row["ID(s) interactor B"])
+                usecols=[
+                    "#ID(s) interactor A", "ID(s) interactor B",
+                    "Alt. ID(s) interactor A", "Alt. ID(s) interactor B",
+                    "Taxid interactor A", "Taxid interactor B",
+                    "Confidence value(s)"
+                ]):
+            if row["#ID(s) interactor A"].split(":", 1)[0] == "uniprotkb":
+                interactor_a = row["#ID(s) interactor A"].split(":", 1)[1]
+            elif row["Alt. ID(s) interactor A"] != "-":
+                for db, identifier in (entry.split(
+                        ":",
+                        1) for entry in row["Alt. ID(s) interactor A"].split(
+                            "|")):
+                    if db == "uniprotkb":
+                        interactor_a = identifier
+                        break
+                else:
+                    continue
+            else:
+                continue
+
+            if row["ID(s) interactor B"].split(":", 1)[0] == "uniprotkb":
+                interactor_b = row["ID(s) interactor B"].split(":", 1)[1]
+            elif row["Alt. ID(s) interactor B"] != "-":
+                for db, identifier in (entry.split(
+                        ":",
+                        1) for entry in row["Alt. ID(s) interactor B"].split(
+                            "|")):
+                    if db == "uniprotkb":
+                        interactor_b = identifier
+                        break
+                else:
+                    continue
+            else:
+                continue
+
+            if row["Taxid interactor A"] != "-":
+                for system, species in (entry.split(
+                        ":",
+                        1) for entry in row["Taxid interactor A"].split("|")):
+                    if species in ("9606(human)", "9606(Homo sapiens)"):
+                        break
+                else:
+                    continue
+            else:
+                continue
+
+            if row["Taxid interactor B"] != "-":
+                for system, species in (entry.split(
+                        ":",
+                        1) for entry in row["Taxid interactor B"].split("|")):
+                    if species in ("9606(human)", "9606(Homo sapiens)"):
+                        break
+                else:
+                    continue
+            else:
+                continue
+
+            if row["Confidence value(s)"] != "-":
+                for system, s in (entry.split(
+                        ":",
+                        1) for entry in row["Confidence value(s)"].split("|")):
+                    if system == "intact-miscore":
+                        if float(s) >= miscore:
+                            score = float(s)
+                            break
+                else:
+                    continue
+            else:
+                continue
+
+            if (interactor_a in self and interactor_b in self
+                    and score >= miscore):
+                self.add_edge(interactor_a, interactor_b)
 
     def add_interactions_from_STRING(self,
                                      neighborhood=0.0,
@@ -124,14 +200,14 @@ class ProteinProteinInteractionNetwork(nx.Graph):
                                      combined_score=0.7):
 
         uniprot = {}
-        for _, row in utilities.read_tabular_data(configuration.UNIPROT_ID_MAP,
-                                                  delimiter="\t",
-                                                  usecols=[0, 1, 2]):
+        for _, row in fetch_data.read_tabular_data(
+                interaction_data.UNIPROT_ID_MAP, delimiter="\t",
+                usecols=[0, 1, 2]):
             if row[1] == "STRING" and row[0] in self.nodes:
                 uniprot[row[2]] = row[0]
 
-        for _, row in utilities.read_tabular_data(configuration.STRING_ID_MAP,
-                                                  usecols=[1, 2]):
+        for _, row in fetch_data.read_tabular_data(
+                interaction_data.STRING_ID_MAP, usecols=[1, 2]):
             if row[1].split("|")[0] in self.nodes:
                 uniprot[row[2]] = row[1].split("|")[0]
 
@@ -155,8 +231,8 @@ class ProteinProteinInteractionNetwork(nx.Graph):
             }.items() if threshold
         }
 
-        for _, row in utilities.read_tabular_data(
-                configuration.STRING,
+        for _, row in fetch_data.read_tabular_data(
+                interaction_data.STRING,
                 delimiter=" ",
                 header=0,
                 usecols=["protein1", "protein2"] + list(thresholds.keys())):

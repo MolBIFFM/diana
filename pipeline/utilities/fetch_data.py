@@ -42,30 +42,30 @@ def download_gzip_file(url):
     return decompressed_file_name
 
 
-def download_zip_file(url):
+def download_zip_file(url, file=None):
     compressed_file_name = download_file(url)
 
     with zipfile.ZipFile(compressed_file_name) as archive:
-        if not os.path.exists(
-                os.path.join(tempfile.gettempdir(),
-                             archive.namelist()[0])):
+        if not file:
+            file = archive.namelist()[0]
+
+        if not os.path.exists(os.path.join(tempfile.gettempdir(), file)):
             decompressed_file_name = archive.extract(
-                archive.namelist()[0], path=tempfile.gettempdir())
+                file, path=tempfile.gettempdir())
         else:
-            decompressed_file_name = os.path.join(tempfile.gettempdir(),
-                                                  archive.namelist()[0])
+            decompressed_file_name = os.path.join(tempfile.gettempdir(), file)
 
     return decompressed_file_name
 
 
-def read_tabular_data(url, delimiter=None, header=None, usecols=[]):
+def read_tabular_data(url, file=None, delimiter=None, header=None, usecols=[]):
     file_name = urllib.parse.urlparse(url).path
     file_name_extension = os.path.splitext(file_name)[1]
 
     if file_name_extension == ".gz":
         local_file_name = download_gzip_file(url)
     elif file_name_extension == ".zip":
-        local_file_name = download_zip_file(url)
+        local_file_name = download_zip_file(url, file)
     else:
         local_file_name = download_file(url)
 
