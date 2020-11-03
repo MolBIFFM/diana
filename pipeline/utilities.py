@@ -39,8 +39,6 @@ def download_gzip_file(url):
                     decompressed_file.write(chunk)
                     chunk = compressed_file.read(1048576)
 
-    os.remove(compressed_file_name)
-
     return decompressed_file_name
 
 
@@ -53,14 +51,16 @@ def download_zip_file(url):
                              archive.namelist()[0])):
             decompressed_file_name = archive.extract(
                 archive.namelist()[0], path=tempfile.gettempdir())
-
-    os.remove(compressed_file_name)
+        else:
+            decompressed_file_name = os.path.join(tempfile.gettempdir(),
+                                                  archive.namelist()[0])
 
     return decompressed_file_name
 
 
-def iterate_tabular_data(url, delimiter=None, header=None, usecols=[]):
-    file_name_extension = os.path.splitext(urllib.parse.urlparse(url).path)[1]
+def read_tabular_data(url, delimiter=None, header=None, usecols=[]):
+    file_name = urllib.parse.urlparse(url).path
+    file_name_extension = os.path.splitext(file_name)[1]
 
     if file_name_extension == ".gz":
         local_file_name = download_gzip_file(url)
@@ -77,4 +77,5 @@ def iterate_tabular_data(url, delimiter=None, header=None, usecols=[]):
     return pd.read_csv(local_file_name,
                        sep=delimiter,
                        header=header,
-                       usecols=usecols).iterrows()
+                       usecols=usecols,
+                       engine="c").iterrows()
