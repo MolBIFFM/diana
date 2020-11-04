@@ -8,27 +8,20 @@ import zipfile
 import pandas as pd
 
 
-def download_file(url):
-    remote_file_name = os.path.split(urllib.parse.urlparse(url).path)[1]
-    local_file_name = os.path.join(tempfile.gettempdir(), remote_file_name)
+def download_file(url, local_file_name):
+    request = urllib.request.Request(
+        url,
+        headers={"User-Agent": "https://github.com/lucasfein/pipeline"})
 
-    if not os.path.exists(local_file_name):
-        request = urllib.request.Request(
-            url,
-            headers={"User-Agent": "https://github.com/lucasfein/pipeline"})
-
-        with urllib.request.urlopen(request) as response:
-            with open(local_file_name, "wb") as local_file:
+    with urllib.request.urlopen(request) as response:
+        with open(local_file_name, "wb") as local_file:
+            chunk = response.read(1048576)
+            while chunk:
+                local_file.write(chunk)
                 chunk = response.read(1048576)
-                while chunk:
-                    local_file.write(chunk)
-                    chunk = response.read(1048576)
-
-    return local_file_name
 
 
-def download_gzip_file(url):
-    compressed_file_name = download_file(url)
+def decompress_gzip_file(compressed_file_name):
     decompressed_file_name = os.path.splitext(compressed_file_name)[0]
 
     if not os.path.exists(decompressed_file_name):
@@ -39,12 +32,11 @@ def download_gzip_file(url):
                     decompressed_file.write(chunk)
                     chunk = compressed_file.read(1048576)
 
+    os.remove(compressed_file_name)
     return decompressed_file_name
 
 
-def download_zip_file(url, file=None):
-    compressed_file_name = download_file(url)
-
+def decompress_zip_file(compressed_file_name, file=None):
     with zipfile.ZipFile(compressed_file_name) as archive:
         if not file:
             file = archive.namelist()[0]
@@ -55,19 +47,22 @@ def download_zip_file(url, file=None):
         else:
             decompressed_file_name = os.path.join(tempfile.gettempdir(), file)
 
+    os.remove(compressed_file_name)
     return decompressed_file_name
 
 
 def read_tabular_data(url, file=None, delimiter=None, header=None, usecols=[]):
-    file_name = urllib.parse.urlparse(url).path
+    file_name = os.path.split(urllib.parse.urlparse(url).path)[1]
     file_name_extension = os.path.splitext(file_name)[1]
+    local_file_name = os.path.join(tempfile.gettempdir(), file_name)
+
+    if not os.path.exists(local_file_name):
+        download_file(url, local_file_name)
 
     if file_name_extension == ".gz":
-        local_file_name = download_gzip_file(url)
+        local_file_name = decompress_gzip_file(local_file_name)
     elif file_name_extension == ".zip":
-        local_file_name = download_zip_file(url, file)
-    else:
-        local_file_name = download_file(url)
+        local_file_name = decompress_zip_file(local_file_name, file)
 
     if os.path.splitext(local_file_name)[1] == ".csv":
         delimiter = ","

@@ -6,6 +6,7 @@ import pandas as pd
 
 from pipeline.configuration import interaction_data
 from pipeline.utilities import fetch_data
+from pipeline.utilities import mitab
 
 
 class ProteinProteinInteractionNetwork(nx.Graph):
@@ -102,7 +103,11 @@ class ProteinProteinInteractionNetwork(nx.Graph):
                 self.add_edge(uniprot[row["BioGRID ID Interactor A"]],
                               uniprot[row["BioGRID ID Interactor B"]])
 
-    def add_interactions_from_IntAct(self, miscore=0.27):
+    def add_interactions_from_IntAct(self, 
+            miscore=0.27, 
+            interaction_types=[
+                "physical association",
+                "direct interaction"]):
         for _, row in fetch_data.read_tabular_data(
                 interaction_data.INTACT_ARCHIVE,
                 file=interaction_data.INTACT_FILE,
@@ -112,76 +117,35 @@ class ProteinProteinInteractionNetwork(nx.Graph):
                     "#ID(s) interactor A", "ID(s) interactor B",
                     "Alt. ID(s) interactor A", "Alt. ID(s) interactor B",
                     "Taxid interactor A", "Taxid interactor B",
-                    "Confidence value(s)"
+                    "Interaction type(s)", "Confidence value(s)"
                 ]):
-            if row["#ID(s) interactor A"].split(":", 1)[0] == "uniprotkb":
-                interactor_a = row["#ID(s) interactor A"].split(":", 1)[1]
-            elif row["Alt. ID(s) interactor A"] != "-":
-                for db, identifier in (entry.split(
-                        ":",
-                        1) for entry in row["Alt. ID(s) interactor A"].split(
-                            "|")):
-                    if db == "uniprotkb":
-                        interactor_a = identifier
-                        break
-                else:
+
+            if not (interactor_a := mitab.get_id_from_ns(row["#ID(s) interactor A"], "uniprotkb")):
+                if not (interactor_a := mitab.get_id_from_ns(row["Alt. ID(s) interactor A"], "uniprotkb")):
+                    continue
+            if interactor_a not in self:
+                continue
+
+            if not (interactor_b := mitab.get_id_from_ns(row["ID(s) interactor B"], "uniprotkb")):
+                if not (interactor_b := mitab.get_id_from_ns(row["Alt. ID(s) interactor B"], "uniprotkb")):
+                    continue
+            if interactor_b not in self:
+                continue
+
+            if not (mitab.ns_has_id(row["Taxid interactor A"], "taxid", "human") 
+                    and mitab.ns_has_id(row["Taxid interactor B"], "taxid", "human")):
+                continue
+
+            if not (mitab.ns_has_any_id(row["Interaction type(s)"], "psi-mi", interaction_types)):
+                continue
+
+            if (score := mitab.get_id_from_ns(row["Confidence value(s)"], "intact-miscore")):
+                if float(score) < miscore:
                     continue
             else:
                 continue
-
-            if row["ID(s) interactor B"].split(":", 1)[0] == "uniprotkb":
-                interactor_b = row["ID(s) interactor B"].split(":", 1)[1]
-            elif row["Alt. ID(s) interactor B"] != "-":
-                for db, identifier in (entry.split(
-                        ":",
-                        1) for entry in row["Alt. ID(s) interactor B"].split(
-                            "|")):
-                    if db == "uniprotkb":
-                        interactor_b = identifier
-                        break
-                else:
-                    continue
-            else:
-                continue
-
-            if row["Taxid interactor A"] != "-":
-                for system, species in (entry.split(
-                        ":",
-                        1) for entry in row["Taxid interactor A"].split("|")):
-                    if species in ("9606(human)", "9606(Homo sapiens)"):
-                        break
-                else:
-                    continue
-            else:
-                continue
-
-            if row["Taxid interactor B"] != "-":
-                for system, species in (entry.split(
-                        ":",
-                        1) for entry in row["Taxid interactor B"].split("|")):
-                    if species in ("9606(human)", "9606(Homo sapiens)"):
-                        break
-                else:
-                    continue
-            else:
-                continue
-
-            if row["Confidence value(s)"] != "-":
-                for system, s in (entry.split(
-                        ":",
-                        1) for entry in row["Confidence value(s)"].split("|")):
-                    if system == "intact-miscore":
-                        if float(s) >= miscore:
-                            score = float(s)
-                            break
-                else:
-                    continue
-            else:
-                continue
-
-            if (interactor_a in self and interactor_b in self
-                    and score >= miscore):
-                self.add_edge(interactor_a, interactor_b)
+            
+            self.add_edge(interactor_a, interactor_b)
 
     def add_interactions_from_STRING(self,
                                      neighborhood=0.0,
