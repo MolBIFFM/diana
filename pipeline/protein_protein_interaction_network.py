@@ -64,15 +64,14 @@ class ProteinProteinInteractionNetwork(nx.Graph):
                 self.nodes[protein_id][position][ptm][
                     time] = convert_measurement(merge_replicates(measurements))
 
-    def add_interactions_from_BioGRID(
-            self,
-            experimental_system=[
-                "Affinity Capture-Luminescence", "Affinity Capture-MS",
-                "Affinity Capture-RNA", "Affinity Capture-Western",
-                "Biochemical Activity", "Co-crystal Structure", "FRET", "PCA",
-                "Two-hybrid"
-            ],
-            throughput=["Low Throughput", "High Throughput"]):
+    def add_interactions_from_BioGRID_TAB3(
+        self,
+        experimental_system=[
+            "Affinity Capture-Luminescence", "Affinity Capture-MS",
+            "Affinity Capture-RNA", "Affinity Capture-Western",
+            "Biochemical Activity", "Co-crystal Structure", "FRET", "PCA",
+            "Two-hybrid"
+        ]):
 
         uniprot = {}
         for _, row in fetch.read_tabular_data(
@@ -83,8 +82,8 @@ class ProteinProteinInteractionNetwork(nx.Graph):
                 uniprot[int(row[2])] = row[0]
 
         for _, row in fetch.read_tabular_data(
-                protein_protein_interaction_data.BIOGRID_ARCHIVE,
-                file=protein_protein_interaction_data.BIOGRID_FILE,
+                protein_protein_interaction_data.BIOGRID_TAB3_ARCHIVE,
+                file=protein_protein_interaction_data.BIOGRID_TAB3_FILE,
                 delimiter="\t",
                 header=0,
                 usecols=[
@@ -98,11 +97,71 @@ class ProteinProteinInteractionNetwork(nx.Graph):
                     and row["Experimental System"] in experimental_system
                     and row["Experimental System Type"] == "physical"
                     and row["Organism ID Interactor A"] == 9606
-                    and row["Organism ID Interactor B"] == 9606
-                    and any(tp in throughput
-                            for tp in row["Throughput"].split("|"))):
+                    and row["Organism ID Interactor B"] == 9606):
                 self.add_edge(uniprot[row["BioGRID ID Interactor A"]],
                               uniprot[row["BioGRID ID Interactor B"]])
+
+    def add_interactions_from_BioGRID_MITAB(
+        self,
+        interaction_detection_methods=[
+            "affinity chromatography technology", "two hybrid", "biochemical",
+            "pull down", "enzymatic study", "bio id", "x-ray crystallography",
+            "fluorescent resonance energy transfer"
+            "protein complementation assay"
+        ],
+        interaction_types=[
+            "physical association", "direct interaction", "association"
+        ]):
+        uniprot = {}
+        for _, row in fetch.read_tabular_data(
+                protein_protein_interaction_data.UNIPROT_ID_MAP,
+                delimiter="\t",
+                usecols=[0, 1, 2]):
+            if row[1] == "BioGRID" and row[0] in self.nodes:
+                uniprot[row[2]] = row[0]
+
+        for _, row in fetch.read_tabular_data(
+                protein_protein_interaction_data.BIOGRID_MITAB_ARCHIVE,
+                file=protein_protein_interaction_data.BIOGRID_MITAB_FILE,
+                delimiter="\t",
+                header=0,
+                usecols=[
+                    "#ID Interactor A", "ID Interactor B",
+                    "Alt IDs Interactor A", "Alt IDs Interactor B",
+                    "Taxid Interactor A", "Taxid Interactor B",
+                    "Interaction Detection Method", "Interaction Types"
+                ]):
+            if not (interactor_a := mitab.get_id_from_ns(
+                    row["#ID Interactor A"], "biogrid")):
+                if not (interactor_a := mitab.get_id_from_ns(
+                        row["Alt IDs Interactor A"], "biogrid")):
+                    continue
+            if not uniprot.get(interactor_a):
+                continue
+
+            if not (interactor_b := mitab.get_id_from_ns(
+                    row["ID Interactor B"], "biogrid")):
+                if not (interactor_b := mitab.get_id_from_ns(
+                        row["Alt IDs Interactor B"], "biogrid")):
+                    continue
+            if not uniprot.get(interactor_b):
+                continue
+
+            if not (mitab.ns_has_id(row["Taxid Interactor A"], "taxid", "9606")
+                    and mitab.ns_has_id(row["Taxid Interactor B"], "taxid",
+                                        "9606")):
+                continue
+
+            if not mitab.ns_has_any_id(row["Interaction Detection Method"],
+                                       "psi-mi",
+                                       interaction_detection_methods):
+                continue
+
+            if not mitab.ns_has_any_id(row["Interaction Types"], "psi-mi",
+                                       interaction_types):
+                continue
+
+            self.add_edge(uniprot[interactor_a], uniprot[interactor_b])
 
     def add_interactions_from_IntAct(
         self,
@@ -125,7 +184,8 @@ class ProteinProteinInteractionNetwork(nx.Graph):
                     "#ID(s) interactor A", "ID(s) interactor B",
                     "Alt. ID(s) interactor A", "Alt. ID(s) interactor B",
                     "Taxid interactor A", "Taxid interactor B",
-                    "Interaction type(s)", "Confidence value(s)"
+                    "Interaction detection method(s)", "Interaction type(s)",
+                    "Confidence value(s)"
                 ]):
 
             if not (interactor_a := mitab.get_id_from_ns(
@@ -144,10 +204,9 @@ class ProteinProteinInteractionNetwork(nx.Graph):
             if interactor_b not in self:
                 continue
 
-            if not (mitab.ns_has_id(row["Taxid interactor A"], "taxid",
-                                    "human")
+            if not (mitab.ns_has_id(row["Taxid interactor A"], "taxid", "9606")
                     and mitab.ns_has_id(row["Taxid interactor B"], "taxid",
-                                        "human")):
+                                        "9606")):
                 continue
 
             if not mitab.ns_has_any_id(row["Interaction detection method(s)"],

@@ -1,16 +1,20 @@
 def parse(entry):
     if entry != "-":
         values = {}
-        for ns, ids in (ns_ids.split(":", 1) for ns_ids in entry.split("|")):
-            ids = ids.split("(")
-            ids[0] = ids[0].strip("\"")
-            if len(ids) == 2:
-                ids[1] = ids[1][:-1]
+        for ns, identifiers in (ns_identifiers.split(":", 1)
+                                for ns_identifiers in entry.split("|")):
+            identifiers = identifiers.split("(")
+            identifiers[0] = identifiers[0].strip("\"")
+            if len(identifiers) == 2:
+                identifiers[1] = identifiers[1][:-1]
 
             if ns in values:
-                values[ns].extend(ids)
+                values[ns].extend([
+                    identifier for identifier in identifiers
+                    if identifier not in values[ns]
+                ])
             else:
-                values[ns] = ids
+                values[ns] = identifiers
         return values
     else:
         return {}
