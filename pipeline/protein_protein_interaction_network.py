@@ -4,8 +4,8 @@ import statistics
 import networkx as nx
 import pandas as pd
 
-from pipeline.configuration import interaction_data
-from pipeline.utilities import fetch_data
+from pipeline.configuration import protein_protein_interaction_data
+from pipeline.utilities import fetch
 from pipeline.utilities import mitab
 
 
@@ -75,15 +75,16 @@ class ProteinProteinInteractionNetwork(nx.Graph):
             throughput=["Low Throughput", "High Throughput"]):
 
         uniprot = {}
-        for _, row in fetch_data.read_tabular_data(
-                interaction_data.UNIPROT_ID_MAP, delimiter="\t",
+        for _, row in fetch.read_tabular_data(
+                protein_protein_interaction_data.UNIPROT_ID_MAP,
+                delimiter="\t",
                 usecols=[0, 1, 2]):
             if row[1] == "BioGRID" and row[0] in self.nodes:
                 uniprot[int(row[2])] = row[0]
 
-        for _, row in fetch_data.read_tabular_data(
-                interaction_data.BIOGRID_ARCHIVE,
-                file=interaction_data.BIOGRID_FILE,
+        for _, row in fetch.read_tabular_data(
+                protein_protein_interaction_data.BIOGRID_ARCHIVE,
+                file=protein_protein_interaction_data.BIOGRID_FILE,
                 delimiter="\t",
                 header=0,
                 usecols=[
@@ -103,14 +104,21 @@ class ProteinProteinInteractionNetwork(nx.Graph):
                 self.add_edge(uniprot[row["BioGRID ID Interactor A"]],
                               uniprot[row["BioGRID ID Interactor B"]])
 
-    def add_interactions_from_IntAct(self, 
-            miscore=0.27, 
-            interaction_types=[
-                "physical association",
-                "direct interaction"]):
-        for _, row in fetch_data.read_tabular_data(
-                interaction_data.INTACT_ARCHIVE,
-                file=interaction_data.INTACT_FILE,
+    def add_interactions_from_IntAct(
+        self,
+        miscore=0.27,
+        interaction_detection_methods=[
+            "affinity chromatography technology", "two hybrid", "biochemical",
+            "pull down", "enzymatic study", "bio id", "x-ray crystallography",
+            "fluorescent resonance energy transfer"
+            "protein complementation assay"
+        ],
+        interaction_types=[
+            "physical association", "direct interaction", "association"
+        ]):
+        for _, row in fetch.read_tabular_data(
+                protein_protein_interaction_data.INTACT_ARCHIVE,
+                file=protein_protein_interaction_data.INTACT_FILE,
                 delimiter="\t",
                 header=0,
                 usecols=[
@@ -120,31 +128,44 @@ class ProteinProteinInteractionNetwork(nx.Graph):
                     "Interaction type(s)", "Confidence value(s)"
                 ]):
 
-            if not (interactor_a := mitab.get_id_from_ns(row["#ID(s) interactor A"], "uniprotkb")):
-                if not (interactor_a := mitab.get_id_from_ns(row["Alt. ID(s) interactor A"], "uniprotkb")):
+            if not (interactor_a := mitab.get_id_from_ns(
+                    row["#ID(s) interactor A"], "uniprotkb")):
+                if not (interactor_a := mitab.get_id_from_ns(
+                        row["Alt. ID(s) interactor A"], "uniprotkb")):
                     continue
             if interactor_a not in self:
                 continue
 
-            if not (interactor_b := mitab.get_id_from_ns(row["ID(s) interactor B"], "uniprotkb")):
-                if not (interactor_b := mitab.get_id_from_ns(row["Alt. ID(s) interactor B"], "uniprotkb")):
+            if not (interactor_b := mitab.get_id_from_ns(
+                    row["ID(s) interactor B"], "uniprotkb")):
+                if not (interactor_b := mitab.get_id_from_ns(
+                        row["Alt. ID(s) interactor B"], "uniprotkb")):
                     continue
             if interactor_b not in self:
                 continue
 
-            if not (mitab.ns_has_id(row["Taxid interactor A"], "taxid", "human") 
-                    and mitab.ns_has_id(row["Taxid interactor B"], "taxid", "human")):
+            if not (mitab.ns_has_id(row["Taxid interactor A"], "taxid",
+                                    "human")
+                    and mitab.ns_has_id(row["Taxid interactor B"], "taxid",
+                                        "human")):
                 continue
 
-            if not (mitab.ns_has_any_id(row["Interaction type(s)"], "psi-mi", interaction_types)):
+            if not mitab.ns_has_any_id(row["Interaction detection method(s)"],
+                                       "psi-mi",
+                                       interaction_detection_methods):
                 continue
 
-            if (score := mitab.get_id_from_ns(row["Confidence value(s)"], "intact-miscore")):
+            if not mitab.ns_has_any_id(row["Interaction type(s)"], "psi-mi",
+                                       interaction_types):
+                continue
+
+            if score := mitab.get_id_from_ns(row["Confidence value(s)"],
+                                             "intact-miscore"):
                 if float(score) < miscore:
                     continue
             else:
                 continue
-            
+
             self.add_edge(interactor_a, interactor_b)
 
     def add_interactions_from_STRING(self,
@@ -164,14 +185,16 @@ class ProteinProteinInteractionNetwork(nx.Graph):
                                      combined_score=0.7):
 
         uniprot = {}
-        for _, row in fetch_data.read_tabular_data(
-                interaction_data.UNIPROT_ID_MAP, delimiter="\t",
+        for _, row in fetch.read_tabular_data(
+                protein_protein_interaction_data.UNIPROT_ID_MAP,
+                delimiter="\t",
                 usecols=[0, 1, 2]):
             if row[1] == "STRING" and row[0] in self.nodes:
                 uniprot[row[2]] = row[0]
 
-        for _, row in fetch_data.read_tabular_data(
-                interaction_data.STRING_ID_MAP, usecols=[1, 2]):
+        for _, row in fetch.read_tabular_data(
+                protein_protein_interaction_data.STRING_ID_MAP, usecols=[1,
+                                                                         2]):
             if row[1].split("|")[0] in self.nodes:
                 uniprot[row[2]] = row[1].split("|")[0]
 
@@ -195,8 +218,8 @@ class ProteinProteinInteractionNetwork(nx.Graph):
             }.items() if threshold
         }
 
-        for _, row in fetch_data.read_tabular_data(
-                interaction_data.STRING,
+        for _, row in fetch.read_tabular_data(
+                protein_protein_interaction_data.STRING,
                 delimiter=" ",
                 header=0,
                 usecols=["protein1", "protein2"] + list(thresholds.keys())):
