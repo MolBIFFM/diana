@@ -30,7 +30,7 @@ class ProteinProteinInteractionNetwork(nx.Graph):
             min_num_replicates=1,
             merge_replicates=statistics.mean,
             convert_measurement=math.log2):
-        for _, row in pd.read_excel(
+        for row in pd.read_excel(
                 file_name,
                 skiprows=skiprows,
                 usecols=[protein_id_col, position_col] + replicates,
@@ -69,19 +69,32 @@ class ProteinProteinInteractionNetwork(nx.Graph):
         experimental_system=[
             "Affinity Capture-Luminescence", "Affinity Capture-MS",
             "Affinity Capture-RNA", "Affinity Capture-Western",
-            "Biochemical Activity", "Co-crystal Structure", "FRET", "PCA",
-            "Two-hybrid"
+            "Biochemical Activity", "Co-crystal Structure", "Co-purification",
+            "FRET", "PCA", "Two-hybrid"
         ]):
-
         uniprot = {}
-        for _, row in fetch.read_tabular_data(
+        for row in fetch.read_tabular_data(
                 protein_protein_interaction_data.UNIPROT_ID_MAP,
                 delimiter="\t",
                 usecols=[0, 1, 2]):
             if row[1] == "BioGRID" and row[0] in self.nodes:
                 uniprot[int(row[2])] = row[0]
 
-        for _, row in fetch.read_tabular_data(
+        for row in fetch.read_tabular_data(
+                protein_protein_interaction_data.BIOGRID_ID_MAP_ARCHIVE,
+                file=protein_protein_interaction_data.BIOGRID_ID_MAP_FILE,
+                delimiter="\t",
+                header=20,
+                usecols=["BIOGRID_ID", 
+                    "IDENTIFIER_VALUE", 
+                    "IDENTIFIER_TYPE", 
+                    "ORGANISM_OFFICIAL_NAME"]):
+            if (row["IDENTIFIER_TYPE"] in ("UNIPROT-ACCESSION", "UNIPROT-ISOFORM") 
+                    and row["ORGANISM_OFFICIAL_NAME"] == "Homo sapiens"
+                    and row["IDENTIFIER_VALUE"] in self.nodes):
+                uniprot[int(row["BIOGRID_ID"])] = row["IDENTIFIER_VALUE"]
+
+        for row in fetch.read_tabular_data(
                 protein_protein_interaction_data.BIOGRID_TAB3_ARCHIVE,
                 file=protein_protein_interaction_data.BIOGRID_TAB3_FILE,
                 delimiter="\t",
@@ -113,14 +126,14 @@ class ProteinProteinInteractionNetwork(nx.Graph):
             "physical association", "direct interaction", "association"
         ]):
         uniprot = {}
-        for _, row in fetch.read_tabular_data(
+        for row in fetch.read_tabular_data(
                 protein_protein_interaction_data.UNIPROT_ID_MAP,
                 delimiter="\t",
                 usecols=[0, 1, 2]):
             if row[1] == "BioGRID" and row[0] in self.nodes:
                 uniprot[row[2]] = row[0]
 
-        for _, row in fetch.read_tabular_data(
+        for row in fetch.read_tabular_data(
                 protein_protein_interaction_data.BIOGRID_MITAB_ARCHIVE,
                 file=protein_protein_interaction_data.BIOGRID_MITAB_FILE,
                 delimiter="\t",
@@ -175,7 +188,7 @@ class ProteinProteinInteractionNetwork(nx.Graph):
         interaction_types=[
             "physical association", "direct interaction", "association"
         ]):
-        for _, row in fetch.read_tabular_data(
+        for row in fetch.read_tabular_data(
                 protein_protein_interaction_data.INTACT_ARCHIVE,
                 file=protein_protein_interaction_data.INTACT_FILE,
                 delimiter="\t",
@@ -244,14 +257,14 @@ class ProteinProteinInteractionNetwork(nx.Graph):
                                      combined_score=0.7):
 
         uniprot = {}
-        for _, row in fetch.read_tabular_data(
+        for row in fetch.read_tabular_data(
                 protein_protein_interaction_data.UNIPROT_ID_MAP,
                 delimiter="\t",
                 usecols=[0, 1, 2]):
             if row[1] == "STRING" and row[0] in self.nodes:
                 uniprot[row[2]] = row[0]
 
-        for _, row in fetch.read_tabular_data(
+        for row in fetch.read_tabular_data(
                 protein_protein_interaction_data.STRING_ID_MAP, usecols=[1,
                                                                          2]):
             if row[1].split("|")[0] in self.nodes:
@@ -277,7 +290,7 @@ class ProteinProteinInteractionNetwork(nx.Graph):
             }.items() if threshold
         }
 
-        for _, row in fetch.read_tabular_data(
+        for row in fetch.read_tabular_data(
                 protein_protein_interaction_data.STRING,
                 delimiter=" ",
                 header=0,

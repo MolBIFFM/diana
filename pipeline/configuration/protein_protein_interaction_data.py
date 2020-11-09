@@ -1,3 +1,5 @@
+BIOGRID_ID_MAP_ARCHIVE = "https://downloads.thebiogrid.org/Download/BioGRID/Latest-Release/BIOGRID-IDENTIFIERS-LATEST.tab.zip"
+BIOGRID_ID_MAP_FILE = "BIOGRID-IDENTIFIERS-4.2.191.tab.txt"
 BIOGRID_TAB3_ARCHIVE = "https://downloads.thebiogrid.org/Download/BioGRID/Latest-Release/BIOGRID-ORGANISM-LATEST.tab3.zip"
 BIOGRID_TAB3_FILE = "BIOGRID-ORGANISM-Homo_sapiens-4.2.191.tab3.txt"
 BIOGRID_MITAB_ARCHIVE = "https://downloads.thebiogrid.org/Download/BioGRID/Latest-Release/BIOGRID-ORGANISM-LATEST.mitab.zip"
