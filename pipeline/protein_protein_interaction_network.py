@@ -30,7 +30,7 @@ class ProteinProteinInteractionNetwork(nx.Graph):
             min_num_replicates=1,
             merge_replicates=statistics.mean,
             convert_measurement=math.log2):
-        for row in pd.read_excel(
+        for _, row in pd.read_excel(
                 file_name,
                 skiprows=skiprows,
                 usecols=[protein_id_col, position_col] + replicates,
@@ -85,11 +85,12 @@ class ProteinProteinInteractionNetwork(nx.Graph):
                 file=protein_protein_interaction_data.BIOGRID_ID_MAP_FILE,
                 delimiter="\t",
                 header=20,
-                usecols=["BIOGRID_ID", 
-                    "IDENTIFIER_VALUE", 
-                    "IDENTIFIER_TYPE", 
-                    "ORGANISM_OFFICIAL_NAME"]):
-            if (row["IDENTIFIER_TYPE"] in ("UNIPROT-ACCESSION", "UNIPROT-ISOFORM") 
+                usecols=[
+                    "BIOGRID_ID", "IDENTIFIER_VALUE", "IDENTIFIER_TYPE",
+                    "ORGANISM_OFFICIAL_NAME"
+                ]):
+            if (row["IDENTIFIER_TYPE"]
+                    in ("UNIPROT-ACCESSION", "UNIPROT-ISOFORM")
                     and row["ORGANISM_OFFICIAL_NAME"] == "Homo sapiens"
                     and row["IDENTIFIER_VALUE"] in self.nodes):
                 uniprot[int(row["BIOGRID_ID"])] = row["IDENTIFIER_VALUE"]
@@ -134,6 +135,21 @@ class ProteinProteinInteractionNetwork(nx.Graph):
                 uniprot[row[2]] = row[0]
 
         for row in fetch.read_tabular_data(
+                protein_protein_interaction_data.BIOGRID_ID_MAP_ARCHIVE,
+                file=protein_protein_interaction_data.BIOGRID_ID_MAP_FILE,
+                delimiter="\t",
+                header=20,
+                usecols=[
+                    "BIOGRID_ID", "IDENTIFIER_VALUE", "IDENTIFIER_TYPE",
+                    "ORGANISM_OFFICIAL_NAME"
+                ]):
+            if (row["IDENTIFIER_TYPE"]
+                    in ("UNIPROT-ACCESSION", "UNIPROT-ISOFORM")
+                    and row["ORGANISM_OFFICIAL_NAME"] == "Homo sapiens"
+                    and row["IDENTIFIER_VALUE"] in self.nodes):
+                uniprot[int(row["BIOGRID_ID"])] = row["IDENTIFIER_VALUE"]
+
+        for row in fetch.read_tabular_data(
                 protein_protein_interaction_data.BIOGRID_MITAB_ARCHIVE,
                 file=protein_protein_interaction_data.BIOGRID_MITAB_FILE,
                 delimiter="\t",
@@ -160,9 +176,10 @@ class ProteinProteinInteractionNetwork(nx.Graph):
             if not uniprot.get(interactor_b):
                 continue
 
-            if not (mitab.ns_has_id(row["Taxid Interactor A"], "taxid", "9606")
+            if not (mitab.ns_has_id(row["Taxid Interactor A"], "taxid",
+                                    "human")
                     and mitab.ns_has_id(row["Taxid Interactor B"], "taxid",
-                                        "9606")):
+                                        "human")):
                 continue
 
             if not mitab.ns_has_any_id(row["Interaction Detection Method"],
@@ -217,9 +234,10 @@ class ProteinProteinInteractionNetwork(nx.Graph):
             if interactor_b not in self:
                 continue
 
-            if not (mitab.ns_has_id(row["Taxid interactor A"], "taxid", "9606")
+            if not (mitab.ns_has_id(row["Taxid interactor A"], "taxid",
+                                    "human")
                     and mitab.ns_has_id(row["Taxid interactor B"], "taxid",
-                                        "9606")):
+                                        "human")):
                 continue
 
             if not mitab.ns_has_any_id(row["Interaction detection method(s)"],
