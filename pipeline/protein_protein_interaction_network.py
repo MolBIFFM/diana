@@ -27,7 +27,7 @@ class ProteinProteinInteractionNetwork(nx.Graph):
                 "Ratio H/L normalized Exp1", "Ratio H/L normalized Exp2",
                 "Ratio H/L normalized Exp3"
             ],
-            min_num_replicates=1,
+            min_num_replicates=2,
             merge_replicates=statistics.mean,
             convert_measurement=math.log2):
         for _, row in pd.read_excel(
