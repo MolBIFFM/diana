@@ -18,7 +18,7 @@ class ProteinProteinInteractionNetwork(nx.Graph):
             file_name,
             ptm,
             time,
-            skiprows=0,
+            header=0,
             protein_id_col="Protein",
             protein_id_format=lambda entry: entry,
             position_col="Positions within proteins",
@@ -32,7 +32,7 @@ class ProteinProteinInteractionNetwork(nx.Graph):
             convert_measurement=math.log2):
         for _, row in pd.read_excel(
                 file_name,
-                skiprows=skiprows,
+                header=header,
                 usecols=[protein_id_col, position_col] + replicates,
                 dtype={
                     protein_id_col: str,
@@ -50,21 +50,14 @@ class ProteinProteinInteractionNetwork(nx.Graph):
 
             if len(measurements) >= min(min_num_replicates, len(replicates)):
                 protein_id = str(protein_id_format(row[protein_id_col]))
-                position = int(position_format(row[position_col]))
+                position = str(position_format(row[position_col]))
 
-                if protein_id not in self.nodes:
-                    self.add_node(protein_id)
+                self.add_node(protein_id)
 
-                if position not in self.nodes[protein_id]:
-                    self.nodes[protein_id][position] = {}
+                self.nodes[protein_id]["-".join([position, ptm, str(time)])
+                    ] = convert_measurement(merge_replicates(measurements))
 
-                if ptm not in self.nodes[protein_id][position]:
-                    self.nodes[protein_id][position][ptm] = {}
-
-                self.nodes[protein_id][position][ptm][
-                    time] = convert_measurement(merge_replicates(measurements))
-
-    def add_interactions_from_BioGRID_TAB3(
+    def add_interactions_from_BioGRID(
         self,
         experimental_system=[
             "Affinity Capture-Luminescence", "Affinity Capture-MS",
@@ -82,7 +75,7 @@ class ProteinProteinInteractionNetwork(nx.Graph):
 
         for row in fetch.read_tabular_data(
                 protein_protein_interaction_data.BIOGRID_ID_MAP_ARCHIVE,
-                file=protein_protein_interaction_data.BIOGRID_ID_MAP_FILE,
+                zip_file=protein_protein_interaction_data.BIOGRID_ID_MAP_FILE,
                 delimiter="\t",
                 header=20,
                 usecols=[
@@ -97,7 +90,7 @@ class ProteinProteinInteractionNetwork(nx.Graph):
 
         for row in fetch.read_tabular_data(
                 protein_protein_interaction_data.BIOGRID_TAB3_ARCHIVE,
-                file=protein_protein_interaction_data.BIOGRID_TAB3_FILE,
+                zip_file=protein_protein_interaction_data.BIOGRID_TAB3_FILE,
                 delimiter="\t",
                 header=0,
                 usecols=[
@@ -136,7 +129,7 @@ class ProteinProteinInteractionNetwork(nx.Graph):
 
         for row in fetch.read_tabular_data(
                 protein_protein_interaction_data.BIOGRID_ID_MAP_ARCHIVE,
-                file=protein_protein_interaction_data.BIOGRID_ID_MAP_FILE,
+                zip_file=protein_protein_interaction_data.BIOGRID_ID_MAP_FILE,
                 delimiter="\t",
                 header=20,
                 usecols=[
@@ -151,7 +144,7 @@ class ProteinProteinInteractionNetwork(nx.Graph):
 
         for row in fetch.read_tabular_data(
                 protein_protein_interaction_data.BIOGRID_MITAB_ARCHIVE,
-                file=protein_protein_interaction_data.BIOGRID_MITAB_FILE,
+                zip_file=protein_protein_interaction_data.BIOGRID_MITAB_FILE,
                 delimiter="\t",
                 header=0,
                 usecols=[
@@ -195,7 +188,6 @@ class ProteinProteinInteractionNetwork(nx.Graph):
 
     def add_interactions_from_IntAct(
         self,
-        miscore=0.27,
         interaction_detection_methods=[
             "affinity chromatography technology", "two hybrid", "biochemical",
             "pull down", "enzymatic study", "bio id", "x-ray crystallography",
@@ -204,10 +196,11 @@ class ProteinProteinInteractionNetwork(nx.Graph):
         ],
         interaction_types=[
             "physical association", "direct interaction", "association"
-        ]):
+        ],
+        miscore=0.27):
         for row in fetch.read_tabular_data(
                 protein_protein_interaction_data.INTACT_ARCHIVE,
-                file=protein_protein_interaction_data.INTACT_FILE,
+                zip_file=protein_protein_interaction_data.INTACT_FILE,
                 delimiter="\t",
                 header=0,
                 usecols=[

@@ -46,9 +46,9 @@ def decompress_zip_file(compressed_file_name, file=None):
     return decompressed_file_name
 
 
-def read_tabular_data(url, file=None, delimiter=None, header=None, usecols=[]):
-    if file:
-        local_file_name = os.path.join(tempfile.gettempdir(), file)
+def read_tabular_data(url, zip_file=None, delimiter=None, header=None, usecols=[]):
+    if zip_file:
+        local_file_name = os.path.join(tempfile.gettempdir(), zip_file)
     else:
         local_file_name = os.path.join(
             tempfile.gettempdir(),
@@ -62,7 +62,7 @@ def read_tabular_data(url, file=None, delimiter=None, header=None, usecols=[]):
     if file_name_extension == ".gz":
         local_file_name = decompress_gzip_file(local_file_name)
     elif file_name_extension == ".zip":
-        local_file_name = decompress_zip_file(local_file_name, file)
+        local_file_name = decompress_zip_file(local_file_name, zip_file)
 
     if os.path.splitext(local_file_name)[1] == ".csv":
         delimiter = ","
