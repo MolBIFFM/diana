@@ -57,7 +57,7 @@ class ProteinProteinInteractionNetwork(nx.Graph):
                 self.nodes[protein_id]["-".join([position, ptm, str(time)])
                     ] = convert_measurement(merge_replicates(measurements))
 
-    def add_interactions_from_BioGRID(
+    def add_interactions_from_BioGRID_TAB3(
         self,
         experimental_system=[
             "Affinity Capture-Luminescence", "Affinity Capture-MS",

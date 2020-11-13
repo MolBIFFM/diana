@@ -7,14 +7,15 @@ import zipfile
 
 import pandas as pd
 
+from ..configuration import configuration
 
 def download_file(url, local_file_name):
     request = urllib.request.Request(
-        url, headers={"User-Agent": "lucas.fein@stud.uni-frankfurt.de"})
+        url, headers={"User-Agent": configuration.USER_AGENT})
 
     with urllib.request.urlopen(request) as response:
         with open(local_file_name, "wb") as local_file:
-            while chunk := response.read(1048576):
+            while chunk := response.read(configuration.CHUNK_SIZE):
                 local_file.write(chunk)
 
 
@@ -24,7 +25,7 @@ def decompress_gzip_file(compressed_file_name):
     if not os.path.exists(decompressed_file_name):
         with gzip.open(compressed_file_name, "rb") as compressed_file:
             with open(decompressed_file_name, "wb") as decompressed_file:
-                while chunk := compressed_file.read(1048576):
+                while chunk := compressed_file.read(configuration.CHUNK_SIZE):
                     decompressed_file.write(chunk)
 
     os.remove(compressed_file_name)
@@ -73,6 +74,6 @@ def read_tabular_data(url, zip_file=None, delimiter=None, header=None, usecols=[
                              sep=delimiter,
                              header=header,
                              usecols=usecols,
-                             chunksize=1048576):
+                             chunksize=configuration.CHUNK_SIZE):
         for _, row in chunk.iterrows():
             yield row
