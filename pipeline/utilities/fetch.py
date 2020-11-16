@@ -9,6 +9,7 @@ import pandas as pd
 
 from ..configuration import configuration
 
+
 def download_file(url, local_file_name):
     request = urllib.request.Request(
         url, headers={"User-Agent": configuration.USER_AGENT})
@@ -28,7 +29,6 @@ def decompress_gzip_file(compressed_file_name):
                 while chunk := compressed_file.read(configuration.CHUNK_SIZE):
                     decompressed_file.write(chunk)
 
-    os.remove(compressed_file_name)
     return decompressed_file_name
 
 
@@ -43,23 +43,23 @@ def decompress_zip_file(compressed_file_name, file=None):
         else:
             decompressed_file_name = os.path.join(tempfile.gettempdir(), file)
 
-    os.remove(compressed_file_name)
     return decompressed_file_name
 
 
-def read_tabular_data(url, zip_file=None, delimiter=None, header=None, usecols=[]):
-    if zip_file:
-        local_file_name = os.path.join(tempfile.gettempdir(), zip_file)
-    else:
-        local_file_name = os.path.join(
-            tempfile.gettempdir(),
-            os.path.split(urllib.parse.urlparse(url).path)[1])
+def read_tabular_data(url,
+                      zip_file=None,
+                      delimiter=None,
+                      header=None,
+                      usecols=[]):
+
+    local_file_name = os.path.join(
+        tempfile.gettempdir(),
+        os.path.split(urllib.parse.urlparse(url).path)[1])
 
     if not (os.path.exists(local_file_name)):
         download_file(url, local_file_name)
 
     file_name_extension = os.path.splitext(local_file_name)[1]
-
     if file_name_extension == ".gz":
         local_file_name = decompress_gzip_file(local_file_name)
     elif file_name_extension == ".zip":

@@ -54,8 +54,9 @@ class ProteinProteinInteractionNetwork(nx.Graph):
 
                 self.add_node(protein_id)
 
-                self.nodes[protein_id]["-".join([position, ptm, str(time)])
-                    ] = convert_measurement(merge_replicates(measurements))
+                self.nodes[protein_id]["-".join([
+                    position, ptm, str(time)
+                ])] = convert_measurement(merge_replicates(measurements))
 
     def add_interactions_from_BioGRID_TAB3(
         self,
@@ -101,6 +102,8 @@ class ProteinProteinInteractionNetwork(nx.Graph):
                 ]):
             if (uniprot.get(row["BioGRID ID Interactor A"])
                     and uniprot.get(row["BioGRID ID Interactor B"])
+                    and row["BioGRID ID Interactor A"] !=
+                    row["BioGRID ID Interactor B"]
                     and row["Experimental System"] in experimental_system
                     and row["Experimental System Type"] == "physical"
                     and row["Organism ID Interactor A"] == 9606
@@ -169,35 +172,39 @@ class ProteinProteinInteractionNetwork(nx.Graph):
             if not uniprot.get(interactor_b):
                 continue
 
-            if not (mitab.ns_has_id(row["Taxid Interactor A"], "taxid",
-                                    "human")
+            if interactor_a == interactor_b:
+                continue
+
+            if not (mitab.ns_has_id(row["Taxid Interactor A"], "taxid", "9606")
                     and mitab.ns_has_id(row["Taxid Interactor B"], "taxid",
-                                        "human")):
+                                        "9606")):
                 continue
 
-            if not mitab.ns_has_any_id(row["Interaction Detection Method"],
-                                       "psi-mi",
-                                       interaction_detection_methods):
+            if not mitab.ns_has_any_term(row["Interaction Detection Method"],
+                                         "psi-mi",
+                                         interaction_detection_methods):
                 continue
 
-            if not mitab.ns_has_any_id(row["Interaction Types"], "psi-mi",
-                                       interaction_types):
+            if not mitab.ns_has_any_term(row["Interaction Types"], "psi-mi",
+                                         interaction_types):
                 continue
 
             self.add_edge(uniprot[interactor_a], uniprot[interactor_b])
+            print(uniprot[interactor_a], uniprot[interactor_b])
 
     def add_interactions_from_IntAct(
-        self,
-        interaction_detection_methods=[
-            "affinity chromatography technology", "two hybrid", "biochemical",
-            "pull down", "enzymatic study", "bio id", "x-ray crystallography",
-            "fluorescent resonance energy transfer"
-            "protein complementation assay"
-        ],
-        interaction_types=[
-            "physical association", "direct interaction", "association"
-        ],
-        miscore=0.27):
+            self,
+            interaction_detection_methods=[
+                "affinity chromatography technology", "two hybrid",
+                "biochemical", "pull down", "enzymatic study", "bio id",
+                "x-ray crystallography",
+                "fluorescent resonance energy transfer"
+                "protein complementation assay"
+            ],
+            interaction_types=[
+                "physical association", "direct interaction", "association"
+            ],
+            miscore=0.27):
         for row in fetch.read_tabular_data(
                 protein_protein_interaction_data.INTACT_ARCHIVE,
                 zip_file=protein_protein_interaction_data.INTACT_FILE,
@@ -227,19 +234,21 @@ class ProteinProteinInteractionNetwork(nx.Graph):
             if interactor_b not in self:
                 continue
 
-            if not (mitab.ns_has_id(row["Taxid interactor A"], "taxid",
-                                    "human")
+            if interactor_a == interactor_b:
+                continue
+
+            if not (mitab.ns_has_id(row["Taxid interactor A"], "taxid", "9606")
                     and mitab.ns_has_id(row["Taxid interactor B"], "taxid",
-                                        "human")):
+                                        "9606")):
                 continue
 
-            if not mitab.ns_has_any_id(row["Interaction detection method(s)"],
-                                       "psi-mi",
-                                       interaction_detection_methods):
+            if not mitab.ns_has_any_term(
+                    row["Interaction detection method(s)"], "psi-mi",
+                    interaction_detection_methods):
                 continue
 
-            if not mitab.ns_has_any_id(row["Interaction type(s)"], "psi-mi",
-                                       interaction_types):
+            if not mitab.ns_has_any_term(row["Interaction type(s)"], "psi-mi",
+                                         interaction_types):
                 continue
 
             if score := mitab.get_id_from_ns(row["Confidence value(s)"],
@@ -250,6 +259,7 @@ class ProteinProteinInteractionNetwork(nx.Graph):
                 continue
 
             self.add_edge(interactor_a, interactor_b)
+            print(interactor_a, interactor_b)
 
     def add_interactions_from_STRING(self,
                                      neighborhood=0.0,
@@ -307,6 +317,7 @@ class ProteinProteinInteractionNetwork(nx.Graph):
                 header=0,
                 usecols=["protein1", "protein2"] + list(thresholds.keys())):
             if (uniprot.get(row["protein1"]) and uniprot.get(row["protein2"])
+                    and row["protein1"] != row["protein2"]
                     and all(row[column] / 1000 >= thresholds[column]
                             for column in thresholds)):
                 self.add_edge(uniprot[row["protein1"]],
