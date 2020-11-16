@@ -23,6 +23,6 @@ for time, column in [(15, "wt15minvscontrolratio"),
         convert_measurement=lambda measurement: math.log10(measurement
                                                            ) / math.log10(2.0))
 
-ppin.add_interactions_from_BioGRID_TAB3()
+ppin.add_interactions_from_BioGRID()
 ppin.add_interactions_from_IntAct()
 ppin.add_interactions_from_STRING()

@@ -58,7 +58,7 @@ class ProteinProteinInteractionNetwork(nx.Graph):
                     position, ptm, str(time)
                 ])] = convert_measurement(merge_replicates(measurements))
 
-    def add_interactions_from_BioGRID_TAB3(
+    def add_interactions_from_BioGRID(
         self,
         experimental_system=[
             "Affinity Capture-Luminescence", "Affinity Capture-MS",
@@ -190,7 +190,6 @@ class ProteinProteinInteractionNetwork(nx.Graph):
                 continue
 
             self.add_edge(uniprot[interactor_a], uniprot[interactor_b])
-            print(uniprot[interactor_a], uniprot[interactor_b])
 
     def add_interactions_from_IntAct(
             self,
@@ -259,7 +258,6 @@ class ProteinProteinInteractionNetwork(nx.Graph):
                 continue
 
             self.add_edge(interactor_a, interactor_b)
-            print(interactor_a, interactor_b)
 
     def add_interactions_from_STRING(self,
                                      neighborhood=0.0,
