@@ -1,5 +1,6 @@
 import math
 import statistics
+import bisect
 
 import networkx as nx
 import pandas as pd
@@ -29,7 +30,9 @@ class ProteinProteinInteractionNetwork(nx.Graph):
             ],
             min_num_replicates=2,
             merge_replicates=statistics.mean,
-            convert_measurement=math.log2):
+            convert_measurement=math.log2,
+            num_sites=5):
+        proteins = {}
         for _, row in pd.read_excel(
                 file_name,
                 header=header,
@@ -50,13 +53,29 @@ class ProteinProteinInteractionNetwork(nx.Graph):
 
             if len(measurements) >= min(min_num_replicates, len(replicates)):
                 protein_id = str(protein_id_format(row[protein_id_col]))
-                position = str(position_format(row[position_col]))
+                position = int(position_format(row[position_col]))
 
-                self.add_node(protein_id)
+                if protein_id not in proteins:
+                    proteins[protein_id] = []
+                bisect.insort(
+                    proteins[protein_id],
+                    (position,
+                     convert_measurement(merge_replicates(measurements))))
 
-                self.nodes[protein_id]["-".join([
-                    position, ptm, str(time)
-                ])] = convert_measurement(merge_replicates(measurements))
+        for protein in proteins:
+            self.add_node(protein)
+            if len(proteins[protein]) > num_sites:
+                proteins[protein] = sorted(
+                    sorted(proteins[protein],
+                           key=lambda tp: tp[1],
+                           reverse=True)[:num_sites])
+            for i in range(len(proteins[protein])):
+                self.nodes[protein]["-".join(
+                    [ptm, str(i + 1), str(time),
+                     "CHANGE"])] = proteins[protein][i][1]
+                self.nodes[protein]["-".join(
+                    [ptm, str(i + 1), str(time),
+                     "SITE"])] = proteins[protein][i][0]
 
     def add_interactions_from_BioGRID(
         self,
@@ -110,6 +129,8 @@ class ProteinProteinInteractionNetwork(nx.Graph):
                     and row["Organism ID Interactor B"] == 9606):
                 self.add_edge(uniprot[row["BioGRID ID Interactor A"]],
                               uniprot[row["BioGRID ID Interactor B"]])
+                self.edges[uniprot[row["BioGRID ID Interactor A"]]][uniprot[
+                    row["BioGRID ID Interactor B"]]]["BioGRID"] = 1.0
 
     def add_interactions_from_BioGRID_MITAB(
         self,
@@ -190,6 +211,7 @@ class ProteinProteinInteractionNetwork(nx.Graph):
                 continue
 
             self.add_edge(uniprot[interactor_a], uniprot[interactor_b])
+            self.edges[interactor_a][interactor_b]["BioGRID"] = 1.0
 
     def add_interactions_from_IntAct(
             self,
@@ -252,12 +274,14 @@ class ProteinProteinInteractionNetwork(nx.Graph):
 
             if score := mitab.get_id_from_ns(row["Confidence value(s)"],
                                              "intact-miscore"):
-                if float(score) < miscore:
+                score = float(score)
+                if score < miscore:
                     continue
             else:
                 continue
 
             self.add_edge(interactor_a, interactor_b)
+            self.edges[interactor_a][interactor_b]["IntAct"] = score
 
     def add_interactions_from_STRING(self,
                                      neighborhood=0.0,
@@ -304,10 +328,10 @@ class ProteinProteinInteractionNetwork(nx.Graph):
                 "database": database,
                 "database_transferred": database_transferred,
                 "textmining": textmining,
-                "textmining_transferred": textmining_transferred,
-                "combined_score": combined_score
+                "textmining_transferred": textmining_transferred
             }.items() if threshold
         }
+        thresholds["combined_score"] = combined_score
 
         for row in fetch.read_tabular_data(
                 protein_protein_interaction_data.STRING,
@@ -320,3 +344,8 @@ class ProteinProteinInteractionNetwork(nx.Graph):
                             for column in thresholds)):
                 self.add_edge(uniprot[row["protein1"]],
                               uniprot[row["protein2"]])
+                self.edges[uniprot[row["protein1"]]][uniprot[
+                    row["protein2"]]]["STRING"] = row["combined_score"]
+
+    def export_as_graphml(self, file_name):
+        nx.write_graphml_xml(self, file_name)
