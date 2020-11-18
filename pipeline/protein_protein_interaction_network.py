@@ -219,7 +219,7 @@ class ProteinProteinInteractionNetwork(nx.Graph):
                 "affinity chromatography technology", "two hybrid",
                 "biochemical", "pull down", "enzymatic study", "bio id",
                 "x-ray crystallography",
-                "fluorescent resonance energy transfer"
+                "fluorescent resonance energy transfer",
                 "protein complementation assay"
             ],
             interaction_types=[
