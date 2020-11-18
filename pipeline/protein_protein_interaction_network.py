@@ -129,7 +129,7 @@ class ProteinProteinInteractionNetwork(nx.Graph):
                     and row["Organism ID Interactor B"] == 9606):
                 self.add_edge(uniprot[row["BioGRID ID Interactor A"]],
                               uniprot[row["BioGRID ID Interactor B"]])
-                self.edges[uniprot[row["BioGRID ID Interactor A"]]][uniprot[
+                self.edges[uniprot[row["BioGRID ID Interactor A"]], uniprot[
                     row["BioGRID ID Interactor B"]]]["BioGRID"] = 1.0
 
     def add_interactions_from_BioGRID_MITAB(
@@ -211,7 +211,7 @@ class ProteinProteinInteractionNetwork(nx.Graph):
                 continue
 
             self.add_edge(uniprot[interactor_a], uniprot[interactor_b])
-            self.edges[interactor_a][interactor_b]["BioGRID"] = 1.0
+            self.edges[interactor_a, interactor_b]["BioGRID"] = 1.0
 
     def add_interactions_from_IntAct(
             self,
@@ -281,7 +281,7 @@ class ProteinProteinInteractionNetwork(nx.Graph):
                 continue
 
             self.add_edge(interactor_a, interactor_b)
-            self.edges[interactor_a][interactor_b]["IntAct"] = score
+            self.edges[interactor_a, interactor_b]["IntAct"] = score
 
     def add_interactions_from_STRING(self,
                                      neighborhood=0.0,
@@ -344,7 +344,7 @@ class ProteinProteinInteractionNetwork(nx.Graph):
                             for column in thresholds)):
                 self.add_edge(uniprot[row["protein1"]],
                               uniprot[row["protein2"]])
-                self.edges[uniprot[row["protein1"]]][uniprot[
+                self.edges[uniprot[row["protein1"]], uniprot[
                     row["protein2"]]]["STRING"] = row["combined_score"]
 
     def export_as_graphml(self, file_name):
