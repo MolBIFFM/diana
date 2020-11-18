@@ -30,4 +30,3 @@ ppin.add_interactions_from_STRING()
 ppin.remove_isolates()
 
 ppin.export_as_graphml("test.graphml")
-ppin.export_as_cyjs("test.cyjs")
