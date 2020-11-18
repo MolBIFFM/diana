@@ -375,6 +375,3 @@ class ProteinProteinInteractionNetwork(nx.Graph):
             json.dump(nx.readwrite.json_graph.cytoscape_data(self),
                       file,
                       indent=2)
-
-    def export_as_gml(self, file_name):
-        nx.readwrite.gml.write_gml(self, file_name)
