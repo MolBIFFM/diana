@@ -1,6 +1,7 @@
 import math
 import statistics
 import bisect
+import json
 
 import networkx as nx
 import pandas as pd
@@ -70,12 +71,12 @@ class ProteinProteinInteractionNetwork(nx.Graph):
                            key=lambda tp: tp[1],
                            reverse=True)[:num_sites])
             for i in range(len(proteins[protein])):
-                self.nodes[protein]["-".join(
-                    [ptm, str(i + 1), str(time),
-                     "CHANGE"])] = proteins[protein][i][1]
-                self.nodes[protein]["-".join(
+                self.nodes[protein][" ".join(
                     [ptm, str(i + 1), str(time),
                      "SITE"])] = proteins[protein][i][0]
+                self.nodes[protein][" ".join(
+                    [ptm, str(i + 1), str(time),
+                     "CHANGE"])] = proteins[protein][i][1]
 
     def add_interactions_from_BioGRID(
         self,
@@ -282,7 +283,12 @@ class ProteinProteinInteractionNetwork(nx.Graph):
                 continue
 
             self.add_edge(interactor_a, interactor_b)
-            self.edges[interactor_a, interactor_b]["IntAct"] = score
+            if self.has_edge(interactor_a, interactor_b):
+                self.edges[interactor_a, interactor_b]["IntAct"] = max(
+                    score, self.edges[interactor_a,
+                                      interactor_b].get("IntAct", 0.0))
+            else:
+                self.edges[interactor_a, interactor_b]["IntAct"] = score
 
     def add_interactions_from_STRING(self,
                                      neighborhood=0.0,
@@ -345,9 +351,30 @@ class ProteinProteinInteractionNetwork(nx.Graph):
                             for column in thresholds)):
                 self.add_edge(uniprot[row["protein1"]],
                               uniprot[row["protein2"]])
-                self.edges[
-                    uniprot[row["protein1"]],
-                    uniprot[row["protein2"]]]["STRING"] = row["combined_score"]
+                if self.has_edge(uniprot[row["protein1"]],
+                                 uniprot[row["protein2"]]):
+                    self.edges[uniprot[row["protein1"]],
+                               uniprot[row["protein2"]]]["STRING"] = max(
+                                   row["combined_score"] / 1000,
+                                   self.edges[uniprot[row["protein1"]],
+                                              uniprot[row["protein2"]]].get(
+                                                  "STRING", 0.0))
+                else:
+                    self.edges[uniprot[row["protein1"]],
+                               uniprot[row["protein2"]]][
+                                   "STRING"] = row["combined_score"] / 1000
+
+    def remove_isolates(self):
+        self.remove_nodes_from(list(nx.isolates(self)))
 
     def export_as_graphml(self, file_name):
         nx.write_graphml_xml(self, file_name)
+
+    def export_as_cyjs(self, file_name):
+        with open(file_name, "w") as file:
+            json.dump(nx.readwrite.json_graph.cytoscape_data(self),
+                      file,
+                      indent=2)
+                
+    def export_as_gml(self, file_name):
+        nx.readwrite.gml.write_gml(self, file_name)
