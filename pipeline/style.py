@@ -16,7 +16,7 @@ class Style(ET.ElementTree):
                                          "visualStyle",
                                          attrib={"name": str(time)})
             tags = {}
-            for tag in ("network", "node", "edge"):
+            for tag in pipeline.configuration.style.defaults:
                 tags[tag] = ET.SubElement(visual_style, tag)
                 for name, value in pipeline.configuration.style.defaults[tag][
                         "dependency"].items():
