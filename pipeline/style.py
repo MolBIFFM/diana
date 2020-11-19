@@ -35,7 +35,7 @@ class Style(ET.ElementTree):
                                                "default": setting["default"]
                                            })
                     if setting.get("passthroughMapping"):
-                        subtag = ET.SubElement(
+                        ET.SubElement(
                             subtag,
                             "passthroughMapping",
                             attrib={
