@@ -1,7 +1,6 @@
 import math
 
 from pipeline import protein_protein_interaction_network
-from pipeline import style
 
 ppin = protein_protein_interaction_network.ProteinProteinInteractionNetwork()
 ppin.add_proteins_from_excel("data/WT_vs_noninvasive_15min.xlsx", "U", 15)

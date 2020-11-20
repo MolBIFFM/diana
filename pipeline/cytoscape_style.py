@@ -1,11 +1,11 @@
 import xml.etree.ElementTree as ET
 
-import pipeline.configuration.style
+import pipeline.configuration.cytoscape_style
 
 
-class Style(ET.ElementTree):
+class CytoscapeStyle(ET.ElementTree):
     def __init__(self, times):
-        super(Style, self).__init__(
+        super(CytoscapeStyle, self).__init__(
             ET.Element("vizmap",
                        attrib={
                            "id": "VizMap",
@@ -16,9 +16,9 @@ class Style(ET.ElementTree):
                                          "visualStyle",
                                          attrib={"name": str(time)})
             tags = {}
-            for tag in pipeline.configuration.style.defaults:
+            for tag in pipeline.configuration.cytoscape_style.defaults:
                 tags[tag] = ET.SubElement(visual_style, tag)
-                for name, value in pipeline.configuration.style.defaults[tag][
+                for name, value in pipeline.configuration.cytoscape_style.defaults[tag][
                         "dependency"].items():
                     ET.SubElement(tags[tag],
                                   "dependency",
@@ -26,7 +26,7 @@ class Style(ET.ElementTree):
                                       "name": name,
                                       "value": value
                                   })
-                for name, setting in pipeline.configuration.style.defaults[
+                for name, setting in pipeline.configuration.cytoscape_style.defaults[
                         tag]["visualProperty"].items():
                     subtag = ET.SubElement(tags[tag],
                                            "visualProperty",
