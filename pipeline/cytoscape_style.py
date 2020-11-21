@@ -16,17 +16,17 @@ class CytoscapeStyle(ET.ElementTree):
                                          "visualStyle",
                                          attrib={"name": str(time)})
             tags = {}
-            for tag in pipeline.configuration.cytoscape_style.defaults:
+            for tag in pipeline.configuration.cytoscape_style.settings:
                 tags[tag] = ET.SubElement(visual_style, tag)
-                for name, value in pipeline.configuration.cytoscape_style.defaults[
+                for name, setting in pipeline.configuration.cytoscape_style.settings[
                         tag]["dependency"].items():
                     ET.SubElement(tags[tag],
                                   "dependency",
                                   attrib={
                                       "name": name,
-                                      "value": value
+                                      "value": setting["value"]
                                   })
-                for name, setting in pipeline.configuration.cytoscape_style.defaults[
+                for name, setting in pipeline.configuration.cytoscape_style.settings[
                         tag]["visualProperty"].items():
                     subtag = ET.SubElement(tags[tag],
                                            "visualProperty",

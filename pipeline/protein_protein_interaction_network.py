@@ -73,10 +73,10 @@ class ProteinProteinInteractionNetwork(nx.Graph):
             for i in range(len(proteins[protein])):
                 self.nodes[protein][" ".join(
                     [ptm, str(i + 1), str(time),
-                     "SITE"])] = proteins[protein][i][0]
+                     "site"])] = proteins[protein][i][0]
                 self.nodes[protein][" ".join(
                     [ptm, str(i + 1), str(time),
-                     "CHANGE"])] = proteins[protein][i][1]
+                     "change"])] = proteins[protein][i][1]
 
     def add_interactions_from_BioGRID(
         self,
