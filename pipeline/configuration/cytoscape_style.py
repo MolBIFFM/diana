@@ -288,6 +288,7 @@ SETTINGS = {
                         "mid up": "#FF6666",
                         "down": "#0000FF",
                         "mid down": "#6666FF",
+                        "mid": "#89D0F5",
                         "P up U down": "#00FF00",
                         "P down U up": "#FFFF00",
                     }

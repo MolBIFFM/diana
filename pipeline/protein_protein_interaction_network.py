@@ -150,12 +150,17 @@ class ProteinProteinInteractionNetwork(nx.Graph):
                         self.nodes[protein]["change {}".format(
                             time)] = "mid down"
                 else:
-                    self.nodes[protein]["change {}".format(time)] = " ".join([
-                        "{} up".format(post_translational_modification)
-                        if ptm[post_translational_modification] > 0.0 else
-                        "{} down".format(post_translational_modification)
-                        for post_translational_modification in ptm
-                    ])
+                    if ptm:
+                        self.nodes[protein]["change {}".format(
+                            time)] = " ".join([
+                                "{} up".format(post_translational_modification)
+                                if ptm[post_translational_modification] > 0.0
+                                else "{} down".format(
+                                    post_translational_modification)
+                                for post_translational_modification in ptm
+                            ])
+                    else:
+                        self.nodes[protein]["change {}".format(time)] = "mid"
 
     def add_interactions_from_BioGRID(
         self,
