@@ -1,4 +1,4 @@
-settings = {
+SETTINGS = {
     "edge": {
         "dependency": {
             "arrowColorMatchesEdge": {
@@ -279,7 +279,19 @@ settings = {
                 "default": "0.0"
             },
             "NODE_FILL_COLOR": {
-                "default": "#89D0F5"
+                "default": "#89D0F5",
+                "discreteMapping": {
+                    "attributeName": "change {time}",
+                    "attributeType": "string",
+                    "discreteMappingEntry": {
+                        "up": "#FF0000",
+                        "mid up": "#FF6666",
+                        "down": "#0000FF",
+                        "mid down": "#6666FF",
+                        "P up U down": "#00FF00",
+                        "P down U up": "#FFFF00",
+                    }
+                }
             },
             "NODE_HEIGHT": {
                 "default": "35.0"
@@ -322,7 +334,17 @@ settings = {
                 "default": "#FFFF00"
             },
             "NODE_SHAPE": {
-                "default": "ROUND_RECTANGLE"
+                "default": "ROUND_RECTANGLE",
+                "discreteMapping": {
+                    "attributeName": "post-translational modification {time}",
+                    "attributeType": "string",
+                    "discreteMappingEntry": {
+                        "ubiquitination": "TRIANGLE",
+                        "phosphorylation": "RECTANGLE",
+                        "both": "ELLIPSE",
+                        "none": "ROUND_RECTANGLE"
+                    }
+                }
             },
             "NODE_SIZE": {
                 "default": "35.0"
