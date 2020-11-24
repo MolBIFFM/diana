@@ -13,7 +13,7 @@ class CytoscapeStyle(ET.ElementTree):
                            "documentVersion": "3.0"
                        }))
 
-        NODE_CUSTOMGRAPHICS_POSITION = [
+        [
             "{},{},c,0.00,0.00".format(*anchor_points)
             for anchor_points in (("W", "E"), ("E", "W"), ("S", "N"),
                                   ("N", "S"), ("SW", "N"), ("NE", "N"),
@@ -92,8 +92,17 @@ class CytoscapeStyle(ET.ElementTree):
                     elif visual_property.get(
                             "name"
                     ) == "NODE_CUSTOMGRAPHICS_POSITION_{}".format(i + 1):
-                        visual_property.set("default",
-                                            NODE_CUSTOMGRAPHICS_POSITION[i])
+                        visual_property.set(
+                            "default", "{},{},c,0.00,0.00".format([("W", "E"),
+                                                                   ("E", "W"),
+                                                                   ("S", "N"),
+                                                                   ("N", "S"),
+                                                                   ("SW", "N"),
+                                                                   ("NE", "N"),
+                                                                   ("SE", "N"),
+                                                                   ("NW", "N"),
+                                                                   ("C", "C")
+                                                                   ][i]))
 
     def bar_chart(self, time, ptm, sites, cy_range=(-3.0, 3.0)):
         chart = json.dumps({
