@@ -71,98 +71,97 @@ class ProteinProteinInteractionNetwork(nx.Graph):
                            key=lambda tp: tp[1],
                            reverse=True)[:num_sites])
             for i in range(len(proteins[protein])):
-                self.nodes[protein][" ".join(
-                    ["site", ptm, str(time),
-                     str(i + 1)])] = proteins[protein][i][0]
-                self.nodes[protein][" ".join(
-                    ["change", ptm, str(time),
-                     str(i + 1)])] = proteins[protein][i][1]
-
-    def post_translational_modifications(self):
-        return tuple(
-            sorted(
-                set(
-                    attr.split(" ")[1] for protein in self
-                    for attr in self.nodes[protein]
-                    if len(attr.split(" ")) == 4
-                    and attr.split(" ")[0] == "change")))
+                self.nodes[protein][" ".join([str(time), ptm,
+                                              str(i + 1)
+                                              ])] = proteins[protein][i][1]
 
     def times(self):
         return tuple(
             sorted(
                 set(
-                    int(attr.split(" ")[2]) for protein in self
+                    int(attr.split(" ")[0]) for protein in self
                     for attr in self.nodes[protein]
-                    if len(attr.split(" ")) == 4
-                    and attr.split(" ")[0] == "change")))
+                    if len(attr.split(" ")) == 3)))
 
-    def cytoscape_style_shape(self):
-        modifications = {
-            ("P", "U"): "both",
-            ("P", ): "phosphorylation",
-            ("U", ): "ubiquitination",
-            (): "none"
+    def post_translational_modifications(self):
+        return {
+            time: tuple(
+                sorted(
+                    set(
+                        attr.split(" ")[1] for protein in self
+                        for attr in self.nodes[protein]
+                        if len(attr.split(" ")) == 3
+                        and attr.split(" ")[0] == str(time))))
+            for time in self.times()
         }
 
+    def sites(self, time, modification):
+        return max(
+            int(attr.split(" ")[2]) for protein in self
+            for attr in self.nodes[protein]
+            if len(attr.split(" ")) == 3 and attr.split(" ")[0] == str(time)
+            and attr.split(" ")[1] == modification)
+
+    def cytoscape_style_shape(self):
         for time in self.times():
             for protein in self:
-                self.nodes[protein][
-                    "post-translational modification {}".format(
-                        time)] = modifications[tuple(
-                            sorted(
-                                set(
-                                    attr.split(" ")[1]
-                                    for attr in self.nodes[protein]
-                                    if len(attr.split(" ")) == 4
-                                    and attr.split(" ")[0] == "change")))]
+                self.nodes[protein]["PTM {}".format(time)] = ", ".join(
+                    tuple(
+                        sorted(
+                            set(
+                                attr.split(" ")[1]
+                                for attr in self.nodes[protein]
+                                if len(attr.split(" ")) == 3
+                                and attr.split(" ")[0] == str(time)))))
 
     def cytoscape_style_color(self,
-                              merge_changes=statistics.mean,
+                              merge_trends=statistics.mean,
                               threshold=1.0):
-        post_translational_modifications = self.post_translational_modifications(
-        )
+        modifications = self.post_translational_modifications()
         for time in self.times():
             for protein in self:
                 ptm = {}
-                for post_translational_modification in post_translational_modifications:
-                    changes = [
+                for post_translational_modification in modifications[time]:
+                    trends = [
                         self.nodes[protein][attr]
                         for attr in self.nodes[protein]
-                        if len(attr.split(" ")) == 4
-                        and attr.split(" ")[0] == "change" and attr.split(
+                        if len(attr.split(" ")) == 3
+                        and attr.split(" ")[0] == str(time) and attr.split(
                             " ")[1] == post_translational_modification
-                        and attr.split(" ")[2] == str(time)
                     ]
-                    if changes:
-                        ptm[post_translational_modification] = merge_changes(
-                            changes)
+                    if trends:
+                        ptm[post_translational_modification] = merge_trends(
+                            trends)
 
-                if all(change > 0.0 for change in ptm.values()):
-                    if any(change >= threshold for change in ptm.values()):
-                        self.nodes[protein]["change {}".format(time)] = "up"
+                if ptm:
+                    if all(trend > 0.0 for trend in ptm.values()):
+                        if any(trend >= threshold for trend in ptm.values()):
+                            self.nodes[protein]["trend {}".format(time)] = "up"
+                        else:
+                            self.nodes[protein]["trend {}".format(
+                                time)] = "mid up"
+                    elif all(trend < 0.0 for trend in ptm.values()):
+                        if any(trend <= -threshold for trend in ptm.values()):
+                            self.nodes[protein]["trend {}".format(
+                                time)] = "down"
+                        else:
+                            self.nodes[protein]["trend {}".format(
+                                time)] = "mid down"
                     else:
-                        self.nodes[protein]["change {}".format(
-                            time)] = "mid up"
-                elif all(change < 0.0 for change in ptm.values()):
-                    if any(change <= -threshold for change in ptm.values()):
-                        self.nodes[protein]["change {}".format(time)] = "down"
-                    else:
-                        self.nodes[protein]["change {}".format(
-                            time)] = "mid down"
+                        self.nodes[protein]["trend {}".format(
+                            time)] = " ".join(
+                                sorted([
+                                    "{} up".format(
+                                        post_translational_modification) if
+                                    ptm[post_translational_modification] > 0.0
+                                    else "{} down".format(
+                                        post_translational_modification)
+                                    for post_translational_modification in ptm
+                                ]))
                 else:
-                    if ptm:
-                        self.nodes[protein]["change {}".format(
-                            time)] = " ".join([
-                                "{} up".format(post_translational_modification)
-                                if ptm[post_translational_modification] > 0.0
-                                else "{} down".format(
-                                    post_translational_modification)
-                                for post_translational_modification in ptm
-                            ])
-                    else:
-                        self.nodes[protein]["change {}".format(time)] = "mid"
+                    self.nodes[protein]["trend {}".format(time)] = ""
 
-    def add_interactions_from_BioGRID(
+    def add_interactions_from_BioGRID_TAB3(
         self,
         experimental_system=[
             "Affinity Capture-Luminescence", "Affinity Capture-MS",

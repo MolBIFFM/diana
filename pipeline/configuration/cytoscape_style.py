@@ -281,14 +281,14 @@ SETTINGS = {
             "NODE_FILL_COLOR": {
                 "default": "#89D0F5",
                 "discreteMapping": {
-                    "attributeName": "change {time}",
+                    "attributeName": "trend {time}",
                     "attributeType": "string",
                     "discreteMappingEntry": {
                         "up": "#FF0000",
                         "mid up": "#FF6666",
                         "down": "#0000FF",
                         "mid down": "#6666FF",
-                        "mid": "#89D0F5",
+                        "": "#89D0F5",
                         "P up U down": "#00FF00",
                         "P down U up": "#FFFF00",
                     }
@@ -337,13 +337,13 @@ SETTINGS = {
             "NODE_SHAPE": {
                 "default": "ROUND_RECTANGLE",
                 "discreteMapping": {
-                    "attributeName": "post-translational modification {time}",
+                    "attributeName": "PTM {time}",
                     "attributeType": "string",
                     "discreteMappingEntry": {
-                        "ubiquitination": "TRIANGLE",
-                        "phosphorylation": "RECTANGLE",
-                        "both": "ELLIPSE",
-                        "none": "ROUND_RECTANGLE"
+                        "U": "TRIANGLE",
+                        "P": "RECTANGLE",
+                        "P, U": "ELLIPSE",
+                        "": "ROUND_RECTANGLE"
                     }
                 }
             },
