@@ -34,18 +34,19 @@ PPI:
   IntAct:
     interaction detection methods:
       - affinity chromatography technology
-      - two hybrid
-      - biochemical
-      - pull down
-      - enzymatic study
       - bio id
-      - x-ray crystallography
+      - biochemical
+      - enzymatic study
       - fluorescent resonance energy transfer
-      - protein complementation assay"
+      - protein complementation assay
+      - pull down
+      - two hybrid
+      - x-ray crystallography
 
     interaction types:
       - physical association
       - direct interaction
+      - association
     
     MI score: 0.27
 
