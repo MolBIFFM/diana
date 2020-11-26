@@ -288,7 +288,6 @@ SETTINGS = {
                         "mid up": "#FF6666",
                         "down": "#0000FF",
                         "mid down": "#6666FF",
-                        "": "#89D0F5",
                         "P up U down": "#00FF00",
                         "P down U up": "#FFFF00",
                     }
@@ -342,8 +341,7 @@ SETTINGS = {
                     "discreteMappingEntry": {
                         "U": "TRIANGLE",
                         "P": "RECTANGLE",
-                        "P, U": "ELLIPSE",
-                        "": "ROUND_RECTANGLE"
+                        "P, U": "ELLIPSE"
                     }
                 }
             },

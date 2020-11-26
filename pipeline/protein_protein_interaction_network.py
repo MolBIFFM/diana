@@ -29,7 +29,7 @@ class ProteinProteinInteractionNetwork(nx.Graph):
                 "Ratio H/L normalized Exp1", "Ratio H/L normalized Exp2",
                 "Ratio H/L normalized Exp3"
             ],
-            min_num_replicates=2,
+            num_replicates=2,
             merge_replicates=statistics.mean,
             convert_measurement=math.log2,
             num_sites=5):
@@ -52,7 +52,7 @@ class ProteinProteinInteractionNetwork(nx.Graph):
                 row[repl] for repl in replicates if not pd.isna(row[repl])
             ]
 
-            if len(measurements) >= min(min_num_replicates, len(replicates)):
+            if len(measurements) >= min(num_replicates, len(replicates)):
                 protein_id = str(protein_id_format(row[protein_id_col]))
                 position = int(position_format(row[position_col]))
 
@@ -71,11 +71,10 @@ class ProteinProteinInteractionNetwork(nx.Graph):
                            key=lambda tp: tp[1],
                            reverse=True)[:num_sites])
             for i in range(len(proteins[protein])):
-                self.nodes[protein][" ".join([str(time), ptm,
-                                              str(i + 1)
-                                              ])] = proteins[protein][i][1]
+                self.nodes[protein]["{} {} {}".format(
+                    str(time), ptm, str(i + 1))] = proteins[protein][i][1]
 
-    def times(self):
+    def get_times(self):
         return tuple(
             sorted(
                 set(
@@ -83,7 +82,7 @@ class ProteinProteinInteractionNetwork(nx.Graph):
                     for attr in self.nodes[protein]
                     if len(attr.split(" ")) == 3)))
 
-    def post_translational_modifications(self):
+    def get_post_translational_modifications(self):
         return {
             time: tuple(
                 sorted(
@@ -92,18 +91,18 @@ class ProteinProteinInteractionNetwork(nx.Graph):
                         for attr in self.nodes[protein]
                         if len(attr.split(" ")) == 3
                         and attr.split(" ")[0] == str(time))))
-            for time in self.times()
+            for time in self.get_times()
         }
 
-    def sites(self, time, modification):
+    def get_sites(self, time, modification):
         return max(
             int(attr.split(" ")[2]) for protein in self
             for attr in self.nodes[protein]
             if len(attr.split(" ")) == 3 and attr.split(" ")[0] == str(time)
             and attr.split(" ")[1] == modification)
 
-    def cytoscape_style_shape(self):
-        for time in self.times():
+    def set_ptm_data_column(self):
+        for time in self.get_times():
             for protein in self:
                 self.nodes[protein]["PTM {}".format(time)] = ", ".join(
                     tuple(
@@ -114,11 +113,11 @@ class ProteinProteinInteractionNetwork(nx.Graph):
                                 if len(attr.split(" ")) == 3
                                 and attr.split(" ")[0] == str(time)))))
 
-    def cytoscape_style_color(self,
+    def set_trend_data_column(self,
                               merge_trends=statistics.mean,
                               threshold=1.0):
-        modifications = self.post_translational_modifications()
-        for time in self.times():
+        modifications = self.get_post_translational_modifications()
+        for time in self.get_times():
             for protein in self:
                 ptm = {}
                 for post_translational_modification in modifications[time]:
@@ -161,7 +160,7 @@ class ProteinProteinInteractionNetwork(nx.Graph):
                 else:
                     self.nodes[protein]["trend {}".format(time)] = ""
 
-    def add_interactions_from_BioGRID_TAB3(
+    def add_interactions_from_BioGRID(
         self,
         experimental_system=[
             "Affinity Capture-Luminescence", "Affinity Capture-MS",
@@ -310,7 +309,7 @@ class ProteinProteinInteractionNetwork(nx.Graph):
             interaction_types=[
                 "physical association", "direct interaction", "association"
             ],
-            miscore=0.27):
+            mi_score=0.27):
         for row in fetch.read_tabular_data(
                 protein_protein_interaction_data.INTACT_ARCHIVE,
                 zip_file=protein_protein_interaction_data.INTACT_FILE,
@@ -360,7 +359,7 @@ class ProteinProteinInteractionNetwork(nx.Graph):
             if score := mitab.get_id_from_ns(row["Confidence value(s)"],
                                              "intact-miscore"):
                 score = float(score)
-                if score < miscore:
+                if score < mi_score:
                     continue
             else:
                 continue

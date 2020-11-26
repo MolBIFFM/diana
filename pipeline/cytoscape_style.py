@@ -13,14 +13,7 @@ class CytoscapeStyle(ET.ElementTree):
                            "documentVersion": "3.0"
                        }))
 
-        [
-            "{},{},c,0.00,0.00".format(*anchor_points)
-            for anchor_points in (("W", "E"), ("E", "W"), ("S", "N"),
-                                  ("N", "S"), ("SW", "N"), ("NE", "N"),
-                                  ("SE", "N"), ("NW", "N"), ("C", "C"))
-        ]
-
-        for time in ppi_network.times():
+        for time in ppi_network.get_times():
             visual_style = ET.SubElement(self.getroot(),
                                          "visualStyle",
                                          attrib={"name": str(time)})
@@ -78,7 +71,7 @@ class CytoscapeStyle(ET.ElementTree):
                                           })
 
             for i, ptm in enumerate(
-                    ppi_network.post_translational_modifications()[time]):
+                    ppi_network.get_post_translational_modifications()[time]):
                 for visual_property in visual_style.find("node").findall(
                         "visualProperty"):
                     if visual_property.get(
@@ -87,7 +80,7 @@ class CytoscapeStyle(ET.ElementTree):
                             "default",
                             self.bar_chart(time,
                                            ptm,
-                                           ppi_network.sites(time, ptm),
+                                           ppi_network.get_sites(time, ptm),
                                            cy_range=bar_chart_range))
                     elif visual_property.get(
                             "name"

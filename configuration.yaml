@@ -1,0 +1,71 @@
+PTM:
+  - file: data/WT_vs_noninvasive_15min.xlsx
+    label: U
+    time: 15
+    replicates: 2
+    sites: 5
+
+  - file: data/WT_vs_noninvasive_1h.xlsx
+    label: U
+    time: 60
+    replicates: 2
+    sites: 5
+
+  - file: data/WT_vs_noninvasive_2h.xlsx
+    label: U
+    time: 120
+    replicates: 2
+    sites: 5
+
+PPI:
+  BioGRID:
+    experimental system:
+      - Affinity Capture-Luminescence
+      - Affinity Capture-MS
+      - Affinity Capture-RNA 
+      - Affinity Capture-Western
+      - Biochemical Activity
+      - Co-crystal Structure
+      - Co-purification
+      - FRET
+      - PCA
+      - Two-hybrid
+
+  IntAct:
+    interaction detection methods:
+      - affinity chromatography technology
+      - two hybrid
+      - biochemical
+      - pull down
+      - enzymatic study
+      - bio id
+      - x-ray crystallography
+      - fluorescent resonance energy transfer
+      - protein complementation assay"
+
+    interaction types:
+      - physical association
+      - direct interaction
+    
+    MI score: 0.27
+
+  STRING:
+    neighborhood: 0.0
+    neighborhood transferred: 0.0
+    fusion: 0.0
+    cooccurence: 0.0
+    homology: 0.0
+    coexpression: 0.0
+    coexpression transferred: 0.0
+    experiments: 0.7
+    experiments transferred: 0.0
+    database: 0.0
+    database transferred: 0.0
+    textmining: 0.0
+    textmining transferred: 0.0
+    combined score: 0.7
+
+Cytoscape:
+  bar chart:
+    minimum: -3.0
+    maximum: 3.0
