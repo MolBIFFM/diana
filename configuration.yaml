@@ -44,9 +44,9 @@ PPI:
       - x-ray crystallography
 
     interaction types:
-      - physical association
-      - direct interaction
       - association
+      - direct interaction
+      - physical association
     
     MI score: 0.27
 
