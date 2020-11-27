@@ -7,7 +7,7 @@ def parse(entry):
             identifier = identifier.split("(")
             identifier = {
                 identifier[0].strip("\""):
-                identifier[1].rstrip(")") if len(identifier) == 2 else None
+                    identifier[1].rstrip(")") if len(identifier) == 2 else None
             }
 
             if ns in values:
@@ -40,7 +40,8 @@ def ns_has_term(entry, ns, identifier):
 
 def ns_has_any_id(entry, ns, identifiers):
     if values := parse(entry):
-        return any(identifier in value.keys() for value in values[ns]
+        return any(identifier in value.keys()
+                   for value in values[ns]
                    for identifier in identifiers)
     else:
         return False
@@ -48,7 +49,8 @@ def ns_has_any_id(entry, ns, identifiers):
 
 def ns_has_any_term(entry, ns, identifiers):
     if values := parse(entry):
-        return any(identifier in value.values() for value in values[ns]
+        return any(identifier in value.values()
+                   for value in values[ns]
                    for identifier in identifiers)
     else:
         return False

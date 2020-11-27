@@ -8,8 +8,8 @@ from pipeline import cytoscape_style
 
 parser = argparse.ArgumentParser()
 parser.add_argument("-c", "--configuration", help="YAML configuration file")
-parser.add_argument("-o",
-                    "--output",
+parser.add_argument("-n",
+                    "--network",
                     help="protein-protein interaction network")
 parser.add_argument("-s", "--styles", help="Cytoscape style specification")
 args = parser.parse_args()
@@ -38,7 +38,6 @@ if configuration.get("PPI"):
                     "Biochemical Activity", "Co-crystal Structure",
                     "Co-purification", "FRET", "PCA", "Two-hybrid"
                 ]))
-    
 
     if configuration["PPI"].get("IntAct"):
         ppi_network.add_interactions_from_IntAct(
@@ -77,7 +76,8 @@ if configuration.get("PPI"):
             textmining=configuration["PPI"]["STRING"].get("textmining", 0.0),
             textmining_transferred=configuration["PPI"]["STRING"].get(
                 "textmining transferred", 0.0),
-            combined_score=configuration["PPI"]["STRING"].get("combined score", 0.7),
+            combined_score=configuration["PPI"]["STRING"].get(
+                "combined score", 0.7),
         )
 
 if args.styles:
@@ -91,13 +91,18 @@ if args.styles:
                                                    {}).get("maximum", 3.0)))
 
     ppi_network.set_ptm_data_column()
-    ppi_network.set_trend_data_column()
+    ppi_network.set_trend_data_column(mid_range=(
+        configuration.get("Cytoscape", {}).get("mid range", {}).get(
+            "minimum", -1.0),
+        configuration.get("Cytoscape", {}).get("mid range", {}).get(
+            "maximum", 1.0),
+    ))
 
     if args.styles.endswith(".xml"):
         style.export_as_xml(args.styles)
 
-if args.output:
-    if args.output.endswith(".graphml") or args.output.endswith(".xml"):
-        ppi_network.export_as_graphml(args.output)
-    elif args.output.endswith(".cyjs") or args.output.endswith(".json"):
-        ppi_network.export_as_cyjs(args.output)
+if args.network:
+    if args.network.endswith(".graphml") or args.network.endswith(".xml"):
+        ppi_network.export_as_graphml(args.network)
+    elif args.network.endswith(".cyjs") or args.network.endswith(".json"):
+        ppi_network.export_as_cyjs(args.network)
