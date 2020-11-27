@@ -53,8 +53,9 @@ def main():
                     "Biochemical Activity", "Co-crystal Structure",
                     "Co-purification", "FRET", "PCA", "Two-hybrid"
                 ])):
-                logging.info("BioGRID: {}, {} 1.0".format(
-                    interactor_a, interactor_b))
+                if args.log:
+                    logging.info("BioGRID: {}, {} 1.0".format(
+                        interactor_a, interactor_b))
 
         if configuration["PPI"].get("IntAct"):
             for interactor_a, interactor_b, score in ppi_network.add_interactions_from_IntAct(
@@ -73,8 +74,9 @@ def main():
                         ]),
                     mi_score=configuration["PPI"]["IntAct"].get(
                         "MI score", 0.27)):
-                logging.info("IntAct: {}, {} {}".format(
-                    interactor_a, interactor_b, score))
+                if args.log:
+                    logging.info("IntAct: {}, {} {}".format(
+                        interactor_a, interactor_b, score))
 
         if configuration["PPI"].get("STRING"):
             for interactor_a, interactor_b, score in ppi_network.add_interactions_from_STRING(
@@ -105,8 +107,9 @@ def main():
                         "textmining transferred", 0.0),
                     combined_score=configuration["PPI"]["STRING"].get(
                         "combined score", 0.7)):
-                logging.info("STRING {}, {} {}".format(interactor_a,
-                                                       interactor_b, score))
+                if args.log:
+                    logging.info("STRING {}, {} {}".format(
+                        interactor_a, interactor_b, score))
 
     ppi_network.remove_isolates()
 
