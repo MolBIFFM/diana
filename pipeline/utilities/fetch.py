@@ -38,8 +38,8 @@ def decompress_zip_file(compressed_file_name, file=None):
             file = archive.namelist()[0]
 
         if not os.path.exists(os.path.join(tempfile.gettempdir(), file)):
-            decompressed_file_name = archive.extract(file,
-                                                     path=tempfile.gettempdir())
+            decompressed_file_name = archive.extract(
+                file, path=tempfile.gettempdir())
         else:
             decompressed_file_name = os.path.join(tempfile.gettempdir(), file)
 

@@ -5,7 +5,6 @@ import pipeline.configuration.cytoscape_style
 
 
 class CytoscapeStyle(ET.ElementTree):
-
     def __init__(self, ppi_network, bar_chart_range=(-3.0, 3.0)):
         super(CytoscapeStyle, self).__init__(
             ET.Element("vizmap",
@@ -31,34 +30,34 @@ class CytoscapeStyle(ET.ElementTree):
                                   })
                 for name, setting in pipeline.configuration.cytoscape_style.SETTINGS[
                         tag]["visualProperty"].items():
-                    visual_property = ET.SubElement(
-                        tags[tag],
-                        "visualProperty",
-                        attrib={
-                            "name": name,
-                            "default": setting["default"]
-                        })
+                    visual_property = ET.SubElement(tags[tag],
+                                                    "visualProperty",
+                                                    attrib={
+                                                        "name":
+                                                        name,
+                                                        "default":
+                                                        setting["default"]
+                                                    })
                     if setting.get("passthroughMapping"):
-                        ET.SubElement(visual_property,
-                                      "passthroughMapping",
-                                      attrib={
-                                          "attributeName":
-                                              setting["passthroughMapping"]
-                                              ["attributeName"],
-                                          "attributeType":
-                                              setting["passthroughMapping"]
-                                              ["attributeType"]
-                                      })
+                        ET.SubElement(
+                            visual_property,
+                            "passthroughMapping",
+                            attrib={
+                                "attributeName":
+                                setting["passthroughMapping"]["attributeName"],
+                                "attributeType":
+                                setting["passthroughMapping"]["attributeType"]
+                            })
                     elif setting.get("discreteMapping"):
                         discrete_mapping = ET.SubElement(
                             visual_property,
                             "discreteMapping",
                             attrib={
                                 "attributeName":
-                                    setting["discreteMapping"]
-                                    ["attributeName"].format(time=time),
+                                setting["discreteMapping"]
+                                ["attributeName"].format(time=time),
                                 "attributeType":
-                                    setting["discreteMapping"]["attributeType"]
+                                setting["discreteMapping"]["attributeType"]
                             })
                         for attribute_value, value in setting[
                                 "discreteMapping"][
@@ -66,7 +65,8 @@ class CytoscapeStyle(ET.ElementTree):
                             ET.SubElement(discrete_mapping,
                                           "discreteMappingEntry",
                                           attrib={
-                                              "attributeValue": attribute_value,
+                                              "attributeValue":
+                                              attribute_value,
                                               "value": value
                                           })
 
@@ -80,39 +80,38 @@ class CytoscapeStyle(ET.ElementTree):
                             "default",
                             self.bar_chart(time,
                                            ptm,
-                                           ppi_network.get_sites(time, ptm),
+                                           ppi_network.get_sites()[time][ptm],
                                            cy_range=bar_chart_range))
                     elif visual_property.get(
-                            "name") == "NODE_CUSTOMGRAPHICS_POSITION_{}".format(
-                                i + 1):
+                            "name"
+                    ) == "NODE_CUSTOMGRAPHICS_POSITION_{}".format(i + 1):
                         visual_property.set(
                             "default",
                             "{},{},c,0.00,0.00".format(*[("W", "E"), (
                                 "E", "W"), ("S", "N"), ("N", "S"), (
-                                    "SW", "N"), ("NE",
-                                                 "N"), ("SE",
-                                                        "N"), ("NW",
-                                                               "N"), ("C",
-                                                                      "C")][i]))
+                                    "SW",
+                                    "N"), ("NE",
+                                           "N"), ("SE",
+                                                  "N"), ("NW",
+                                                         "N"), ("C", "C")][i]))
 
     def bar_chart(self, time, ptm, sites, cy_range=(-3.0, 3.0)):
         chart = json.dumps({
             "cy_range":
-                cy_range,
+            cy_range,
             "cy_showRangeAxis":
-                True,
+            True,
             "cy_type":
-                "UP_DOWN",
+            "UP_DOWN",
             "cy_autoRange":
-                False,
+            False,
             "cy_colorScheme":
-                "BLUE_RED",
+            "BLUE_RED",
             "cy_showRangeZeroBaseline":
-                True,
+            True,
             "cy_colors": ["#FF0000", "#0000FF"],
-            "cy_dataColumns": [
-                "{} {} {}".format(time, ptm, site + 1) for site in range(sites)
-            ]
+            "cy_dataColumns":
+            ["{} {} {}".format(time, ptm, site + 1) for site in range(sites)]
         })
         return "org.cytoscape.BarChart: {}".format(chart)
 
