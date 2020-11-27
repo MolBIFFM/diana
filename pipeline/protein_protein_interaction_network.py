@@ -194,8 +194,8 @@ class ProteinProteinInteractionNetwork(nx.Graph):
                 uniprot[int(row["BIOGRID_ID"])] = row["IDENTIFIER_VALUE"]
 
         for row in fetch.read_tabular_data(
-                protein_protein_interaction_data.BIOGRID_TAB3_ARCHIVE,
-                zip_file=protein_protein_interaction_data.BIOGRID_TAB3_FILE,
+                protein_protein_interaction_data.BIOGRID_ARCHIVE,
+                zip_file=protein_protein_interaction_data.BIOGRID_FILE,
                 delimiter="\t",
                 header=0,
                 usecols=[
@@ -217,87 +217,6 @@ class ProteinProteinInteractionNetwork(nx.Graph):
                 self.edges[
                     uniprot[row["BioGRID ID Interactor A"]],
                     uniprot[row["BioGRID ID Interactor B"]]]["BioGRID"] = 1.0
-
-    def add_interactions_from_BioGRID_MITAB(
-        self,
-        interaction_detection_methods=[
-            "affinity chromatography technology", "two hybrid", "biochemical",
-            "pull down", "enzymatic study", "bio id", "x-ray crystallography",
-            "fluorescent resonance energy transfer",
-            "protein complementation assay"
-        ],
-        interaction_types=[
-            "physical association", "direct interaction", "association"
-        ]):
-        uniprot = {}
-        for row in fetch.read_tabular_data(
-                protein_protein_interaction_data.UNIPROT_ID_MAP,
-                delimiter="\t",
-                usecols=[0, 1, 2]):
-            if row[1] == "BioGRID" and row[0] in self.nodes:
-                uniprot[row[2]] = row[0]
-
-        for row in fetch.read_tabular_data(
-                protein_protein_interaction_data.BIOGRID_ID_MAP_ARCHIVE,
-                zip_file=protein_protein_interaction_data.BIOGRID_ID_MAP_FILE,
-                delimiter="\t",
-                header=20,
-                usecols=[
-                    "BIOGRID_ID", "IDENTIFIER_VALUE", "IDENTIFIER_TYPE",
-                    "ORGANISM_OFFICIAL_NAME"
-                ]):
-            if (row["IDENTIFIER_TYPE"]
-                    in ("UNIPROT-ACCESSION", "UNIPROT-ISOFORM") and
-                    row["ORGANISM_OFFICIAL_NAME"] == "Homo sapiens" and
-                    row["IDENTIFIER_VALUE"] in self.nodes):
-                uniprot[int(row["BIOGRID_ID"])] = row["IDENTIFIER_VALUE"]
-
-        for row in fetch.read_tabular_data(
-                protein_protein_interaction_data.BIOGRID_MITAB_ARCHIVE,
-                zip_file=protein_protein_interaction_data.BIOGRID_MITAB_FILE,
-                delimiter="\t",
-                header=0,
-                usecols=[
-                    "#ID Interactor A", "ID Interactor B",
-                    "Alt IDs Interactor A", "Alt IDs Interactor B",
-                    "Taxid Interactor A", "Taxid Interactor B",
-                    "Interaction Detection Method", "Interaction Types"
-                ]):
-            if not (interactor_a := mitab.get_id_from_ns(
-                    row["#ID Interactor A"], "biogrid")):
-                if not (interactor_a := mitab.get_id_from_ns(
-                        row["Alt IDs Interactor A"], "biogrid")):
-                    continue
-            if not uniprot.get(interactor_a):
-                continue
-
-            if not (interactor_b := mitab.get_id_from_ns(
-                    row["ID Interactor B"], "biogrid")):
-                if not (interactor_b := mitab.get_id_from_ns(
-                        row["Alt IDs Interactor B"], "biogrid")):
-                    continue
-            if not uniprot.get(interactor_b):
-                continue
-
-            if interactor_a == interactor_b:
-                continue
-
-            if not (mitab.ns_has_id(row["Taxid Interactor A"], "taxid", "9606")
-                    and mitab.ns_has_id(row["Taxid Interactor B"], "taxid",
-                                        "9606")):
-                continue
-
-            if not mitab.ns_has_any_term(row["Interaction Detection Method"],
-                                         "psi-mi",
-                                         interaction_detection_methods):
-                continue
-
-            if not mitab.ns_has_any_term(row["Interaction Types"], "psi-mi",
-                                         interaction_types):
-                continue
-
-            self.add_edge(uniprot[interactor_a], uniprot[interactor_b])
-            self.edges[interactor_a, interactor_b]["BioGRID"] = 1.0
 
     def add_interactions_from_IntAct(
             self,
