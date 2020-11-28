@@ -42,7 +42,7 @@ def main():
             if args.log:
                 logging.info("{} {} {}".format(entry["label"], entry["time"],
                                                protein))
-
+    
     if configuration.get("PPI"):
         if configuration["PPI"].get("BioGRID"):
             for interactor_a, interactor_b in ppi_network.add_interactions_from_BioGRID(
@@ -54,7 +54,7 @@ def main():
                     "Co-purification", "FRET", "PCA", "Two-hybrid"
                 ])):
                 if args.log:
-                    logging.info("BioGRID: {}, {} 1.0".format(
+                    logging.info("BioGRID\t{} {}\t1.000".format(
                         interactor_a, interactor_b))
 
         if configuration["PPI"].get("IntAct"):
@@ -75,7 +75,7 @@ def main():
                     mi_score=configuration["PPI"]["IntAct"].get(
                         "MI score", 0.27)):
                 if args.log:
-                    logging.info("IntAct: {}, {} {}".format(
+                    logging.info("IntAct\t{} {}\t{:.3f}".format(
                         interactor_a, interactor_b, score))
 
         if configuration["PPI"].get("STRING"):
@@ -108,11 +108,11 @@ def main():
                     combined_score=configuration["PPI"]["STRING"].get(
                         "combined score", 0.7)):
                 if args.log:
-                    logging.info("STRING {}, {} {}".format(
+                    logging.info("STRING\t{} {}\t{:.3f}".format(
                         interactor_a, interactor_b, score))
 
     ppi_network.remove_isolates()
-
+    
     if args.styles:
         style = cytoscape_style.CytoscapeStyle(
             ppi_network,

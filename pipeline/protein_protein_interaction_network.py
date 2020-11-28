@@ -104,7 +104,7 @@ class ProteinProteinInteractionNetwork(nx.Graph):
                     for attr in self.nodes[protein]
                     if len(attr.split(" ")) == 3 and attr.split(" ")[0] == str(
                         time) and attr.split(" ")[1] == ptm)
-                for ptm in self.get_post_translational_modifications()
+                for ptm in self.get_post_translational_modifications()[time]
             }
             for time in self.get_times()
         }
