@@ -1,5 +1,6 @@
 import argparse
 import logging
+import sys
 
 import yaml
 
@@ -28,6 +29,11 @@ def main():
                             level=logging.DEBUG,
                             format="%(asctime)s\t%(levelname)s\t%(message)s",
                             datefmt="%H:%M:%S")
+    else:
+        logging.basicConfig(stream=sys.stdout,
+                            level=logging.DEBUG,
+                            format="%(asctime)s\t%(levelname)s\t%(message)s",
+                            datefmt="%H:%M:%S")
 
     ppi_network = protein_protein_interaction_network.ProteinProteinInteractionNetwork(
     )
@@ -39,10 +45,9 @@ def main():
                 entry["time"],
                 num_replicates=entry.get("replicates", 2),
                 num_sites=entry.get("sites", 5)):
-            if args.log:
-                logging.info("{} {} {}".format(entry["label"], entry["time"],
-                                               protein))
-    
+            logging.info("{} {} {}".format(entry["label"], entry["time"],
+                                           protein))
+
     if configuration.get("PPI"):
         if configuration["PPI"].get("BioGRID"):
             for interactor_a, interactor_b in ppi_network.add_interactions_from_BioGRID(
@@ -53,9 +58,8 @@ def main():
                     "Biochemical Activity", "Co-crystal Structure",
                     "Co-purification", "FRET", "PCA", "Two-hybrid"
                 ])):
-                if args.log:
-                    logging.info("BioGRID\t{} {}\t1.000".format(
-                        interactor_a, interactor_b))
+                logging.info("BioGRID\t{} {}\t1.000".format(
+                    interactor_a, interactor_b))
 
         if configuration["PPI"].get("IntAct"):
             for interactor_a, interactor_b, score in ppi_network.add_interactions_from_IntAct(
@@ -74,9 +78,8 @@ def main():
                         ]),
                     mi_score=configuration["PPI"]["IntAct"].get(
                         "MI score", 0.27)):
-                if args.log:
-                    logging.info("IntAct\t{} {}\t{:.3f}".format(
-                        interactor_a, interactor_b, score))
+                logging.info("IntAct\t{} {}\t{:.3f}".format(
+                    interactor_a, interactor_b, score))
 
         if configuration["PPI"].get("STRING"):
             for interactor_a, interactor_b, score in ppi_network.add_interactions_from_STRING(
@@ -107,12 +110,11 @@ def main():
                         "textmining transferred", 0.0),
                     combined_score=configuration["PPI"]["STRING"].get(
                         "combined score", 0.7)):
-                if args.log:
-                    logging.info("STRING\t{} {}\t{:.3f}".format(
-                        interactor_a, interactor_b, score))
+                logging.info("STRING\t{} {}\t{:.3f}".format(
+                    interactor_a, interactor_b, score))
 
     ppi_network.remove_isolates()
-    
+
     if args.styles:
         style = cytoscape_style.CytoscapeStyle(
             ppi_network,
