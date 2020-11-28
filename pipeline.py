@@ -46,8 +46,10 @@ def main():
                 num_replicates=entry.get("replicates", 2),
                 num_sites=entry.get("sites", 5)):
             logging.info("{}\t{}\t{}\t{}".format(
-                protein, entry["time"], entry["label"],
-                " ".join([" {:.3f}".format(site) if site > 0.0 else "{:.3f}".format(site) for site in sites])))
+                protein, entry["time"], entry["label"], " ".join([
+                    " {:.3f}".format(site)
+                    if site > 0.0 else "{:.3f}".format(site) for site in sites
+                ])))
 
     if configuration.get("PPI"):
         if configuration["PPI"].get("BioGRID"):
