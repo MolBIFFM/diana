@@ -74,7 +74,11 @@ class ProteinProteinInteractionNetwork(nx.Graph):
                 self.nodes[protein]["{} {} {}".format(
                     str(time), ptm, str(i + 1))] = proteins[protein][i][1]
 
-            yield protein
+            yield (protein,
+                   tuple([
+                       proteins[protein][i][1]
+                       for i in range(len(proteins[protein]))
+                   ]))
 
     def get_times(self):
         return tuple(

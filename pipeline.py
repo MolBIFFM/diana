@@ -39,14 +39,15 @@ def main():
     )
 
     for entry in configuration.get("PTM", {}):
-        for protein in ppi_network.add_proteins_from_excel(
+        for protein, sites in ppi_network.add_proteins_from_excel(
                 entry["file"],
                 entry["label"],
                 entry["time"],
                 num_replicates=entry.get("replicates", 2),
                 num_sites=entry.get("sites", 5)):
-            logging.info("{} {} {}".format(entry["label"], entry["time"],
-                                           protein))
+            logging.info("{}\t{}\t{}\t{}".format(
+                protein, entry["time"], entry["label"],
+                " ".join([" {:.3f}".format(site) if site > 0.0 else "{:.3f}".format(site) for site in sites])))
 
     if configuration.get("PPI"):
         if configuration["PPI"].get("BioGRID"):
@@ -58,7 +59,7 @@ def main():
                     "Biochemical Activity", "Co-crystal Structure",
                     "Co-purification", "FRET", "PCA", "Two-hybrid"
                 ])):
-                logging.info("BioGRID\t{} {}\t1.000".format(
+                logging.info("BioGRID\t{}\t{}\t1.000".format(
                     interactor_a, interactor_b))
 
         if configuration["PPI"].get("IntAct"):
@@ -78,7 +79,7 @@ def main():
                         ]),
                     mi_score=configuration["PPI"]["IntAct"].get(
                         "MI score", 0.27)):
-                logging.info("IntAct\t{} {}\t{:.3f}".format(
+                logging.info("IntAct\t{}\t{}\t{:.3f}".format(
                     interactor_a, interactor_b, score))
 
         if configuration["PPI"].get("STRING"):
@@ -110,7 +111,7 @@ def main():
                         "textmining transferred", 0.0),
                     combined_score=configuration["PPI"]["STRING"].get(
                         "combined score", 0.7)):
-                logging.info("STRING\t{} {}\t{:.3f}".format(
+                logging.info("STRING\t{}\t{}\t{:.3f}".format(
                     interactor_a, interactor_b, score))
 
     ppi_network.remove_isolates()
