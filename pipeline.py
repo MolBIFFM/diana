@@ -67,18 +67,9 @@ def main():
         if configuration["PPI"].get("IntAct"):
             for interactor_a, interactor_b, score in ppi_network.add_interactions_from_IntAct(
                     interaction_detection_methods=configuration["PPI"]
-                ["IntAct"].get("interaction detection methods", [
-                    "affinity chromatography technology", "two hybrid",
-                    "biochemical", "pull down", "enzymatic study", "bio id",
-                    "x-ray crystallography",
-                    "fluorescent resonance energy transfer",
-                    "protein complementation assay"
-                ]),
+                ["IntAct"].get("interaction detection methods", []),
                     interaction_types=configuration["PPI"]["IntAct"].get(
-                        "interaction_types", [
-                            "physical association", "direct interaction",
-                            "association"
-                        ]),
+                        "interaction_types", []),
                     mi_score=configuration["PPI"]["IntAct"].get(
                         "MI score", 0.27)):
                 logging.info("{}\t{}\tIntAct\t{:.3f}".format(
