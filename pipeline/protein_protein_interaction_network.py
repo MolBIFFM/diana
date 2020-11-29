@@ -174,14 +174,7 @@ class ProteinProteinInteractionNetwork(nx.Graph):
                 else:
                     self.nodes[protein]["trend {}".format(time)] = ""
 
-    def add_interactions_from_BioGRID(
-        self,
-        experimental_system=[
-            "Affinity Capture-Luminescence", "Affinity Capture-MS",
-            "Affinity Capture-RNA", "Affinity Capture-Western",
-            "Biochemical Activity", "Co-crystal Structure", "Co-purification",
-            "FRET", "PCA", "Two-hybrid"
-        ]):
+    def add_interactions_from_BioGRID(self, experimental_system=[]):
         uniprot = {}
         for row in fetch.read_tabular_data(
                 protein_protein_interaction_data.UNIPROT_ID_MAP,
@@ -220,7 +213,8 @@ class ProteinProteinInteractionNetwork(nx.Graph):
                     and uniprot.get(row["BioGRID ID Interactor B"])
                     and row["BioGRID ID Interactor A"] !=
                     row["BioGRID ID Interactor B"]
-                    and row["Experimental System"] in experimental_system
+                    and (not experimental_system
+                         or row["Experimental System"] in experimental_system)
                     and row["Experimental System Type"] == "physical"
                     and row["Organism ID Interactor A"] == 9606
                     and row["Organism ID Interactor B"] == 9606):
@@ -233,19 +227,10 @@ class ProteinProteinInteractionNetwork(nx.Graph):
                 yield (uniprot[row["BioGRID ID Interactor A"]],
                        uniprot[row["BioGRID ID Interactor B"]])
 
-    def add_interactions_from_IntAct(
-            self,
-            interaction_detection_methods=[
-                "affinity chromatography technology", "two hybrid",
-                "biochemical", "pull down", "enzymatic study", "bio id",
-                "x-ray crystallography",
-                "fluorescent resonance energy transfer",
-                "protein complementation assay"
-            ],
-            interaction_types=[
-                "physical association", "direct interaction", "association"
-            ],
-            mi_score=0.27):
+    def add_interactions_from_IntAct(self,
+                                     interaction_detection_methods=[],
+                                     interaction_types=[],
+                                     mi_score=0.0):
         for row in fetch.read_tabular_data(
                 protein_protein_interaction_data.INTACT_ARCHIVE,
                 zip_file=protein_protein_interaction_data.INTACT_FILE,
@@ -283,13 +268,13 @@ class ProteinProteinInteractionNetwork(nx.Graph):
                                         "9606")):
                 continue
 
-            if not mitab.ns_has_any_term(
+            if not (not interaction_detection_methods or mitab.ns_has_any_term(
                     row["Interaction detection method(s)"], "psi-mi",
-                    interaction_detection_methods):
+                    interaction_detection_methods)):
                 continue
 
-            if not mitab.ns_has_any_term(row["Interaction type(s)"], "psi-mi",
-                                         interaction_types):
+            if not (not interaction_types or mitab.ns_has_any_term(
+                    row["Interaction type(s)"], "psi-mi", interaction_types)):
                 continue
 
             if score := mitab.get_id_from_ns(row["Confidence value(s)"],
@@ -319,13 +304,13 @@ class ProteinProteinInteractionNetwork(nx.Graph):
                                      homology=0.0,
                                      coexpression=0.0,
                                      coexpression_transferred=0.0,
-                                     experiments=0.7,
+                                     experiments=0.0,
                                      experiments_transferred=0.0,
                                      database=0.0,
                                      database_transferred=0.0,
                                      textmining=0.0,
                                      textmining_transferred=0.0,
-                                     combined_score=0.7):
+                                     combined_score=0.0):
 
         uniprot = {}
         for row in fetch.read_tabular_data(
