@@ -43,8 +43,16 @@ def main():
                 entry["file"],
                 entry["label"],
                 entry["time"],
-                num_replicates=entry.get("replicates", 2),
-                num_sites=entry.get("sites", 5)):
+                header=int(entry.get("header", "0")),
+                protein_id_col=entry.get("protein column", "Protein"),
+                position_col=entry.get("position column", "Positions within proteins"),
+                num_sites=int(entry.get("sites", "5")),
+                replicates=entry.get("replicate columns", [
+                    "Ratio H/L normalized Exp1", 
+                    "Ratio H/L normalized Exp2",
+                    "Ratio H/L normalized Exp3"
+                ]),
+                num_replicates=entry.get("replicates", 2)):
             logging.info("{}\t{}\t{}\t{}".format(
                 protein, entry["time"], entry["label"], " ".join([
                     " {:.3f}".format(site)

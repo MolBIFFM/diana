@@ -20,19 +20,16 @@ class ProteinProteinInteractionNetwork(nx.Graph):
             file_name,
             ptm,
             time,
-            header=0,
-            protein_id_col="Protein",
+            header,
+            protein_id_col,
+            position_col,
+            num_sites=1,
+            replicates=[],
+            num_replicates=1,
             protein_id_format=lambda entry: entry,
-            position_col="Positions within proteins",
             position_format=lambda entry: entry.split(";")[0].split(".")[0],
-            replicates=[
-                "Ratio H/L normalized Exp1", "Ratio H/L normalized Exp2",
-                "Ratio H/L normalized Exp3"
-            ],
-            num_replicates=2,
             merge_replicates=statistics.mean,
-            convert_measurement=math.log2,
-            num_sites=5):
+            convert_measurement=math.log2):
         proteins = {}
         for _, row in pd.read_excel(
                 file_name,
@@ -116,7 +113,7 @@ class ProteinProteinInteractionNetwork(nx.Graph):
     def set_ptm_data_column(self):
         for time in self.get_times():
             for protein in self:
-                self.nodes[protein]["PTM {}".format(time)] = ", ".join(
+                self.nodes[protein]["PTM {}".format(time)] = " ".join(
                     tuple(
                         sorted(
                             set(

@@ -339,9 +339,9 @@ SETTINGS = {
                     "attributeName": "PTM {time}",
                     "attributeType": "string",
                     "discreteMappingEntry": {
-                        "U": "TRIANGLE",
                         "P": "RECTANGLE",
-                        "P, U": "ELLIPSE"
+                        "U": "TRIANGLE",
+                        "P U": "ELLIPSE"
                     }
                 }
             },
