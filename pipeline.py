@@ -43,10 +43,10 @@ def main():
                 entry["file"],
                 entry["label"],
                 entry["time"],
-                header=int(entry.get("header", "0")),
+                header=entry.get("header", 0),
                 protein_id_col=entry.get("protein column", "Protein"),
                 position_col=entry.get("position column", "Positions within proteins"),
-                num_sites=int(entry.get("sites", "5")),
+                num_sites=entry.get("sites", 5),
                 replicates=entry.get("replicate columns", [
                     "Ratio H/L normalized Exp1", 
                     "Ratio H/L normalized Exp2",
