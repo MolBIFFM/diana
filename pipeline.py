@@ -115,8 +115,6 @@ def main():
                 logging.info("{}\t{}\tSTRING\t{:.3f}".format(
                     interactor_a, interactor_b, score))
 
-    ppi_network.remove_isolates()
-
     if args.styles:
         style = cytoscape_style.CytoscapeStyle(
             ppi_network,

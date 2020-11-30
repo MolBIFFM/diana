@@ -14,14 +14,16 @@ class CytoscapeStyle(ET.ElementTree):
                        }))
 
         for time in ppi_network.get_times():
+            ptms = ppi_network.get_post_translational_modifications()[time]
             visual_style = ET.SubElement(self.getroot(),
                                          "visualStyle",
                                          attrib={"name": str(time)})
             tags = {}
-            for tag in pipeline.configuration.cytoscape_style.SETTINGS:
+            for tag in pipeline.configuration.cytoscape_style.SETTINGS[
+                    len(ptms) - 1]:
                 tags[tag] = ET.SubElement(visual_style, tag)
                 for name, setting in pipeline.configuration.cytoscape_style.SETTINGS[
-                        tag]["dependency"].items():
+                        len(ptms) - 1][tag]["dependency"].items():
                     ET.SubElement(tags[tag],
                                   "dependency",
                                   attrib={
@@ -29,7 +31,7 @@ class CytoscapeStyle(ET.ElementTree):
                                       "value": setting["value"]
                                   })
                 for name, setting in pipeline.configuration.cytoscape_style.SETTINGS[
-                        tag]["visualProperty"].items():
+                        len(ptms) - 1][tag]["visualProperty"].items():
                     visual_property = ET.SubElement(tags[tag],
                                                     "visualProperty",
                                                     attrib={
@@ -62,16 +64,17 @@ class CytoscapeStyle(ET.ElementTree):
                         for attribute_value, value in setting[
                                 "discreteMapping"][
                                     "discreteMappingEntry"].items():
-                            ET.SubElement(discrete_mapping,
-                                          "discreteMappingEntry",
-                                          attrib={
-                                              "attributeValue":
-                                              attribute_value,
-                                              "value": value
-                                          })
+                            ET.SubElement(
+                                discrete_mapping,
+                                "discreteMappingEntry",
+                                attrib={
+                                    "attributeValue":
+                                    attribute_value.format(ptms=ptms),
+                                    "value":
+                                    value
+                                })
 
-            for i, ptm in enumerate(
-                    ppi_network.get_post_translational_modifications()[time]):
+            for i, ptm in enumerate(ptms):
                 for visual_property in visual_style.find("node").findall(
                         "visualProperty"):
                     if visual_property.get(
@@ -87,13 +90,9 @@ class CytoscapeStyle(ET.ElementTree):
                     ) == "NODE_CUSTOMGRAPHICS_POSITION_{}".format(i + 1):
                         visual_property.set(
                             "default",
-                            "{},{},c,0.00,0.00".format(*[("W", "E"), (
-                                "E", "W"), ("S", "N"), ("N", "S"), (
-                                    "SW",
-                                    "N"), ("NE",
-                                           "N"), ("SE",
-                                                  "N"), ("NW",
-                                                         "N"), ("C", "C")][i]))
+                            "{},{},c,0.00,0.00".format(*[("W",
+                                                          "E"), ("E",
+                                                                 "W")][i]))
 
     def bar_chart(self, time, ptm, sites, cy_range=(-3.0, 3.0)):
         chart = json.dumps({
