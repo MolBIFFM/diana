@@ -45,11 +45,11 @@ def main():
                 entry["time"],
                 header=entry.get("header", 0),
                 protein_id_col=entry.get("protein column", "Protein"),
-                position_col=entry.get("position column", "Positions within proteins"),
+                position_col=entry.get("position column",
+                                       "Positions within proteins"),
                 num_sites=entry.get("sites", 5),
                 replicates=entry.get("replicate columns", [
-                    "Ratio H/L normalized Exp1", 
-                    "Ratio H/L normalized Exp2",
+                    "Ratio H/L normalized Exp1", "Ratio H/L normalized Exp2",
                     "Ratio H/L normalized Exp3"
                 ]),
                 num_replicates=entry.get("replicates", 2)):

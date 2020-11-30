@@ -208,8 +208,8 @@ class ProteinProteinInteractionNetwork(nx.Graph):
                 ]):
             if (uniprot.get(row["BioGRID ID Interactor A"])
                     and uniprot.get(row["BioGRID ID Interactor B"])
-                    and row["BioGRID ID Interactor A"] !=
-                    row["BioGRID ID Interactor B"]
+                    and uniprot[row["BioGRID ID Interactor A"]] !=
+                    uniprot[row["BioGRID ID Interactor B"]]
                     and (not experimental_system
                          or row["Experimental System"] in experimental_system)
                     and row["Experimental System Type"] == "physical"
@@ -282,12 +282,12 @@ class ProteinProteinInteractionNetwork(nx.Graph):
             else:
                 continue
 
-            self.add_edge(interactor_a, interactor_b)
             if self.has_edge(interactor_a, interactor_b):
                 self.edges[interactor_a, interactor_b]["IntAct"] = max(
                     score, self.edges[interactor_a,
                                       interactor_b].get("IntAct", 0.0))
             else:
+                self.add_edge(interactor_a, interactor_b)
                 self.edges[interactor_a, interactor_b]["IntAct"] = score
 
             yield (interactor_a, interactor_b,
@@ -349,11 +349,9 @@ class ProteinProteinInteractionNetwork(nx.Graph):
                 header=0,
                 usecols=["protein1", "protein2"] + list(thresholds.keys())):
             if (uniprot.get(row["protein1"]) and uniprot.get(row["protein2"])
-                    and row["protein1"] != row["protein2"]
+                    and uniprot[row["protein1"]] != uniprot[row["protein2"]]
                     and all(row[column] / 1000 >= thresholds[column]
                             for column in thresholds)):
-                self.add_edge(uniprot[row["protein1"]],
-                              uniprot[row["protein2"]])
                 if self.has_edge(uniprot[row["protein1"]],
                                  uniprot[row["protein2"]]):
                     self.edges[uniprot[row["protein1"]],
@@ -363,6 +361,8 @@ class ProteinProteinInteractionNetwork(nx.Graph):
                                               uniprot[row["protein2"]]].get(
                                                   "STRING", 0.0))
                 else:
+                    self.add_edge(uniprot[row["protein1"]],
+                                  uniprot[row["protein2"]])
                     self.edges[uniprot[row["protein1"]],
                                uniprot[row["protein2"]]][
                                    "STRING"] = row["combined_score"] / 1000
