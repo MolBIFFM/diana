@@ -12,7 +12,8 @@ def main():
     parser = argparse.ArgumentParser()
     parser.add_argument("-c",
                         "--configuration",
-                        help="YAML configuration file")
+                        help="YAML configuration file",
+                        required=True)
     parser.add_argument("-n",
                         "--network",
                         help="protein-protein interaction network")

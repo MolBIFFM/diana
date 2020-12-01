@@ -150,7 +150,7 @@ class ProteinProteinInteractionNetwork(nx.Graph):
                             self.nodes[protein]["trend {}".format(
                                 time)] = "mid up"
                     elif all(trend < 0.0 for trend in ptm.values()):
-                        if any(trend <= -mid_range[0]
+                        if any(trend <= mid_range[0]
                                for trend in ptm.values()):
                             self.nodes[protein]["trend {}".format(
                                 time)] = "down"

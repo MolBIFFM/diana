@@ -35,19 +35,7 @@ PPI:
     MI score: 0.27
 
   STRING:
-    neighborhood: 0.0
-    neighborhood transferred: 0.0
-    fusion: 0.0
-    cooccurence: 0.0
-    homology: 0.0
-    coexpression: 0.0
-    coexpression transferred: 0.0
     experiments: 0.7
-    experiments transferred: 0.0
-    database: 0.0
-    database transferred: 0.0
-    textmining: 0.0
-    textmining transferred: 0.0
     combined score: 0.7
 
 Cytoscape:
