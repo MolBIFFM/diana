@@ -138,8 +138,8 @@ def main():
                                          {}).get("mid range",
                                                  {}).get("maximum", 1.0)),
             merge_trends=conversions.CONVERSIONS.get(
-                configuration.get("Cytoscape",
-                                         {}).get("merge sites", "mean").lower(),
+                configuration.get("Cytoscape", {}).get("merge sites",
+                                                       "mean").lower(),
                 conversions.CONVERSIONS["mean"]))
 
         if args.styles.endswith(".xml"):
