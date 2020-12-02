@@ -31,6 +31,7 @@ class ProteinProteinInteractionNetwork(nx.Graph):
             merge_replicates=statistics.mean,
             convert_measurement=math.log2):
         proteins = {}
+        print(merge_replicates)
         for _, row in pd.read_excel(
                 file_name,
                 header=header,

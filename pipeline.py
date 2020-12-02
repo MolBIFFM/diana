@@ -4,8 +4,9 @@ import sys
 
 import yaml
 
-from pipeline import protein_protein_interaction_network
-from pipeline import cytoscape_style
+from pipeline.protein_protein_interaction_network import ProteinProteinInteractionNetwork
+from pipeline.cytoscape_style import CytoscapeStyle
+from pipeline.configuration import conversions
 
 
 def main():
@@ -36,8 +37,7 @@ def main():
                             format="%(asctime)s\t%(levelname)s\t%(message)s",
                             datefmt="%H:%M:%S")
 
-    ppi_network = protein_protein_interaction_network.ProteinProteinInteractionNetwork(
-    )
+    ppi_network = ProteinProteinInteractionNetwork()
 
     for entry in configuration.get("PTM", {}):
         for protein, sites in ppi_network.add_proteins_from_excel(
@@ -53,7 +53,10 @@ def main():
                     "Ratio H/L normalized Exp1", "Ratio H/L normalized Exp2",
                     "Ratio H/L normalized Exp3"
                 ]),
-                num_replicates=entry.get("replicates", 2)):
+                num_replicates=entry.get("replicates", 2),
+                merge_replicates=conversions.CONVERSIONS.get(
+                    entry.get("merge replicates", "mean").lower(),
+                    conversions.CONVERSIONS["mean"])):
             logging.info("{}\t{}\t{}\t{}".format(
                 protein, entry["time"], entry["label"], " ".join([
                     " {:.3f}".format(site)
@@ -117,7 +120,7 @@ def main():
                     interactor_a, interactor_b, score))
 
     if args.styles:
-        style = cytoscape_style.CytoscapeStyle(
+        style = CytoscapeStyle(
             ppi_network,
             bar_chart_range=(configuration.get("Cytoscape", {}).get(
                 "bar chart", {}).get("minimum", -3.0),
@@ -127,12 +130,16 @@ def main():
                                                                3.0)))
 
         ppi_network.set_ptm_data_column()
-        ppi_network.set_trend_data_column(mid_range=(
-            configuration.get("Cytoscape", {}).get("mid range", {}).get(
-                "minimum", -1.0),
-            configuration.get("Cytoscape", {}).get("mid range", {}).get(
-                "maximum", 1.0),
-        ))
+        ppi_network.set_trend_data_column(
+            mid_range=(configuration.get("Cytoscape",
+                                         {}).get("mid range",
+                                                 {}).get("minimum", -1.0),
+                       configuration.get("Cytoscape",
+                                         {}).get("mid range",
+                                                 {}).get("maximum", 1.0)),
+            merge_trends=conversions.CONVERSIONS.get(
+                entry.get("merge sites", "mean").lower(),
+                conversions.CONVERSIONS["mean"]))
 
         if args.styles.endswith(".xml"):
             style.export_as_xml(args.styles)

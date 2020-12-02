@@ -4,19 +4,22 @@ PTM:
     time: 15
     replicates: 2
     sites: 5
+    merge replicates: mean
 
   - file: data/WT_vs_noninvasive_1h.xlsx
     label: U
     time: 60
     replicates: 2
     sites: 5
+    merge replicates: mean
 
   - file: data/WT_vs_noninvasive_2h.xlsx
     label: U
     time: 120
     replicates: 2
     sites: 5
-
+    merge replicates: mean
+    
 PPI:
   BioGRID:
     experimental system:
@@ -45,3 +48,4 @@ Cytoscape:
   mid range:
     minimum: -1.0
     maximum: 1.0
+  merge sites: mean
