@@ -37,11 +37,17 @@ def decompress_zip_file(compressed_file_name, file=None):
         if not file:
             file = archive.namelist()[0]
 
-        if not os.path.exists(os.path.join(tempfile.gettempdir(), file)):
+        if not os.path.exists(
+                os.path.join(tempfile.gettempdir(), configuration.TMP_FOLDER,
+                             file)):
             decompressed_file_name = archive.extract(
-                file, path=tempfile.gettempdir())
+                file,
+                path=os.path.join(tempfile.gettempdir(),
+                                  configuration.TMP_FOLDER))
         else:
-            decompressed_file_name = os.path.join(tempfile.gettempdir(), file)
+            decompressed_file_name = os.path.join(tempfile.gettempdir(),
+                                                  configuration.TMP_FOLDER,
+                                                  file)
 
     return decompressed_file_name
 
@@ -52,8 +58,12 @@ def read_tabular_data(url,
                       header=None,
                       usecols=[]):
 
+    if not os.path.exists(
+            os.path.join(tempfile.gettempdir(), configuration.TMP_FOLDER)):
+        os.mkdir(os.path.join(tempfile.gettempdir(), configuration.TMP_FOLDER))
+
     local_file_name = os.path.join(
-        tempfile.gettempdir(),
+        tempfile.gettempdir(), configuration.TMP_FOLDER,
         os.path.split(urllib.parse.urlparse(url).path)[1])
 
     if not (os.path.exists(local_file_name)):
