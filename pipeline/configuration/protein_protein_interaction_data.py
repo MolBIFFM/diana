@@ -5,5 +5,7 @@ BIOGRID_FILE = "BIOGRID-ORGANISM-Homo_sapiens-4.2.192.tab3.txt"
 INTACT_ARCHIVE = "ftp://ftp.ebi.ac.uk/pub/databases/intact/current/psimitab/intact.zip"
 INTACT_FILE = "intact.txt"
 UNIPROT_ID_MAP = "ftp://ftp.uniprot.org/pub/databases/uniprot/current_release/knowledgebase/idmapping/by_organism/HUMAN_9606_idmapping.dat.gz"
-STRING_ID_MAP = "https://string-db.org/mapping_files/uniprot/human.uniprot_2_string.2018.tsv.gz"
+STRING_ID_MAP = (
+    "https://string-db.org/mapping_files/uniprot/human.uniprot_2_string.2018.tsv.gz"
+)
 STRING = "https://stringdb-static.org/download/protein.links.full.v11.0/9606.protein.links.full.v11.0.txt.gz"

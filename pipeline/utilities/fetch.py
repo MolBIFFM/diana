@@ -12,7 +12,8 @@ from ..configuration import configuration
 
 def download_file(url, local_file_name):
     request = urllib.request.Request(
-        url, headers={"User-Agent": configuration.USER_AGENT})
+        url, headers={"User-Agent": configuration.USER_AGENT}
+    )
 
     with urllib.request.urlopen(request) as response:
         with open(local_file_name, "wb") as local_file:
@@ -38,33 +39,31 @@ def decompress_zip_file(compressed_file_name, file=None):
             file = archive.namelist()[0]
 
         if not os.path.exists(
-                os.path.join(tempfile.gettempdir(), configuration.TMP_FOLDER,
-                             file)):
+            os.path.join(tempfile.gettempdir(), configuration.TMP_FOLDER, file)
+        ):
             decompressed_file_name = archive.extract(
-                file,
-                path=os.path.join(tempfile.gettempdir(),
-                                  configuration.TMP_FOLDER))
+                file, path=os.path.join(tempfile.gettempdir(), configuration.TMP_FOLDER)
+            )
         else:
-            decompressed_file_name = os.path.join(tempfile.gettempdir(),
-                                                  configuration.TMP_FOLDER,
-                                                  file)
+            decompressed_file_name = os.path.join(
+                tempfile.gettempdir(), configuration.TMP_FOLDER, file
+            )
 
     return decompressed_file_name
 
 
-def read_tabular_data(url,
-                      zip_file=None,
-                      delimiter=None,
-                      header=None,
-                      usecols=[]):
+def read_tabular_data(url, zip_file=None, delimiter=None, header=None, usecols=[]):
 
     if not os.path.exists(
-            os.path.join(tempfile.gettempdir(), configuration.TMP_FOLDER)):
+        os.path.join(tempfile.gettempdir(), configuration.TMP_FOLDER)
+    ):
         os.mkdir(os.path.join(tempfile.gettempdir(), configuration.TMP_FOLDER))
 
     local_file_name = os.path.join(
-        tempfile.gettempdir(), configuration.TMP_FOLDER,
-        os.path.split(urllib.parse.urlparse(url).path)[1])
+        tempfile.gettempdir(),
+        configuration.TMP_FOLDER,
+        os.path.split(urllib.parse.urlparse(url).path)[1],
+    )
 
     if not (os.path.exists(local_file_name)):
         download_file(url, local_file_name)
@@ -80,10 +79,12 @@ def read_tabular_data(url,
     elif os.path.splitext(local_file_name)[1] == ".tsv":
         delimiter = "\t"
 
-    for chunk in pd.read_csv(local_file_name,
-                             sep=delimiter,
-                             header=header,
-                             usecols=usecols,
-                             chunksize=configuration.CHUNK_SIZE):
+    for chunk in pd.read_csv(
+        local_file_name,
+        sep=delimiter,
+        header=header,
+        usecols=usecols,
+        chunksize=configuration.CHUNK_SIZE,
+    ):
         for _, row in chunk.iterrows():
             yield row

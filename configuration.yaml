@@ -1,9 +1,57 @@
 PTM:
+  - file: data/mcp.M113.029918-2.xls
+    label: P
+    time: 15
+    replicates: 1
+    sites: 5
+    header: 1
+    protein column: protein
+    protein format: Y|X|Y
+    position column: phosphosites
+    position format: X_Y
+    replicate columns:
+      - wt15minvscontrolratio
+    log base: 10
+
+  - file: data/mcp.M113.029918-2.xls
+    label: P
+    time: 60
+    sites: 5
+    header: 1
+    protein column: protein
+    protein format: Y|X|Y
+    position column: phosphosites
+    position format: X_Y
+    replicate columns:
+      - wt60minvscontrolratio
+    log base: 10
+
+  - file: data/mcp.M113.029918-2.xls
+    label: P
+    time: 120
+    sites: 5
+    header: 1
+    protein column: protein
+    protein format: Y|X|Y
+    position column: phosphosites
+    position format: X_Y
+    replicate columns:
+      - wt120minvscontrolratio
+    log base: 10
+
   - file: data/WT_vs_noninvasive_15min.xlsx
     label: U
     time: 15
     replicates: 2
     sites: 5
+    protein column: Protein
+    protein format: X
+    position column: Positions within proteins
+    position format: X.Y;
+    replicate columns:
+      - Ratio H/L normalized Exp1
+      - Ratio H/L normalized Exp2
+      - Ratio H/L normalized Exp3
     merge replicates: mean
 
   - file: data/WT_vs_noninvasive_1h.xlsx
@@ -11,6 +59,14 @@ PTM:
     time: 60
     replicates: 2
     sites: 5
+    protein column: Protein
+    protein format: X
+    position column: Positions within proteins
+    position format: X.Y;
+    replicate columns:
+      - Ratio H/L normalized Exp1
+      - Ratio H/L normalized Exp2
+      - Ratio H/L normalized Exp3
     merge replicates: mean
 
   - file: data/WT_vs_noninvasive_2h.xlsx
@@ -18,6 +74,14 @@ PTM:
     time: 120
     replicates: 2
     sites: 5
+    protein column: Protein
+    protein format: X
+    position column: Positions within proteins
+    position format: X.Y;
+    replicate columns:
+      - Ratio H/L normalized Exp1
+      - Ratio H/L normalized Exp2
+      - Ratio H/L normalized Exp3
     merge replicates: mean
     
 PPI:

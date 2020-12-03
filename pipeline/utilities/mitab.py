@@ -1,13 +1,15 @@
 def parse(entry):
     if entry != "-":
         values = {}
-        for ns, identifier in (ns_identifier.split(":", 1)
-                               for ns_identifier in entry.split("|")):
+        for ns, identifier in (
+            ns_identifier.split(":", 1) for ns_identifier in entry.split("|")
+        ):
 
             identifiers = identifier.split("(")
             identifiers = {
-                identifiers[0].strip("\""):
-                identifiers[1].rstrip(")") if len(identifiers) == 2 else None
+                identifiers[0].strip('"'): identifiers[1].rstrip(")")
+                if len(identifiers) == 2
+                else None
             }
 
             if ns in values:
@@ -40,15 +42,21 @@ def ns_has_term(entry, ns, identifier):
 
 def ns_has_any_id(entry, ns, identifiers):
     if values := parse(entry):
-        return any(identifier in value.keys() for value in values[ns]
-                   for identifier in identifiers)
+        return any(
+            identifier in value.keys()
+            for value in values[ns]
+            for identifier in identifiers
+        )
     else:
         return False
 
 
 def ns_has_any_term(entry, ns, identifiers):
     if values := parse(entry):
-        return any(identifier in value.values() for value in values[ns]
-                   for identifier in identifiers)
+        return any(
+            identifier in value.values()
+            for value in values[ns]
+            for identifier in identifiers
+        )
     else:
         return False
