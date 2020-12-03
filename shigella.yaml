@@ -1,5 +1,5 @@
 PTM:
-  - file: data/mcp.M113.029918-2.xls
+  - file: data/shigella/phosphorylation/mcp.M113.029918-2.xls
     label: P
     time: 15
     replicates: 1
@@ -13,7 +13,7 @@ PTM:
       - wt15minvscontrolratio
     log base: 10
 
-  - file: data/mcp.M113.029918-2.xls
+  - file: data/shigella/phosphorylation/mcp.M113.029918-2.xls
     label: P
     time: 60
     sites: 5
@@ -26,7 +26,7 @@ PTM:
       - wt60minvscontrolratio
     log base: 10
 
-  - file: data/mcp.M113.029918-2.xls
+  - file: data/shigella/phosphorylation/mcp.M113.029918-2.xls
     label: P
     time: 120
     sites: 5
@@ -39,7 +39,7 @@ PTM:
       - wt120minvscontrolratio
     log base: 10
 
-  - file: data/WT_vs_noninvasive_15min.xlsx
+  - file: data/shigella/ubiquitination/WT_vs_noninvasive_15min.xlsx
     label: U
     time: 15
     replicates: 2
@@ -54,7 +54,7 @@ PTM:
       - Ratio H/L normalized Exp3
     merge replicates: mean
 
-  - file: data/WT_vs_noninvasive_1h.xlsx
+  - file: data/shigella/ubiquitination/WT_vs_noninvasive_1h.xlsx
     label: U
     time: 60
     replicates: 2
@@ -69,7 +69,7 @@ PTM:
       - Ratio H/L normalized Exp3
     merge replicates: mean
 
-  - file: data/WT_vs_noninvasive_2h.xlsx
+  - file: data/shigella/ubiquitination/WT_vs_noninvasive_2h.xlsx
     label: U
     time: 120
     replicates: 2
