@@ -47,7 +47,7 @@ PTM:
     protein column: Protein
     protein format: X
     position column: Positions within proteins
-    position format: X.Y;
+    position format: X;Y
     replicate columns:
       - Ratio H/L normalized Exp1
       - Ratio H/L normalized Exp2
@@ -62,7 +62,7 @@ PTM:
     protein column: Protein
     protein format: X
     position column: Positions within proteins
-    position format: X.Y;
+    position format: X;Y
     replicate columns:
       - Ratio H/L normalized Exp1
       - Ratio H/L normalized Exp2
@@ -77,7 +77,7 @@ PTM:
     protein column: Protein
     protein format: X
     position column: Positions within proteins
-    position format: X.Y;
+    position format: X;Y
     replicate columns:
       - Ratio H/L normalized Exp1
       - Ratio H/L normalized Exp2
