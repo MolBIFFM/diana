@@ -4,7 +4,7 @@ import sys
 
 import yaml
 
-from pipeline.configuration import convert, merge, modify
+from pipeline.interface import convert, merge, modify
 from pipeline.cytoscape_style import CytoscapeStyle
 from pipeline.protein_protein_interaction_network import (
     ProteinProteinInteractionNetwork,
