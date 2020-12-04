@@ -181,7 +181,9 @@ class ProteinProteinInteractionNetwork(nx.Graph):
                 else:
                     self.nodes[protein]["trend {}".format(time)] = ""
 
-    def add_interactions_from_BioGRID(self, experimental_system=[]):
+    def add_interactions_from_BioGRID(
+        self, experimental_system=[], multi_validated_physical=False
+    ):
         uniprot = {}
         for row in fetch.read_tabular_data(
             protein_protein_interaction_data.UNIPROT_ID_MAP,
@@ -211,8 +213,12 @@ class ProteinProteinInteractionNetwork(nx.Graph):
                 uniprot[int(row["BIOGRID_ID"])] = row["IDENTIFIER_VALUE"]
 
         for row in fetch.read_tabular_data(
-            protein_protein_interaction_data.BIOGRID_ARCHIVE,
-            zip_file=protein_protein_interaction_data.BIOGRID_FILE,
+            protein_protein_interaction_data.BIOGRID_MV_PHYSICAL_ARCHIVE
+            if multi_validated_physical
+            else protein_protein_interaction_data.BIOGRID_ARCHIVE,
+            zip_file=protein_protein_interaction_data.BIOGRID_MV_PHYSICAL_FILE
+            if multi_validated_physical
+            else protein_protein_interaction_data.BIOGRID_FILE,
             delimiter="\t",
             header=0,
             usecols=[
@@ -367,6 +373,7 @@ class ProteinProteinInteractionNetwork(nx.Graph):
         textmining=0.0,
         textmining_transferred=0.0,
         combined_score=0.0,
+        physical=False,
     ):
 
         uniprot = {}
@@ -406,7 +413,9 @@ class ProteinProteinInteractionNetwork(nx.Graph):
         thresholds["combined_score"] = combined_score
 
         for row in fetch.read_tabular_data(
-            protein_protein_interaction_data.STRING,
+            protein_protein_interaction_data.STRING_PHYSICAL
+            if physical
+            else protein_protein_interaction_data.STRING,
             delimiter=" ",
             header=0,
             usecols=["protein1", "protein2"] + list(thresholds.keys()),

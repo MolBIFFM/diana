@@ -93,10 +93,15 @@ def main():
                         "PCA",
                         "Two-hybrid",
                     ],
-                )
+                ),
+                multi_validated_physical=configuration["PPI"]["BioGRID"].get(
+                    "multi-validated physical", False
+                ),
             ):
                 logging.info(
-                    "{}\t{}\tBioGRID\t1.000".format(interactor_a, interactor_b)
+                    "{}\t{}\tBioGRID\t1.000".format(
+                        *sorted([interactor_a, interactor_b])
+                    )
                 )
 
         if configuration["PPI"].get("IntAct"):
@@ -114,7 +119,9 @@ def main():
                 mi_score=configuration["PPI"]["IntAct"].get("MI score", 0.27),
             ):
                 logging.info(
-                    "{}\t{}\tIntAct\t{:.3f}".format(interactor_a, interactor_b, score)
+                    "{}\t{}\tIntAct\t{:.3f}".format(
+                        *sorted([interactor_a, interactor_b]), score
+                    )
                 )
 
         if configuration["PPI"].get("STRING"):
@@ -149,9 +156,12 @@ def main():
                 combined_score=configuration["PPI"]["STRING"].get(
                     "combined score", 0.7
                 ),
+                physical=configuration["PPI"]["STRING"].get("physical", False),
             ):
                 logging.info(
-                    "{}\t{}\tSTRING\t{:.3f}".format(interactor_a, interactor_b, score)
+                    "{}\t{}\tSTRING\t{:.3f}".format(
+                        *sorted([interactor_a, interactor_b]), score
+                    )
                 )
 
     if args.styles:
