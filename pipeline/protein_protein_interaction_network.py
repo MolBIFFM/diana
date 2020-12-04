@@ -451,9 +451,6 @@ class ProteinProteinInteractionNetwork(nx.Graph):
                     ],
                 )
 
-    def remove_isolates(self):
-        self.remove_nodes_from(list(nx.isolates(self)))
-
     def export_as_graphml(self, file_name):
         nx.write_graphml_xml(self, file_name)
 

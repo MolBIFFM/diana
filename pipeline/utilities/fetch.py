@@ -4,6 +4,7 @@ import tempfile
 import urllib.parse
 import urllib.request
 import zipfile
+import re
 
 import pandas as pd
 
@@ -37,6 +38,9 @@ def decompress_zip_file(compressed_file_name, file=None):
     with zipfile.ZipFile(compressed_file_name) as archive:
         if not file:
             file = archive.namelist()[0]
+        else:
+            regex = re.compile(file)
+            file = next(filter(regex.match, archive.namelist()))
 
         if not os.path.exists(
             os.path.join(tempfile.gettempdir(), configuration.TMP_FOLDER, file)
