@@ -450,10 +450,3 @@ class ProteinProteinInteractionNetwork(nx.Graph):
                         "STRING"
                     ],
                 )
-
-    def export_as_graphml(self, file_name):
-        nx.write_graphml_xml(self, file_name)
-
-    def export_as_cyjs(self, file_name):
-        with open(file_name, "w") as file:
-            json.dump(nx.readwrite.json_graph.cytoscape_data(self), file, indent=2)

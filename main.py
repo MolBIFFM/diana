@@ -2,6 +2,8 @@ import argparse
 import logging
 import sys
 
+import networkx as nx
+import json
 import yaml
 
 from pipeline.interface import convert, merge, modify
@@ -198,9 +200,12 @@ def main():
 
     if args.network:
         if args.network.endswith(".graphml") or args.network.endswith(".xml"):
-            ppi_network.export_as_graphml(args.network)
+            nx.write_graphml_xml(ppi_network, args.network)
         elif args.network.endswith(".cyjs") or args.network.endswith(".json"):
-            ppi_network.export_as_cyjs(args.network)
+            with open(args.network, "w") as file:
+                json.dump(
+                    nx.readwrite.json_graph.cytoscape_data(ppi_network), file, indent=2
+                )
 
 
 if __name__ == "__main__":
