@@ -112,7 +112,3 @@ class CytoscapeStyle(ET.ElementTree):
             }
         )
         return "org.cytoscape.BarChart: {}".format(chart)
-
-    def export_as_xml(self, file_name):
-        with open(file_name, "wb") as file:
-            self.write(file, encoding="UTF-8", xml_declaration=True)

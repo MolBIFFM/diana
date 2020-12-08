@@ -25,6 +25,7 @@ class ProteinProteinInteractionNetwork(nx.Graph):
         replicates,
         protein_id_format,
         position_format,
+        sheet_name=0,
         header=0,
         num_sites=1,
         num_replicates=1,
@@ -34,6 +35,7 @@ class ProteinProteinInteractionNetwork(nx.Graph):
         proteins = {}
         for _, row in pd.read_excel(
             file_name,
+            sheet_name=sheet_name,
             header=header,
             usecols=[protein_id_col, position_col] + replicates,
             dtype={

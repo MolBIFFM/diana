@@ -1,115 +1,117 @@
-PTM:
-  - file: data/shigella/phosphorylation/mcp.M113.029918-2.xls
-    label: P
-    time: 15
-    replicates: 1
-    sites: 5
-    header: 1
-    protein column: protein
-    protein format: Y|X|Y
-    position column: phosphosites
-    position format: X_Y
-    replicate columns:
-      - wt15minvscontrolratio
-    log base: 10
+- network: shigella.graphml
+  styles: shigella.styles.xml
+  PTM:
+    - file: data/shigella/phosphorylation/mcp.M113.029918-2.xls
+      label: P
+      time: 15
+      replicates: 1
+      sites: 5
+      header: 1
+      protein column: protein
+      protein format: Y|X|Y
+      position column: phosphosites
+      position format: X_Y
+      replicate columns:
+        - wt15minvscontrolratio
+      log base: 10
 
-  - file: data/shigella/phosphorylation/mcp.M113.029918-2.xls
-    label: P
-    time: 60
-    sites: 5
-    header: 1
-    protein column: protein
-    protein format: Y|X|Y
-    position column: phosphosites
-    position format: X_Y
-    replicate columns:
-      - wt60minvscontrolratio
-    log base: 10
+    - file: data/shigella/phosphorylation/mcp.M113.029918-2.xls
+      label: P
+      time: 60
+      sites: 5
+      header: 1
+      protein column: protein
+      protein format: Y|X|Y
+      position column: phosphosites
+      position format: X_Y
+      replicate columns:
+        - wt60minvscontrolratio
+      log base: 10
 
-  - file: data/shigella/phosphorylation/mcp.M113.029918-2.xls
-    label: P
-    time: 120
-    sites: 5
-    header: 1
-    protein column: protein
-    protein format: Y|X|Y
-    position column: phosphosites
-    position format: X_Y
-    replicate columns:
-      - wt120minvscontrolratio
-    log base: 10
+    - file: data/shigella/phosphorylation/mcp.M113.029918-2.xls
+      label: P
+      time: 120
+      sites: 5
+      header: 1
+      protein column: protein
+      protein format: Y|X|Y
+      position column: phosphosites
+      position format: X_Y
+      replicate columns:
+        - wt120minvscontrolratio
+      log base: 10
 
-  - file: data/shigella/ubiquitination/WT_vs_noninvasive_15min.xlsx
-    label: U
-    time: 15
-    replicates: 2
-    sites: 5
-    protein column: Protein
-    protein format: X
-    position column: Positions within proteins
-    position format: X;Y
-    replicate columns:
-      - Ratio H/L normalized Exp1
-      - Ratio H/L normalized Exp2
-      - Ratio H/L normalized Exp3
-    merge replicates: mean
+    - file: data/shigella/ubiquitination/WT_vs_noninvasive_15min.xlsx
+      label: U
+      time: 15
+      sites: 5
+      protein column: Protein
+      protein format: X
+      position column: Positions within proteins
+      position format: X;Y
+      replicate columns:
+        - Ratio H/L normalized Exp1
+        - Ratio H/L normalized Exp2
+        - Ratio H/L normalized Exp3
+      replicates: 2
+      merge replicates: mean
 
-  - file: data/shigella/ubiquitination/WT_vs_noninvasive_1h.xlsx
-    label: U
-    time: 60
-    replicates: 2
-    sites: 5
-    protein column: Protein
-    protein format: X
-    position column: Positions within proteins
-    position format: X;Y
-    replicate columns:
-      - Ratio H/L normalized Exp1
-      - Ratio H/L normalized Exp2
-      - Ratio H/L normalized Exp3
-    merge replicates: mean
+    - file: data/shigella/ubiquitination/WT_vs_noninvasive_1h.xlsx
+      label: U
+      time: 60
+      sites: 5
+      protein column: Protein
+      protein format: X
+      position column: Positions within proteins
+      position format: X;Y
+      replicate columns:
+        - Ratio H/L normalized Exp1
+        - Ratio H/L normalized Exp2
+        - Ratio H/L normalized Exp3
+      replicates: 2
+      merge replicates: mean
 
-  - file: data/shigella/ubiquitination/WT_vs_noninvasive_2h.xlsx
-    label: U
-    time: 120
-    replicates: 2
-    sites: 5
-    protein column: Protein
-    protein format: X
-    position column: Positions within proteins
-    position format: X;Y
-    replicate columns:
-      - Ratio H/L normalized Exp1
-      - Ratio H/L normalized Exp2
-      - Ratio H/L normalized Exp3
-    merge replicates: mean
-    
-PPI:
-  BioGRID:
-    experimental system:
-      - Affinity Capture-Luminescence
-      - Affinity Capture-MS
-      - Affinity Capture-RNA 
-      - Affinity Capture-Western
-      - Biochemical Activity
-      - Co-crystal Structure
-      - Co-purification
-      - FRET
-      - PCA
-      - Two-hybrid
+    - file: data/shigella/ubiquitination/WT_vs_noninvasive_2h.xlsx
+      label: U
+      time: 120
+      sites: 5
+      protein column: Protein
+      protein format: X
+      position column: Positions within proteins
+      position format: X;Y
+      replicate columns:
+        - Ratio H/L normalized Exp1
+        - Ratio H/L normalized Exp2
+        - Ratio H/L normalized Exp3
+      replicates: 2
+      merge replicates: mean
+      
+  PPI:
+    BioGRID:
+      experimental system:
+        - Affinity Capture-Luminescence
+        - Affinity Capture-MS
+        - Affinity Capture-RNA 
+        - Affinity Capture-Western
+        - Biochemical Activity
+        - Co-crystal Structure
+        - Co-purification
+        - FRET
+        - PCA
+        - Two-hybrid
 
-  IntAct: 
-    MI score: 0.27
+    IntAct: 
+      MI score: 0.27
 
-  STRING:
-    experiments: 0.7
-    combined score: 0.7
+    STRING:
+      experiments: 0.7
+      combined score: 0.7
 
-Cytoscape:
-  bar chart:
-    minimum: -3.0
-    maximum: 3.0
-  mid range:
-    minimum: -1.0
-    maximum: 1.0
-  merge sites: mean
+  Cytoscape:
+    bar chart:
+      minimum: -3.0
+      maximum: 3.0
+    mid range:
+      minimum: -1.0
+      maximum: 1.0
+    merge sites: mean
