@@ -1,6 +1,7 @@
 import argparse
 import json
 import logging
+import os
 import sys
 import xml.etree.ElementTree as ET
 
@@ -42,7 +43,7 @@ def main():
         )
 
     for configuration in configurations:
-        logging.info(configuration.get("network", ""))
+        logging.info(os.path.splitext(configuration.get("network", ""))[0])
         ppi_network = ProteinProteinInteractionNetwork()
 
         for entry in configuration.get("PTM", {}):

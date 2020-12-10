@@ -44,10 +44,10 @@
       position column: Positions within proteins
       position format: X;Y
       replicate columns:
-        - Ratio H/L normalized HeLa_05_R1
-        - Ratio H/L normalized HeLa_05_R2
-        - Ratio H/L normalized HeLa_05_R3
-        - Ratio H/L normalized HeLa_05_R4
+        - Ratio H/L normalized HCT116_05_R1
+        - Ratio H/L normalized HCT116_05_R2
+        - Ratio H/L normalized HCT116_05_R3
+        - Ratio H/L normalized HCT116_05_R4
       replicates: 2
       merge replicates: mean
       log base: 2
@@ -61,10 +61,10 @@
       position column: Positions within proteins
       position format: X;Y
       replicate columns:
-        - Ratio H/L normalized HeLa_2_R1
-        - Ratio H/L normalized HeLa_2_R2
-        - Ratio H/L normalized HeLa_2_R3
-        - Ratio H/L normalized HeLa_2_R4
+        - Ratio H/L normalized HCT116_2_R1
+        - Ratio H/L normalized HCT116_2_R2
+        - Ratio H/L normalized HCT116_2_R3
+        - Ratio H/L normalized HCT116_2_R4
       replicates: 2
       merge replicates: mean
       log base: 2
@@ -135,6 +135,7 @@
       replicates: 2
       merge replicates: mean
       log base: 2
+      
   PPI:
     BioGRID:
       experimental system:
