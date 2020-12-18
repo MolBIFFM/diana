@@ -27,30 +27,32 @@ def main():
     parser.add_argument("-l", "--log", help="file name for log")
     args = parser.parse_args()
 
+    logging.basicConfig(
+        stream=sys.stdout,
+        level=logging.DEBUG,
+        format="%(asctime)s\t%(levelname)s\t%(message)s",
+        datefmt="%H:%M:%S",
+    )
+
+    logger = logging.getLogger("root")
+
     if args.log:
-        logging.basicConfig(
-            filename=args.log,
-            filemode="w",
-            level=logging.DEBUG,
-            format="%(asctime)s\t%(levelname)s\t%(message)s",
-            datefmt="%H:%M:%S",
+        log_file = logging.FileHandler(args.log, mode="w")
+        log_file.setFormatter(
+            logging.Formatter(
+                fmt="%(asctime)s\t%(levelname)s\t%(message)s", datefmt="%H:%M:%S"
+            )
         )
-    else:
-        logging.basicConfig(
-            stream=sys.stdout,
-            level=logging.DEBUG,
-            format="%(asctime)s\t%(levelname)s\t%(message)s",
-            datefmt="%H:%M:%S",
-        )
+        logger.addHandler(log_file)
 
     for configuration_file in args.configurations:
-        logging.info(os.path.splitext(configuration_file)[0])
+        logger.info(os.path.splitext(configuration_file)[0])
 
         with open(configuration_file) as configuration:
             configurations = yaml.load(configuration, Loader=yaml.Loader)
 
         for configuration in configurations:
-            logging.info(os.path.splitext(configuration.get("network", ""))[0])
+            logger.info(os.path.splitext(configuration.get("network", ""))[0])
 
             ppi_network = ProteinProteinInteractionNetwork()
 
@@ -76,8 +78,9 @@ def main():
                         entry.get("merge replicates", "mean"), merge.MERGE["mean"]
                     ),
                     convert_measurement=convert.LOG_BASE[entry.get("log base")],
+                    reviewed=entry.get("reviewed", True),
                 ):
-                    logging.info(
+                    logger.info(
                         "{}\t{}\t{}\t{}".format(
                             protein,
                             entry["time"],
@@ -118,7 +121,7 @@ def main():
                             "multi-validated physical", False
                         ),
                     ):
-                        logging.info(
+                        logger.info(
                             "{}\t{}\tBioGRID\t1.000".format(
                                 *sorted([interactor_a, interactor_b])
                             )
@@ -138,7 +141,7 @@ def main():
                         ),
                         mi_score=configuration["PPI"]["IntAct"].get("MI score", 0.27),
                     ):
-                        logging.info(
+                        logger.info(
                             "{}\t{}\tIntAct\t{:.3f}".format(
                                 *sorted([interactor_a, interactor_b]), score
                             )
@@ -188,7 +191,7 @@ def main():
                         ),
                         physical=configuration["PPI"]["STRING"].get("physical", False),
                     ):
-                        logging.info(
+                        logger.info(
                             "{}\t{}\tSTRING\t{:.3f}".format(
                                 *sorted([interactor_a, interactor_b]), score
                             )

@@ -56,8 +56,7 @@ def decompress_zip_file(compressed_file_name, file=None):
     return decompressed_file_name
 
 
-def read_tabular_data(url, zip_file=None, delimiter=None, header=None, usecols=[]):
-
+def fetch_data(url, zip_file=None):
     if not os.path.exists(
         os.path.join(tempfile.gettempdir(), configuration.TMP_FOLDER)
     ):
@@ -77,6 +76,18 @@ def read_tabular_data(url, zip_file=None, delimiter=None, header=None, usecols=[
         local_file_name = decompress_gzip_file(local_file_name)
     elif file_name_extension == ".zip":
         local_file_name = decompress_zip_file(local_file_name, zip_file)
+
+    return local_file_name
+
+
+def iterate_data(url, zip_file=None):
+    with open(fetch_data(url, zip_file), buffering=configuration.CHUNK_SIZE) as file:
+        for line in file:
+            yield line.rstrip("\n")
+
+
+def iterate_tabular_data(url, zip_file=None, delimiter=None, header=None, usecols=[]):
+    local_file_name = fetch_data(url, zip_file)
 
     if os.path.splitext(local_file_name)[1] == ".csv":
         delimiter = ","

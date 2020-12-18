@@ -8,7 +8,7 @@
       sites: 5
       header: 1
       protein column: protein
-      protein format: Y|X|Y
+      protein format: Y|X|Z
       position column: phosphosites
       position format: X_Y
       replicate columns:
@@ -21,7 +21,7 @@
       sites: 5
       header: 1
       protein column: protein
-      protein format: Y|X|Y
+      protein format: Y|X|Z
       position column: phosphosites
       position format: X_Y
       replicate columns:
@@ -34,7 +34,7 @@
       sites: 5
       header: 1
       protein column: protein
-      protein format: Y|X|Y
+      protein format: Y|X|Z
       position column: phosphosites
       position format: X_Y
       replicate columns:
@@ -45,10 +45,10 @@
       label: U
       time: 15
       sites: 5
-      protein column: Protein
-      protein format: X
+      protein column: Proteins
+      protein format: X;X
       position column: Positions within proteins
-      position format: X;Y
+      position format: X;X
       replicate columns:
         - Ratio H/L normalized Exp1
         - Ratio H/L normalized Exp2
@@ -60,10 +60,10 @@
       label: U
       time: 60
       sites: 5
-      protein column: Protein
-      protein format: X
+      protein column: Proteins
+      protein format: X;X
       position column: Positions within proteins
-      position format: X;Y
+      position format: X;X
       replicate columns:
         - Ratio H/L normalized Exp1
         - Ratio H/L normalized Exp2
@@ -75,10 +75,10 @@
       label: U
       time: 120
       sites: 5
-      protein column: Protein
-      protein format: X
+      protein column: Proteins
+      protein format: X;X
       position column: Positions within proteins
-      position format: X;Y
+      position format: X;X
       replicate columns:
         - Ratio H/L normalized Exp1
         - Ratio H/L normalized Exp2

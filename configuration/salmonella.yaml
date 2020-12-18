@@ -5,8 +5,8 @@
       label: P
       time: 30
       sites: 5
-      protein column: Protein
-      protein format: X
+      protein column: Fasta.headers
+      protein format: Y|X|Z;Y|X|Z
       position column: Positions.within.proteins
       position format: X
       replicate columns:
@@ -22,8 +22,8 @@
       label: P
       time: 120
       sites: 5
-      protein column: Protein
-      protein format: X
+      protein column: Fasta.headers
+      protein format: Y|X|Z;Y|X|Z
       position column: Positions.within.proteins
       position format: X
       replicate columns:
@@ -39,10 +39,10 @@
       label: U
       time: 30
       sites: 5
-      protein column: Protein
-      protein format: X
+      protein column: Proteins
+      protein format: X;X
       position column: Positions within proteins
-      position format: X;Y
+      position format: X;X
       replicate columns:
         - Ratio H/L normalized HCT116_05_R1
         - Ratio H/L normalized HCT116_05_R2
@@ -56,10 +56,10 @@
       label: U
       time: 120
       sites: 5
-      protein column: Protein
-      protein format: X
+      protein column: Proteins
+      protein format: X;X
       position column: Positions within proteins
-      position format: X;Y
+      position format: X;X
       replicate columns:
         - Ratio H/L normalized HCT116_2_R1
         - Ratio H/L normalized HCT116_2_R2

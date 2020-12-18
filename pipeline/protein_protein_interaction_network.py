@@ -6,7 +6,7 @@ import json
 import networkx as nx
 import pandas as pd
 
-from pipeline.configuration import protein_protein_interaction_data
+from pipeline.configuration import data
 from pipeline.utilities import fetch
 from pipeline.utilities import mitab
 
@@ -31,6 +31,7 @@ class ProteinProteinInteractionNetwork(nx.Graph):
         num_replicates=1,
         merge_replicates=statistics.mean,
         convert_measurement=math.log2,
+        reviewed=True,
     ):
         proteins = {}
         for _, row in pd.read_excel(
@@ -51,15 +52,38 @@ class ProteinProteinInteractionNetwork(nx.Graph):
             measurements = [row[repl] for repl in replicates if not pd.isna(row[repl])]
 
             if len(measurements) >= min(num_replicates, len(replicates)):
-                protein_id = str(protein_id_format(row[protein_id_col]))
-                position = int(position_format(row[position_col]))
+                protein_ids = [
+                    str(protein_id)
+                    for protein_id in protein_id_format(row[protein_id_col])
+                ]
+                positions = [
+                    int(position) for position in position_format(row[position_col])
+                ]
 
-                if protein_id not in proteins:
-                    proteins[protein_id] = []
-                bisect.insort(
-                    proteins[protein_id],
-                    (position, convert_measurement(merge_replicates(measurements))),
-                )
+                for protein_id, position in zip(protein_ids, positions):
+                    if protein_id not in proteins:
+                        proteins[protein_id] = []
+                    bisect.insort(
+                        proteins[protein_id],
+                        (position, convert_measurement(merge_replicates(measurements))),
+                    )
+
+                if len(protein_ids) > len(positions):
+                    for protein_id in protein_ids[len(positions) - 1 :]:
+                        if protein_id not in proteins:
+                            proteins[protein_id] = []
+                        proteins[protein_id].append(
+                            (0, convert_measurement(merge_replicates(measurements)))
+                        )
+
+        if reviewed:
+            reviewed_proteins = {}
+            for line in fetch.iterate_data(data.UNIPROT_SWISS_PROT):
+                if line.split("   ")[0] == "AC":
+                    for accession in line.split("   ")[1].rstrip(";").split("; "):
+                        if accession in proteins and accession not in reviewed_proteins:
+                            reviewed_proteins[accession] = proteins[accession]
+            proteins = reviewed_proteins
 
         for protein in proteins:
             self.add_node(protein)
@@ -187,17 +211,17 @@ class ProteinProteinInteractionNetwork(nx.Graph):
         self, experimental_system=[], multi_validated_physical=False
     ):
         uniprot = {}
-        for row in fetch.read_tabular_data(
-            protein_protein_interaction_data.UNIPROT_ID_MAP,
+        for row in fetch.iterate_tabular_data(
+            data.UNIPROT_ID_MAP,
             delimiter="\t",
             usecols=[0, 1, 2],
         ):
             if row[1] == "BioGRID" and row[0] in self.nodes:
                 uniprot[int(row[2])] = row[0]
 
-        for row in fetch.read_tabular_data(
-            protein_protein_interaction_data.BIOGRID_ID_MAP_ARCHIVE,
-            zip_file=protein_protein_interaction_data.BIOGRID_ID_MAP_FILE,
+        for row in fetch.iterate_tabular_data(
+            data.BIOGRID_ID_MAP_ARCHIVE,
+            zip_file=data.BIOGRID_ID_MAP_FILE,
             delimiter="\t",
             header=20,
             usecols=[
@@ -214,13 +238,13 @@ class ProteinProteinInteractionNetwork(nx.Graph):
             ):
                 uniprot[int(row["BIOGRID_ID"])] = row["IDENTIFIER_VALUE"]
 
-        for row in fetch.read_tabular_data(
-            protein_protein_interaction_data.BIOGRID_MV_PHYSICAL_ARCHIVE
+        for row in fetch.iterate_tabular_data(
+            data.BIOGRID_MV_PHYSICAL_ARCHIVE
             if multi_validated_physical
-            else protein_protein_interaction_data.BIOGRID_ARCHIVE,
-            zip_file=protein_protein_interaction_data.BIOGRID_MV_PHYSICAL_FILE
+            else data.BIOGRID_ARCHIVE,
+            zip_file=data.BIOGRID_MV_PHYSICAL_FILE
             if multi_validated_physical
-            else protein_protein_interaction_data.BIOGRID_FILE,
+            else data.BIOGRID_FILE,
             delimiter="\t",
             header=0,
             usecols=[
@@ -263,9 +287,9 @@ class ProteinProteinInteractionNetwork(nx.Graph):
     def add_interactions_from_IntAct(
         self, interaction_detection_methods=[], interaction_types=[], mi_score=0.0
     ):
-        for row in fetch.read_tabular_data(
-            protein_protein_interaction_data.INTACT_ARCHIVE,
-            zip_file=protein_protein_interaction_data.INTACT_FILE,
+        for row in fetch.iterate_tabular_data(
+            data.INTACT_ARCHIVE,
+            zip_file=data.INTACT_FILE,
             delimiter="\t",
             header=0,
             usecols=[
@@ -379,16 +403,16 @@ class ProteinProteinInteractionNetwork(nx.Graph):
     ):
 
         uniprot = {}
-        for row in fetch.read_tabular_data(
-            protein_protein_interaction_data.UNIPROT_ID_MAP,
+        for row in fetch.iterate_tabular_data(
+            data.UNIPROT_ID_MAP,
             delimiter="\t",
             usecols=[0, 1, 2],
         ):
             if row[1] == "STRING" and row[0] in self.nodes:
                 uniprot[row[2]] = row[0]
 
-        for row in fetch.read_tabular_data(
-            protein_protein_interaction_data.STRING_ID_MAP, usecols=[1, 2]
+        for row in fetch.iterate_tabular_data(
+            data.STRING_ID_MAP, usecols=[1, 2]
         ):
             if row[1].split("|")[0] in self.nodes:
                 uniprot[row[2]] = row[1].split("|")[0]
@@ -414,10 +438,10 @@ class ProteinProteinInteractionNetwork(nx.Graph):
         }
         thresholds["combined_score"] = combined_score
 
-        for row in fetch.read_tabular_data(
-            protein_protein_interaction_data.STRING_PHYSICAL
+        for row in fetch.iterate_tabular_data(
+            data.STRING_PHYSICAL
             if physical
-            else protein_protein_interaction_data.STRING,
+            else data.STRING,
             delimiter=" ",
             header=0,
             usecols=["protein1", "protein2"] + list(thresholds.keys()),
