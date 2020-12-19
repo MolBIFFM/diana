@@ -60,16 +60,19 @@ class ProteinProteinInteractionNetwork(nx.Graph):
                     int(position) for position in position_format(row[position_col])
                 ]
 
-                for protein_id, position in zip(protein_ids, positions):
-                    if protein_id not in proteins:
-                        proteins[protein_id] = []
-                    bisect.insort(
-                        proteins[protein_id],
-                        (position, convert_measurement(merge_replicates(measurements))),
-                    )
-
-                if len(protein_ids) > len(positions):
-                    for protein_id in protein_ids[len(positions) - 1 :]:
+                if len(protein_ids) == len(positions):
+                    for protein_id, position in zip(protein_ids, positions):
+                        if protein_id not in proteins:
+                            proteins[protein_id] = []
+                        bisect.insort(
+                            proteins[protein_id],
+                            (
+                                position,
+                                convert_measurement(merge_replicates(measurements)),
+                            ),
+                        )
+                else:
+                    for protein_id in protein_ids:
                         if protein_id not in proteins:
                             proteins[protein_id] = []
                         proteins[protein_id].append(
@@ -411,9 +414,7 @@ class ProteinProteinInteractionNetwork(nx.Graph):
             if row[1] == "STRING" and row[0] in self.nodes:
                 uniprot[row[2]] = row[0]
 
-        for row in fetch.iterate_tabular_data(
-            data.STRING_ID_MAP, usecols=[1, 2]
-        ):
+        for row in fetch.iterate_tabular_data(data.STRING_ID_MAP, usecols=[1, 2]):
             if row[1].split("|")[0] in self.nodes:
                 uniprot[row[2]] = row[1].split("|")[0]
 
@@ -439,9 +440,7 @@ class ProteinProteinInteractionNetwork(nx.Graph):
         thresholds["combined_score"] = combined_score
 
         for row in fetch.iterate_tabular_data(
-            data.STRING_PHYSICAL
-            if physical
-            else data.STRING,
+            data.STRING_PHYSICAL if physical else data.STRING,
             delimiter=" ",
             header=0,
             usecols=["protein1", "protein2"] + list(thresholds.keys()),
