@@ -20,10 +20,10 @@ class ProteinProteinInteractionNetwork(nx.Graph):
         file_name,
         ptm,
         time,
-        protein_id_col,
+        protein_accession_col,
         position_col,
         replicates,
-        protein_id_format,
+        protein_accession_format,
         position_format,
         sheet_name=0,
         header=0,
@@ -31,80 +31,122 @@ class ProteinProteinInteractionNetwork(nx.Graph):
         num_replicates=1,
         merge_replicates=statistics.mean,
         convert_measurement=math.log2,
-        reviewed=True,
     ):
         proteins = {}
         for _, row in pd.read_excel(
             file_name,
             sheet_name=sheet_name,
             header=header,
-            usecols=[protein_id_col, position_col] + replicates,
+            usecols=[protein_accession_col, position_col] + replicates,
             dtype={
-                protein_id_col: str,
+                protein_accession_col: str,
                 position_col: str,
                 **{replicate: float for replicate in replicates},
             },
         ).iterrows():
 
-            if pd.isna(row[protein_id_col]) or pd.isna(row[position_col]):
+            if pd.isna(row[protein_accession_col]) or pd.isna(row[position_col]):
                 continue
 
             measurements = [row[repl] for repl in replicates if not pd.isna(row[repl])]
 
             if len(measurements) >= min(num_replicates, len(replicates)):
-                protein_ids = [
-                    str(protein_id)
-                    for protein_id in protein_id_format(row[protein_id_col])
+                protein_accessions = [
+                    str(protein_accession)
+                    for protein_accession in protein_accession_format(
+                        row[protein_accession_col]
+                    )
                 ]
                 positions = [
                     int(position) for position in position_format(row[position_col])
                 ]
 
-                if len(protein_ids) == len(positions):
-                    for protein_id, position in zip(protein_ids, positions):
-                        if protein_id not in proteins:
-                            proteins[protein_id] = []
+                if len(protein_accessions) == len(positions):
+                    for protein_accession, position in zip(
+                        protein_accessions, positions
+                    ):
+                        if len(protein_accession.split("-")) > 1:
+                            protein, isoform = protein_accession.split("-")
+                        else:
+                            protein, isoform = protein_accession, "1"
+
+                        if protein not in proteins:
+                            proteins[protein] = {}
+                        if isoform not in proteins[protein]:
+                            proteins[protein][isoform] = []
+
                         bisect.insort(
-                            proteins[protein_id],
+                            proteins[protein][isoform],
                             (
                                 position,
                                 convert_measurement(merge_replicates(measurements)),
                             ),
                         )
                 else:
-                    for protein_id in protein_ids:
-                        if protein_id not in proteins:
-                            proteins[protein_id] = []
-                        proteins[protein_id].append(
+                    for protein_accession in protein_accessions:
+                        if len(protein_accession.split("-")) > 1:
+                            protein, isoform = protein_accession.split("-")
+                        else:
+                            protein, isoform = protein_accession, "1"
+
+                        if protein not in proteins:
+                            proteins[protein] = {}
+                        if isoform not in proteins[protein]:
+                            proteins[protein][isoform] = []
+
+                        proteins[protein][isoform].append(
                             (0, convert_measurement(merge_replicates(measurements)))
                         )
 
-        if reviewed:
-            reviewed_proteins = {}
-            for line in fetch.iterate_data(data.UNIPROT_SWISS_PROT):
-                if line.split("   ")[0] == "AC":
-                    for accession in line.split("   ")[1].rstrip(";").split("; "):
-                        if accession in proteins and accession not in reviewed_proteins:
-                            reviewed_proteins[accession] = proteins[accession]
-            proteins = reviewed_proteins
+        reviewed_proteins, primary_accession = {}, {}
+        for line in fetch.iterate_data(data.UNIPROT_SWISS_PROT):
+            if line.split("   ")[0] == "AC":
+                accessions = line.split("   ")[1].rstrip(";").split("; ")
+                for i, accession in enumerate(accessions):
+                    if accession in proteins:
+                        reviewed_proteins[accession] = proteins[accession]
+                        if i > 0:
+                            primary_accession[accession] = accessions[0]
+        proteins = reviewed_proteins
+
+        for protein in primary_accession:
+            if primary_accession[protein] not in proteins:
+                proteins[primary_accession[protein]] = proteins.pop(protein)
 
         for protein in proteins:
-            self.add_node(protein)
-            if len(proteins[protein]) > num_sites:
-                proteins[protein] = sorted(
-                    sorted(proteins[protein], key=lambda tp: tp[1], reverse=True)[
-                        :num_sites
-                    ]
-                )
-            for i in range(len(proteins[protein])):
-                self.nodes[protein][
-                    "{} {} {}".format(str(time), ptm, str(i + 1))
-                ] = proteins[protein][i][1]
+            for isoform in proteins[protein]:
+                if isoform != "1":
+                    self.add_node("{}-{}".format(protein, isoform))
+                else:
+                    self.add_node(protein)
 
-            yield (
-                protein,
-                tuple([proteins[protein][i][1] for i in range(len(proteins[protein]))]),
-            )
+                if len(proteins[protein][isoform]) > num_sites:
+                    proteins[protein][isoform] = sorted(
+                        sorted(
+                            proteins[protein][isoform],
+                            key=lambda tp: tp[1],
+                            reverse=True,
+                        )[:num_sites]
+                    )
+                for i in range(len(proteins[protein][isoform])):
+                    if isoform != "1":
+                        self.nodes["{}-{}".format(protein, isoform)][
+                            "{} {} {}".format(str(time), ptm, str(i + 1))
+                        ] = proteins[protein][isoform][i][1]
+                    else:
+                        self.nodes[protein][
+                            "{} {} {}".format(str(time), ptm, str(i + 1))
+                        ] = proteins[protein][isoform][i][1]
+
+                yield (
+                    "{}-{}".format(protein, isoform) if isoform != "1" else protein,
+                    tuple(
+                        [
+                            proteins[protein][isoform][i][1]
+                            for i in range(len(proteins[protein][isoform]))
+                        ]
+                    ),
+                )
 
     def get_times(self):
         return tuple(

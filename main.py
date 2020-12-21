@@ -61,10 +61,10 @@ def main():
                     entry["file"],
                     entry["label"],
                     entry["time"],
-                    protein_id_col=entry["protein column"],
+                    protein_accession_col=entry["protein column"],
                     position_col=entry["position column"],
                     replicates=entry["replicate columns"],
-                    protein_id_format=modify.MODIFY.get(
+                    protein_accession_format=modify.MODIFY.get(
                         entry["protein format"], lambda x: x
                     ),
                     position_format=modify.MODIFY.get(
@@ -78,21 +78,13 @@ def main():
                         entry.get("merge replicates", "mean"), merge.MERGE["mean"]
                     ),
                     convert_measurement=convert.LOG_BASE[entry.get("log base")],
-                    reviewed=entry.get("reviewed", True),
                 ):
                     logger.info(
                         "{}\t{}\t{}\t{}".format(
                             protein,
                             entry["time"],
                             entry["label"],
-                            " ".join(
-                                [
-                                    " {:.3f}".format(site)
-                                    if site > 0.0
-                                    else "{:.3f}".format(site)
-                                    for site in sites
-                                ]
-                            ),
+                            " ".join(["{:.2f}".format(site) for site in sites]),
                         )
                     )
 
