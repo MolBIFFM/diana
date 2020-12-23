@@ -2,6 +2,7 @@ import math
 import statistics
 import bisect
 import json
+import itertools
 
 import networkx as nx
 import pandas as pd
@@ -61,42 +62,26 @@ class ProteinProteinInteractionNetwork(nx.Graph):
                     int(position) for position in position_format(row[position_col])
                 ]
 
-                if len(protein_accessions) == len(positions):
-                    for protein_accession, position in zip(
-                        protein_accessions, positions
-                    ):
-                        if len(protein_accession.split("-")) > 1:
-                            protein, isoform = protein_accession.split("-")
-                        else:
-                            protein, isoform = protein_accession, "1"
+                for protein_accession, position in itertools.zip_longest(
+                    protein_accessions, positions, fillvalue=0
+                ):
+                    if len(protein_accession.split("-")) > 1:
+                        protein, isoform = protein_accession.split("-")
+                    else:
+                        protein, isoform = protein_accession, "1"
 
-                        if protein not in proteins:
-                            proteins[protein] = {}
-                        if isoform not in proteins[protein]:
-                            proteins[protein][isoform] = []
+                    if protein not in proteins:
+                        proteins[protein] = {}
+                    if isoform not in proteins[protein]:
+                        proteins[protein][isoform] = []
 
-                        bisect.insort(
-                            proteins[protein][isoform],
-                            (
-                                position,
-                                convert_measurement(merge_replicates(measurements)),
-                            ),
-                        )
-                else:
-                    for protein_accession in protein_accessions:
-                        if len(protein_accession.split("-")) > 1:
-                            protein, isoform = protein_accession.split("-")
-                        else:
-                            protein, isoform = protein_accession, "1"
-
-                        if protein not in proteins:
-                            proteins[protein] = {}
-                        if isoform not in proteins[protein]:
-                            proteins[protein][isoform] = []
-
-                        proteins[protein][isoform].append(
-                            (0, convert_measurement(merge_replicates(measurements)))
-                        )
+                    bisect.insort(
+                        proteins[protein][isoform],
+                        (
+                            position,
+                            convert_measurement(merge_replicates(measurements)),
+                        ),
+                    )
 
         reviewed_proteins, primary_accession = {}, {}
         for line in fetch.iterate_data(data.UNIPROT_SWISS_PROT):
@@ -112,6 +97,32 @@ class ProteinProteinInteractionNetwork(nx.Graph):
         for protein in primary_accession:
             if primary_accession[protein] not in proteins:
                 proteins[primary_accession[protein]] = proteins.pop(protein)
+            else:
+                for primary_isoform in list(proteins[primary_accession[protein]]):
+                    for secondary_isoform in list(proteins[protein]):
+                        primary_positions, primary_measurements = list(
+                            zip(*proteins[primary_accession[protein]][primary_isoform])
+                        )
+                        secondary_positions, secondary_measurements = list(
+                            zip(*proteins[protein][secondary_isoform])
+                        )
+                        if set(secondary_measurements) == set(primary_measurements):
+                            positions = [
+                                secondary_position
+                                if not primary_position
+                                else primary_position
+                                for primary_position, secondary_position in zip(
+                                    primary_positions, secondary_positions
+                                )
+                            ]
+                        proteins[primary_accession[protein]][primary_isoform] = list(
+                            zip(positions, primary_measurements)
+                        )
+                        del proteins[protein][secondary_isoform]
+                        break
+
+                if not proteins[protein]:
+                    del proteins[protein]
 
         for protein in proteins:
             for isoform in proteins[protein]:
