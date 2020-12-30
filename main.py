@@ -204,18 +204,11 @@ def main():
 
                 ppi_network.set_ptm_data_column()
                 ppi_network.set_trend_data_column(
-                    mid_range=(
-                        configuration.get("Cytoscape", {})
-                        .get("mid range", {})
-                        .get("minimum", -1.0),
-                        configuration.get("Cytoscape", {})
-                        .get("mid range", {})
-                        .get("maximum", 1.0),
-                    ),
-                    merge_trends=merge.MERGE.get(
+                    merge_sites=merge.MERGE.get(
                         configuration.get("Cytoscape", {}).get("merge sites", "mean"),
                         merge.MERGE["mean"],
                     ),
+                    p=configuration.get("Cytoscape", {}).get("threshold", 0.05),
                 )
 
                 if configuration["styles"].endswith(".xml"):

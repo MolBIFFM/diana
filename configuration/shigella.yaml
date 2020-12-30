@@ -10,7 +10,7 @@
       protein column: protein
       protein format: Y|X|Z
       position column: phosphosites
-      position format: X_Y
+      position format: X_Y,X_Y
       replicate columns:
         - wt15minvscontrolratio
       log base: 10
@@ -23,7 +23,7 @@
       protein column: protein
       protein format: Y|X|Z
       position column: phosphosites
-      position format: X_Y
+      position format: X_Y,X_Y
       replicate columns:
         - wt60minvscontrolratio
       log base: 10
@@ -36,7 +36,7 @@
       protein column: protein
       protein format: Y|X|Z
       position column: phosphosites
-      position format: X_Y
+      position format: X_Y,X_Y
       replicate columns:
         - wt120minvscontrolratio
       log base: 10
@@ -111,7 +111,5 @@
     bar chart:
       minimum: -3.0
       maximum: 3.0
-    mid range:
-      minimum: -1.0
-      maximum: 1.0
+    threshold: 0.05
     merge sites: mean

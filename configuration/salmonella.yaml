@@ -94,8 +94,6 @@
     bar chart:
       minimum: -3.0
       maximum: 3.0
-    mid range:
-      minimum: -1.0
-      maximum: 1.0
+    threshold: 0.05
     merge sites: mean
     

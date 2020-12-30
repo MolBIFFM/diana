@@ -1,15 +1,15 @@
+import bisect
+import itertools
+import json
 import math
 import statistics
-import bisect
-import json
-import itertools
 
 import networkx as nx
+import scipy.stats
 import pandas as pd
 
 from pipeline.configuration import data
-from pipeline.utilities import fetch
-from pipeline.utilities import mitab
+from pipeline.utilities import fetch, mitab
 
 
 class ProteinProteinInteractionNetwork(nx.Graph):
@@ -95,17 +95,16 @@ class ProteinProteinInteractionNetwork(nx.Graph):
         proteins = reviewed_proteins
 
         for protein in primary_accession:
-            if primary_accession[protein] not in proteins:
-                proteins[primary_accession[protein]] = proteins.pop(protein)
-            else:
+            if primary_accession[protein] in proteins:
                 for primary_isoform in list(proteins[primary_accession[protein]]):
+                    primary_positions, primary_measurements = list(
+                        zip(*proteins[primary_accession[protein]][primary_isoform])
+                    )
                     for secondary_isoform in list(proteins[protein]):
-                        primary_positions, primary_measurements = list(
-                            zip(*proteins[primary_accession[protein]][primary_isoform])
-                        )
                         secondary_positions, secondary_measurements = list(
                             zip(*proteins[protein][secondary_isoform])
                         )
+
                         if set(secondary_measurements) == set(primary_measurements):
                             positions = [
                                 secondary_position
@@ -115,14 +114,18 @@ class ProteinProteinInteractionNetwork(nx.Graph):
                                     primary_positions, secondary_positions
                                 )
                             ]
+
                         proteins[primary_accession[protein]][primary_isoform] = list(
                             zip(positions, primary_measurements)
                         )
+
                         del proteins[protein][secondary_isoform]
                         break
 
                 if not proteins[protein]:
                     del proteins[protein]
+            else:
+                proteins[primary_accession[protein]] = proteins.pop(protein)
 
         for protein in proteins:
             for isoform in proteins[protein]:
@@ -142,11 +145,11 @@ class ProteinProteinInteractionNetwork(nx.Graph):
                 for i in range(len(proteins[protein][isoform])):
                     if isoform != "1":
                         self.nodes["{}-{}".format(protein, isoform)][
-                            "{} {} {}".format(str(time), ptm, str(i + 1))
+                            "{} {} {}".format(time, ptm, i + 1)
                         ] = proteins[protein][isoform][i][1]
                     else:
                         self.nodes[protein][
-                            "{} {} {}".format(str(time), ptm, str(i + 1))
+                            "{} {} {}".format(time, ptm, i + 1)
                         ] = proteins[protein][isoform][i][1]
 
                 yield (
@@ -163,10 +166,10 @@ class ProteinProteinInteractionNetwork(nx.Graph):
         return tuple(
             sorted(
                 set(
-                    int(attr.split(" ")[0])
+                    int(attribute.split(" ")[0])
                     for protein in self
-                    for attr in self.nodes[protein]
-                    if len(attr.split(" ")) == 3
+                    for attribute in self.nodes[protein]
+                    if len(attribute.split(" ")) == 3
                 )
             )
         )
@@ -176,10 +179,11 @@ class ProteinProteinInteractionNetwork(nx.Graph):
             time: tuple(
                 sorted(
                     set(
-                        attr.split(" ")[1]
+                        attribute.split(" ")[1]
                         for protein in self
-                        for attr in self.nodes[protein]
-                        if len(attr.split(" ")) == 3 and attr.split(" ")[0] == str(time)
+                        for attribute in self.nodes[protein]
+                        if len(attribute.split(" ")) == 3
+                        and attribute.split(" ")[0] == str(time)
                     )
                 )
             )
@@ -190,12 +194,12 @@ class ProteinProteinInteractionNetwork(nx.Graph):
         return {
             time: {
                 ptm: max(
-                    int(attr.split(" ")[2])
+                    int(attribute.split(" ")[2])
                     for protein in self
-                    for attr in self.nodes[protein]
-                    if len(attr.split(" ")) == 3
-                    and attr.split(" ")[0] == str(time)
-                    and attr.split(" ")[1] == ptm
+                    for attribute in self.nodes[protein]
+                    if len(attribute.split(" ")) == 3
+                    and attribute.split(" ")[0] == str(time)
+                    and attribute.split(" ")[1] == ptm
                 )
                 for ptm in self.get_post_translational_modifications()[time]
             }
@@ -209,41 +213,92 @@ class ProteinProteinInteractionNetwork(nx.Graph):
                     tuple(
                         sorted(
                             set(
-                                attr.split(" ")[1]
-                                for attr in self.nodes[protein]
-                                if len(attr.split(" ")) == 3
-                                and attr.split(" ")[0] == str(time)
+                                attribute.split(" ")[1]
+                                for attribute in self.nodes[protein]
+                                if len(attribute.split(" ")) == 3
+                                and attribute.split(" ")[0] == str(time)
                             )
                         )
                     )
                 )
 
-    def set_trend_data_column(
-        self, merge_trends=statistics.mean, mid_range=(-1.0, 1.0)
+    def get_change_distribution(
+        self, time, post_translational_modification, merge_sites=statistics.mean
     ):
-        modifications = self.get_post_translational_modifications()
-        for time in self.get_times():
-            for protein in self:
-                ptm = {}
-                for post_translational_modification in modifications[time]:
-                    trends = [
-                        self.nodes[protein][attr]
-                        for attr in self.nodes[protein]
-                        if len(attr.split(" ")) == 3
-                        and attr.split(" ")[0] == str(time)
-                        and attr.split(" ")[1] == post_translational_modification
-                    ]
-                    if trends:
-                        ptm[post_translational_modification] = merge_trends(trends)
+        return [
+            merge_sites(
+                [
+                    self.nodes[protein][attribute]
+                    for attribute in self.nodes[protein]
+                    if len(attribute.split(" ")) == 3
+                    and attribute.split(" ")[0] == str(time)
+                    and attribute.split(" ")[1] == post_translational_modification
+                ]
+            )
+            for protein in self
+        ]
 
-                if ptm:
-                    if all(trend > 0.0 for trend in ptm.values()):
-                        if any(trend >= mid_range[1] for trend in ptm.values()):
+    def get_range(
+        self, time, post_translational_modification, merge_sites=statistics.mean, p=0.05
+    ):
+        change_distribution = self.get_change_distribution(
+            time, post_translational_modification, merge_sites
+        )
+        mean = statistics.mean(change_distribution)
+        stdev = statistics.stdev(change_distribution)
+        return (
+            scipy.stats.norm.ppf(0.5 * p, mean, stdev),
+            scipy.stats.norm.ppf(1.0 - 0.5 * p, mean, stdev),
+        )
+
+    def set_trend_data_column(self, merge_sites=statistics.mean, p=0.05):
+        post_translational_modifications = self.get_post_translational_modifications()
+        times = self.get_times()
+
+        mid_range = {
+            time: {
+                post_translational_modification: self.get_range(
+                    time, post_translational_modification, merge_sites, p
+                )
+                for post_translational_modification in post_translational_modifications[
+                    time
+                ]
+            }
+            for time in times
+        }
+
+        for time in times:
+            for protein in self:
+                modifications = {}
+                for post_translational_modification in post_translational_modifications[
+                    time
+                ]:
+                    sites = [
+                        self.nodes[protein][attribute]
+                        for attribute in self.nodes[protein]
+                        if len(attribute.split(" ")) == 3
+                        and attribute.split(" ")[0] == str(time)
+                        and attribute.split(" ")[1] == post_translational_modification
+                    ]
+                    if sites:
+                        modifications[post_translational_modification] = merge_sites(
+                            sites
+                        )
+
+                if modifications:
+                    if all(trend > 0.0 for trend in modifications.values()):
+                        if any(
+                            trend >= mid_range[time][ptm][1]
+                            for ptm, trend in modifications.items()
+                        ):
                             self.nodes[protein]["trend {}".format(time)] = "up"
                         else:
                             self.nodes[protein]["trend {}".format(time)] = "mid up"
-                    elif all(trend < 0.0 for trend in ptm.values()):
-                        if any(trend <= mid_range[0] for trend in ptm.values()):
+                    elif all(trend < 0.0 for trend in modifications.values()):
+                        if any(
+                            trend <= mid_range[time][ptm][0]
+                            for ptm, trend in modifications.items()
+                        ):
                             self.nodes[protein]["trend {}".format(time)] = "down"
                         else:
                             self.nodes[protein]["trend {}".format(time)] = "mid down"
@@ -251,12 +306,12 @@ class ProteinProteinInteractionNetwork(nx.Graph):
                         self.nodes[protein]["trend {}".format(time)] = " ".join(
                             sorted(
                                 [
-                                    "{} up".format(post_translational_modification)
-                                    if ptm[post_translational_modification] > 0.0
-                                    else "{} down".format(
-                                        post_translational_modification
-                                    )
-                                    for post_translational_modification in ptm
+                                    ""
+                                    if modifications[ptm] == 0.0
+                                    else "{} up".format(ptm)
+                                    if modifications[ptm] > 0.0
+                                    else "{} down".format(ptm)
+                                    for ptm in modifications
                                 ]
                             )
                         )
