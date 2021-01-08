@@ -225,18 +225,20 @@ class ProteinProteinInteractionNetwork(nx.Graph):
     def get_change_distribution(
         self, time, post_translational_modification, merge_sites=statistics.mean
     ):
-        return [
-            merge_sites(
-                [
-                    self.nodes[protein][attribute]
-                    for attribute in self.nodes[protein]
-                    if len(attribute.split(" ")) == 3
-                    and attribute.split(" ")[0] == str(time)
-                    and attribute.split(" ")[1] == post_translational_modification
-                ]
-            )
-            for protein in self
-        ]
+        change_distribution = []
+        for protein in self:
+            sites = [
+                self.nodes[protein][attribute]
+                for attribute in self.nodes[protein]
+                if len(attribute.split(" ")) == 3
+                and attribute.split(" ")[0] == str(time)
+                and attribute.split(" ")[1] == post_translational_modification
+            ]
+
+            if sites:
+                change_distribution.append(merge_sites(sites))
+
+        return change_distribution
 
     def get_range(
         self, time, post_translational_modification, merge_sites=statistics.mean, p=0.05
