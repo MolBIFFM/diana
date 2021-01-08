@@ -246,8 +246,10 @@ class ProteinProteinInteractionNetwork(nx.Graph):
         change_distribution = self.get_change_distribution(
             time, post_translational_modification, merge_sites
         )
+
         mean = statistics.mean(change_distribution)
         stdev = statistics.stdev(change_distribution)
+
         return (
             scipy.stats.norm.ppf(0.5 * p, mean, stdev),
             scipy.stats.norm.ppf(1.0 - 0.5 * p, mean, stdev),
