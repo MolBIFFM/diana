@@ -1,7 +1,10 @@
 - network: shigella.graphml
   styles: shigella.styles.xml
+  community detection: true
+
   PTM:
     - file: data/shigella/phosphorylation/mcp.M113.029918-2.xls
+      sheet: wt15min
       label: P
       time: 15
       replicates: 1
@@ -16,6 +19,7 @@
       log base: 10
 
     - file: data/shigella/phosphorylation/mcp.M113.029918-2.xls
+      sheet: wt60min
       label: P
       time: 60
       sites: 5
@@ -29,6 +33,7 @@
       log base: 10
 
     - file: data/shigella/phosphorylation/mcp.M113.029918-2.xls
+      sheet: wt120min
       label: P
       time: 120
       sites: 5
@@ -42,6 +47,7 @@
       log base: 10
 
     - file: data/shigella/ubiquitination/WT_vs_noninvasive_15min.xlsx
+      sheet: GlyGly (K) stringentSites
       label: U
       time: 15
       sites: 5
@@ -57,6 +63,7 @@
       merge replicates: mean
 
     - file: data/shigella/ubiquitination/WT_vs_noninvasive_1h.xlsx
+      sheet: GlyGly (K) stringentSites
       label: U
       time: 60
       sites: 5
@@ -72,6 +79,7 @@
       merge replicates: mean
 
     - file: data/shigella/ubiquitination/WT_vs_noninvasive_2h.xlsx
+      sheet: GlyGly (K) stringentSites
       label: U
       time: 120
       sites: 5
@@ -111,5 +119,6 @@
     bar chart:
       minimum: -3.0
       maximum: 3.0
+    type: p
     threshold: 0.05
     merge sites: mean

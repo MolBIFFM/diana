@@ -203,13 +203,29 @@ def main():
                 )
 
                 ppi_network.set_ptm_data_column()
-                ppi_network.set_trend_data_column(
-                    merge_sites=merge.MERGE.get(
-                        configuration.get("Cytoscape", {}).get("merge sites", "mean"),
-                        merge.MERGE["mean"],
-                    ),
-                    p=configuration.get("Cytoscape", {}).get("threshold", 0.05),
-                )
+
+                if configuration.get("Cytoscape", {}).get("type") == "p":
+                    ppi_network.set_change_data_column_p(
+                        merge_sites=merge.MERGE.get(
+                            configuration.get("Cytoscape", {}).get(
+                                "merge sites", "mean"
+                            ),
+                            merge.MERGE["mean"],
+                        ),
+                        p=configuration.get("Cytoscape", {}).get("threshold", 0.05),
+                    )
+                else:
+                    ppi_network.set_change_data_column_abs(
+                        merge_sites=merge.MERGE.get(
+                            configuration.get("Cytoscape", {}).get(
+                                "merge sites", "mean"
+                            ),
+                            merge.MERGE["mean"],
+                        ),
+                        absolute=configuration.get("Cytoscape", {}).get(
+                            "threshold", 1.0
+                        ),
+                    )
 
                 if configuration["styles"].endswith(".xml"):
                     with open(configuration["styles"], "wb") as file:
@@ -229,6 +245,55 @@ def main():
                             file,
                             indent=2,
                         )
+
+            if configuration.get("community detection"):
+                ppi_network.remove_nodes_from(list(nx.isolates(ppi_network)))
+                ppi_network.set_edge_weights()
+
+                communities = list(
+                    nx.algorithms.community.modularity_max.greedy_modularity_communities(
+                        ppi_network
+                    )
+                )
+
+                logger.info(
+                    "{}\t{}".format(
+                        len(communities),
+                        nx.algorithms.community.quality.modularity(
+                            ppi_network, communities
+                        ),
+                    )
+                )
+
+                for i, community in enumerate(communities, 1):
+                    logger.info("{}\t{}".format(i, len(community)))
+
+                    if configuration.get("network"):
+                        if configuration["network"].endswith(
+                            ".graphml"
+                        ) or configuration["network"].endswith(".xml"):
+                            nx.write_graphml_xml(
+                                ppi_network.subgraph(community),
+                                "{0}.{2}{1}".format(
+                                    *os.path.splitext(configuration["network"]), i
+                                ),
+                            )
+                        elif configuration["network"].endswith(
+                            ".cyjs"
+                        ) or configuration["network"].endswith(".json"):
+                            with open(
+                                "{0}.{2}{1}".format(
+                                    *os.path.splitext(configuration["network"]), i
+                                ),
+                                "w",
+                            ) as file:
+                                json.dump(
+                                    nx.readwrite.json_graph.cytoscape_data(
+                                        ppi_network.subgraph(community)
+                                    ),
+                                    file,
+                                    indent=2,
+                                )
 
 
 if __name__ == "__main__":

@@ -1,7 +1,10 @@
 - network: salmonella.graphml
   styles: salmonella.styles.xml
+  community detection: true
+
   PTM:
     - file: data/salmonella/phosphorylation/Supplementary_Table_01.xlsx
+      sheet: Supplementary1
       label: P
       time: 30
       sites: 5
@@ -19,6 +22,7 @@
       log base: 2
 
     - file: data/salmonella/phosphorylation/Supplementary_Table_01.xlsx
+      sheet: Supplementary1
       label: P
       time: 120
       sites: 5
@@ -36,6 +40,7 @@
       log base: 2
 
     - file: data/salmonella/ubiquitination/20151119_HeLa_HCT116_05h_2h_all.xlsx
+      sheet: 20151119_HeLa_HCT116_05h_2h_all
       label: U
       time: 30
       sites: 5
@@ -53,6 +58,7 @@
       log base: 2
 
     - file: data/salmonella/ubiquitination/20151119_HeLa_HCT116_05h_2h_all.xlsx
+      sheet: 20151119_HeLa_HCT116_05h_2h_all
       label: U
       time: 120
       sites: 5
@@ -94,6 +100,7 @@
     bar chart:
       minimum: -3.0
       maximum: 3.0
+    type: p
     threshold: 0.05
     merge sites: mean
     

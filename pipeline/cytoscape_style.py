@@ -11,7 +11,7 @@ class CytoscapeStyle(ET.ElementTree):
         )
 
         for time in ppi_network.get_times():
-            ptms = ppi_network.get_post_translational_modifications()[time]
+            ptms = ppi_network.get_post_translational_modifications(time)
             visual_style = ET.SubElement(
                 self.getroot(), "visualStyle", attrib={"name": str(time)}
             )
@@ -81,7 +81,7 @@ class CytoscapeStyle(ET.ElementTree):
                     ):
                         visual_property.set(
                             "default",
-                            self.bar_chart(
+                            self.get_bar_chart(
                                 time,
                                 ptm,
                                 ppi_network.get_sites()[time][ptm],
@@ -96,8 +96,8 @@ class CytoscapeStyle(ET.ElementTree):
                             "{},{},c,0.00,0.00".format(*[("W", "E"), ("E", "W")][i]),
                         )
 
-    def bar_chart(self, time, ptm, sites, cy_range=(-3.0, 3.0)):
-        chart = json.dumps(
+    def get_bar_chart(self, time, ptm, sites, cy_range=(-3.0, 3.0)):
+        bar_chart = json.dumps(
             {
                 "cy_range": cy_range,
                 "cy_showRangeAxis": True,
@@ -111,4 +111,4 @@ class CytoscapeStyle(ET.ElementTree):
                 ],
             }
         )
-        return "org.cytoscape.BarChart: {}".format(chart)
+        return "org.cytoscape.BarChart: {}".format(bar_chart)
