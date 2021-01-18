@@ -1,6 +1,5 @@
 - network: shigella.graphml
   styles: shigella.styles.xml
-  community detection: true
 
   PTM:
     - file: data/shigella/phosphorylation/mcp.M113.029918-2.xls
@@ -119,6 +118,6 @@
     bar chart:
       minimum: -3.0
       maximum: 3.0
-    type: p
-    threshold: 0.05
+    type: absolute
+    threshold: 1.0
     merge sites: mean

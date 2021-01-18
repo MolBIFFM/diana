@@ -84,7 +84,7 @@ class CytoscapeStyle(ET.ElementTree):
                             self.get_bar_chart(
                                 time,
                                 ptm,
-                                ppi_network.get_sites()[time][ptm],
+                                ppi_network.get_sites(time, ptm),
                                 cy_range=bar_chart_range,
                             ),
                         )

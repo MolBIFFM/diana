@@ -134,7 +134,7 @@ SETTINGS = [
                 "NODE_FILL_COLOR": {
                     "default": "#89D0F5",
                     "discreteMapping": {
-                        "attributeName": "trend {time}",
+                        "attributeName": "change {time}",
                         "attributeType": "string",
                         "discreteMappingEntry": {
                             "up": "#FF0000",
@@ -317,7 +317,7 @@ SETTINGS = [
                 "NODE_FILL_COLOR": {
                     "default": "#89D0F5",
                     "discreteMapping": {
-                        "attributeName": "trend {time}",
+                        "attributeName": "change {time}",
                         "attributeType": "string",
                         "discreteMappingEntry": {
                             "up": "#FF0000",

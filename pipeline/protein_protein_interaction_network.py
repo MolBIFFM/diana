@@ -97,26 +97,54 @@ class ProteinProteinInteractionNetwork(nx.Graph):
         for protein in primary_accession:
             if primary_accession[protein] in proteins:
                 for primary_isoform in list(proteins[primary_accession[protein]]):
-                    primary_positions, primary_measurements = list(
-                        zip(*proteins[primary_accession[protein]][primary_isoform])
-                    )
-                    for secondary_isoform in list(proteins[protein]):
-                        secondary_positions, secondary_measurements = list(
-                            zip(*proteins[protein][secondary_isoform])
-                        )
+                    primary_positions = {}
+                    for position, measurement in proteins[primary_accession[protein]][
+                        primary_isoform
+                    ]:
+                        if position not in primary_positions:
+                            primary_positions[position] = set()
+                        primary_positions[position].add(measurement)
 
-                        if set(secondary_measurements) == set(primary_measurements):
+                    for secondary_isoform in list(proteins[protein]):
+                        secondary_positions = {}
+                        for position, measurement in proteins[protein][
+                            secondary_isoform
+                        ]:
+                            if position not in secondary_positions:
+                                secondary_positions[position] = set()
+                            secondary_positions[position].add(measurement)
+
+                        if [
+                            measurements
+                            for position, measurements in sorted(
+                                secondary_positions.items()
+                            )
+                        ] == [
+                            measurements
+                            for position, measurements in sorted(
+                                primary_positions.items()
+                            )
+                        ]:
                             positions = [
                                 secondary_position
                                 if not primary_position
                                 else primary_position
                                 for primary_position, secondary_position in zip(
-                                    primary_positions, secondary_positions
+                                    sorted(primary_positions.keys()),
+                                    sorted(secondary_positions.keys()),
                                 )
                             ]
 
                         proteins[primary_accession[protein]][primary_isoform] = sorted(
-                            zip(positions, primary_measurements)
+                            zip(
+                                positions,
+                                [
+                                    measurement
+                                    for position, measurement in proteins[
+                                        primary_accession[protein]
+                                    ][primary_isoform]
+                                ],
+                            )
                         )
 
                         del proteins[protein][secondary_isoform]
@@ -130,7 +158,7 @@ class ProteinProteinInteractionNetwork(nx.Graph):
         for protein in proteins:
             for isoform in proteins[protein]:
                 if isoform != "1":
-                    self.add_node("{}-{}".format(protein, isoform))
+                    self.add_node("-".join([protein, isoform]))
                 else:
                     self.add_node(protein)
 
@@ -144,7 +172,7 @@ class ProteinProteinInteractionNetwork(nx.Graph):
                     )
                 for i in range(len(proteins[protein][isoform])):
                     if isoform != "1":
-                        self.nodes["{}-{}".format(protein, isoform)][
+                        self.nodes["-".join([protein, isoform])][
                             "{} {} {}".format(time, ptm, i + 1)
                         ] = proteins[protein][isoform][i][1]
                     else:
@@ -152,38 +180,32 @@ class ProteinProteinInteractionNetwork(nx.Graph):
                             "{} {} {}".format(time, ptm, i + 1)
                         ] = proteins[protein][isoform][i][1]
 
-                yield (
-                    "{}-{}".format(protein, isoform) if isoform != "1" else protein,
-                    tuple(
-                        [
-                            proteins[protein][isoform][i][1]
-                            for i in range(len(proteins[protein][isoform]))
-                        ]
-                    ),
-                )
+                yield [
+                    "-".join([protein, isoform]) if isoform != "1" else protein,
+                    [
+                        proteins[protein][isoform][i][1]
+                        for i in range(len(proteins[protein][isoform]))
+                    ],
+                ]
 
     def get_times(self):
-        return tuple(
-            sorted(
-                set(
-                    int(attribute.split(" ")[0])
-                    for protein in self
-                    for attribute in self.nodes[protein]
-                    if len(attribute.split(" ")) == 3
-                )
+        return sorted(
+            set(
+                int(attribute.split(" ")[0])
+                for protein in self
+                for attribute in self.nodes[protein]
+                if len(attribute.split(" ")) == 3
             )
         )
 
     def get_post_translational_modifications(self, time):
-        return tuple(
-            sorted(
-                set(
-                    attribute.split(" ")[1]
-                    for protein in self
-                    for attribute in self.nodes[protein]
-                    if len(attribute.split(" ")) == 3
-                    and attribute.split(" ")[0] == str(time)
-                )
+        return sorted(
+            set(
+                attribute.split(" ")[1]
+                for protein in self
+                for attribute in self.nodes[protein]
+                if len(attribute.split(" ")) == 3
+                and attribute.split(" ")[0] == str(time)
             )
         )
 
@@ -197,24 +219,22 @@ class ProteinProteinInteractionNetwork(nx.Graph):
             and attribute.split(" ")[1] == ptm
         )
 
-    def set_ptm_data_column(self):
+    def set_post_translational_modification_data_column(self):
         for time in self.get_times():
             for protein in self:
                 self.nodes[protein]["PTM {}".format(time)] = " ".join(
-                    tuple(
-                        sorted(
-                            set(
-                                attribute.split(" ")[1]
-                                for attribute in self.nodes[protein]
-                                if len(attribute.split(" ")) == 3
-                                and attribute.split(" ")[0] == str(time)
-                            )
+                    sorted(
+                        set(
+                            attribute.split(" ")[1]
+                            for attribute in self.nodes[protein]
+                            if len(attribute.split(" ")) == 3
+                            and attribute.split(" ")[0] == str(time)
                         )
                     )
                 )
 
     def get_changes(self, time, ptm, merge_sites=statistics.mean):
-        change_distribution = []
+        changes = []
         for protein in self:
             sites = [
                 self.nodes[protein][attribute]
@@ -225,65 +245,72 @@ class ProteinProteinInteractionNetwork(nx.Graph):
             ]
 
             if sites:
-                change_distribution.append(merge_sites(sites))
+                changes.append(merge_sites(sites))
+            else:
+                changes.append(0.0)
 
-        return change_distribution
+        return changes
 
-    def get_p_range(self, time, ptm, merge_sites=statistics.mean, p=0.05):
-        change_distribution = self.get_changes(time, ptm, merge_sites)
+    def get_range_p(self, time, ptm, merge_sites=statistics.mean, p=0.05):
+        changes = self.get_changes(time, ptm, merge_sites)
 
-        mean = statistics.mean(change_distribution)
-        stdev = statistics.stdev(change_distribution)
+        change_distribution = scipy.stats.norm(
+            loc=0.0, scale=scipy.stats.norm.fit(changes, floc=0.0)[1]
+        )
 
         return (
-            scipy.stats.norm.ppf(0.5 * p, mean, stdev),
-            scipy.stats.norm.ppf(1.0 - 0.5 * p, mean, stdev),
+            change_distribution.ppf(0.5 * p),
+            change_distribution.ppf(1.0 - 0.5 * p),
         )
 
     def set_change_data_column_p(self, merge_sites=statistics.mean, p=0.05):
         times = self.get_times()
-        ptms = {time: self.get_post_translational_modifications(time) for time in times}
+        post_translational_modifications = {
+            time: self.get_post_translational_modifications(time) for time in times
+        }
 
         mid_range = {
             time: {
-                ptm: self.get_p_range(time, ptm, merge_sites, p) for ptm in ptms[time]
+                post_translational_modification: self.get_range_p(
+                    time, post_translational_modification, merge_sites, p
+                )
+                for post_translational_modification in post_translational_modifications[
+                    time
+                ]
             }
             for time in times
         }
 
         for time in times:
             for protein in self:
-                post_translational_modifications = {}
-                for ptm in ptms[time]:
+                ptms = {}
+                for post_translational_modification in post_translational_modifications[
+                    time
+                ]:
                     sites = [
                         self.nodes[protein][attribute]
                         for attribute in self.nodes[protein]
                         if len(attribute.split(" ")) == 3
                         and attribute.split(" ")[0] == str(time)
-                        and attribute.split(" ")[1] == ptm
+                        and attribute.split(" ")[1] == post_translational_modification
                     ]
                     if sites:
-                        post_translational_modifications[ptm] = merge_sites(sites)
+                        ptms[post_translational_modification] = merge_sites(sites)
 
-                if post_translational_modifications:
-                    if all(
-                        change > 0.0
-                        for change in post_translational_modifications.values()
-                    ):
+                if ptms:
+                    if all(change > 0.0 for change in ptms.values()):
                         if any(
-                            change >= mid_range[time][ptm][1]
-                            for ptm, change in post_translational_modifications.items()
+                            change
+                            >= mid_range[time][post_translational_modification][1]
+                            for post_translational_modification, change in ptms.items()
                         ):
                             self.nodes[protein]["change {}".format(time)] = "up"
                         else:
                             self.nodes[protein]["change {}".format(time)] = "mid up"
-                    elif all(
-                        change < 0.0
-                        for change in post_translational_modifications.values()
-                    ):
+                    elif all(change < 0.0 for change in ptms.values()):
                         if any(
                             change <= mid_range[time][ptm][0]
-                            for ptm, change in post_translational_modifications.items()
+                            for ptm, change in ptms.items()
                         ):
                             self.nodes[protein]["change {}".format(time)] = "down"
                         else:
@@ -297,52 +324,48 @@ class ProteinProteinInteractionNetwork(nx.Graph):
                                     else "{} up".format(ptm)
                                     if change > 0.0
                                     else "{} down".format(ptm)
-                                    for ptm, change in post_translational_modifications.items()
+                                    for ptm, change in ptms.items()
                                 ]
                             )
                         )
                 else:
                     self.nodes[protein]["change {}".format(time)] = ""
 
-    def set_change_data_column_abs(self, merge_sites=statistics.mean, absolute=1.0):
+    def set_change_data_column_abs(
+        self, merge_sites=statistics.mean, absolute_change=1.0
+    ):
         times = self.get_times()
-        ptms = {time: self.get_post_translational_modifications(time) for time in times}
-
-        mid_range = (-abs(absolute), abs(absolute))
+        post_translational_modifications = {
+            time: self.get_post_translational_modifications(time) for time in times
+        }
 
         for time in times:
             for protein in self:
-                post_translational_modifications = {}
-                for ptm in ptms[time]:
+                ptms = {}
+                for post_translational_modification in post_translational_modifications[
+                    time
+                ]:
                     sites = [
                         self.nodes[protein][attribute]
                         for attribute in self.nodes[protein]
                         if len(attribute.split(" ")) == 3
                         and attribute.split(" ")[0] == str(time)
-                        and attribute.split(" ")[1] == ptm
+                        and attribute.split(" ")[1] == post_translational_modification
                     ]
                     if sites:
-                        post_translational_modifications[ptm] = merge_sites(sites)
+                        ptms[post_translational_modification] = merge_sites(sites)
 
-                if post_translational_modifications:
-                    if all(
-                        change > 0.0
-                        for change in post_translational_modifications.values()
-                    ):
+                if ptms:
+                    if all(change > 0.0 for change in ptms.values()):
                         if any(
-                            change >= mid_range[1]
-                            for ptm, change in post_translational_modifications.items()
+                            change >= absolute_change for ptm, change in ptms.items()
                         ):
                             self.nodes[protein]["change {}".format(time)] = "up"
                         else:
                             self.nodes[protein]["change {}".format(time)] = "mid up"
-                    elif all(
-                        change < 0.0
-                        for change in post_translational_modifications.values()
-                    ):
+                    elif all(change < 0.0 for change in ptms.values()):
                         if any(
-                            change <= mid_range[0]
-                            for ptm, change in post_translational_modifications.items()
+                            change <= -absolute_change for ptm, change in ptms.items()
                         ):
                             self.nodes[protein]["change {}".format(time)] = "down"
                         else:
@@ -356,7 +379,7 @@ class ProteinProteinInteractionNetwork(nx.Graph):
                                     else "{} up".format(ptm)
                                     if change > 0.0
                                     else "{} down".format(ptm)
-                                    for ptm, change in post_translational_modifications.items()
+                                    for ptm, change in ptms.items()
                                 ]
                             )
                         )
