@@ -270,8 +270,6 @@ class ProteinProteinInteractionNetwork(nx.Graph):
 
             if sites:
                 changes.append(merge_sites(sites))
-            else:
-                changes.append(0.0)
 
         return changes
 
