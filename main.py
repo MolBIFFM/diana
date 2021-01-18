@@ -57,7 +57,7 @@ def main():
             ppi_network = ProteinProteinInteractionNetwork()
 
             for entry in configuration.get("PTM", {}):
-                for protein, sites in ppi_network.add_proteins_from_excel(
+                for gene_name, protein, sites in ppi_network.add_proteins_from_excel(
                     entry["file"],
                     entry["label"],
                     entry["time"],
@@ -80,7 +80,8 @@ def main():
                     convert_measurement=convert.LOG_BASE[entry.get("log base")],
                 ):
                     logger.info(
-                        "{}\t{}\t{}\t{}".format(
+                        "{}\t{}\t{}\t{}\t{}".format(
+                            gene_name,
                             protein,
                             entry["time"],
                             entry["label"],

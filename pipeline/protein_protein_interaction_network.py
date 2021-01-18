@@ -83,7 +83,8 @@ class ProteinProteinInteractionNetwork(nx.Graph):
                         ),
                     )
 
-        reviewed_proteins, primary_accession = {}, {}
+        reviewed_proteins, primary_accession, gene_name = {}, {}, {}
+        accession_in_proteins = None
         for line in fetch.iterate_data(data.UNIPROT_SWISS_PROT):
             if line.split("   ")[0] == "AC":
                 accessions = line.split("   ")[1].rstrip(";").split("; ")
@@ -92,6 +93,20 @@ class ProteinProteinInteractionNetwork(nx.Graph):
                         reviewed_proteins[accession] = proteins[accession]
                         if i > 0:
                             primary_accession[accession] = accessions[0]
+                        accession_in_proteins = accession
+            elif line.split("   ")[0] == "GN" and accession_in_proteins:
+                for entry in line.split("   ")[1].rstrip(";").split("; "):
+                    if entry.split(" ")[0].split("=")[0] == "Name":
+                        gene_name[accession_in_proteins] = entry.split(" ")[0].split(
+                            "="
+                        )[1]
+                        if accession_in_proteins in primary_accession:
+                            gene_name[
+                                primary_accession[accession_in_proteins]
+                            ] = gene_name[accession_in_proteins]
+            elif line == "//":
+                accession_in_proteins = None
+
         proteins = reviewed_proteins
 
         for protein in primary_accession:
@@ -152,15 +167,23 @@ class ProteinProteinInteractionNetwork(nx.Graph):
 
                 if not proteins[protein]:
                     del proteins[protein]
+                    if protein in gene_name:
+                        del gene_name[protein]
             else:
                 proteins[primary_accession[protein]] = proteins.pop(protein)
+                if protein in gene_name:
+                    gene_name[primary_accession[protein]] = gene_name.pop(protein)
 
         for protein in proteins:
             for isoform in proteins[protein]:
                 if isoform != "1":
                     self.add_node("-".join([protein, isoform]))
+                    self.nodes["-".join([protein, isoform])][
+                        "gene name"
+                    ] = gene_name.get(protein, "")
                 else:
                     self.add_node(protein)
+                    self.nodes[protein]["gene name"] = gene_name.get(protein, "")
 
                 if len(proteins[protein][isoform]) > num_sites:
                     proteins[protein][isoform] = sorted(
@@ -181,6 +204,7 @@ class ProteinProteinInteractionNetwork(nx.Graph):
                         ] = proteins[protein][isoform][i][1]
 
                 yield [
+                    gene_name.get(protein, ""),
                     "-".join([protein, isoform]) if isoform != "1" else protein,
                     [
                         proteins[protein][isoform][i][1]
