@@ -30,7 +30,7 @@ def main():
     logging.basicConfig(
         stream=sys.stdout,
         level=logging.DEBUG,
-        format="%(asctime)s\t%(levelname)s\t%(message)s",
+        format="%(asctime)s\t%(message)s",
         datefmt="%H:%M:%S",
     )
 
@@ -40,7 +40,7 @@ def main():
         log_file = logging.FileHandler(args.log, mode="w")
         log_file.setFormatter(
             logging.Formatter(
-                fmt="%(asctime)s\t%(levelname)s\t%(message)s", datefmt="%H:%M:%S"
+                fmt="%(asctime)s\t%(message)s", datefmt="%H:%M:%S"
             )
         )
         logger.addHandler(log_file)
@@ -81,7 +81,7 @@ def main():
                 ):
                     logger.info(
                         "{}\t{}\t{}\t{}\t{}".format(
-                            gene_name,
+                            gene_name if gene_name else "",
                             protein,
                             entry["time"],
                             entry["label"],
