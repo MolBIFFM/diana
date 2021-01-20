@@ -101,5 +101,5 @@
       maximum: 3.0
     type: absolute
     threshold: 1.0
-    merge sites: mean
+    merge sites: max abs
     
