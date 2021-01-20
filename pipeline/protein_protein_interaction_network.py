@@ -83,32 +83,52 @@ class ProteinProteinInteractionNetwork(nx.Graph):
                         ),
                     )
 
-        reviewed_proteins, primary_accession, gene_name = {}, {}, {}
-        accessions, gene_names = [], []
+        reviewed_proteins, primary_accession, gene_name, protein_name = {}, {}, {}, {}
+        accessions, gene_names, protein_names = [], {}, {}
+        recommended_name = False
         for line in fetch.iterate_data(data.UNIPROT_SWISS_PROT):
             if line.split("   ")[0] == "AC":
                 accessions.extend(line.split("   ")[1].rstrip(";").split("; "))
-            elif line.split("   ")[0] == "GN":
-                gene_names.extend(
-                    entry.split(" ")[0]
-                    for entry in line.split("   ")[1].rstrip(";").split("; ")
-                )
-            elif line == "//":
-                for entry in gene_names:
-                    if entry.split("=")[0] == "Name":
-                        name = entry.split("=")[1]
-                        break
-                else:
-                    name = ""
-                gene_names.clear()
 
+            elif line.split("   ")[0] == "GN":
+                for entry in line.split("   ")[1].rstrip(";").split("; "):
+                    if "=" in entry:
+                        gene_names[entry.split("=")[0]] = (
+                            entry.split("=")[1].split("{")[0].rstrip()
+                        )
+
+            elif line.split("   ")[0] == "DE":
+                if line.split(" ", 1)[1].lstrip().split(":", 1)[0] == "RecName":
+                    entries = line.split(":", 1)[1].lstrip().rstrip(";").split("; ")
+                    recommended_name = True
+                elif line.split(" ", 1)[1].lstrip().split(":", 1)[0] == "AltName":
+                    entries = []
+                    recommended_name = False
+                elif line.split(" ", 1)[1].lstrip().split(":", 1)[0] in (
+                    "Flags",
+                    "Contains",
+                ):
+                    entries = []
+                elif recommended_name:
+                    entries = line.split(" ", 1)[1].lstrip().rstrip(";").split("; ")
+
+                for entry in entries:
+                    if "=" in entry:
+                        protein_names[entry.split("=")[0]] = (
+                            entry.split("=")[1].split("{")[0].rstrip()
+                        )
+
+            elif line == "//":
                 for i, accession in enumerate(accessions):
                     if accession in proteins:
                         reviewed_proteins[accession] = proteins[accession]
-                        gene_name[accession] = name
+                        gene_name[accession] = gene_names.get("Name", "")
+                        protein_name[accession] = protein_names.get("Full", "")
                         if i > 0:
                             primary_accession[accession] = accessions[0]
                 accessions.clear()
+                gene_names.clear()
+                protein_names.clear()
 
         proteins = reviewed_proteins
 
@@ -174,18 +194,23 @@ class ProteinProteinInteractionNetwork(nx.Graph):
                         del gene_name[protein]
             else:
                 proteins[primary_accession[protein]] = proteins.pop(protein)
-                gene_name[primary_accession[protein]] = gene_name.pop(protein, None)
+                gene_name[primary_accession[protein]] = gene_name.pop(protein)
+                protein_name[primary_accession[protein]] = protein_name.pop(protein)
 
         for protein in proteins:
             for isoform in proteins[protein]:
                 if isoform != "1":
                     self.add_node("-".join([protein, isoform]))
+                    self.nodes["-".join([protein, isoform])]["gene name"] = gene_name[
+                        protein
+                    ]
                     self.nodes["-".join([protein, isoform])][
-                        "gene name"
-                    ] = gene_name[protein]
+                        "protein name"
+                    ] = protein_name[protein]
                 else:
                     self.add_node(protein)
                     self.nodes[protein]["gene name"] = gene_name[protein]
+                    self.nodes[protein]["protein name"] = protein_name[protein]
 
                 if len(proteins[protein][isoform]) > num_sites:
                     proteins[protein][isoform] = sorted(

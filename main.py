@@ -39,9 +39,7 @@ def main():
     if args.log:
         log_file = logging.FileHandler(args.log, mode="w")
         log_file.setFormatter(
-            logging.Formatter(
-                fmt="%(asctime)s\t%(message)s", datefmt="%H:%M:%S"
-            )
+            logging.Formatter(fmt="%(asctime)s\t%(message)s", datefmt="%H:%M:%S")
         )
         logger.addHandler(log_file)
 
