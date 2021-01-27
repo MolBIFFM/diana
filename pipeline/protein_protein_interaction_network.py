@@ -435,12 +435,21 @@ class ProteinProteinInteractionNetwork(nx.Graph):
                 else:
                     self.nodes[protein]["change {}".format(time)] = ""
 
-    def set_edge_weights(self, weight=lambda confidence_scores: 1.0):
+    def get_databases(self):
+        databases = set()
+        for u, v in self.edges:
+            databases.union(set(self.edges[u][v]).difference({"weight"}))
+        return databases
+
+    def set_edge_weights(
+        self, weight=lambda confidence_scores: 1.0, attribute="weight"
+    ):
+        databases = self.get_databases()
         for edge in self.edges:
-            self.edges[edge]["weight"] = weight(
+            self.edges[edge][attribute] = weight(
                 {
                     database: self.edges[edge][database]
-                    for database in ("BioGRID", "IntAct", "STRING")
+                    for database in databases
                     if database in self.edges[edge]
                 }
             )

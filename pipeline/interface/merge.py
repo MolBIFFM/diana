@@ -3,8 +3,8 @@ import statistics
 MERGE = {
     "max": max,
     "min": min,
-    "max abs": lambda changes: max(abs(change) for change in changes),
-    "min abs": lambda changes: min(abs(change) for change in changes),
+    "max abs": lambda changes: max(changes, key=abs),
+    "min abs": lambda changes: min(changes, key=abs),
     "mean": statistics.mean,
     "median": statistics.median,
 }
