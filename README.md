@@ -1,2 +1,2 @@
 # pipeline
-protein-protein interaction network analysis
+protein-protein interaction network assembly and analysis

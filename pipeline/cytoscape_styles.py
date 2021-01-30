@@ -1,12 +1,12 @@
 import xml.etree.ElementTree as ET
 import json
 
-import pipeline.configuration.cytoscape_style
+import pipeline.configuration.cytoscape_styles
 
 
-class CytoscapeStyle(ET.ElementTree):
+class CytoscapeStyles(ET.ElementTree):
     def __init__(self, ppi_network, bar_chart_range=(-3.0, 3.0)):
-        super(CytoscapeStyle, self).__init__(
+        super(CytoscapeStyles, self).__init__(
             ET.Element("vizmap", attrib={"id": "VizMap", "documentVersion": "3.0"})
         )
 
@@ -16,9 +16,9 @@ class CytoscapeStyle(ET.ElementTree):
                 self.getroot(), "visualStyle", attrib={"name": str(time)}
             )
             tags = {}
-            for tag in pipeline.configuration.cytoscape_style.SETTINGS[len(ptms) - 1]:
+            for tag in pipeline.configuration.cytoscape_styles.SETTINGS[len(ptms) - 1]:
                 tags[tag] = ET.SubElement(visual_style, tag)
-                for name, setting in pipeline.configuration.cytoscape_style.SETTINGS[
+                for name, setting in pipeline.configuration.cytoscape_styles.SETTINGS[
                     len(ptms) - 1
                 ][tag]["dependency"].items():
                     ET.SubElement(
@@ -26,7 +26,7 @@ class CytoscapeStyle(ET.ElementTree):
                         "dependency",
                         attrib={"name": name, "value": setting["value"]},
                     )
-                for name, setting in pipeline.configuration.cytoscape_style.SETTINGS[
+                for name, setting in pipeline.configuration.cytoscape_styles.SETTINGS[
                     len(ptms) - 1
                 ][tag]["visualProperty"].items():
                     visual_property = ET.SubElement(

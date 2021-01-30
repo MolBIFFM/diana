@@ -1,4 +1,4 @@
-MODIFY = {
+EXTRACT = {
     "X": lambda entry: [entry],
     "X;X": lambda entry: entry.split(";"),
     "Y|X|Z": lambda entry: entry.split("|")[1:2],

@@ -6,13 +6,28 @@ import sys
 import xml.etree.ElementTree as ET
 
 import networkx as nx
-import yaml
 
-from pipeline.cytoscape_style import CytoscapeStyle
-from pipeline.interface import convert, merge, modify
+from pipeline.cytoscape_styles import CytoscapeStyles
+from pipeline.interface import convert, merge, extract
 from pipeline.protein_protein_interaction_network import (
     ProteinProteinInteractionNetwork,
 )
+
+
+def export_network(path, network, suffix=""):
+    if path.endswith(".graphml") or path.endswith(".xml"):
+        nx.write_graphml_xml(
+            network, "{0}{2}{1}".format(*os.path.splitext(path), suffix)
+        )
+    elif path.endswith(".cyjs") or path.endswith(".json"):
+        with open("{0}{2}{1}".format(*os.path.splitext(path), suffix), "w") as file:
+            json.dump(nx.readwrite.json_graph.cytoscape_data(network), file, indent=2)
+
+
+def export_styles(path, styles):
+    if path.endswith(".xml"):
+        with open(path, "wb") as file:
+            styles.write(file, encoding="UTF-8", xml_declaration=True)
 
 
 def main():
@@ -47,25 +62,25 @@ def main():
         logger.info(os.path.splitext(configuration_file)[0])
 
         with open(configuration_file) as configuration:
-            configurations = yaml.load(configuration, Loader=yaml.Loader)
+            configurations = json.load(configuration)
 
         for configuration in configurations:
             logger.info(os.path.splitext(configuration.get("network", ""))[0])
 
-            ppi_network = ProteinProteinInteractionNetwork()
+            network = ProteinProteinInteractionNetwork()
 
             for entry in configuration.get("PTM", {}):
-                for gene_name, protein, sites in ppi_network.add_proteins_from_excel(
+                for gene_name, protein, sites in network.add_proteins_from_excel(
                     entry["file"],
                     entry["label"],
                     entry["time"],
                     protein_accession_col=entry["protein column"],
                     position_col=entry["position column"],
                     replicates=entry["replicate columns"],
-                    protein_accession_format=modify.MODIFY.get(
+                    protein_accession_format=extract.EXTRACT.get(
                         entry["protein format"], lambda x: x
                     ),
-                    position_format=modify.MODIFY.get(
+                    position_format=extract.EXTRACT.get(
                         entry["position format"], lambda x: x
                     ),
                     sheet_name=entry.get("sheet", 0),
@@ -92,7 +107,7 @@ def main():
                     for (
                         interactor_a,
                         interactor_b,
-                    ) in ppi_network.add_interactions_from_BioGRID(
+                    ) in network.add_interactions_from_BioGRID(
                         experimental_system=configuration["PPI"]["BioGRID"].get(
                             "experimental system",
                             [
@@ -123,7 +138,7 @@ def main():
                         interactor_a,
                         interactor_b,
                         score,
-                    ) in ppi_network.add_interactions_from_IntAct(
+                    ) in network.add_interactions_from_IntAct(
                         interaction_detection_methods=configuration["PPI"][
                             "IntAct"
                         ].get("interaction detection methods", []),
@@ -143,7 +158,7 @@ def main():
                         interactor_a,
                         interactor_b,
                         score,
-                    ) in ppi_network.add_interactions_from_STRING(
+                    ) in network.add_interactions_from_STRING(
                         neighborhood=configuration["PPI"]["STRING"].get(
                             "neighborhood", 0.0
                         ),
@@ -189,8 +204,10 @@ def main():
                         )
 
             if configuration.get("styles"):
-                style = CytoscapeStyle(
-                    ppi_network,
+                network.set_post_translational_modification_data_column()
+
+                styles = CytoscapeStyles(
+                    network,
                     bar_chart_range=(
                         configuration.get("Cytoscape", {})
                         .get("bar chart", {})
@@ -201,49 +218,65 @@ def main():
                     ),
                 )
 
-                ppi_network.set_post_translational_modification_data_column()
-
                 if configuration.get("Cytoscape", {}).get("type") == "p":
-                    ppi_network.set_change_data_column_p(
+                    network.set_change_data_column_p(
                         merge_sites=merge.MERGE.get(
-                            configuration.get("Cytoscape", {}).get(
-                                "merge sites", "mean"
-                            ),
+                            configuration["Cytoscape"].get("merge sites", "mean"),
                             merge.MERGE["mean"],
                         ),
-                        p=configuration.get("Cytoscape", {}).get("threshold", 0.05),
+                        p=configuration["Cytoscape"].get("threshold", 0.05),
                     )
                 else:
-                    ppi_network.set_change_data_column_abs(
+                    network.set_change_data_column_abs(
                         merge_sites=merge.MERGE.get(
-                            configuration.get("Cytoscape", {}).get(
-                                "merge sites", "mean"
-                            ),
+                            configuration["Cytoscape"].get("merge sites", "mean"),
                             merge.MERGE["mean"],
                         ),
-                        absolute_change=configuration.get("Cytoscape", {}).get(
+                        absolute_change=configuration["Cytoscape"].get(
                             "threshold", 1.0
                         ),
                     )
 
-                if configuration["styles"].endswith(".xml"):
-                    with open(configuration["styles"], "wb") as file:
-                        style.write(file, encoding="UTF-8", xml_declaration=True)
+                export_styles(configuration["styles"], styles)
 
             if configuration.get("network"):
-                if configuration["network"].endswith(".graphml") or configuration[
-                    "network"
-                ].endswith(".xml"):
-                    nx.write_graphml_xml(ppi_network, configuration["network"])
-                elif configuration["network"].endswith(".cyjs") or configuration[
-                    "network"
-                ].endswith(".json"):
-                    with open(configuration["network"], "w") as file:
-                        json.dump(
-                            nx.readwrite.json_graph.cytoscape_data(ppi_network),
-                            file,
-                            indent=2,
-                        )
+                export_network(configuration["network"], network)
+
+            if configuration.get("module detection"):
+                modules, p_values = network.get_change_enrichment(
+                    p=configuration["module detection"].get("p", 0.05),
+                    z=configuration["module detection"].get("z", (-1.0, 1.0)),
+                    merge_sites=merge.MERGE.get(
+                        configuration["module detection"].get("merge sites", "mean"),
+                        merge.MERGE["mean"],
+                    ),
+                    min_size=configuration["module detection"]
+                    .get("module size", {})
+                    .get("minimum", 3),
+                    max_size=configuration["module detection"]
+                    .get("module size", {})
+                    .get("maximum", 100),
+                    merge_sizes=merge.MERGE.get(
+                        configuration["module detection"]
+                        .get("module size", {})
+                        .get("merge", "max"),
+                        merge.MERGE["max"],
+                    ),
+                )
+                for time in p_values:
+                    for ptm in sorted(p_values[time]):
+                        for module in sorted(p_values[time][ptm]):
+                            logger.info(
+                                "{}\t{}\t{}\t{:.2E}".format(
+                                    time, ptm, module, p_values[time][ptm][module]
+                                )
+                            )
+                            if configuration.get("network"):
+                                export_network(
+                                    configuration["network"],
+                                    network.subgraph(modules[module]),
+                                    ".{}".format(module),
+                                )
 
 
 if __name__ == "__main__":

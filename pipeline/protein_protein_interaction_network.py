@@ -3,6 +3,7 @@ import itertools
 import json
 import math
 import statistics
+import collections
 
 import networkx as nx
 import scipy.stats
@@ -803,7 +804,8 @@ class ProteinProteinInteractionNetwork(nx.Graph):
 
     def get_change_enrichment(
         self,
-        z=1.0,
+        p=0.05,
+        z=(-1.0, 1.0),
         merge_sites=lambda sites: max(sites, key=abs),
         min_size=3,
         max_size=100,
@@ -812,48 +814,88 @@ class ProteinProteinInteractionNetwork(nx.Graph):
     ):
         modules = self.get_modules(min_size, max_size, merge_sizes, weight)
 
-        p = {}
+        p_values = {}
         for time in self.get_times():
-            p[time] = {}
+            p_values[time] = {}
             for ptm in self.get_post_translational_modifications(time):
-                change_distribution = self.get_change_distribution(
-                    time, ptm, merge_sites
-                )
-                z_range = (
-                    -z * change_distribution.std(),
-                    z * change_distribution.std(),
-                )
-
                 M = len(self.get_proteins(time, ptm))
-                n = len(
-                    self.get_proteins_below(
-                        time, ptm, z_range[0], merge_sites=merge_sites
-                    )
-                ) + len(
-                    self.get_proteins_above(
-                        time, ptm, z_range[1], merge_sites=merge_sites
-                    )
-                )
-
                 N = [
                     len(self.subgraph(module).get_proteins(time, ptm))
                     for module in modules
                 ]
-                k = [
-                    len(
-                        self.subgraph(module).get_proteins_below(
+
+                change_distribution = self.get_change_distribution(
+                    time, ptm, merge_sites
+                )
+
+                if isinstance(z, collections.abc.Iterable):
+                    z_range = (
+                        z[0] * change_distribution.std() + change_distribution.mean(),
+                        z[1] * change_distribution.std() + change_distribution.mean(),
+                    )
+
+                    n = len(
+                        self.get_proteins_below(
                             time, ptm, z_range[0], merge_sites=merge_sites
                         )
-                    )
-                    + len(
-                        self.subgraph(module).get_proteins_above(
+                    ) + len(
+                        self.get_proteins_above(
                             time, ptm, z_range[1], merge_sites=merge_sites
                         )
                     )
-                    for module in modules
-                ]
 
-                p[time][ptm] = {
+                    k = [
+                        len(
+                            self.subgraph(module).get_proteins_below(
+                                time, ptm, z_range[0], merge_sites=merge_sites
+                            )
+                        )
+                        + len(
+                            self.subgraph(module).get_proteins_above(
+                                time, ptm, z_range[1], merge_sites=merge_sites
+                            )
+                        )
+                        for module in modules
+                    ]
+
+                else:
+                    z_threshold = (
+                        z * change_distribution.std() + change_distribution.mean()
+                    )
+
+                    if z < 0.0:
+                        n = len(
+                            self.get_proteins_below(
+                                time, ptm, z_threshold, merge_sites=merge_sites
+                            )
+                        )
+
+                        k = [
+                            len(
+                                self.subgraph(module).get_proteins_below(
+                                    time, ptm, z_threshold, merge_sites=merge_sites
+                                )
+                            )
+                            for module in modules
+                        ]
+
+                    else:
+                        n = len(
+                            self.get_proteins_above(
+                                time, ptm, z_threshold, merge_sites=merge_sites
+                            )
+                        )
+
+                        k = [
+                            len(
+                                self.subgraph(module).get_proteins_above(
+                                    time, ptm, z_threshold, merge_sites=merge_sites
+                                )
+                            )
+                            for module in modules
+                        ]
+
+                p_values[time][ptm] = {
                     i: scipy.stats.hypergeom.sf(k[i] - 1, M, n, N[i])
                     for i in range(len(modules))
                 }
@@ -864,26 +906,32 @@ class ProteinProteinInteractionNetwork(nx.Graph):
                 [p_value, (time, ptm, module)]
                 for time in p
                 for ptm in p[time]
-                for module, p_value in p[time][ptm].items()
+                for module, p_value in p_values[time][ptm].items()
             ]
         )
 
         for i in range(len(enrichments)):
             enrichments[i][0] = min(len(enrichments) * enrichments[i][0] / (i + 1), 1.0)
             for j in range(i - 1, -1, -1):
-                if enrichments[j][0] < enrichments[i][0]:
+                if enrichments[j][0] <= enrichments[i][0]:
                     break
                 enrichments[j][0] = enrichments[i][0]
 
-        p_corrected = {}
-        for p_value, (time, ptm, module) in enrichments:
-            if time not in p_corrected:
-                p_corrected[time] = {}
-            if ptm not in p_corrected[time]:
-                p_corrected[time][ptm] = {}
-            p_corrected[time][ptm][module] = p_value
+        modules = {i: module for i, module in enumerate(modules)}
 
-        return {i: module for i, module in enumerate(modules)}, p_corrected
+        p_filtered = {}
+        modules_filtered = {}
+        for p_value, (time, ptm, module) in enrichments:
+            if p_value <= p or not p:
+                if time not in p_filtered:
+                    p_filtered[time] = {}
+                if ptm not in p_filtered[time]:
+                    p_filtered[time][ptm] = {}
+
+                modules_filtered[module] = modules[module]
+                p_filtered[time][ptm][module] = p_value
+
+        return modules_filtered, p_filtered
 
     def add_graph(self, graph):
         for node in graph.nodes:
