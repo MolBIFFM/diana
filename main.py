@@ -206,6 +206,31 @@ def main():
             if configuration.get("styles"):
                 network.set_post_translational_modification_data_column()
 
+                if configuration.get("Cytoscape", {}).get("type") == "z":
+                    network.set_change_data_column(
+                        merge_sites=merge.MERGE.get(
+                            configuration["Cytoscape"].get("merge sites", "mean"),
+                            merge.MERGE["mean"],
+                        ),
+                        mid_range_thresholds=configuration["Cytoscape"].get(
+                            "threshold", (-2.0, 2.0)
+                        ),
+                        mid_range=network.get_range_z,
+                    )
+                else:
+                    network.set_change_data_column_abs(
+                        merge_sites=merge.MERGE.get(
+                            configuration["Cytoscape"].get("merge sites", "mean"),
+                            merge.MERGE["mean"],
+                        ),
+                        mid_range_thresholds=configuration["Cytoscape"].get(
+                            "threshold", (-1.0, 1.0)
+                        ),
+                    )
+
+                if configuration.get("network"):
+                    export_network(configuration["network"], network)
+
                 styles = CytoscapeStyles(
                     network,
                     bar_chart_range=(
@@ -218,34 +243,12 @@ def main():
                     ),
                 )
 
-                if configuration.get("Cytoscape", {}).get("type") == "p":
-                    network.set_change_data_column_p(
-                        merge_sites=merge.MERGE.get(
-                            configuration["Cytoscape"].get("merge sites", "mean"),
-                            merge.MERGE["mean"],
-                        ),
-                        p=configuration["Cytoscape"].get("threshold", 0.05),
-                    )
-                else:
-                    network.set_change_data_column_abs(
-                        merge_sites=merge.MERGE.get(
-                            configuration["Cytoscape"].get("merge sites", "mean"),
-                            merge.MERGE["mean"],
-                        ),
-                        absolute_change=configuration["Cytoscape"].get(
-                            "threshold", 1.0
-                        ),
-                    )
-
                 export_styles(configuration["styles"], styles)
-
-            if configuration.get("network"):
-                export_network(configuration["network"], network)
 
             if configuration.get("module detection"):
                 modules, p_values = network.get_change_enrichment(
-                    p=configuration["module detection"].get("p", 0.05),
-                    z=configuration["module detection"].get("z", (-1.0, 1.0)),
+                    p=configuration["module detection"].get("p", 0.1),
+                    z=configuration["module detection"].get("z", (-2.0, 2.0)),
                     merge_sites=merge.MERGE.get(
                         configuration["module detection"].get("merge sites", "mean"),
                         merge.MERGE["mean"],
@@ -267,15 +270,19 @@ def main():
                     for ptm in sorted(p_values[time]):
                         for module in sorted(p_values[time][ptm]):
                             logger.info(
-                                "{}\t{}\t{}\t{:.2E}".format(
-                                    time, ptm, module, p_values[time][ptm][module]
+                                "{}\t{}\t{} ({} proteins)\t{:.2E}".format(
+                                    time,
+                                    ptm,
+                                    module + 1,
+                                    len(modules[module]),
+                                    p_values[time][ptm][module],
                                 )
                             )
                             if configuration.get("network"):
                                 export_network(
                                     configuration["network"],
                                     network.subgraph(modules[module]),
-                                    ".{}".format(module),
+                                    ".{}".format(module + 1),
                                 )
 
 

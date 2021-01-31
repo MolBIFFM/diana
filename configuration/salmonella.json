@@ -113,12 +113,12 @@
           "maximum": 3.0
         },
         "type": "absolute",
-        "threshold": 1.0,
+        "threshold": [-1.0, 1.0],
         "merge sites": "max abs"
       },
       "module detection": {
-        "p": 0.05,
-        "z": [-1.0, 1.0],
+        "p": 0.1,
+        "z": [-2.0, 2.0],
         "merge sites":"max abs",
         "module size": {
           "minimum": 3,
