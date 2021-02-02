@@ -11,7 +11,7 @@ import scipy.stats
 import pandas as pd
 
 from pipeline.configuration import data
-from pipeline.utilities import fetch, mitab
+from pipeline.utilities import download, mitab
 
 
 class ProteinProteinInteractionNetwork(nx.Graph):
@@ -111,7 +111,7 @@ class ProteinProteinInteractionNetwork(nx.Graph):
         reviewed_proteins, primary_accession, gene_name, protein_name = {}, {}, {}, {}
         accessions, gene_names, protein_names = [], {}, {}
         recommended_name = False
-        for line in fetch.iterate_data(data.UNIPROT_SWISS_PROT):
+        for line in download.iterate_data(data.UNIPROT_SWISS_PROT):
             if line.split("   ")[0] == "AC":
                 accessions.extend(line.split("   ")[1].rstrip(";").split("; "))
 
@@ -433,7 +433,7 @@ class ProteinProteinInteractionNetwork(nx.Graph):
         self, experimental_system=[], multi_validated_physical=False
     ):
         uniprot = {}
-        for row in fetch.iterate_tabular_data(
+        for row in download.iterate_tabular_data(
             data.UNIPROT_ID_MAP,
             delimiter="\t",
             usecols=[0, 1, 2],
@@ -441,7 +441,7 @@ class ProteinProteinInteractionNetwork(nx.Graph):
             if row[1] == "BioGRID" and row[0] in self.nodes:
                 uniprot[int(row[2])] = row[0]
 
-        for row in fetch.iterate_tabular_data(
+        for row in download.iterate_tabular_data(
             data.BIOGRID_ID_MAP_ARCHIVE,
             zip_file=data.BIOGRID_ID_MAP_FILE,
             delimiter="\t",
@@ -460,7 +460,7 @@ class ProteinProteinInteractionNetwork(nx.Graph):
             ):
                 uniprot[int(row["BIOGRID_ID"])] = row["IDENTIFIER_VALUE"]
 
-        for row in fetch.iterate_tabular_data(
+        for row in download.iterate_tabular_data(
             data.BIOGRID_MV_PHYSICAL_ARCHIVE
             if multi_validated_physical
             else data.BIOGRID_ARCHIVE,
@@ -509,7 +509,7 @@ class ProteinProteinInteractionNetwork(nx.Graph):
     def add_interactions_from_IntAct(
         self, interaction_detection_methods=[], interaction_types=[], mi_score=0.0
     ):
-        for row in fetch.iterate_tabular_data(
+        for row in download.iterate_tabular_data(
             data.INTACT_ARCHIVE,
             zip_file=data.INTACT_FILE,
             delimiter="\t",
@@ -528,12 +528,12 @@ class ProteinProteinInteractionNetwork(nx.Graph):
         ):
 
             if not (
-                interactor_a := mitab.get_id_from_ns(
+                interactor_a := mitab.get_id_from_namespace(
                     row["#ID(s) interactor A"], "uniprotkb"
                 )
             ):
                 if not (
-                    interactor_a := mitab.get_id_from_ns(
+                    interactor_a := mitab.get_id_from_namespace(
                         row["Alt. ID(s) interactor A"], "uniprotkb"
                     )
                 ):
@@ -542,12 +542,12 @@ class ProteinProteinInteractionNetwork(nx.Graph):
                 continue
 
             if not (
-                interactor_b := mitab.get_id_from_ns(
+                interactor_b := mitab.get_id_from_namespace(
                     row["ID(s) interactor B"], "uniprotkb"
                 )
             ):
                 if not (
-                    interactor_b := mitab.get_id_from_ns(
+                    interactor_b := mitab.get_id_from_namespace(
                         row["Alt. ID(s) interactor B"], "uniprotkb"
                     )
                 ):
@@ -559,14 +559,14 @@ class ProteinProteinInteractionNetwork(nx.Graph):
                 continue
 
             if not (
-                mitab.ns_has_id(row["Taxid interactor A"], "taxid", "9606")
-                and mitab.ns_has_id(row["Taxid interactor B"], "taxid", "9606")
+                mitab.namespace_has_id(row["Taxid interactor A"], "taxid", "9606")
+                and mitab.namespace_has_id(row["Taxid interactor B"], "taxid", "9606")
             ):
                 continue
 
             if not (
                 not interaction_detection_methods
-                or mitab.ns_has_any_term(
+                or mitab.namespace_has_any_term_from(
                     row["Interaction detection method(s)"],
                     "psi-mi",
                     interaction_detection_methods,
@@ -576,13 +576,13 @@ class ProteinProteinInteractionNetwork(nx.Graph):
 
             if not (
                 not interaction_types
-                or mitab.ns_has_any_term(
+                or mitab.namespace_has_any_term_from(
                     row["Interaction type(s)"], "psi-mi", interaction_types
                 )
             ):
                 continue
 
-            if score := mitab.get_id_from_ns(
+            if score := mitab.get_id_from_namespace(
                 row["Confidence value(s)"], "intact-miscore"
             ):
                 score = float(score)
@@ -625,7 +625,7 @@ class ProteinProteinInteractionNetwork(nx.Graph):
     ):
 
         uniprot = {}
-        for row in fetch.iterate_tabular_data(
+        for row in download.iterate_tabular_data(
             data.UNIPROT_ID_MAP,
             delimiter="\t",
             usecols=[0, 1, 2],
@@ -633,7 +633,7 @@ class ProteinProteinInteractionNetwork(nx.Graph):
             if row[1] == "STRING" and row[0] in self.nodes:
                 uniprot[row[2]] = row[0]
 
-        for row in fetch.iterate_tabular_data(data.STRING_ID_MAP, usecols=[1, 2]):
+        for row in download.iterate_tabular_data(data.STRING_ID_MAP, usecols=[1, 2]):
             if row[1].split("|")[0] in self.nodes:
                 uniprot[row[2]] = row[1].split("|")[0]
 
@@ -658,7 +658,7 @@ class ProteinProteinInteractionNetwork(nx.Graph):
         }
         thresholds["combined_score"] = combined_score
 
-        for row in fetch.iterate_tabular_data(
+        for row in download.iterate_tabular_data(
             data.STRING_PHYSICAL if physical else data.STRING,
             delimiter=" ",
             header=0,

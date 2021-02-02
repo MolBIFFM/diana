@@ -1,8 +1,9 @@
 def parse(entry):
     if entry != "-":
         values = {}
-        for ns, identifier in (
-            ns_identifier.split(":", 1) for ns_identifier in entry.split("|")
+        for namespace, identifier in (
+            namespace_identifier.split(":", 1)
+            for namespace_identifier in entry.split("|")
         ):
 
             identifiers = identifier.split("(")
@@ -12,50 +13,50 @@ def parse(entry):
                 else None
             }
 
-            if ns in values:
-                values[ns].append(identifiers)
+            if namespace in values:
+                values[namespace].append(identifiers)
             else:
-                values[ns] = [identifiers]
+                values[namespace] = [identifiers]
 
         return values
     else:
         return {}
 
 
-def get_id_from_ns(entry, ns):
-    return list(parse(entry).get(ns, [{None: ""}])[0].keys())[0]
+def get_id_from_namespace(entry, namespace):
+    return list(parse(entry).get(namespace, [{None: ""}])[0].keys())[0]
 
 
-def ns_has_id(entry, ns, identifier):
+def namespace_has_id(entry, namespace, identifier):
     if values := parse(entry):
-        return any(identifier in value.keys() for value in values[ns])
+        return any(identifier in value.keys() for value in values[namespace])
     else:
         return False
 
 
-def ns_has_term(entry, ns, identifier):
+def namespace_has_term(entry, namespace, identifier):
     if values := parse(entry):
-        return any(identifier in value.values() for value in values[ns])
+        return any(identifier in value.values() for value in values[namespace])
     else:
         return False
 
 
-def ns_has_any_id(entry, ns, identifiers):
+def namespace_has_any_id_from(entry, namespace, identifiers):
     if values := parse(entry):
         return any(
             identifier in value.keys()
-            for value in values[ns]
+            for value in values[namespace]
             for identifier in identifiers
         )
     else:
         return False
 
 
-def ns_has_any_term(entry, ns, identifiers):
+def namespace_has_any_term_from(entry, namespace, identifiers):
     if values := parse(entry):
         return any(
             identifier in value.values()
-            for value in values[ns]
+            for value in values[namespace]
             for identifier in identifiers
         )
     else:
