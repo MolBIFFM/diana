@@ -1,8 +1,8 @@
 BIOGRID_ID_MAP_ARCHIVE = "https://downloads.thebiogrid.org/Download/BioGRID/Latest-Release/BIOGRID-IDENTIFIERS-LATEST.tab.zip"
 BIOGRID_ID_MAP_FILE = r"BIOGRID-IDENTIFIERS-[0-9]\.[0-9]\.[0-9]{3}\.tab\.txt"
 
-UNIPROT_ID_MAP = "ftp://ftp.expasy.org/databases/uniprot/current_release/knowledgebase/idmapping/by_organism/HUMAN_9606_idmapping.dat.gz"
-UNIPROT_SWISS_PROT = "ftp://ftp.expasy.org/databases/uniprot/current_release/knowledgebase/complete/uniprot_sprot.dat.gz"
+UNIPROT_ID_MAP = "ftp://ftp.uniprot.org/pub/databases/uniprot/current_release/knowledgebase/idmapping/by_organism/HUMAN_9606_idmapping.dat.gz"
+UNIPROT_SWISS_PROT = "ftp://ftp.uniprot.org/pub/databases/uniprot/current_release/knowledgebase/complete/uniprot_sprot.dat.gz"
 
 STRING_ID_MAP = (
     "https://string-db.org/mapping_files/uniprot/human.uniprot_2_string.2018.tsv.gz"

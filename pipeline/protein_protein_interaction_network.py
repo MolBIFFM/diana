@@ -248,11 +248,11 @@ class ProteinProteinInteractionNetwork(nx.Graph):
                 for i in range(len(proteins[protein][isoform])):
                     if isoform != "1":
                         self.nodes["-".join([protein, isoform])][
-                            "{} {} {}".format(time, ptm, i + 1)
+                            "{}-{}-{}".format(time, ptm, i + 1)
                         ] = proteins[protein][isoform][i][1]
                     else:
                         self.nodes[protein][
-                            "{} {} {}".format(time, ptm, i + 1)
+                            "{}-{}-{}".format(time, ptm, i + 1)
                         ] = proteins[protein][isoform][i][1]
 
                 yield [
@@ -267,31 +267,31 @@ class ProteinProteinInteractionNetwork(nx.Graph):
     def get_times(self):
         return sorted(
             set(
-                int(change.split(" ")[0])
+                int(change.split("-")[0])
                 for protein in self
                 for change in self.nodes[protein]
-                if len(change.split(" ")) == 3
+                if len(change.split("-")) == 3
             )
         )
 
     def get_post_translational_modifications(self, time):
         return sorted(
             set(
-                change.split(" ")[1]
+                change.split("-")[1]
                 for protein in self
                 for change in self.nodes[protein]
-                if len(change.split(" ")) == 3 and change.split(" ")[0] == str(time)
+                if len(change.split("-")) == 3 and change.split("-")[0] == str(time)
             )
         )
 
     def get_sites(self, time, ptm):
         return max(
-            int(change.split(" ")[2])
+            int(change.split("-")[2])
             for protein in self
             for change in self.nodes[protein]
-            if len(change.split(" ")) == 3
-            and change.split(" ")[0] == str(time)
-            and change.split(" ")[1] == ptm
+            if len(change.split("-")) == 3
+            and change.split("-")[0] == str(time)
+            and change.split("-")[1] == ptm
         )
 
     def set_post_translational_modification_data_column(self):
@@ -300,10 +300,10 @@ class ProteinProteinInteractionNetwork(nx.Graph):
                 self.nodes[protein]["PTM {}".format(time)] = " ".join(
                     sorted(
                         set(
-                            change.split(" ")[1]
+                            change.split("-")[1]
                             for change in self.nodes[protein]
-                            if len(change.split(" ")) == 3
-                            and change.split(" ")[0] == str(time)
+                            if len(change.split("-")) == 3
+                            and change.split("-")[0] == str(time)
                         )
                     )
                 )
@@ -314,9 +314,9 @@ class ProteinProteinInteractionNetwork(nx.Graph):
             sites = [
                 self.nodes[protein][change]
                 for change in self.nodes[protein]
-                if len(change.split(" ")) == 3
-                and change.split(" ")[0] == str(time)
-                and change.split(" ")[1] == ptm
+                if len(change.split("-")) == 3
+                and change.split("-")[0] == str(time)
+                and change.split("-")[1] == ptm
             ]
 
             if sites:
@@ -368,9 +368,9 @@ class ProteinProteinInteractionNetwork(nx.Graph):
                     sites = [
                         self.nodes[protein][change]
                         for change in self.nodes[protein]
-                        if len(change.split(" ")) == 3
-                        and change.split(" ")[0] == str(time)
-                        and change.split(" ")[1] == post_translational_modification
+                        if len(change.split("-")) == 3
+                        and change.split("-")[0] == str(time)
+                        and change.split("-")[1] == post_translational_modification
                     ]
                     if sites:
                         ptms[post_translational_modification] = merge_sites(sites)
@@ -730,9 +730,9 @@ class ProteinProteinInteractionNetwork(nx.Graph):
             sites = [
                 self.nodes[protein][change]
                 for change in self.nodes[protein]
-                if len(change.split(" ")) == 3
-                and change.split(" ")[0] == str(time)
-                and change.split(" ")[1] == ptm
+                if len(change.split("-")) == 3
+                and change.split("-")[0] == str(time)
+                and change.split("-")[1] == ptm
             ]
             if sites:
                 proteins.append(protein)
@@ -746,9 +746,9 @@ class ProteinProteinInteractionNetwork(nx.Graph):
             sites = [
                 self.nodes[protein][change]
                 for change in self.nodes[protein]
-                if len(change.split(" ")) == 3
-                and change.split(" ")[0] == str(time)
-                and change.split(" ")[1] == ptm
+                if len(change.split("-")) == 3
+                and change.split("-")[0] == str(time)
+                and change.split("-")[1] == ptm
             ]
             if sites and merge_sites(sites) < change:
                 proteins.append(protein)
@@ -762,9 +762,9 @@ class ProteinProteinInteractionNetwork(nx.Graph):
             sites = [
                 self.nodes[protein][change]
                 for change in self.nodes[protein]
-                if len(change.split(" ")) == 3
-                and change.split(" ")[0] == str(time)
-                and change.split(" ")[1] == ptm
+                if len(change.split("-")) == 3
+                and change.split("-")[0] == str(time)
+                and change.split("-")[1] == ptm
             ]
             if sites and merge_sites(sites) > change:
                 proteins.append(protein)

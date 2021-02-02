@@ -12,9 +12,9 @@
           "sites": 5,
           "header": 1,
           "protein column": "protein",
-          "protein format": "Y|X|Z",
+          "protein format": 3,
           "position column": "phosphosites",
-          "position format": "X_Y,X_Y",
+          "position format": 4,
           "replicate columns": [
             "wt15minvscontrolratio"
           ],
@@ -29,9 +29,9 @@
           "sites": 5,
           "header": 1,
           "protein column": "protein",
-          "protein format": "Y|X|Z",
+          "protein format": 3,
           "position column": "phosphosites",
-          "position format": "X_Y,X_Y",
+          "position format": 4,
           "replicate columns": [
             "wt60minvscontrolratio"
           ],
@@ -46,9 +46,9 @@
           "sites": 5,
           "header": 1,
           "protein column": "protein",
-          "protein format": "Y|X|Z",
+          "protein format": 3,
           "position column": "phosphosites",
-          "position format": "X_Y,X_Y",
+          "position format": 4,
           "replicate columns": [
             "wt120minvscontrolratio"
           ],
@@ -62,9 +62,9 @@
           "time": 15,
           "sites": 5,
           "protein column": "Proteins",
-          "protein format": "X;X",
+          "protein format": 2,
           "position column": "Positions within proteins",
-          "position format": "X;X",
+          "position format": 2,
           "replicate columns": [
             "Ratio H/L normalized Exp1",
             "Ratio H/L normalized Exp2",
@@ -80,9 +80,9 @@
           "time": 60,
           "sites": 5,
           "protein column": "Proteins",
-          "protein format": "X;X",
+          "protein format": 2,
           "position column": "Positions within proteins",
-          "position format": "X;X",
+          "position format": 2,
           "replicate columns": [
             "Ratio H/L normalized Exp1",
             "Ratio H/L normalized Exp2",
@@ -98,9 +98,9 @@
           "time": 120,
           "sites": 5,
           "protein column": "Proteins",
-          "protein format": "X;X",
+          "protein format": 2,
           "position column": "Positions within proteins",
-          "position format": "X;X",
+          "position format": 2,
           "replicate columns": [
             "Ratio H/L normalized Exp1",
             "Ratio H/L normalized Exp2",
