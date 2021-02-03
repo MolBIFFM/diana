@@ -215,10 +215,10 @@ def main():
                         mid_range_thresholds=configuration["Cytoscape"].get(
                             "threshold", (-2.0, 2.0)
                         ),
-                        mid_range=network.get_range_z,
+                        get_mid_range=network.get_range_z_score,
                     )
                 else:
-                    network.set_change_data_column_abs(
+                    network.set_change_data_column(
                         merge_sites=merge.MERGE.get(
                             configuration["Cytoscape"].get("merge sites", "mean"),
                             merge.MERGE["mean"],
@@ -270,11 +270,12 @@ def main():
                     for ptm in sorted(p_values[time]):
                         for module in sorted(p_values[time][ptm]):
                             logger.info(
-                                "{}\t{}\t{} ({} proteins)\t{:.2E}".format(
+                                "{}\t{}\t{} ({} proteins, density {:.2f})\t{:.2E}".format(
                                     time,
                                     ptm,
                                     module + 1,
                                     len(modules[module]),
+                                    nx.density(network.subgraph(modules[module])),
                                     p_values[time][ptm][module],
                                 )
                             )
