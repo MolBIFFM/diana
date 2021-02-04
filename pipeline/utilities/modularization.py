@@ -1,6 +1,7 @@
 import networkx as nx
 import scipy.sparse
 
+
 def clauset_newman_moore(G, weight="weight"):
     # Clauset, Newman, Moore (2004), Newman (2004)
     A = nx.linalg.graphmatrix.adjacency_matrix(G, weight=weight).toarray().tolist()
@@ -8,7 +9,7 @@ def clauset_newman_moore(G, weight="weight"):
     k = [sum(row) for row in A]
     m = sum(k) / 2.0
     a = [k[i] / (2.0 * m) for i in range(len(k))]
-    
+
     communities = [[node] for node in G.nodes()]
     connected = [[bool(A[i][j]) for j in range(i)] for i in range(n)]
 
@@ -33,7 +34,7 @@ def clauset_newman_moore(G, weight="weight"):
         deltaQprime = [deltaQ[i][:] for i in range(len(deltaQ))]
 
         for k in range(n):
-            if k != i and k != j:
+            if communities[k] and k != i and k != j:
                 if k < i and k < j:
                     if connected[i][k] and connected[j][k]:
                         deltaQprime[j][k] = deltaQ[i][k] + deltaQ[j][k]
@@ -64,23 +65,25 @@ def clauset_newman_moore(G, weight="weight"):
         deltaQ = deltaQprime
 
         for i in range(n):
-            if i < max_i:
-                deltaQ[max_i][i] = 0.0
-                connected[max_i][i] = False
+            if communities[i]:
+                if i < max_i:
+                    deltaQ[max_i][i] = 0.0
+                    connected[max_i][i] = False
 
-            elif i > max_i:
-                deltaQ[i][max_i] = 0.0
-                connected[i][max_i] = False
+                elif i > max_i:
+                    deltaQ[i][max_i] = 0.0
+                    connected[i][max_i] = False
 
         a[j] += a[i]
         a[i] = 0.0
 
         max_entry = -1.0
         for i in range(n):
-            for j in range(i):
-                if deltaQ[i][j] > max_entry:
-                    max_entry = deltaQ[i][j]
-                    max_i = i
-                    max_j = j
+            if communities[i]:
+                for j in range(i):
+                    if deltaQ[i][j] > max_entry:
+                        max_entry = deltaQ[i][j]
+                        max_i = i
+                        max_j = j
 
     return [frozenset(community) for community in communities if community]
