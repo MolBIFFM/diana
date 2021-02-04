@@ -11,7 +11,7 @@ import scipy.stats
 import pandas as pd
 
 from pipeline.configuration import data
-from pipeline.utilities import download, mitab
+from pipeline.utilities import download, mitab, modularization
 
 
 class ProteinProteinInteractionNetwork(nx.Graph):
@@ -710,7 +710,7 @@ class ProteinProteinInteractionNetwork(nx.Graph):
             subdivision = False
             for i in range(len(max_indices)):
                 subdivided_community = list(
-                    nx.algorithms.community.modularity_max.greedy_modularity_communities(
+                    modularization.clauset_newman_moore(
                         self.subgraph(communities[max_indices[i]]), weight=weight
                     )
                 )

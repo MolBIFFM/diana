@@ -246,6 +246,9 @@ def main():
                 export_styles(configuration["styles"], styles)
 
             if configuration.get("module detection"):
+                network.set_edge_weights(
+                    weight=lambda confidence_scores: len(confidence_scores)
+                )
                 modules, p_values = network.get_change_enrichment(
                     p=configuration["module detection"].get("p", 0.1),
                     z=configuration["module detection"].get("z", (-2.0, 2.0)),
