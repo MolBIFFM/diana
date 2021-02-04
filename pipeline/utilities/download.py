@@ -43,15 +43,24 @@ def decompress_zip_file(compressed_file_name, file=None):
             file = next(filter(regex.match, archive.namelist()))
 
         if not os.path.exists(
-            os.path.join(tempfile.gettempdir(), os.path.basename(__file__), file)
+            os.path.join(
+                tempfile.gettempdir(),
+                os.path.splitext(os.path.basename(__file__))[0],
+                file,
+            )
         ):
             decompressed_file_name = archive.extract(
                 file,
-                path=os.path.join(tempfile.gettempdir(), os.path.basename(__file__)),
+                path=os.path.join(
+                    tempfile.gettempdir(),
+                    os.path.splitext(os.path.basename(__file__))[0],
+                ),
             )
         else:
             decompressed_file_name = os.path.join(
-                tempfile.gettempdir(), os.path.basename(__file__), file
+                tempfile.gettempdir(),
+                os.path.splitext(os.path.basename(__file__))[0],
+                file,
             )
 
     return decompressed_file_name
@@ -59,13 +68,19 @@ def decompress_zip_file(compressed_file_name, file=None):
 
 def download_data(url, zip_file=None):
     if not os.path.exists(
-        os.path.join(tempfile.gettempdir(), os.path.basename(__file__))
+        os.path.join(
+            tempfile.gettempdir(), os.path.splitext(os.path.basename(__file__))[0]
+        )
     ):
-        os.mkdir(os.path.join(tempfile.gettempdir(), os.path.basename(__file__)))
+        os.mkdir(
+            os.path.join(
+                tempfile.gettempdir(), os.path.splitext(os.path.basename(__file__))[0]
+            )
+        )
 
     local_file_name = os.path.join(
         tempfile.gettempdir(),
-        os.path.basename(__file__),
+        os.path.splitext(os.path.basename(__file__))[0],
         os.path.split(urllib.parse.urlparse(url).path)[1],
     )
 

@@ -147,8 +147,8 @@ class ProteinProteinInteractionNetwork(nx.Graph):
                 for i, accession in enumerate(accessions):
                     if accession in proteins:
                         reviewed_proteins[accession] = proteins[accession]
-                        gene_name[accession] = gene_names.get("Name", "")
-                        protein_name[accession] = protein_names.get("Full", "")
+                        gene_name[accession] = gene_names.get("Name", "NA")
+                        protein_name[accession] = protein_names.get("Full", "NA")
                         if i > 0:
                             primary_accession[accession] = accessions[0]
                 accessions.clear()

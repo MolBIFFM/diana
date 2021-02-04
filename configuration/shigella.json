@@ -143,7 +143,7 @@
         "merge sites": "max abs"
       },
       "module detection": {
-        "p": 0.1,
+        "p": 0.25,
         "z": [-2.0, 2.0],
         "merge sites":"max abs",
         "module size": {
