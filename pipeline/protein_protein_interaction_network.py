@@ -3,8 +3,6 @@ import itertools
 import json
 import math
 import statistics
-import collections
-import numbers
 
 import networkx as nx
 import scipy.stats
@@ -18,7 +16,7 @@ class ProteinProteinInteractionNetwork(nx.Graph):
     def __init__(self):
         super().__init__()
 
-    def add_proteins_from_excel(
+    def add_proteins_from_spreadsheet(
         self,
         file_name,
         ptm,
@@ -248,16 +246,17 @@ class ProteinProteinInteractionNetwork(nx.Graph):
                 for i in range(len(proteins[protein][isoform])):
                     if isoform != "1":
                         self.nodes["-".join([protein, isoform])][
-                            "{}-{}-{}".format(time, ptm, i + 1)
+                            "{} {} {}".format(time, ptm, i + 1)
                         ] = proteins[protein][isoform][i][1]
                     else:
                         self.nodes[protein][
-                            "{}-{}-{}".format(time, ptm, i + 1)
+                            "{} {} {}".format(time, ptm, i + 1)
                         ] = proteins[protein][isoform][i][1]
 
                 yield [
                     gene_name[protein],
                     "-".join([protein, isoform]) if isoform != "1" else protein,
+                    protein_name[protein],
                     [
                         proteins[protein][isoform][i][1]
                         for i in range(len(proteins[protein][isoform]))
@@ -267,43 +266,48 @@ class ProteinProteinInteractionNetwork(nx.Graph):
     def get_times(self):
         return sorted(
             set(
-                int(change.split("-")[0])
+                int(change.split(" ")[0])
                 for protein in self
                 for change in self.nodes[protein]
-                if len(change.split("-")) == 3
+                if len(change.split(" ")) == 3 and change.split(" ")[0].isnumeric()
             )
         )
 
     def get_post_translational_modifications(self, time):
         return sorted(
             set(
-                change.split("-")[1]
+                change.split(" ")[1]
                 for protein in self
                 for change in self.nodes[protein]
-                if len(change.split("-")) == 3 and change.split("-")[0] == str(time)
+                if len(change.split(" ")) == 3
+                and change.split(" ")[0].isnumeric()
+                and change.split(" ")[0] == str(time)
             )
         )
 
     def get_sites(self, time, ptm):
         return max(
-            int(change.split("-")[2])
+            int(change.split(" ")[2])
             for protein in self
             for change in self.nodes[protein]
-            if len(change.split("-")) == 3
-            and change.split("-")[0] == str(time)
-            and change.split("-")[1] == ptm
+            if len(change.split(" ")) == 3
+            and change.split(" ")[0].isnumeric()
+            and change.split(" ")[0] == str(time)
+            and change.split(" ")[1] == ptm
         )
 
     def set_post_translational_modification_data_column(self):
         for time in self.get_times():
             for protein in self:
-                self.nodes[protein]["PTM {}".format(time)] = " ".join(
+                self.nodes[protein][
+                    "post-translational modification {}".format(time)
+                ] = " ".join(
                     sorted(
                         set(
-                            change.split("-")[1]
+                            change.split(" ")[1]
                             for change in self.nodes[protein]
-                            if len(change.split("-")) == 3
-                            and change.split("-")[0] == str(time)
+                            if len(change.split(" ")) == 3
+                            and change.split(" ")[0] == str(time)
                         )
                     )
                 )
@@ -314,9 +318,10 @@ class ProteinProteinInteractionNetwork(nx.Graph):
             sites = [
                 self.nodes[protein][change]
                 for change in self.nodes[protein]
-                if len(change.split("-")) == 3
-                and change.split("-")[0] == str(time)
-                and change.split("-")[1] == ptm
+                if len(change.split(" ")) == 3
+                and change.split(" ")[0].isnumeric()
+                and change.split(" ")[0] == str(time)
+                and change.split(" ")[1] == ptm
             ]
 
             if sites:
@@ -324,7 +329,7 @@ class ProteinProteinInteractionNetwork(nx.Graph):
 
         return changes
 
-    def get_range_z_score(
+    def get_range_from_z_score(
         self,
         time,
         ptm,
@@ -341,7 +346,7 @@ class ProteinProteinInteractionNetwork(nx.Graph):
         self,
         merge_sites=lambda sites: max(sites, key=abs),
         mid_range_thresholds=(-1.0, 1.0),
-        get_mid_range=lambda time, ptm, merge_sites, mid_range_bounds: mid_range_bounds,
+        get_mid_range=lambda time, ptm, merge_sites, mid_range_thresholds: mid_range_thresholds,
     ):
         times = self.get_times()
         post_translational_modifications = {
@@ -372,15 +377,20 @@ class ProteinProteinInteractionNetwork(nx.Graph):
                     sites = [
                         self.nodes[protein][change]
                         for change in self.nodes[protein]
-                        if len(change.split("-")) == 3
-                        and change.split("-")[0] == str(time)
-                        and change.split("-")[1] == post_translational_modification
+                        if len(change.split(" ")) == 3
+                        and change.split(" ")[0].isnumeric()
+                        and change.split(" ")[0] == str(time)
+                        and change.split(" ")[1] == post_translational_modification
                     ]
                     if sites:
                         ptms[post_translational_modification] = merge_sites(sites)
 
                 if ptms:
-                    if all(change > 0.0 for change in ptms.values()):
+                    if all(
+                        change
+                        >= 0.5 * mid_ranges[time][post_translational_modification][1]
+                        for change in ptms.values()
+                    ):
                         if any(
                             change
                             >= mid_ranges[time][post_translational_modification][1]
@@ -389,9 +399,14 @@ class ProteinProteinInteractionNetwork(nx.Graph):
                             self.nodes[protein]["change {}".format(time)] = "up"
                         else:
                             self.nodes[protein]["change {}".format(time)] = "mid up"
-                    elif all(change < 0.0 for change in ptms.values()):
+                    elif all(
+                        change
+                        <= 0.5 * mid_ranges[time][post_translational_modification][0]
+                        for change in ptms.values()
+                    ):
                         if any(
-                            change <= mid_ranges[time][ptm][0]
+                            change
+                            <= mid_ranges[time][post_translational_modification][0]
                             for ptm, change in ptms.items()
                         ):
                             self.nodes[protein]["change {}".format(time)] = "down"
@@ -411,13 +426,13 @@ class ProteinProteinInteractionNetwork(nx.Graph):
                             )
                         )
                 else:
-                    self.nodes[protein]["change {}".format(time)] = ""
+                    self.nodes[protein]["change {}".format(time)] = "mid"
 
     def get_databases(self):
         return sorted(
             set(
                 database for edge in self.edges for database in self.edges[edge]
-            ).intersection({"BioGRID", "IntAct", "STRING"})
+            ).intersection({"BioGRID", "IntAct", "STRING", "Reactome"})
         )
 
     def set_edge_weights(
@@ -433,7 +448,7 @@ class ProteinProteinInteractionNetwork(nx.Graph):
                 }
             )
 
-    def add_interactions_from_BioGRID(
+    def add_interactions_from_biogrid(
         self, experimental_system=[], multi_validated_physical=False
     ):
         uniprot = {}
@@ -447,7 +462,7 @@ class ProteinProteinInteractionNetwork(nx.Graph):
 
         for row in download.iterate_tabular_data(
             data.BIOGRID_ID_MAP_ARCHIVE,
-            zip_file=data.BIOGRID_ID_MAP_FILE,
+            zip_file=data.BIOGRID_ID_MAP,
             delimiter="\t",
             header=20,
             usecols=[
@@ -468,9 +483,9 @@ class ProteinProteinInteractionNetwork(nx.Graph):
             data.BIOGRID_MV_PHYSICAL_ARCHIVE
             if multi_validated_physical
             else data.BIOGRID_ARCHIVE,
-            zip_file=data.BIOGRID_MV_PHYSICAL_FILE
+            zip_file=data.BIOGRID_MV_PHYSICAL
             if multi_validated_physical
-            else data.BIOGRID_FILE,
+            else data.BIOGRID,
             delimiter="\t",
             header=0,
             usecols=[
@@ -503,19 +518,23 @@ class ProteinProteinInteractionNetwork(nx.Graph):
                 self.edges[
                     uniprot[row["BioGRID ID Interactor A"]],
                     uniprot[row["BioGRID ID Interactor B"]],
-                ]["BioGRID"] = 1.0
+                ]["BioGRID"] = 0.5
 
                 yield (
                     uniprot[row["BioGRID ID Interactor A"]],
                     uniprot[row["BioGRID ID Interactor B"]],
+                    self.edges[
+                        uniprot[row["BioGRID ID Interactor A"]],
+                        uniprot[row["BioGRID ID Interactor B"]],
+                    ]["BioGRID"],
                 )
 
-    def add_interactions_from_IntAct(
+    def add_interactions_from_intact(
         self, interaction_detection_methods=[], interaction_types=[], mi_score=0.0
     ):
         for row in download.iterate_tabular_data(
             data.INTACT_ARCHIVE,
-            zip_file=data.INTACT_FILE,
+            zip_file=data.INTACT,
             delimiter="\t",
             header=0,
             usecols=[
@@ -609,7 +628,105 @@ class ProteinProteinInteractionNetwork(nx.Graph):
                 self.edges[interactor_a, interactor_b]["IntAct"],
             )
 
-    def add_interactions_from_STRING(
+    def add_interactions_from_reactome(
+        self, interaction_detection_methods=[], interaction_types=[], reactome_score=0.0
+    ):
+        for row in download.iterate_tabular_data(
+            data.REACTOME,
+            delimiter="\t",
+            header=0,
+            usecols=[
+                "#ID(s) interactor A",
+                "ID(s) interactor B",
+                "Alt. ID(s) interactor A",
+                "Alt. ID(s) interactor B",
+                "Taxid interactor A",
+                "Taxid interactor B",
+                "Interaction detection method(s)",
+                "Interaction type(s)",
+                "Confidence value(s)",
+            ],
+        ):
+
+            if not (
+                interactor_a := mitab.get_id_from_namespace(
+                    row["#ID(s) interactor A"], "uniprotkb"
+                )
+            ):
+                if not (
+                    interactor_a := mitab.get_id_from_namespace(
+                        row["Alt. ID(s) interactor A"], "uniprotkb"
+                    )
+                ):
+                    continue
+            if interactor_a not in self:
+                continue
+
+            if not (
+                interactor_b := mitab.get_id_from_namespace(
+                    row["ID(s) interactor B"], "uniprotkb"
+                )
+            ):
+                if not (
+                    interactor_b := mitab.get_id_from_namespace(
+                        row["Alt. ID(s) interactor B"], "uniprotkb"
+                    )
+                ):
+                    continue
+            if interactor_b not in self:
+                continue
+
+            if interactor_a == interactor_b:
+                continue
+
+            if not (
+                mitab.namespace_has_id(row["Taxid interactor A"], "taxid", "9606")
+                and mitab.namespace_has_id(row["Taxid interactor B"], "taxid", "9606")
+            ):
+                continue
+
+            if not (
+                not interaction_detection_methods
+                or mitab.namespace_has_any_term_from(
+                    row["Interaction detection method(s)"],
+                    "psi-mi",
+                    interaction_detection_methods,
+                )
+            ):
+                continue
+
+            if not (
+                not interaction_types
+                or mitab.namespace_has_any_term_from(
+                    row["Interaction type(s)"], "psi-mi", interaction_types
+                )
+            ):
+                continue
+
+            if score := mitab.get_id_from_namespace(
+                row["Confidence value(s)"], "reactome-score"
+            ):
+                score = float(score)
+                if score < reactome_score:
+                    continue
+            else:
+                continue
+
+            if self.has_edge(interactor_a, interactor_b):
+                self.edges[interactor_a, interactor_b]["Reactome"] = max(
+                    score, self.edges[interactor_a, interactor_b].get("Reactome", 0.0)
+                )
+            else:
+                self.add_edge(interactor_a, interactor_b)
+                self.edges[interactor_a, interactor_b]["Reactome"] = score
+
+            yield (
+                interactor_a,
+                interactor_b,
+                self.edges[interactor_a, interactor_b]["Reactome"],
+            )
+
+    def add_interactions_from_string(
         self,
         neighborhood=0.0,
         neighborhood_transferred=0.0,
@@ -710,7 +827,7 @@ class ProteinProteinInteractionNetwork(nx.Graph):
             subdivision = False
             for i in range(len(max_indices)):
                 subdivided_community = list(
-                    modularization.clauset_newman_moore(
+                    modularization.louvain(
                         self.subgraph(communities[max_indices[i]]), weight=weight
                     )
                 )
@@ -734,9 +851,10 @@ class ProteinProteinInteractionNetwork(nx.Graph):
             sites = [
                 self.nodes[protein][change]
                 for change in self.nodes[protein]
-                if len(change.split("-")) == 3
-                and change.split("-")[0] == str(time)
-                and change.split("-")[1] == ptm
+                if len(change.split(" ")) == 3
+                and change.split(" ")[0].isnumeric()
+                and change.split(" ")[0] == str(time)
+                and change.split(" ")[1] == ptm
             ]
             if sites:
                 proteins.append(protein)
@@ -750,9 +868,10 @@ class ProteinProteinInteractionNetwork(nx.Graph):
             sites = [
                 self.nodes[protein][change]
                 for change in self.nodes[protein]
-                if len(change.split("-")) == 3
-                and change.split("-")[0] == str(time)
-                and change.split("-")[1] == ptm
+                if len(change.split(" ")) == 3
+                and change.split(" ")[0].isnumeric()
+                and change.split(" ")[0] == str(time)
+                and change.split(" ")[1] == ptm
             ]
             if sites and merge_sites(sites) < change:
                 proteins.append(protein)
@@ -766,9 +885,10 @@ class ProteinProteinInteractionNetwork(nx.Graph):
             sites = [
                 self.nodes[protein][change]
                 for change in self.nodes[protein]
-                if len(change.split("-")) == 3
-                and change.split("-")[0] == str(time)
-                and change.split("-")[1] == ptm
+                if len(change.split(" ")) == 3
+                and change.split(" ")[0].isnumeric()
+                and change.split(" ")[0] == str(time)
+                and change.split(" ")[1] == ptm
             ]
             if sites and merge_sites(sites) > change:
                 proteins.append(protein)
@@ -777,129 +897,87 @@ class ProteinProteinInteractionNetwork(nx.Graph):
     def get_change_enrichment(
         self,
         p=0.05,
-        z=(-2.0, 2.0),
+        mid_range_thresholds=(-1.0, 1.0),
+        get_mid_range=lambda time, ptm, merge_sites, mid_range_thresholds: mid_range_thresholds,
         merge_sites=lambda sites: max(sites, key=abs),
         min_size=3,
         max_size=100,
-        merge_sizes=max,
-        weight=None,
+        weight="weight",
     ):
-        modules = self.get_modules(min_size, max_size, merge_sizes, weight)
+        modules = self.get_modules(min_size, max_size, weight=weight)
+        modules = {i: module for i, module in enumerate(modules)}
 
         p_values = {}
+        p_adjusted = {}
+        modules_filtered = {}
+
         for time in self.get_times():
-            p_values[time] = {}
             for ptm in self.get_post_translational_modifications(time):
                 M = len(self.get_proteins(time, ptm))
                 N = [
-                    len(self.subgraph(module).get_proteins(time, ptm))
-                    for module in modules
+                    len(self.subgraph(modules[i]).get_proteins(time, ptm))
+                    for i in modules
                 ]
 
-                changes = self.get_changes(time, ptm, merge_sites)
-                mean = statistics.mean(changes)
-                std = statistics.pstdev(changes, mu=mean)
+                mid_range = get_mid_range(
+                    time,
+                    ptm,
+                    merge_sites,
+                    mid_range_thresholds,
+                )
 
-                if isinstance(z, collections.abc.Iterable):
-                    z_range = (
-                        z[0] * std + mean,
-                        z[1] * std + mean,
+                n = len(
+                    self.get_proteins_below(
+                        time, ptm, mid_range[0], merge_sites=merge_sites
                     )
+                ) + len(
+                    self.get_proteins_above(
+                        time, ptm, mid_range[1], merge_sites=merge_sites
+                    )
+                )
 
-                    n = len(
-                        self.get_proteins_below(
-                            time, ptm, z_range[0], merge_sites=merge_sites
-                        )
-                    ) + len(
-                        self.get_proteins_above(
-                            time, ptm, z_range[1], merge_sites=merge_sites
+                k = [
+                    len(
+                        self.subgraph(modules[i]).get_proteins_below(
+                            time, ptm, mid_range[0], merge_sites=merge_sites
                         )
                     )
-
-                    k = [
-                        len(
-                            self.subgraph(module).get_proteins_below(
-                                time, ptm, z_range[0], merge_sites=merge_sites
-                            )
+                    + len(
+                        self.subgraph(modules[i]).get_proteins_above(
+                            time, ptm, mid_range[1], merge_sites=merge_sites
                         )
-                        + len(
-                            self.subgraph(module).get_proteins_above(
-                                time, ptm, z_range[1], merge_sites=merge_sites
-                            )
-                        )
-                        for module in modules
-                    ]
+                    )
+                    for i in modules
+                ]
 
-                elif isinstance(z, numbers.Number):
-                    z_threshold = z * std + mean
-
-                    if z < 0.0:
-                        n = len(
-                            self.get_proteins_below(
-                                time, ptm, z_threshold, merge_sites=merge_sites
-                            )
-                        )
-
-                        k = [
-                            len(
-                                self.subgraph(module).get_proteins_below(
-                                    time, ptm, z_threshold, merge_sites=merge_sites
-                                )
-                            )
-                            for module in modules
-                        ]
-
-                    else:
-                        n = len(
-                            self.get_proteins_above(
-                                time, ptm, z_threshold, merge_sites=merge_sites
-                            )
-                        )
-
-                        k = [
-                            len(
-                                self.subgraph(module).get_proteins_above(
-                                    time, ptm, z_threshold, merge_sites=merge_sites
-                                )
-                            )
-                            for module in modules
-                        ]
-
-                p_values[time][ptm] = {
+                p_values = {
                     i: scipy.stats.hypergeom.sf(k[i] - 1, M, n, N[i])
                     for i in range(len(modules))
                 }
 
-        # Benjamini-Hochberg p-value adjustment (Yekutieli & Benjamini (1999))
-        enrichments = sorted(
-            [
-                [p_value, (time, ptm, module)]
-                for time in p_values
-                for ptm in p_values[time]
-                for module, p_value in p_values[time][ptm].items()
-            ]
-        )
+                # Benjamini-Hochberg p-value adjustment (Yekutieli & Benjamini (1999))
+                enrichments = sorted(
+                    [[p_value, module] for module, p_value in p_values.items()]
+                )
 
-        for i in range(len(enrichments)):
-            enrichments[i][0] = min(len(enrichments) * enrichments[i][0] / (i + 1), 1.0)
-            for j in range(i, 0, -1):
-                if enrichments[j - 1][0] <= enrichments[j][0]:
-                    break
-                enrichments[j - 1][0] = enrichments[j][0]
+                for i in range(len(enrichments)):
+                    enrichments[i][0] = min(
+                        len(enrichments) * enrichments[i][0] / (i + 1), 1.0
+                    )
+                    for j in range(i, 0, -1):
+                        if enrichments[j - 1][0] <= enrichments[j][0]:
+                            break
+                        enrichments[j - 1][0] = enrichments[j][0]
 
-        modules = {i: module for i, module in enumerate(modules)}
+                for p_value, module in enrichments:
+                    if p_value <= p:
+                        if time not in p_adjusted:
+                            p_adjusted[time] = {}
+                        if ptm not in p_adjusted[time]:
+                            p_adjusted[time][ptm] = {}
 
-        p_adjusted = {}
-        modules_filtered = {}
-        for p_value, (time, ptm, module) in enrichments:
-            if p_value <= p:
-                if time not in p_adjusted:
-                    p_adjusted[time] = {}
-                if ptm not in p_adjusted[time]:
-                    p_adjusted[time][ptm] = {}
-
-                modules_filtered[module] = modules[module]
-                p_adjusted[time][ptm][module] = p_value
+                        modules_filtered[module] = modules[module]
+                        p_adjusted[time][ptm][module] = p_value
 
         return modules_filtered, p_adjusted
 

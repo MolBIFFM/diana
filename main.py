@@ -70,7 +70,12 @@ def main():
             network = ProteinProteinInteractionNetwork()
 
             for entry in configuration.get("PTM", {}):
-                for gene_name, protein, sites in network.add_proteins_from_excel(
+                for (
+                    gene_name,
+                    protein,
+                    protein_name,
+                    sites,
+                ) in network.add_proteins_from_spreadsheet(
                     entry["file"],
                     entry["label"],
                     entry["time"],
@@ -84,7 +89,7 @@ def main():
                         entry["position format"], lambda x: x
                     ),
                     sheet_name=entry.get("sheet", 0),
-                    header=entry.get("header", 0),
+                    header=entry.get("header", 1) - 1,
                     num_sites=entry.get("sites", 5),
                     num_replicates=entry.get("replicates", 2),
                     merge_replicates=merge.MERGE.get(
@@ -93,8 +98,9 @@ def main():
                     convert_measurement=convert.LOG_BASE[entry.get("log base")],
                 ):
                     logger.info(
-                        "{}\t{}\t{}\t{}\t{}".format(
-                            gene_name if gene_name else "",
+                        "{}\t{}\t{}\t{}\t{}\t{}".format(
+                            gene_name,
+                            protein_name,
                             protein,
                             entry["time"],
                             entry["label"],
@@ -107,7 +113,8 @@ def main():
                     for (
                         interactor_a,
                         interactor_b,
-                    ) in network.add_interactions_from_BioGRID(
+                        score,
+                    ) in network.add_interactions_from_biogrid(
                         experimental_system=configuration["PPI"]["BioGRID"].get(
                             "experimental system",
                             [
@@ -128,8 +135,8 @@ def main():
                         ),
                     ):
                         logger.info(
-                            "{}\t{}\tBioGRID\t1.000".format(
-                                *sorted([interactor_a, interactor_b])
+                            "{}\t{}\BioGRID\t{:.3f}".format(
+                                *sorted([interactor_a, interactor_b]), score
                             )
                         )
 
@@ -138,7 +145,7 @@ def main():
                         interactor_a,
                         interactor_b,
                         score,
-                    ) in network.add_interactions_from_IntAct(
+                    ) in network.add_interactions_from_intact(
                         interaction_detection_methods=configuration["PPI"][
                             "IntAct"
                         ].get("interaction detection methods", []),
@@ -158,7 +165,7 @@ def main():
                         interactor_a,
                         interactor_b,
                         score,
-                    ) in network.add_interactions_from_STRING(
+                    ) in network.add_interactions_from_string(
                         neighborhood=configuration["PPI"]["STRING"].get(
                             "neighborhood", 0.0
                         ),
@@ -203,19 +210,41 @@ def main():
                             )
                         )
 
+                if configuration["PPI"].get("Reactome"):
+                    for (
+                        interactor_a,
+                        interactor_b,
+                        score,
+                    ) in network.add_interactions_from_reactome(
+                        interaction_detection_methods=configuration["PPI"][
+                            "Reactome"
+                        ].get("interaction detection methods", []),
+                        interaction_types=configuration["PPI"]["Reactome"].get(
+                            "interaction_types", []
+                        ),
+                        reactome_score=configuration["PPI"]["Reactome"].get(
+                            "Reactome score", 0.0
+                        ),
+                    ):
+                        logger.info(
+                            "{}\t{}\tReactome\t{:.3f}".format(
+                                *sorted([interactor_a, interactor_b]), score
+                            )
+                        )
+
             if configuration.get("styles"):
                 network.set_post_translational_modification_data_column()
 
-                if configuration.get("Cytoscape", {}).get("type") == "z":
+                if configuration.get("Cytoscape", {}).get("type", "z") == "z-score":
                     network.set_change_data_column(
                         merge_sites=merge.MERGE.get(
                             configuration["Cytoscape"].get("merge sites", "mean"),
                             merge.MERGE["mean"],
                         ),
                         mid_range_thresholds=configuration["Cytoscape"].get(
-                            "threshold", (-2.0, 2.0)
+                            "thresholds", (-2.0, 2.0)
                         ),
-                        get_mid_range=network.get_range_z_score,
+                        get_mid_range=network.get_range_from_z_score,
                     )
                 else:
                     network.set_change_data_column(
@@ -224,8 +253,9 @@ def main():
                             merge.MERGE["mean"],
                         ),
                         mid_range_thresholds=configuration["Cytoscape"].get(
-                            "threshold", (-1.0, 1.0)
+                            "thresholds", (-1.0, 1.0)
                         ),
+                        get_mid_range=lambda time, ptm, merge_sites, mid_range_bounds: mid_range_bounds,
                     )
 
                 if configuration.get("network"):
@@ -249,35 +279,55 @@ def main():
                 network.set_edge_weights(
                     weight=lambda confidence_scores: len(confidence_scores)
                 )
-                modules, p_values = network.get_change_enrichment(
-                    p=configuration["module detection"].get("p", 0.1),
-                    z=configuration["module detection"].get("z", (-2.0, 2.0)),
-                    merge_sites=merge.MERGE.get(
-                        configuration["module detection"].get("merge sites", "mean"),
-                        merge.MERGE["mean"],
-                    ),
-                    min_size=configuration["module detection"]
-                    .get("module size", {})
-                    .get("minimum", 3),
-                    max_size=configuration["module detection"]
-                    .get("module size", {})
-                    .get("maximum", 100),
-                    merge_sizes=merge.MERGE.get(
-                        configuration["module detection"]
+                if configuration["module detection"].get("type", "z") == "z-score":
+                    modules, p_values = network.get_change_enrichment(
+                        p=configuration["module detection"].get("p", 0.1),
+                        mid_range_thresholds=configuration["module detection"].get(
+                            "thresholds", (-2.0, 2.0)
+                        ),
+                        get_mid_range=network.get_range_from_z_score,
+                        merge_sites=merge.MERGE.get(
+                            configuration["module detection"].get(
+                                "merge sites", "mean"
+                            ),
+                            merge.MERGE["mean"],
+                        ),
+                        min_size=configuration["module detection"]
                         .get("module size", {})
-                        .get("merge", "max"),
-                        merge.MERGE["max"],
-                    ),
-                )
+                        .get("minimum", 3),
+                        max_size=configuration["module detection"]
+                        .get("module size", {})
+                        .get("maximum", 100),
+                    )
+                else:
+                    modules, p_values = network.get_change_enrichment(
+                        p=configuration["module detection"].get("p", 0.05),
+                        mid_range_thresholds=configuration["module detection"].get(
+                            "thresholds", (-1.0, 1.0)
+                        ),
+                        get_mid_range=lambda time, ptm, merge_sites, mid_range_bounds: mid_range_bounds,
+                        merge_sites=merge.MERGE.get(
+                            configuration["module detection"].get(
+                                "merge sites", "mean"
+                            ),
+                            merge.MERGE["mean"],
+                        ),
+                        min_size=configuration["module detection"]
+                        .get("module size", {})
+                        .get("minimum", 3),
+                        max_size=configuration["module detection"]
+                        .get("module size", {})
+                        .get("maximum", 100),
+                    )
+
                 for time in p_values:
                     for ptm in sorted(p_values[time]):
                         for module in sorted(p_values[time][ptm]):
                             logger.info(
-                                "{}\t{}\t{} ({} proteins, density {:.2f})\t{:.2E}".format(
+                                "{}\t{}\t{}\t{:.2f}\t{:.2E}".format(
                                     time,
                                     ptm,
                                     module + 1,
-                                    len(modules[module]),
                                     nx.density(network.subgraph(modules[module])),
                                     p_values[time][ptm][module],
                                 )

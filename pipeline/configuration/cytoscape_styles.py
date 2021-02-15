@@ -141,6 +141,7 @@ SETTINGS = [
                             "mid up": "#FF6666",
                             "down": "#0000FF",
                             "mid down": "#6666FF",
+                            "mid": "#808080",
                         },
                     },
                 },
@@ -165,7 +166,7 @@ SETTINGS = [
                 "NODE_SHAPE": {
                     "default": "ROUND_RECTANGLE",
                     "discreteMapping": {
-                        "attributeName": "PTM {time}",
+                        "attributeName": "post-translational modification {time}",
                         "attributeType": "string",
                         "discreteMappingEntry": {
                             "{ptms[0]}": "RECTANGLE",
@@ -326,6 +327,7 @@ SETTINGS = [
                             "mid down": "#6666FF",
                             "{ptms[0]} up {ptms[1]} down": "#00FF00",
                             "{ptms[0]} down {ptms[1]} up": "#FFFF00",
+                            "mid": "#808080",
                         },
                     },
                 },
@@ -350,7 +352,7 @@ SETTINGS = [
                 "NODE_SHAPE": {
                     "default": "ROUND_RECTANGLE",
                     "discreteMapping": {
-                        "attributeName": "PTM {time}",
+                        "attributeName": "post-translational modification {time}",
                         "attributeType": "string",
                         "discreteMappingEntry": {
                             "{ptms[0]}": "RECTANGLE",

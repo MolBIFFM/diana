@@ -8,12 +8,11 @@
           "sheet": "wt15min",
           "label": "P",
           "time": 15,
-          "replicates": 1,
           "sites": 5,
           "header": 1,
           "protein column": "protein",
           "protein format": 3,
-          "position column": "phosphosites",
+          "position column": "phosphosite",
           "position format": 4,
           "replicate columns": [
             "wt15minvscontrolratio"
@@ -27,10 +26,9 @@
           "label": "P",
           "time": 60,
           "sites": 5,
-          "header": 1,
           "protein column": "protein",
           "protein format": 3,
-          "position column": "phosphosites",
+          "position column": "phosphosite",
           "position format": 4,
           "replicate columns": [
             "wt60minvscontrolratio"
@@ -44,10 +42,9 @@
           "label": "P",
           "time": 120,
           "sites": 5,
-          "header": 1,
           "protein column": "protein",
           "protein format": 3,
-          "position column": "phosphosites",
+          "position column": "phosphosite",
           "position format": 4,
           "replicate columns": [
             "wt120minvscontrolratio"
@@ -61,7 +58,7 @@
           "label": "U",
           "time": 15,
           "sites": 5,
-          "protein column": "Proteins",
+          "protein column": "Protein",
           "protein format": 2,
           "position column": "Positions within proteins",
           "position format": 2,
@@ -79,7 +76,7 @@
           "label": "U",
           "time": 60,
           "sites": 5,
-          "protein column": "Proteins",
+          "protein column": "Protein",
           "protein format": 2,
           "position column": "Positions within proteins",
           "position format": 2,
@@ -97,7 +94,7 @@
           "label": "U",
           "time": 120,
           "sites": 5,
-          "protein column": "Proteins",
+          "protein column": "Protein",
           "protein format": 2,
           "position column": "Positions within proteins",
           "position format": 2,
@@ -131,25 +128,27 @@
         "STRING": {
           "experiments": 0.7,
           "combined score": 0.7
+        },
+        "Reactome": {
+          "Reactome score": 0.5
         }
       },
       "Cytoscape": {
         "bar chart": {
-          "minimum": -3.0,
-          "maximum": 3.0
+          "minimum": -2.0,
+          "maximum": 2.0
         },
-        "type": "absolute",
         "threshold": 1.0,
         "merge sites": "max abs"
       },
       "module detection": {
-        "p": 0.25,
-        "z": [-2.0, 2.0],
+        "p": 0.05,
+        "type": "z-score",
+        "thresholds": [-2.0, 2.0],
         "merge sites":"max abs",
         "module size": {
           "minimum": 3,
-          "maximum": 100,
-          "merge": "max"
+          "maximum": 100
         }
       }
     }
