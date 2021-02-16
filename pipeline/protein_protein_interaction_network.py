@@ -87,24 +87,23 @@ class ProteinProteinInteractionNetwork(nx.Graph):
                         )
                 else:
                     for protein in proteins:
-                        for position in positions:
-                            if "-" in protein_accession:
-                                protein, isoform = protein_accession.split("-")
-                            else:
-                                protein, isoform = protein_accession, "1"
+                        if "-" in protein_accession:
+                            protein, isoform = protein_accession.split("-")
+                        else:
+                            protein, isoform = protein_accession, "1"
 
-                            if protein not in proteins:
-                                proteins[protein] = {}
-                            if isoform not in proteins[protein]:
-                                proteins[protein][isoform] = []
+                        if protein not in proteins:
+                            proteins[protein] = {}
+                        if isoform not in proteins[protein]:
+                            proteins[protein][isoform] = []
 
-                            bisect.insort(
-                                proteins[protein][isoform],
-                                (
-                                    position,
-                                    convert_measurement(merge_replicates(measurements)),
-                                ),
-                            )
+                        bisect.insort(
+                            proteins[protein][isoform],
+                            (
+                                positions[0],
+                                convert_measurement(merge_replicates(measurements)),
+                            ),
+                        )
 
         reviewed_proteins, primary_accession, gene_name, protein_name = {}, {}, {}, {}
         accessions, gene_names, protein_names = [], {}, {}

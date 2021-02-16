@@ -128,9 +128,6 @@
         "STRING": {
           "experiments": 0.7,
           "combined score": 0.7
-        },
-        "Reactome": {
-          "Reactome score": 0.5
         }
       },
       "Cytoscape": {

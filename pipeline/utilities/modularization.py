@@ -3,95 +3,95 @@ import networkx as nx
 
 def louvain(G, weight="weight"):
     # Blondel et al. (2008)
-    A = nx.linalg.graphmatrix.adjacency_matrix(G, weight=weight)
-    n = G.number_of_nodes()
-    k = [A[i].sum() for i in range(n)]
-    m = sum(k) / 2.0
+    name = list(G.nodes())
+    previous_communities = [set([i]) for i in range(G.number_of_nodes())]
 
-    sigma_tot = {ci: k[ci] for ci in range(n)}
-    sigma_in = {ci: A[ci, ci] for ci in range(n)}
+    change = True
+    iteration = 0
+    while change:
+        A = nx.linalg.graphmatrix.adjacency_matrix(G, weight=weight)
+        n = G.number_of_nodes()
+        k = [A[i].sum() for i in range(n)]
+        m = sum(k) / 2.0
 
-    k_in = {ni: {cj: A[ni, cj] for cj in range(n)} for ni in range(n)}
+        sigma_tot = [k[ci] for ci in range(n)]
+        sigma_in = [A[ci, ci] for ci in range(n)]
 
-    community = {i: i for i in range(n)}
-    communities = [set([i]) for i in range(n)]
+        k_in = A.toarray()
 
-    change = False
+        community = [i for i in range(n)]
+        communities = [set([i]) for i in range(n)]
 
-    for i in range(n):
-        deltaQ = {}
-        for j in range(n):
-            if A[i, j]:
-                deltaQ[j] = (
-                    (sigma_in[community[j]] + k_in[i][community[j]]) / (2 * m)
-                    - ((sigma_tot[community[j]] + k[i]) / (2 * m)) ** 2
-                ) - (
-                    sigma_in[community[j]] / (2 * m)
-                    - (sigma_tot[community[j]] / (2 * m)) ** 2
-                    - (k[i] / (2 * m)) ** 2
-                )
+        change = False
 
-        if deltaQ:
-            max_j = max(deltaQ.items(), key=lambda item: item[1])[0]
-            if deltaQ[max_j] > 0.0:
-                sigma_tot[community[i]] -= A[i].sum()
-                sigma_tot[community[max_j]] += A[i].sum()
-
-                sigma_in[community[i]] -= sum(
-                    [A[i, l] for l in range(n) if community[l] == community[i]]
-                )
-                sigma_in[community[max_j]] += sum(
-                    [A[i, l] for l in range(n) if community[l] == community[max_j]]
-                )
-
-                for n in k_in:
-                    k_in[n][community[i]] -= A[n, i]
-                    k_in[n][community[max_j]] += A[n, i]
-
-                communities[community[i]].remove(i)
-                communities[community[max_j]].add(i)
-
-                community[i] = community[max_j]
-
-                change = True
-
-    deleted = 0
-    for i in range(len(communities)):
-        if not communities[i - deleted]:
-            del communities[i - deleted]
-            deleted += 1
-
-    if change:
-        H = nx.Graph()
-        H.add_nodes_from(range(len(communities)))
-
-        weights = {}
         for i in range(n):
+            deltaQ = {}
             for j in range(n):
-                if community[i] not in weights:
-                    weights[community[i]] = {}
-                if community[j] not in weights[community[i]]:
-                    weights[community[i]][community[j]] = 0.0
-                weights[community[i]][community[j]] += k_in[i][community[j]]
+                if A[i, j] and i != j:
+                    deltaQ[j] = (
+                        (sigma_in[community[j]] + k_in[i, community[j]]) / (2 * m)
+                        - ((sigma_tot[community[j]] + k[i]) / (2 * m)) ** 2
+                    ) - (
+                        sigma_in[community[j]] / (2 * m)
+                        - (sigma_tot[community[j]] / (2 * m)) ** 2
+                        - (k[i] / (2 * m)) ** 2
+                    )
 
-        for i in range(len(communities)):
-            for j in range(len(communities)):
-                if weights.get(i, {}).get(j, 0.0):
-                    H.add_edge(i, j, weight=weights[i][j])
+            if deltaQ:
+                maxj = max(deltaQ.items(), key=lambda item: item[1])[0]
+                if deltaQ[maxj] > 0.0:
+                    sigma_tot[community[i]] -= A[i].sum()
+                    sigma_tot[community[maxj]] += A[i].sum()
 
-        
-        expanded_communities = []
-        for merged_community in louvain(H, weight=weight):
-            if merged_community:
-                expanded_communities.append(set())
-                for node in merged_community:
-                    expanded_communities[-1] |= communities[node]
+                    sigma_in[community[i]] -= sum(
+                        [A[i, l] for l in range(n) if community[l] == community[i]]
+                    )
+                    sigma_in[community[maxj]] += sum(
+                        [A[i, l] for l in range(n) if community[l] == community[maxj]]
+                    )
 
-        nodes = list(G.nodes())
-        for i in range(len(expanded_communities)):
-            expanded_communities[i] = set(nodes[n] for n in expanded_communities[i]) 
+                    for l in range(n):
+                        k_in[l, community[i]] -= A[l, i]
+                        k_in[l, community[maxj]] += A[l, i]
 
-        return expanded_communities
+                    communities[community[i]].remove(i)
+                    communities[community[maxj]].add(i)
 
-    else:
-        return communities
+                    community[i] = community[maxj]
+
+                    change = True
+
+        communities = [community for community in communities if community]
+
+        if change:
+            if iteration > 0:
+                for i in range(len(communities)):
+                    communities[i] = set.union(
+                        *[
+                            set(n for n in previous_communities[node])
+                            for node in communities[i]
+                        ]
+                    )
+
+            previous_communities = communities[:]
+
+            G = nx.Graph()
+            G.add_nodes_from(range(len(communities)))
+
+            weights = {}
+            for i in range(n):
+                for j in range(n):
+                    if community[i] not in weights:
+                        weights[community[i]] = {}
+                    if community[j] not in weights[community[i]]:
+                        weights[community[i]][community[j]] = 0.0
+                    weights[community[i]][community[j]] += k_in[i, community[j]]
+
+            for i in range(len(communities)):
+                for j in range(len(communities)):
+                    if weights.get(i, {}).get(j, 0.0):
+                        G.add_edge(i, j, weight=weights[i][j])
+
+            iteration += 1
+
+    return [set(name[node] for node in community) for community in previous_communities]
