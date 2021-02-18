@@ -4,10 +4,9 @@ import networkx as nx
 def louvain(G, weight="weight"):
     # Blondel et al. (2008)
     name = list(G.nodes())
-    previous_communities = [set([i]) for i in range(G.number_of_nodes())]
+    communities = [[set([i]) for i in range(G.number_of_nodes())]]
 
     change = True
-    iteration = 0
     while change:
         A = nx.linalg.graphmatrix.adjacency_matrix(G, weight=weight)
         n = G.number_of_nodes()
@@ -20,14 +19,14 @@ def louvain(G, weight="weight"):
         k_in = A.toarray()
 
         community = [i for i in range(n)]
-        communities = [set([i]) for i in range(n)]
+        communities.append([set([i]) for i in range(n)])
 
         change = False
 
         for i in range(n):
             deltaQ = {}
             for j in range(n):
-                if A[i, j] and i != j:
+                if A[i, j]:
                     deltaQ[j] = (
                         (sigma_in[community[j]] + k_in[i, community[j]]) / (2 * m)
                         - ((sigma_tot[community[j]] + k[i]) / (2 * m)) ** 2
@@ -54,29 +53,28 @@ def louvain(G, weight="weight"):
                         k_in[l, community[i]] -= A[l, i]
                         k_in[l, community[maxj]] += A[l, i]
 
-                    communities[community[i]].remove(i)
-                    communities[community[maxj]].add(i)
+                    communities[1][community[i]].remove(i)
+                    communities[1][community[maxj]].add(i)
 
                     community[i] = community[maxj]
 
                     change = True
 
-        communities = [community for community in communities if community]
+        communities[1] = [community for community in communities[1] if community]
 
         if change:
-            if iteration > 0:
-                for i in range(len(communities)):
-                    communities[i] = set.union(
-                        *[
-                            set(n for n in previous_communities[node])
-                            for node in communities[i]
-                        ]
-                    )
+            for ci in range(len(communities)):
+                communities[1][ci] = set.union(
+                    *[
+                        set(i for i in communities[0][node])
+                        for node in communities[1][ci]
+                    ]
+                )
 
-            previous_communities = communities[:]
+            communities = communities[1:2]
 
             G = nx.Graph()
-            G.add_nodes_from(range(len(communities)))
+            G.add_nodes_from(range(len(communities[0])))
 
             weights = {}
             for i in range(n):
@@ -87,11 +85,9 @@ def louvain(G, weight="weight"):
                         weights[community[i]][community[j]] = 0.0
                     weights[community[i]][community[j]] += k_in[i, community[j]]
 
-            for i in range(len(communities)):
-                for j in range(len(communities)):
-                    if weights.get(i, {}).get(j, 0.0):
-                        G.add_edge(i, j, weight=weights[i][j])
+            for ci in range(len(communities[0])):
+                for cj in range(len(communities[0])):
+                    if weights.get(ci, {}).get(cj, 0.0):
+                        G.add_edge(ci, cj, weight=weights[i][j])
 
-            iteration += 1
-
-    return [set(name[node] for node in community) for community in previous_communities]
+    return [set(name[node] for node in community) for community in communities[0]]

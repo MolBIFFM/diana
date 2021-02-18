@@ -79,7 +79,7 @@ def main():
                     entry["file"],
                     entry["label"],
                     entry["time"],
-                    protein_accession_col=entry["protein column"],
+                    protein_accession_column=entry["protein column"],
                     position_col=entry["position column"],
                     replicates=entry["replicate columns"],
                     protein_accession_format=extract.EXTRACT.get(
@@ -135,7 +135,7 @@ def main():
                         ),
                     ):
                         logger.info(
-                            "{}\t{}\BioGRID\t{:.3f}".format(
+                            "{}\t{}\tcBioGRID\t{:.3f}".format(
                                 *sorted([interactor_a, interactor_b]), score
                             )
                         )
@@ -233,10 +233,10 @@ def main():
                         )
 
             if configuration.get("styles"):
-                network.set_post_translational_modification_data_column()
+                network.set_post_translational_modification_data()
 
                 if configuration.get("Cytoscape", {}).get("type", "z") == "z-score":
-                    network.set_change_data_column(
+                    network.set_change_data(
                         merge_sites=merge.MERGE.get(
                             configuration["Cytoscape"].get("merge sites", "mean"),
                             merge.MERGE["mean"],
@@ -247,7 +247,7 @@ def main():
                         get_mid_range=network.get_range_from_z_score,
                     )
                 else:
-                    network.set_change_data_column(
+                    network.set_change_data(
                         merge_sites=merge.MERGE.get(
                             configuration["Cytoscape"].get("merge sites", "mean"),
                             merge.MERGE["mean"],
@@ -276,9 +276,11 @@ def main():
                 export_styles(configuration["styles"], styles)
 
             if configuration.get("module detection"):
+                network.remove_nodes_from(list(nx.isolates(network)))
                 network.set_edge_weights(
                     weight=lambda confidence_scores: len(confidence_scores)
                 )
+
                 if configuration["module detection"].get("type", "z") == "z-score":
                     modules, p_values = network.get_change_enrichment(
                         p=configuration["module detection"].get("p", 0.1),

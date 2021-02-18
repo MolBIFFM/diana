@@ -96,13 +96,13 @@ def download_data(url, zip_file=None):
     return local_file_name
 
 
-def iterate_data(url, zip_file=None):
+def iterate_txt(url, zip_file=None):
     with open(download_data(url, zip_file), buffering=configuration.CHUNK_SIZE) as file:
         for line in file:
             yield line.rstrip("\n")
 
 
-def iterate_tabular_data(url, zip_file=None, delimiter=None, header=None, usecols=[]):
+def iterate_tabular_txt(url, zip_file=None, delimiter=None, header=None, usecols=[]):
     local_file_name = download_data(url, zip_file)
 
     if os.path.splitext(local_file_name)[1] == ".csv":
