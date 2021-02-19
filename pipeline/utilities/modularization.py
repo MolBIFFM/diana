@@ -26,7 +26,7 @@ def louvain(G, weight="weight"):
         for i in range(n):
             deltaQ = {}
             for j in range(n):
-                if i != j and A[i, j]:
+                if A[i, j]:
                     deltaQ[j] = (
                         (
                             (sigma_in[community[j]] + k_in[i, community[j]]) / (2 * m)
