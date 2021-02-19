@@ -27,21 +27,27 @@ def louvain(G, weight="weight"):
             deltaQ = {}
             for j in range(n):
                 if i != j and A[i, j]:
-                    deltaQ[j] = ((
-                        (sigma_in[community[j]] + k_in[i, community[j]]) / (2 * m)
-                        - ((sigma_tot[community[j]] + k[i]) / (2 * m)) ** 2
+                    deltaQ[j] = (
+                        (
+                            (sigma_in[community[j]] + k_in[i, community[j]]) / (2 * m)
+                            - ((sigma_tot[community[j]] + k[i]) / (2 * m)) ** 2
+                        )
+                        - (
+                            sigma_in[community[j]] / (2 * m)
+                            - (sigma_tot[community[j]] / (2 * m)) ** 2
+                            - (k[i] / (2 * m)) ** 2
+                        )
                     ) - (
-                        sigma_in[community[j]] / (2 * m)
-                        - (sigma_tot[community[j]] / (2 * m)) ** 2
-                        - (k[i] / (2 * m)) ** 2
-                    )) - ((
-                        (sigma_in[community[i]] + k_in[i, community[i]]) / (2 * m)
-                        - ((sigma_tot[community[i]] + k[i]) / (2 * m)) ** 2
-                    ) - (
-                        sigma_in[community[i]] / (2 * m)
-                        - (sigma_tot[community[i]] / (2 * m)) ** 2
-                        - (k[i] / (2 * m)) ** 2
-                    ))
+                        (
+                            (sigma_in[community[i]] + k_in[i, community[i]]) / (2 * m)
+                            - ((sigma_tot[community[i]] + k[i]) / (2 * m)) ** 2
+                        )
+                        - (
+                            sigma_in[community[i]] / (2 * m)
+                            - (sigma_tot[community[i]] / (2 * m)) ** 2
+                            - (k[i] / (2 * m)) ** 2
+                        )
+                    )
 
             if deltaQ:
                 maxj = max(deltaQ.items(), key=lambda item: item[1])[0]
