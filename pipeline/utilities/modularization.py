@@ -26,15 +26,22 @@ def louvain(G, weight="weight"):
         for i in range(n):
             deltaQ = {}
             for j in range(n):
-                if A[i, j] and i != j:
-                    deltaQ[j] = (
+                if i != j and A[i, j]:
+                    deltaQ[j] = ((
                         (sigma_in[community[j]] + k_in[i, community[j]]) / (2 * m)
                         - ((sigma_tot[community[j]] + k[i]) / (2 * m)) ** 2
                     ) - (
                         sigma_in[community[j]] / (2 * m)
                         - (sigma_tot[community[j]] / (2 * m)) ** 2
                         - (k[i] / (2 * m)) ** 2
-                    )
+                    )) - ((
+                        (sigma_in[community[i]] + k_in[i, community[i]]) / (2 * m)
+                        - ((sigma_tot[community[i]] + k[i]) / (2 * m)) ** 2
+                    ) - (
+                        sigma_in[community[i]] / (2 * m)
+                        - (sigma_tot[community[i]] / (2 * m)) ** 2
+                        - (k[i] / (2 * m)) ** 2
+                    ))
 
             if deltaQ:
                 maxj = max(deltaQ.items(), key=lambda item: item[1])[0]
@@ -63,7 +70,7 @@ def louvain(G, weight="weight"):
         communities[1] = [community for community in communities[1] if community]
 
         if change:
-            for ci in range(len(communities)):
+            for ci in range(len(communities[1])):
                 communities[1][ci] = set.union(
                     *[
                         set(i for i in communities[0][node])
