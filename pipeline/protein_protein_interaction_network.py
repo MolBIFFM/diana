@@ -433,6 +433,8 @@ class ProteinProteinInteractionNetwork(nx.Graph):
                         )
                     else:
                         self.nodes[protein]["change {}".format(time)] = "mid"
+                else:
+                    self.nodes[protein]["change {}".format(time)] = "mid"
 
     def get_databases(self):
         return sorted(

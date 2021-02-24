@@ -86,21 +86,31 @@ def louvain(G, weight="weight"):
 
             communities = communities[1:2]
 
+            index = dict.fromkeys(community)
+            for ci in range(len(communities[0])):
+                for i in communities[0][ci]:
+                    if i in index:
+                        index[i] = ci
+
+            weights = [
+                [0.0 for cj in range(len(communities[0]))]
+                for ci in range(len(communities[0]))
+            ]
+
+            for i in range(n):
+                for j in range(n):
+                    weights[index[community[i]]][index[community[j]]] += k_in[
+                        i, community[j]
+                    ]
+
             G = nx.Graph()
             G.add_nodes_from(range(len(communities[0])))
 
-            weights = {}
-            for i in range(n):
-                for j in range(n):
-                    if community[i] not in weights:
-                        weights[community[i]] = {}
-                    if community[j] not in weights[community[i]]:
-                        weights[community[i]][community[j]] = 0.0
-                    weights[community[i]][community[j]] += k_in[i, community[j]]
-
             for ci in range(len(communities[0])):
-                for cj in range(len(communities[0])):
-                    if weights.get(ci, {}).get(cj, 0.0):
-                        G.add_edge(ci, cj, weight=weights[ci][cj])
+                if weights[ci][ci]:
+                    G.add_edge(ci, ci, weight=weights[ci][ci])
+                for cj in range(ci):
+                    if weights[ci][cj]:
+                        G.add_edge(ci, cj, weight=weights[ci][cj] + weights[cj][ci])
 
     return [set(name[node] for node in community) for community in communities[0]]

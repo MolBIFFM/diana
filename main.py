@@ -12,22 +12,7 @@ from pipeline.interface import convert, merge, extract
 from pipeline.protein_protein_interaction_network import (
     ProteinProteinInteractionNetwork,
 )
-
-
-def export_network(path, network, suffix=""):
-    if path.endswith(".graphml") or path.endswith(".xml"):
-        nx.write_graphml_xml(
-            network, "{0}{2}{1}".format(*os.path.splitext(path), suffix)
-        )
-    elif path.endswith(".cyjs") or path.endswith(".json"):
-        with open("{0}{2}{1}".format(*os.path.splitext(path), suffix), "w") as file:
-            json.dump(nx.readwrite.json_graph.cytoscape_data(network), file, indent=2)
-
-
-def export_styles(path, styles):
-    if path.endswith(".xml"):
-        with open(path, "wb") as file:
-            styles.write(file, encoding="UTF-8", xml_declaration=True)
+from pipeline.utilities import export
 
 
 def main():
@@ -42,20 +27,13 @@ def main():
     parser.add_argument("-l", "--log", help="file name for log")
     args = parser.parse_args()
 
-    logging.basicConfig(
-        stream=sys.stdout,
-        level=logging.DEBUG,
-        format="%(asctime)s\t%(message)s",
-        datefmt="%H:%M:%S",
-    )
+    logging.basicConfig(stream=sys.stdout, level=logging.DEBUG, format="%(message)s")
 
     logger = logging.getLogger("root")
 
     if args.log:
         log_file = logging.FileHandler(args.log, mode="w")
-        log_file.setFormatter(
-            logging.Formatter(fmt="%(asctime)s\t%(message)s", datefmt="%H:%M:%S")
-        )
+        log_file.setFormatter(logging.Formatter(fmt="%(message)s"))
         logger.addHandler(log_file)
 
     for configuration_file in args.configurations:
@@ -135,7 +113,7 @@ def main():
                         ),
                     ):
                         logger.info(
-                            "{}\t{}\tcBioGRID\t{:.3f}".format(
+                            "{}\t{}\tBioGRID\t{:.3f}".format(
                                 *sorted([interactor_a, interactor_b]), score
                             )
                         )
@@ -156,6 +134,28 @@ def main():
                     ):
                         logger.info(
                             "{}\t{}\tIntAct\t{:.3f}".format(
+                                *sorted([interactor_a, interactor_b]), score
+                            )
+                        )
+
+                if configuration["PPI"].get("Reactome"):
+                    for (
+                        interactor_a,
+                        interactor_b,
+                        score,
+                    ) in network.add_interactions_from_reactome(
+                        interaction_detection_methods=configuration["PPI"][
+                            "Reactome"
+                        ].get("interaction detection methods", []),
+                        interaction_types=configuration["PPI"]["Reactome"].get(
+                            "interaction_types", []
+                        ),
+                        reactome_score=configuration["PPI"]["Reactome"].get(
+                            "Reactome score", 0.0
+                        ),
+                    ):
+                        logger.info(
+                            "{}\t{}\tReactome\t{:.3f}".format(
                                 *sorted([interactor_a, interactor_b]), score
                             )
                         )
@@ -210,28 +210,6 @@ def main():
                             )
                         )
 
-                if configuration["PPI"].get("Reactome"):
-                    for (
-                        interactor_a,
-                        interactor_b,
-                        score,
-                    ) in network.add_interactions_from_reactome(
-                        interaction_detection_methods=configuration["PPI"][
-                            "Reactome"
-                        ].get("interaction detection methods", []),
-                        interaction_types=configuration["PPI"]["Reactome"].get(
-                            "interaction_types", []
-                        ),
-                        reactome_score=configuration["PPI"]["Reactome"].get(
-                            "Reactome score", 0.0
-                        ),
-                    ):
-                        logger.info(
-                            "{}\t{}\tReactome\t{:.3f}".format(
-                                *sorted([interactor_a, interactor_b]), score
-                            )
-                        )
-
             if configuration.get("styles"):
                 network.set_post_translational_modification_data()
 
@@ -259,7 +237,7 @@ def main():
                     )
 
                 if configuration.get("network"):
-                    export_network(configuration["network"], network)
+                    export.export_network(configuration["network"], network)
 
                 styles = CytoscapeStyles(
                     network,
@@ -273,7 +251,7 @@ def main():
                     ),
                 )
 
-                export_styles(configuration["styles"], styles)
+                export.export_styles(configuration["styles"], styles)
 
             if configuration.get("module detection"):
                 network.remove_nodes_from(list(nx.isolates(network)))
@@ -335,7 +313,7 @@ def main():
                                 )
                             )
                             if configuration.get("network"):
-                                export_network(
+                                export.export_network(
                                     configuration["network"],
                                     network.subgraph(modules[module]),
                                     ".{}".format(module + 1),

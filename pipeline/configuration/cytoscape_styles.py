@@ -132,7 +132,7 @@ SETTINGS = [
                 },
                 "NODE_DEPTH": {"default": "0.0"},
                 "NODE_FILL_COLOR": {
-                    "default": "#89D0F5",
+                    "default": "##808080",
                     "discreteMapping": {
                         "attributeName": "change {time}",
                         "attributeType": "string",
@@ -316,7 +316,7 @@ SETTINGS = [
                 },
                 "NODE_DEPTH": {"default": "0.0"},
                 "NODE_FILL_COLOR": {
-                    "default": "#89D0F5",
+                    "default": "#808080",
                     "discreteMapping": {
                         "attributeName": "change {time}",
                         "attributeType": "string",
