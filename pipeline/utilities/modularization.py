@@ -22,7 +22,6 @@ def louvain(G, weight="weight"):
         communities.append([set([i]) for i in range(n)])
 
         change = False
-
         for i in range(n):
             deltaQ = {}
             for j in range(n):
@@ -48,9 +47,9 @@ def louvain(G, weight="weight"):
                             - (k[i] / (2 * m)) ** 2
                         )
                     )
-
             if deltaQ:
                 maxj = max(deltaQ.items(), key=lambda item: item[1])[0]
+
                 if deltaQ[maxj] > 0.0:
                     sigma_tot[community[i]] -= A[i].sum()
                     sigma_tot[community[maxj]] += A[i].sum()
@@ -73,24 +72,17 @@ def louvain(G, weight="weight"):
 
                     change = True
 
-        communities[1] = [community for community in communities[1] if community]
-
         if change:
             for ci in range(len(communities[1])):
-                communities[1][ci] = set.union(
-                    *[
-                        set(i for i in communities[0][node])
-                        for node in communities[1][ci]
-                    ]
-                )
+                if communities[1][ci]:
+                    communities[1][ci] = set.union(
+                        *[
+                            set(i for i in communities[0][node])
+                            for node in communities[1][ci]
+                        ]
+                    )
 
             communities = communities[1:2]
-
-            index = dict.fromkeys(community)
-            for ci in range(len(communities[0])):
-                for i in communities[0][ci]:
-                    if i in index:
-                        index[i] = ci
 
             weights = [
                 [0.0 for cj in range(len(communities[0]))]
@@ -99,18 +91,28 @@ def louvain(G, weight="weight"):
 
             for i in range(n):
                 for j in range(n):
-                    weights[index[community[i]]][index[community[j]]] += k_in[
-                        i, community[j]
-                    ]
+                    weights[community[i]][community[j]] += k_in[i, community[j]]
+
+            weights = [
+                [
+                    weights[ci][cj]
+                    for cj in range(len(communities[0]))
+                    if communities[0][cj]
+                ]
+                for ci in range(len(communities[0]))
+                if communities[0][ci]
+            ]
+
+            communities[0] = [community for community in communities[0] if community]
 
             G = nx.Graph()
             G.add_nodes_from(range(len(communities[0])))
 
             for ci in range(len(communities[0])):
                 if weights[ci][ci]:
-                    G.add_edge(ci, ci, weight=weights[ci][ci])
+                    G.add_edge(ci, ci, weight=2.0 * weights[ci][ci])
                 for cj in range(ci):
-                    if weights[ci][cj]:
+                    if weights[ci][cj] or weights[cj][ci]:
                         G.add_edge(ci, cj, weight=weights[ci][cj] + weights[cj][ci])
 
     return [set(name[node] for node in community) for community in communities[0]]
