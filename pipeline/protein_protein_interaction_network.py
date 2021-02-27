@@ -87,7 +87,7 @@ class ProteinProteinInteractionNetwork(nx.Graph):
                         )
                 else:
                     for protein in proteins:
-                        for position in position:
+                        for position in positions:
                             if "-" in protein_accession:
                                 protein, isoform = protein_accession.split("-")
                             else:

@@ -144,7 +144,7 @@
         "thresholds": [-2.0, 2.0],
         "merge sites":"max abs",
         "module size": {
-          "minimum": 3,
+          "minimum": 2,
           "maximum": 100
         }
       }
