@@ -5,6 +5,11 @@ BIOGRID = r"BIOGRID-ORGANISM-Homo_sapiens-[0-9]\.[0-9]\.[0-9]{3}\.tab3\.txt"
 BIOGRID_MV_PHYSICAL_ZIP_ARCHIVE = "https://downloads.thebiogrid.org/Download/BioGRID/Latest-Release/BIOGRID-MV-Physical-LATEST.tab3.zip"
 BIOGRID_MV_PHYSICAL = r"BIOGRID-MV-Physical-[0-9]\.[0-9]\.[0-9]{3}\.tab3\.txt"
 
+CORUM_ZIP_ARCHIVE = (
+    "http://mips.helmholtz-muenchen.de/corum/download/allComplexes.txt.zip"
+)
+CORUM = "allComplexes.txt"
+
 INTACT_ZIP_ARCHIVE = (
     "ftp://ftp.ebi.ac.uk/pub/databases/intact/current/psimitab/intact.zip"
 )

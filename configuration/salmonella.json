@@ -99,6 +99,9 @@
             "Two-hybrid"
           ]
         },
+        "CORUM": {
+
+        },
         "IntAct": {
           "MI score": 0.27
         },
@@ -119,7 +122,7 @@
         "merge sites": "max abs"
       },
       "module detection": {
-        "p": 0.05,
+        "p": 0.5,
         "type": "z-score",
         "thresholds": [-2.0, 2.0],
         "merge sites":"max abs",

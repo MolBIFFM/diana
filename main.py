@@ -87,7 +87,7 @@ def main():
                     )
 
             if configuration.get("PPI"):
-                if configuration["PPI"].get("BioGRID"):
+                if "BioGRID" in configuration["PPI"]:
                     for (
                         interactor_a,
                         interactor_b,
@@ -118,7 +118,24 @@ def main():
                             )
                         )
 
-                if configuration["PPI"].get("IntAct"):
+                if "CORUM" in configuration["PPI"]:
+                    for (
+                        interactor_a,
+                        interactor_b,
+                        score,
+                    ) in network.add_interactions_from_corum(
+                        purification_method=configuration["PPI"]["CORUM"].get(
+                            "purification method",
+                            [],
+                        )
+                    ):
+                        logger.info(
+                            "{}\t{}\tCORUM\t{:.3f}".format(
+                                *sorted([interactor_a, interactor_b]), score
+                            )
+                        )
+
+                if "IntAct" in configuration["PPI"]:
                     for (
                         interactor_a,
                         interactor_b,
@@ -138,7 +155,7 @@ def main():
                             )
                         )
 
-                if configuration["PPI"].get("Reactome"):
+                if "Reactome" in configuration["PPI"]:
                     for (
                         interactor_a,
                         interactor_b,
@@ -160,7 +177,7 @@ def main():
                             )
                         )
 
-                if configuration["PPI"].get("STRING"):
+                if "STRING" in configuration["PPI"]:
                     for (
                         interactor_a,
                         interactor_b,
@@ -210,7 +227,7 @@ def main():
                             )
                         )
 
-            if configuration.get("styles"):
+            if "styles" in configuration:
                 network.set_post_translational_modification_data()
 
                 if configuration.get("Cytoscape", {}).get("type", "z") == "z-score":
@@ -253,7 +270,7 @@ def main():
 
                 export.export_styles(configuration["styles"], styles)
 
-            if configuration.get("module detection"):
+            if "module detection" in configuration:
                 network.remove_nodes_from(list(nx.isolates(network)))
                 network.set_edge_weights(
                     weight=lambda confidence_scores: len(confidence_scores)

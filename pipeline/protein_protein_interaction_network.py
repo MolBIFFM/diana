@@ -109,7 +109,7 @@ class ProteinProteinInteractionNetwork(nx.Graph):
         reviewed_proteins, primary_accession, gene_name, protein_name = {}, {}, {}, {}
         accessions, gene_names, protein_names = [], {}, {}
         recommended_name = False
-        for line in download.iterate_txt(data.UNIPROT_SWISS_PROT):
+        for line in download.txt(data.UNIPROT_SWISS_PROT):
             if line.split("   ")[0] == "AC":
                 accessions.extend(line.split("   ")[1].rstrip(";").split("; "))
 
@@ -463,7 +463,7 @@ class ProteinProteinInteractionNetwork(nx.Graph):
         self, experimental_system=[], multi_validated_physical=False
     ):
         uniprot = {}
-        for row in download.iterate_tabular_txt(
+        for row in download.tabular_txt(
             data.UNIPROT_ID_MAP,
             delimiter="\t",
             usecols=[0, 1, 2],
@@ -471,7 +471,7 @@ class ProteinProteinInteractionNetwork(nx.Graph):
             if row[1] == "BioGRID" and row[0] in self.nodes:
                 uniprot[int(row[2])] = row[0]
 
-        for row in download.iterate_tabular_txt(
+        for row in download.tabular_txt(
             data.BIOGRID_ID_MAP_ZIP_ARCHIVE,
             zip_file=data.BIOGRID_ID_MAP,
             delimiter="\t",
@@ -490,7 +490,7 @@ class ProteinProteinInteractionNetwork(nx.Graph):
             ):
                 uniprot[int(row["BIOGRID_ID"])] = row["IDENTIFIER_VALUE"]
 
-        for row in download.iterate_tabular_txt(
+        for row in download.tabular_txt(
             data.BIOGRID_MV_PHYSICAL_ZIP_ARCHIVE
             if multi_validated_physical
             else data.BIOGRID_ZIP_ARCHIVE,
@@ -540,10 +540,53 @@ class ProteinProteinInteractionNetwork(nx.Graph):
                     ]["BioGRID"],
                 )
 
+    def add_interactions_from_corum(self, purification_method=[]):
+        for row in download.tabular_txt(
+            data.CORUM_ZIP_ARCHIVE,
+            zip_file=data.CORUM,
+            delimiter="\t",
+            header=0,
+            usecols=[
+                "Organism" "subunits(UniProt IDs)",
+                "Protein complex purification method",
+            ],
+        ):
+            if row["Organism"] == "Human" and (
+                not purification_method
+                or any(
+                    method in purification_method
+                    for method in [
+                        m.split(":")[1].split("-")[1].lstrip()
+                        for m in row["Protein complex purification method"].split(";")
+                    ]
+                )
+            ):
+                for interactor_a, interactor_b in itertools.combinations(
+                    row["subunits(UniProt IDs)"].split(";")
+                ):
+                    if interactor_a in self and interactor_b in self:
+                        self.add_edge(
+                            interactor_a,
+                            interactor_b,
+                        )
+                        self.edges[
+                            interactor_a,
+                            interactor_b,
+                        ]["CORUM"] = 0.5
+
+                        yield (
+                            interactor_a,
+                            interactor_b,
+                            self.edges[
+                                interactor_a,
+                                interactor_b,
+                            ]["CORUM"],
+                        )
+
     def add_interactions_from_intact(
         self, interaction_detection_methods=[], interaction_types=[], mi_score=0.0
     ):
-        for row in download.iterate_tabular_txt(
+        for row in download.tabular_txt(
             data.INTACT_ZIP_ARCHIVE,
             zip_file=data.INTACT,
             delimiter="\t",
@@ -639,100 +682,10 @@ class ProteinProteinInteractionNetwork(nx.Graph):
                 self.edges[interactor_a, interactor_b]["IntAct"],
             )
 
-    def add_interactions_from_string(
-        self,
-        neighborhood=0.0,
-        neighborhood_transferred=0.0,
-        fusion=0.0,
-        cooccurence=0.0,
-        homology=0.0,
-        coexpression=0.0,
-        coexpression_transferred=0.0,
-        experiments=0.0,
-        experiments_transferred=0.0,
-        database=0.0,
-        database_transferred=0.0,
-        textmining=0.0,
-        textmining_transferred=0.0,
-        combined_score=0.0,
-        physical=False,
-    ):
-
-        uniprot = {}
-        for row in download.iterate_tabular_txt(
-            data.UNIPROT_ID_MAP,
-            delimiter="\t",
-            usecols=[0, 1, 2],
-        ):
-            if row[1] == "STRING" and row[0] in self.nodes:
-                uniprot[row[2]] = row[0]
-
-        for row in download.iterate_tabular_txt(data.STRING_ID_MAP, usecols=[1, 2]):
-            if row[1].split("|")[0] in self.nodes:
-                uniprot[row[2]] = row[1].split("|")[0]
-
-        thresholds = {
-            column: threshold
-            for column, threshold in {
-                "neighborhood": neighborhood,
-                "neighborhood_transferred": neighborhood_transferred,
-                "fusion": fusion,
-                "cooccurence": cooccurence,
-                "homology": homology,
-                "coexpression": coexpression,
-                "coexpression_transferred": coexpression_transferred,
-                "experiments": experiments,
-                "experiments_transferred": experiments_transferred,
-                "database": database,
-                "database_transferred": database_transferred,
-                "textmining": textmining,
-                "textmining_transferred": textmining_transferred,
-            }.items()
-            if threshold
-        }
-        thresholds["combined_score"] = combined_score
-
-        for row in download.iterate_tabular_txt(
-            data.STRING_PHYSICAL if physical else data.STRING,
-            delimiter=" ",
-            header=0,
-            usecols=["protein1", "protein2"] + list(thresholds.keys()),
-        ):
-            if (
-                uniprot.get(row["protein1"])
-                and uniprot.get(row["protein2"])
-                and uniprot[row["protein1"]] != uniprot[row["protein2"]]
-                and all(
-                    row[column] / 1000 >= thresholds[column] for column in thresholds
-                )
-            ):
-                if self.has_edge(uniprot[row["protein1"]], uniprot[row["protein2"]]):
-                    self.edges[uniprot[row["protein1"]], uniprot[row["protein2"]]][
-                        "STRING"
-                    ] = max(
-                        row["combined_score"] / 1000,
-                        self.edges[
-                            uniprot[row["protein1"]], uniprot[row["protein2"]]
-                        ].get("STRING", 0.0),
-                    )
-                else:
-                    self.add_edge(uniprot[row["protein1"]], uniprot[row["protein2"]])
-                    self.edges[uniprot[row["protein1"]], uniprot[row["protein2"]]][
-                        "STRING"
-                    ] = (row["combined_score"] / 1000)
-
-                yield (
-                    uniprot[row["protein1"]],
-                    uniprot[row["protein2"]],
-                    self.edges[uniprot[row["protein1"]], uniprot[row["protein2"]]][
-                        "STRING"
-                    ],
-                )
-
     def add_interactions_from_reactome(
         self, interaction_detection_methods=[], interaction_types=[], reactome_score=0.0
     ):
-        for row in download.iterate_tabular_txt(
+        for row in download.tabular_txt(
             data.REACTOME,
             delimiter="\t",
             header=0,
@@ -826,6 +779,96 @@ class ProteinProteinInteractionNetwork(nx.Graph):
                 interactor_b,
                 self.edges[interactor_a, interactor_b]["Reactome"],
             )
+
+    def add_interactions_from_string(
+        self,
+        neighborhood=0.0,
+        neighborhood_transferred=0.0,
+        fusion=0.0,
+        cooccurence=0.0,
+        homology=0.0,
+        coexpression=0.0,
+        coexpression_transferred=0.0,
+        experiments=0.0,
+        experiments_transferred=0.0,
+        database=0.0,
+        database_transferred=0.0,
+        textmining=0.0,
+        textmining_transferred=0.0,
+        combined_score=0.0,
+        physical=False,
+    ):
+
+        uniprot = {}
+        for row in download.tabular_txt(
+            data.UNIPROT_ID_MAP,
+            delimiter="\t",
+            usecols=[0, 1, 2],
+        ):
+            if row[1] == "STRING" and row[0] in self.nodes:
+                uniprot[row[2]] = row[0]
+
+        for row in download.tabular_txt(data.STRING_ID_MAP, usecols=[1, 2]):
+            if row[1].split("|")[0] in self.nodes:
+                uniprot[row[2]] = row[1].split("|")[0]
+
+        thresholds = {
+            column: threshold
+            for column, threshold in {
+                "neighborhood": neighborhood,
+                "neighborhood_transferred": neighborhood_transferred,
+                "fusion": fusion,
+                "cooccurence": cooccurence,
+                "homology": homology,
+                "coexpression": coexpression,
+                "coexpression_transferred": coexpression_transferred,
+                "experiments": experiments,
+                "experiments_transferred": experiments_transferred,
+                "database": database,
+                "database_transferred": database_transferred,
+                "textmining": textmining,
+                "textmining_transferred": textmining_transferred,
+            }.items()
+            if threshold
+        }
+        thresholds["combined_score"] = combined_score
+
+        for row in download.tabular_txt(
+            data.STRING_PHYSICAL if physical else data.STRING,
+            delimiter=" ",
+            header=0,
+            usecols=["protein1", "protein2"] + list(thresholds.keys()),
+        ):
+            if (
+                uniprot.get(row["protein1"])
+                and uniprot.get(row["protein2"])
+                and uniprot[row["protein1"]] != uniprot[row["protein2"]]
+                and all(
+                    row[column] / 1000 >= thresholds[column] for column in thresholds
+                )
+            ):
+                if self.has_edge(uniprot[row["protein1"]], uniprot[row["protein2"]]):
+                    self.edges[uniprot[row["protein1"]], uniprot[row["protein2"]]][
+                        "STRING"
+                    ] = max(
+                        row["combined_score"] / 1000,
+                        self.edges[
+                            uniprot[row["protein1"]], uniprot[row["protein2"]]
+                        ].get("STRING", 0.0),
+                    )
+                else:
+                    self.add_edge(uniprot[row["protein1"]], uniprot[row["protein2"]])
+                    self.edges[uniprot[row["protein1"]], uniprot[row["protein2"]]][
+                        "STRING"
+                    ] = (row["combined_score"] / 1000)
+
+                yield (
+                    uniprot[row["protein1"]],
+                    uniprot[row["protein2"]],
+                    self.edges[uniprot[row["protein1"]], uniprot[row["protein2"]]][
+                        "STRING"
+                    ],
+                )
 
     def get_modules(self, min_size=3, max_size=100, merge_sizes=max, weight=None):
         communities = [list(self.nodes)]

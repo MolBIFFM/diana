@@ -66,7 +66,7 @@ def decompress_zip_file(compressed_file_name, file=None):
     return decompressed_file_name
 
 
-def download_data(url, zip_file=None):
+def download(url, zip_file=None):
     if not os.path.exists(
         os.path.join(
             tempfile.gettempdir(), os.path.splitext(os.path.basename(__file__))[0]
@@ -96,14 +96,14 @@ def download_data(url, zip_file=None):
     return local_file_name
 
 
-def iterate_txt(url, zip_file=None):
-    with open(download_data(url, zip_file), buffering=configuration.CHUNK_SIZE) as file:
+def txt(url, zip_file=None):
+    with open(download(url, zip_file), buffering=configuration.CHUNK_SIZE) as file:
         for line in file:
             yield line.rstrip("\n")
 
 
-def iterate_tabular_txt(url, zip_file=None, delimiter=None, header=None, usecols=[]):
-    local_file_name = download_data(url, zip_file)
+def tabular_txt(url, zip_file=None, delimiter=None, header=None, usecols=[]):
+    local_file_name = download(url, zip_file)
 
     if os.path.splitext(local_file_name)[1] == ".csv":
         delimiter = ","
