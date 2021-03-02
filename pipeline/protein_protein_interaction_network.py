@@ -547,7 +547,8 @@ class ProteinProteinInteractionNetwork(nx.Graph):
             delimiter="\t",
             header=0,
             usecols=[
-                "Organism" "subunits(UniProt IDs)",
+                "Organism",
+                "subunits(UniProt IDs)",
                 "Protein complex purification method",
             ],
         ):
@@ -562,7 +563,7 @@ class ProteinProteinInteractionNetwork(nx.Graph):
                 )
             ):
                 for interactor_a, interactor_b in itertools.combinations(
-                    row["subunits(UniProt IDs)"].split(";")
+                    row["subunits(UniProt IDs)"].split(";"), 2
                 ):
                     if interactor_a in self and interactor_b in self:
                         self.add_edge(
@@ -871,8 +872,8 @@ class ProteinProteinInteractionNetwork(nx.Graph):
                 )
 
     def get_modules(self, min_size=3, max_size=100, merge_sizes=max, weight=None):
-        communities = [list(self.nodes)]
-        while merge_sizes(len(community) for community in communities) > max_size:
+        communities = list(nx.algorithms.components.connected_components(self))
+        while merge_sizes([len(community) for community in communities]) > max_size:
             max_indices = [
                 communities.index(community)
                 for community in communities
@@ -941,8 +942,12 @@ class ProteinProteinInteractionNetwork(nx.Graph):
         max_size=100,
         weight="weight",
     ):
-        modules = self.get_modules(min_size, max_size, weight=weight)
-        modules = {i: module for i, module in enumerate(modules)}
+        modules = {
+            i: module
+            for i, module in enumerate(
+                self.get_modules(min_size, max_size, weight=weight)
+            )
+        }
 
         p_values = {}
         p_adjusted = {}

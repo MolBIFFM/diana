@@ -37,14 +37,10 @@ def main():
         logger.addHandler(log_file)
 
     for configuration_file in args.configurations:
-        logger.info(os.path.splitext(configuration_file)[0])
-
         with open(configuration_file) as configuration:
             configurations = json.load(configuration)
 
         for configuration in configurations:
-            logger.info(os.path.splitext(configuration.get("network", ""))[0])
-
             network = ProteinProteinInteractionNetwork()
 
             for entry in configuration.get("PTM", {}):
@@ -275,10 +271,9 @@ def main():
                 network.set_edge_weights(
                     weight=lambda confidence_scores: len(confidence_scores)
                 )
-
                 if configuration["module detection"].get("type", "z") == "z-score":
                     modules, p_values = network.get_change_enrichment(
-                        p=configuration["module detection"].get("p", 0.1),
+                        p=configuration["module detection"].get("p", 0.05),
                         mid_range_thresholds=configuration["module detection"].get(
                             "thresholds", (-2.0, 2.0)
                         ),
