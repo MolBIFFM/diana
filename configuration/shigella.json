@@ -122,12 +122,18 @@
             "Two-hybrid"
           ]
         },
+        "CORUM": {
+
+        },
         "IntAct": {
           "MI score": 0.27
         },
         "STRING": {
           "experiments": 0.7,
           "combined score": 0.7
+        },
+        "Reactome": {
+          "Reactome score": 0.5
         }
       },
       "Cytoscape": {
@@ -135,16 +141,16 @@
           "minimum": -2.0,
           "maximum": 2.0
         },
-        "threshold": 1.0,
+        "thresholds": [-1.0, 1.0],
         "merge sites": "max abs"
       },
       "module detection": {
-        "p": 0.5,
+        "p": 0.1,
         "type": "z-score",
         "thresholds": [-2.0, 2.0],
         "merge sites":"max abs",
         "module size": {
-          "minimum": 2,
+          "minimum": 3,
           "maximum": 100
         }
       }

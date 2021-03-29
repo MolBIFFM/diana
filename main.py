@@ -235,7 +235,7 @@ def main():
                         mid_range_thresholds=configuration["Cytoscape"].get(
                             "thresholds", (-2.0, 2.0)
                         ),
-                        get_mid_range=network.get_range_from_z_score,
+                        get_mid_range=network.get_range_z_score,
                     )
                 else:
                     network.set_change_data(
@@ -267,7 +267,6 @@ def main():
                 export.export_styles(configuration["styles"], styles)
 
             if "module detection" in configuration:
-                network.remove_nodes_from(list(nx.isolates(network)))
                 network.set_edge_weights(
                     weight=lambda confidence_scores: len(confidence_scores)
                 )
@@ -277,7 +276,7 @@ def main():
                         mid_range_thresholds=configuration["module detection"].get(
                             "thresholds", (-2.0, 2.0)
                         ),
-                        get_mid_range=network.get_range_from_z_score,
+                        get_mid_range=network.get_range_z_score,
                         merge_sites=merge.MERGE.get(
                             configuration["module detection"].get(
                                 "merge sites", "mean"

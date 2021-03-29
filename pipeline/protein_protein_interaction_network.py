@@ -329,7 +329,7 @@ class ProteinProteinInteractionNetwork(nx.Graph):
 
         return changes
 
-    def get_range_from_z_score(
+    def get_range_z_score(
         self,
         time,
         ptm,
@@ -872,13 +872,16 @@ class ProteinProteinInteractionNetwork(nx.Graph):
                 )
 
     def get_modules(self, min_size=3, max_size=100, merge_sizes=max, weight=None):
+        self.remove_nodes_from(list(nx.isolates(self)))
         communities = list(nx.algorithms.components.connected_components(self))
+
         while merge_sizes([len(community) for community in communities]) > max_size:
             max_indices = [
                 communities.index(community)
                 for community in communities
                 if len(community) == max(len(community) for community in communities)
             ]
+
             subdivision = False
             for i in range(len(max_indices)):
                 subdivided_community = list(
@@ -886,6 +889,7 @@ class ProteinProteinInteractionNetwork(nx.Graph):
                         self.subgraph(communities[max_indices[i]]), weight=weight
                     )
                 )
+
                 if len(subdivided_community) > 1:
                     communities[
                         max_indices[i] : max_indices[i] + 1
@@ -896,27 +900,18 @@ class ProteinProteinInteractionNetwork(nx.Graph):
                         for index in max_indices[i + 1 :]
                     ]
                     subdivision = True
+
             if not subdivision:
                 break
+
         return [community for community in communities if len(community) >= min_size]
 
-    def get_proteins(self, time, ptm):
-        proteins = []
-        for protein in self:
-            sites = [
-                self.nodes[protein][change]
-                for change in self.nodes[protein]
-                if len(change.split(" ")) == 3
-                and change.split(" ")[0].isnumeric()
-                and change.split(" ")[0] == str(time)
-                and change.split(" ")[1] == ptm
-            ]
-            if sites:
-                proteins.append(protein)
-        return proteins
-
-    def get_proteins_by_change(
-        self, time, ptm, change_filter, merge_sites=lambda sites: max(sites, key=abs)
+    def get_proteins(
+        self,
+        time,
+        ptm,
+        change_filter=lambda merged_sites: bool(merged_sites),
+        merge_sites=lambda sites: max(sites, key=abs),
     ):
         proteins = []
         for protein in self:
@@ -969,14 +964,14 @@ class ProteinProteinInteractionNetwork(nx.Graph):
                 )
 
                 n = len(
-                    self.get_proteins_by_change(
+                    self.get_proteins(
                         time,
                         ptm,
                         lambda change: change < mid_range[0],
                         merge_sites=merge_sites,
                     )
                 ) + len(
-                    self.get_proteins_by_change(
+                    self.get_proteins(
                         time,
                         ptm,
                         lambda change: change > mid_range[1],
@@ -986,7 +981,7 @@ class ProteinProteinInteractionNetwork(nx.Graph):
 
                 k = [
                     len(
-                        self.subgraph(modules[i]).get_proteins_by_change(
+                        self.subgraph(modules[i]).get_proteins(
                             time,
                             ptm,
                             lambda change: change < mid_range[0],
@@ -994,7 +989,7 @@ class ProteinProteinInteractionNetwork(nx.Graph):
                         )
                     )
                     + len(
-                        self.subgraph(modules[i]).get_proteins_by_change(
+                        self.subgraph(modules[i]).get_proteins(
                             time,
                             ptm,
                             lambda change: change > mid_range[1],
