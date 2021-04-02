@@ -1,6 +1,5 @@
 import gzip
 import os
-import tempfile
 import urllib.parse
 import urllib.request
 import zipfile
@@ -42,45 +41,24 @@ def decompress_zip_file(compressed_file_name, file=None):
             regex = re.compile(file)
             file = next(filter(regex.match, archive.namelist()))
 
-        if not os.path.exists(
-            os.path.join(
-                tempfile.gettempdir(),
-                os.path.splitext(os.path.basename(__file__))[0],
-                file,
-            )
-        ):
+        if not os.path.exists(os.path.join(configuration.DOWNLOAD_DIRECTORY, file)):
             decompressed_file_name = archive.extract(
-                file,
-                path=os.path.join(
-                    tempfile.gettempdir(),
-                    os.path.splitext(os.path.basename(__file__))[0],
-                ),
+                file, path=configuration.DOWNLOAD_DIRECTORY
             )
         else:
             decompressed_file_name = os.path.join(
-                tempfile.gettempdir(),
-                os.path.splitext(os.path.basename(__file__))[0],
-                file,
+                configuration.DOWNLOAD_DIRECTORY, file
             )
 
     return decompressed_file_name
 
 
 def download(url, zip_file=None):
-    if not os.path.exists(
-        os.path.join(
-            tempfile.gettempdir(), os.path.splitext(os.path.basename(__file__))[0]
-        )
-    ):
-        os.mkdir(
-            os.path.join(
-                tempfile.gettempdir(), os.path.splitext(os.path.basename(__file__))[0]
-            )
-        )
+    if not os.path.exists(configuration.DOWNLOAD_DIRECTORY):
+        os.mkdir(configuration.DOWNLOAD_DIRECTORY)
 
     local_file_name = os.path.join(
-        tempfile.gettempdir(),
-        os.path.splitext(os.path.basename(__file__))[0],
+        configuration.DOWNLOAD_DIRECTORY,
         os.path.split(urllib.parse.urlparse(url).path)[1],
     )
 

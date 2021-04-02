@@ -20,7 +20,7 @@ def main():
     parser.add_argument(
         "-c",
         "--configurations",
-        help="YAML configuration files",
+        help="JSON configuration files specifying protein-protein interaction network assembly and analysis",
         nargs="*",
         required=True,
     )
@@ -120,8 +120,10 @@ def main():
                         interactor_b,
                         score,
                     ) in network.add_interactions_from_corum(
-                        purification_method=configuration["PPI"]["CORUM"].get(
-                            "purification method",
+                        protein_complex_purification_method=configuration["PPI"][
+                            "CORUM"
+                        ].get(
+                            "protein complex purification method",
                             [],
                         )
                     ):
@@ -226,7 +228,7 @@ def main():
             if "styles" in configuration:
                 network.set_post_translational_modification_data()
 
-                if configuration.get("Cytoscape", {}).get("type", "z") == "z-score":
+                if configuration.get("Cytoscape", {}).get("type") == "z-score":
                     network.set_change_data(
                         merge_sites=merge.MERGE.get(
                             configuration["Cytoscape"].get("merge sites", "mean"),
@@ -235,8 +237,21 @@ def main():
                         mid_range_thresholds=configuration["Cytoscape"].get(
                             "thresholds", (-2.0, 2.0)
                         ),
-                        get_mid_range=network.get_range_z_score,
+                        get_mid_range=network.get_z_score_range,
                     )
+
+                elif configuration.get("Cytoscape", {}).get("type") == "percentile":
+                    network.set_change_data(
+                        merge_sites=merge.MERGE.get(
+                            configuration["Cytoscape"].get("merge sites", "mean"),
+                            merge.MERGE["mean"],
+                        ),
+                        mid_range_thresholds=configuration["Cytoscape"].get(
+                            "thresholds", (5, 95)
+                        ),
+                        get_mid_range=network.get_percentile_range,
+                    )
+
                 else:
                     network.set_change_data(
                         merge_sites=merge.MERGE.get(
@@ -246,7 +261,7 @@ def main():
                         mid_range_thresholds=configuration["Cytoscape"].get(
                             "thresholds", (-1.0, 1.0)
                         ),
-                        get_mid_range=lambda time, ptm, merge_sites, mid_range_bounds: mid_range_bounds,
+                        get_mid_range=lambda time, ptm, mid_range_thresholds, merge_sites: mid_range_thresholds,
                     )
 
                 if configuration.get("network"):
@@ -270,13 +285,13 @@ def main():
                 network.set_edge_weights(
                     weight=lambda confidence_scores: len(confidence_scores)
                 )
-                if configuration["module detection"].get("type", "z") == "z-score":
-                    modules, p_values = network.get_change_enrichment(
+                if configuration["module detection"].get("type") == "z-score":
+                    modules, p_values = network.get_module_change_enrichment(
                         p=configuration["module detection"].get("p", 0.05),
                         mid_range_thresholds=configuration["module detection"].get(
                             "thresholds", (-2.0, 2.0)
                         ),
-                        get_mid_range=network.get_range_z_score,
+                        get_mid_range=network.get_z_score_range,
                         merge_sites=merge.MERGE.get(
                             configuration["module detection"].get(
                                 "merge sites", "mean"
@@ -290,8 +305,30 @@ def main():
                         .get("module size", {})
                         .get("maximum", 100),
                     )
+
+                elif configuration["module detection"].get("type") == "percentile":
+                    modules, p_values = network.get_module_change_enrichment(
+                        p=configuration["module detection"].get("p", 0.05),
+                        mid_range_thresholds=configuration["module detection"].get(
+                            "thresholds", (5, 95)
+                        ),
+                        get_mid_range=network.get_percentile_range,
+                        merge_sites=merge.MERGE.get(
+                            configuration["module detection"].get(
+                                "merge sites", "mean"
+                            ),
+                            merge.MERGE["mean"],
+                        ),
+                        min_size=configuration["module detection"]
+                        .get("module size", {})
+                        .get("minimum", 3),
+                        max_size=configuration["module detection"]
+                        .get("module size", {})
+                        .get("maximum", 100),
+                    )
+
                 else:
-                    modules, p_values = network.get_change_enrichment(
+                    modules, p_values = network.get_module_change_enrichment(
                         p=configuration["module detection"].get("p", 0.05),
                         mid_range_thresholds=configuration["module detection"].get(
                             "thresholds", (-1.0, 1.0)

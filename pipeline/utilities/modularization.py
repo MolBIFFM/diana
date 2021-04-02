@@ -191,7 +191,7 @@ def louvain(G, weight="weight"):
 
                         sigma_tot[community[i]] += A[i].sum()
 
-                        sigma_in[community[i]] -= sum(
+                        sigma_in[community[i]] += sum(
                             [A[i, l] for l in range(n) if community[l] == community[i]]
                         )
 
@@ -201,7 +201,7 @@ def louvain(G, weight="weight"):
 
                     sigma_tot[community[i]] += A[i].sum()
 
-                    sigma_in[community[i]] -= sum(
+                    sigma_in[community[i]] += sum(
                         [A[i, l] for l in range(n) if community[l] == community[i]]
                     )
 

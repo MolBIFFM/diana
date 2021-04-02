@@ -1,5 +1,7 @@
 def parse(entry):
-    if entry != "-":
+    if entry == "-":
+        return {}
+    else:
         values = {}
         for namespace, identifier in (
             namespace_identifier.split(":", 1)
@@ -19,8 +21,6 @@ def parse(entry):
                 values[namespace] = [identifiers]
 
         return values
-    else:
-        return {}
 
 
 def get_id_from_namespace(entry, namespace):
