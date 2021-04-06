@@ -136,8 +136,7 @@
       },
       "Cytoscape": {
         "bar chart": {
-          "minimum": -2.0,
-          "maximum": 2.0
+          "range": [-2.0, 2.0]
         },
         "thresholds": [-1.0, 1.0],
         "merge sites": "max abs"
@@ -147,10 +146,7 @@
         "type": "z-score",
         "thresholds": [-2.0, 2.0],
         "merge sites":"max abs",
-        "module size": {
-          "minimum": 3,
-          "maximum": 100
-        }
+        "module size range": [3, 100]
       }
     }
   ]

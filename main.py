@@ -21,7 +21,7 @@ def main():
         "-c",
         "--configurations",
         help="JSON configuration files specifying protein-protein interaction network assembly and analysis",
-        nargs="*",
+        nargs="+",
         required=True,
     )
     parser.add_argument("-l", "--log", help="file name for log")
@@ -225,15 +225,14 @@ def main():
                             )
                         )
 
-            network.set_post_translational_modification_data()
+            network.set_post_translational_modification()
 
             if configuration.get("Cytoscape", {}).get("type") == "standard score":
                 network.set_change_data(
-                    merge_sites=merge.MERGE.get(
-                        configuration["Cytoscape"].get("merge sites", "mean"),
-                        merge.MERGE["mean"],
-                    ),
-                    range_thresholds=configuration["Cytoscape"].get(
+                    merge_sites=merge.MERGE[
+                        configuration.get("Cytoscape", {}).get("merge sites", "mean")
+                    ],
+                    change_range=configuration["Cytoscape"].get(
                         "thresholds", (-2.0, 2.0)
                     ),
                     get_range=network.get_standard_score_range,
@@ -241,26 +240,22 @@ def main():
 
             elif configuration.get("Cytoscape", {}).get("type") == "percentile":
                 network.set_change_data(
-                    merge_sites=merge.MERGE.get(
-                        configuration["Cytoscape"].get("merge sites", "mean"),
-                        merge.MERGE["mean"],
-                    ),
-                    range_thresholds=configuration["Cytoscape"].get(
-                        "thresholds", (5, 95)
-                    ),
+                    merge_sites=merge.MERGE[
+                        configuration.get("Cytoscape", {}).get("merge sites", "mean")
+                    ],
+                    change_range=configuration["Cytoscape"].get("thresholds", (5, 95)),
                     get_range=network.get_percentile_range,
                 )
 
             else:
                 network.set_change_data(
-                    merge_sites=merge.MERGE.get(
-                        configuration["Cytoscape"].get("merge sites", "mean"),
-                        merge.MERGE["mean"],
-                    ),
-                    range_thresholds=configuration["Cytoscape"].get(
+                    merge_sites=merge.MERGE[
+                        configuration.get("Cytoscape", {}).get("merge sites", "mean")
+                    ],
+                    change_range=configuration["Cytoscape"].get(
                         "thresholds", (-1.0, 1.0)
                     ),
-                    get_range=lambda time, ptm, range_thresholds, merge_sites: range_thresholds,
+                    get_range=lambda time, ptm, change_range, merge_sites: change_range,
                 )
 
             export.export_network(
@@ -271,17 +266,48 @@ def main():
                 ".{}".format(i) if len(configurations) > 1 else "",
             )
 
-            styles = CytoscapeStyles(
-                network,
-                bar_chart_range=(
-                    configuration.get("Cytoscape", {})
+            if (
+                configuration.get("Cytoscape", {}).get("bar chart", {}).get("type")
+                == "standard score"
+            ):
+                styles = CytoscapeStyles(
+                    network,
+                    bar_chart_range=configuration.get("Cytoscape", {})
                     .get("bar chart", {})
-                    .get("minimum", -3.0),
-                    configuration.get("Cytoscape", {})
+                    .get("range", [-3.0, 3.0]),
+                    get_bar_chart_range=network.get_standard_score_range,
+                    merge_sites=merge.MERGE.get(
+                        configuration.get("Cytoscape", {}).get("merge sites"),
+                        None,
+                    ),
+                )
+            elif (
+                configuration.get("Cytoscape", {}).get("bar chart", {}).get("type")
+                == "percentile"
+            ):
+                styles = CytoscapeStyles(
+                    network,
+                    bar_chart_range=configuration.get("Cytoscape", {})
                     .get("bar chart", {})
-                    .get("maximum", 3.0),
-                ),
-            )
+                    .get("range", [5, 95]),
+                    get_bar_chart_range=network.get_percentile_range,
+                    merge_sites=merge.MERGE.get(
+                        configuration.get("Cytoscape", {}).get("merge sites"),
+                        None,
+                    ),
+                )
+            else:
+                styles = CytoscapeStyles(
+                    network,
+                    bar_chart_range=configuration.get("Cytoscape", {})
+                    .get("bar chart", {})
+                    .get("range", [-3.0, 3.0]),
+                    get_bar_chart_range=lambda time, ptm, change_range, merge_sites: change_range,
+                    merge_sites=merge.MERGE.get(
+                        configuration.get("Cytoscape", {}).get("merge sites"),
+                        None,
+                    ),
+                )
 
             export.export_styles(
                 styles,
@@ -295,67 +321,64 @@ def main():
                 network.set_edge_weights(
                     weight=lambda confidence_scores: len(confidence_scores)
                 )
-                if configuration["module change enrichment"].get("type") == "standard score":
+                if (
+                    configuration["module change enrichment"].get("type")
+                    == "standard score"
+                ):
                     modules, p_values = network.get_module_change_enrichment(
                         p=configuration["module change enrichment"].get("p", 0.05),
-                        range_thresholds=configuration["module change enrichment"].get(
-                            "thresholds", (-2.0, 2.0)
+                        change_range=configuration["module change enrichment"].get(
+                            "thresholds", (-3.0, 3.0)
                         ),
                         get_range=network.get_standard_score_range,
                         merge_sites=merge.MERGE.get(
                             configuration["module change enrichment"].get(
-                                "merge sites", "mean"
+                                "merge sites"
                             ),
-                            merge.MERGE["mean"],
+                            None,
                         ),
-                        min_size=configuration["module change enrichment"]
-                        .get("module size", {})
-                        .get("minimum", 3),
-                        max_size=configuration["module change enrichment"]
-                        .get("module size", {})
-                        .get("maximum", 100),
+                        size_range=configuration["module change enrichment"].get(
+                            "module size range", (3, 100)
+                        ),
                     )
 
-                elif configuration["module change enrichment"].get("type") == "percentile":
+                elif (
+                    configuration["module change enrichment"].get("type")
+                    == "percentile"
+                ):
                     modules, p_values = network.get_module_change_enrichment(
                         p=configuration["module change enrichment"].get("p", 0.05),
-                        range_thresholds=configuration["module change enrichment"].get(
+                        change_range=configuration["module change enrichment"].get(
                             "thresholds", (5, 95)
                         ),
                         get_range=network.get_percentile_range,
                         merge_sites=merge.MERGE.get(
                             configuration["module change enrichment"].get(
-                                "merge sites", "mean"
+                                "merge sites"
                             ),
-                            merge.MERGE["mean"],
+                            None,
                         ),
-                        min_size=configuration["module change enrichment"]
-                        .get("module size", {})
-                        .get("minimum", 3),
-                        max_size=configuration["module change enrichment"]
-                        .get("module size", {})
-                        .get("maximum", 100),
+                        size_range=configuration["module change enrichment"].get(
+                            "module size range", (3, 100)
+                        ),
                     )
 
                 else:
                     modules, p_values = network.get_module_change_enrichment(
                         p=configuration["module change enrichment"].get("p", 0.05),
-                        range_thresholds=configuration["module change enrichment"].get(
+                        change_range=configuration["module change enrichment"].get(
                             "thresholds", (-1.0, 1.0)
                         ),
-                        get_range=lambda time, ptm, range_thresholds, merge_sites: range_thresholds,
+                        get_range=lambda time, ptm, change_range, merge_sites: change_range,
                         merge_sites=merge.MERGE.get(
                             configuration["module change enrichment"].get(
-                                "merge sites", "mean"
+                                "merge sites"
                             ),
-                            merge.MERGE["mean"],
+                            None,
                         ),
-                        min_size=configuration["module change enrichment"]
-                        .get("module size", {})
-                        .get("minimum", 3),
-                        max_size=configuration["module change enrichment"]
-                        .get("module size", {})
-                        .get("maximum", 100),
+                        size_range=configuration["module change enrichment"].get(
+                            "module size range", (3, 100)
+                        ),
                     )
 
                 for time in p_values:

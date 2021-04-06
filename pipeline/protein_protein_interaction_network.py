@@ -9,7 +9,7 @@ import scipy.stats
 import pandas as pd
 
 from pipeline.configuration import data
-from pipeline.utilities import download, mitab, modularization
+from pipeline.utilities import download, mitab, modularization, enrichment
 
 
 class ProteinProteinInteractionNetwork(nx.Graph):
@@ -296,7 +296,7 @@ class ProteinProteinInteractionNetwork(nx.Graph):
             and change.split(" ")[1] == ptm
         )
 
-    def set_post_translational_modification_data(self):
+    def set_post_translational_modification(self):
         for time in self.get_times():
             for protein in self:
                 self.nodes[protein][
@@ -312,7 +312,7 @@ class ProteinProteinInteractionNetwork(nx.Graph):
                     )
                 )
 
-    def get_changes(self, time, ptm, merge_sites=lambda sites: max(sites, key=abs)):
+    def get_changes(self, time, ptm, merge_sites=None):
         changes = []
         for protein in self:
             sites = [
@@ -325,7 +325,10 @@ class ProteinProteinInteractionNetwork(nx.Graph):
             ]
 
             if sites:
-                changes.append(merge_sites(sites))
+                if merge_sites:
+                    changes.append(merge_sites(sites))
+                else:
+                    changes.extend(sites)
 
         return changes
 
@@ -334,7 +337,7 @@ class ProteinProteinInteractionNetwork(nx.Graph):
         time,
         ptm,
         threshold,
-        merge_sites=lambda sites: max(sites, key=abs),
+        merge_sites=None,
     ):
         changes = self.get_changes(time, ptm, merge_sites)
         mean = statistics.mean(changes)
@@ -346,7 +349,7 @@ class ProteinProteinInteractionNetwork(nx.Graph):
         time,
         post_translational_modification,
         threshold,
-        merge_sites=lambda sites: max(sites, key=abs),
+        merge_sites=None,
     ):
         changes = self.get_changes(time, post_translational_modification, merge_sites)
         percentiles = statistics.quantiles(changes, n=100, method="inclusive")
@@ -355,8 +358,8 @@ class ProteinProteinInteractionNetwork(nx.Graph):
     def set_change_data(
         self,
         merge_sites=lambda sites: max(sites, key=abs),
-        range_thresholds=(-1.0, 1.0),
-        get_range=lambda time, post_translational_modification, range_thresholds, merge_sites: range_thresholds,
+        change_range=(-1.0, 1.0),
+        get_range=lambda time, post_translational_modification, change_range, merge_sites: change_range,
     ):
         times = self.get_times()
         post_translational_modifications = {
@@ -368,7 +371,7 @@ class ProteinProteinInteractionNetwork(nx.Graph):
                 post_translational_modification: get_range(
                     time,
                     post_translational_modification,
-                    range_thresholds,
+                    change_range,
                     merge_sites,
                 )
                 for post_translational_modification in post_translational_modifications[
@@ -568,8 +571,10 @@ class ProteinProteinInteractionNetwork(nx.Graph):
                 or any(
                     method in protein_complex_purification_method
                     for method in [
-                        m.split(":")[1].split("-")[1].lstrip()
-                        for m in row["Protein complex purification method"].split(";")
+                        entry.split("-")[1].lstrip()
+                        for entry in row["Protein complex purification method"].split(
+                            ";"
+                        )
                     ]
                 )
             ):
@@ -882,19 +887,19 @@ class ProteinProteinInteractionNetwork(nx.Graph):
                     ],
                 )
 
-    def get_modules(self, min_size=3, max_size=100, weight=None):
+    def get_modules(self, size_range=(3, 100), weight=None):
         self.remove_nodes_from(list(nx.isolates(self)))
         communities = [
             community
             for community in list(nx.algorithms.components.connected_components(self))
-            if len(community) >= min_size
+            if len(community) >= size_range[0]
         ]
 
-        while max(len(community) for community in communities) > max_size:
+        while max(len(community) for community in communities) > size_range[1]:
             max_indices = [
                 communities.index(community)
                 for community in communities
-                if len(community) > max_size
+                if len(community) > size_range[1]
             ]
 
             subdivision = False
@@ -919,14 +924,16 @@ class ProteinProteinInteractionNetwork(nx.Graph):
             if not subdivision:
                 break
 
-        return [community for community in communities if len(community) >= min_size]
+        return [
+            community for community in communities if len(community) >= size_range[0]
+        ]
 
     def get_proteins(
         self,
         time,
         ptm,
         change_filter=lambda merged_sites: bool(merged_sites),
-        merge_sites=lambda sites: max(sites, key=abs),
+        merge_sites=None,
     ):
         proteins = []
         for protein in self:
@@ -945,18 +952,15 @@ class ProteinProteinInteractionNetwork(nx.Graph):
     def get_module_change_enrichment(
         self,
         p=0.05,
-        range_thresholds=(-1.0, 1.0),
-        get_range=lambda time, ptm, range_thresholds, merge_sites: range_thresholds,
-        merge_sites=lambda sites: max(sites, key=abs),
-        min_size=3,
-        max_size=100,
+        change_range=(-1.0, 1.0),
+        get_range=lambda time, ptm, change_range, merge_sites: change_range,
+        merge_sites=None,
+        size_range=(3, 100),
         weight="weight",
     ):
         modules = {
             i: module
-            for i, module in enumerate(
-                self.get_modules(min_size, max_size, weight=weight)
-            )
+            for i, module in enumerate(self.get_modules(size_range, weight=weight))
         }
 
         p_values = {}
@@ -974,7 +978,7 @@ class ProteinProteinInteractionNetwork(nx.Graph):
                 mid_range = get_range(
                     time,
                     ptm,
-                    range_thresholds,
+                    change_range,
                     merge_sites,
                 )
 
@@ -1019,22 +1023,8 @@ class ProteinProteinInteractionNetwork(nx.Graph):
                     for i in range(len(modules))
                 }
 
-                # Benjamini-Hochberg adjustment (Yekutieli & Benjamini (1999))
-                enrichments = sorted(
-                    [[p_value, module] for module, p_value in p_values.items()]
-                )
-
-                for i in range(len(enrichments)):
-                    enrichments[i][0] = min(
-                        len(enrichments) * enrichments[i][0] / (i + 1), 1.0
-                    )
-                    for j in range(i, 0, -1):
-                        if enrichments[j - 1][0] <= enrichments[j][0]:
-                            break
-                        enrichments[j - 1][0] = enrichments[j][0]
-
-                for p_value, module in enrichments:
-                    if p_value <= p:
+                for module, p_value in enrichment.benjamini_hochberg(p_values).items():
+                    if p_value < p:
                         if time not in p_adjusted:
                             p_adjusted[time] = {}
                         if ptm not in p_adjusted[time]:
@@ -1044,3 +1034,50 @@ class ProteinProteinInteractionNetwork(nx.Graph):
                         p_adjusted[time][ptm][module] = p_value
 
         return modules_filtered, p_adjusted
+
+    def get_complex_enrichment(self, p=0.05, protein_complex_purification_method=[]):
+        protein_complexes = {}
+        for row in download.tabular_txt(
+            data.CORUM_ZIP_ARCHIVE,
+            zip_file=data.CORUM,
+            delimiter="\t",
+            header=0,
+            usecols=[
+                "ComplexName",
+                "Organism",
+                "subunits(UniProt IDs)",
+                "Protein complex purification method",
+            ],
+        ):
+            if row["Organism"] == "Human" and (
+                not protein_complex_purification_method
+                or any(
+                    method in protein_complex_purification_method
+                    for method in [
+                        entry.split("-")[1].lstrip()
+                        for entry in row["Protein complex purification method"].split(
+                            ";"
+                        )
+                    ]
+                )
+            ):
+                protein_complexes[row["ComplexName"]] = set(
+                    row["subunits(UniProt IDs)"].split(";")
+                )
+
+        M = len(set.union(*protein_complexes.values()))
+        n = len(set.union(*protein_complexes.values()).intersection(self))
+
+        p_values = {}
+        for protein_complex, proteins in protein_complexes.items():
+            p_values[protein_complex] = scipy.stats.hypergeom.sf(
+                len(proteins.intersection(self)) - 1, M, n, len(proteins)
+            )
+
+        return {
+            protein_complex: p_value
+            for protein_complex, p_value in enrichment.benjamini_hochberg(
+                p_values
+            ).items()
+            if p_value < p
+        }

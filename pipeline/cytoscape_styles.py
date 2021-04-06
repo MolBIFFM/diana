@@ -5,7 +5,13 @@ import pipeline.configuration.cytoscape_styles
 
 
 class CytoscapeStyles(ET.ElementTree):
-    def __init__(self, ppi_network, bar_chart_range=(-3.0, 3.0)):
+    def __init__(
+        self,
+        ppi_network,
+        bar_chart_range=(-3.0, 3.0),
+        get_bar_chart_range=lambda time, ptm, bar_chart_range, merge_sites: bar_chart_range,
+        merge_sites=lambda sites: max(sites, key=abs),
+    ):
         super(CytoscapeStyles, self).__init__(
             ET.Element("vizmap", attrib={"id": "VizMap", "documentVersion": "3.0"})
         )
@@ -85,7 +91,9 @@ class CytoscapeStyles(ET.ElementTree):
                                 time,
                                 ptm,
                                 ppi_network.get_sites(time, ptm),
-                                cy_range=bar_chart_range,
+                                cy_range=get_bar_chart_range(
+                                    time, ptm, bar_chart_range, merge_sites
+                                ),
                             ),
                         )
                     elif visual_property.get(
@@ -96,7 +104,7 @@ class CytoscapeStyles(ET.ElementTree):
                             "{},{},c,0.00,0.00".format(*[("W", "E"), ("E", "W")][i]),
                         )
 
-    def get_bar_chart(self, time, ptm, sites, cy_range=(-2.0, 2.0)):
+    def get_bar_chart(self, time, ptm, sites, cy_range=(-3.0, 3.0)):
         bar_chart = json.dumps(
             {
                 "cy_range": cy_range,
