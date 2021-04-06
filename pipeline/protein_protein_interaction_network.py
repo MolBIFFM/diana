@@ -329,7 +329,7 @@ class ProteinProteinInteractionNetwork(nx.Graph):
 
         return changes
 
-    def get_z_score_range(
+    def get_standard_score_range(
         self,
         time,
         ptm,
@@ -339,7 +339,6 @@ class ProteinProteinInteractionNetwork(nx.Graph):
         changes = self.get_changes(time, ptm, merge_sites)
         mean = statistics.mean(changes)
         std = statistics.pstdev(changes, mu=mean)
-
         return (threshold[0] * std + mean, threshold[1] * std + mean)
 
     def get_percentile_range(
@@ -356,8 +355,8 @@ class ProteinProteinInteractionNetwork(nx.Graph):
     def set_change_data(
         self,
         merge_sites=lambda sites: max(sites, key=abs),
-        mid_range_thresholds=(-1.0, 1.0),
-        get_mid_range=lambda time, post_translational_modification, mid_range_thresholds, merge_sites: mid_range_thresholds,
+        range_thresholds=(-1.0, 1.0),
+        get_range=lambda time, post_translational_modification, range_thresholds, merge_sites: range_thresholds,
     ):
         times = self.get_times()
         post_translational_modifications = {
@@ -366,10 +365,10 @@ class ProteinProteinInteractionNetwork(nx.Graph):
 
         mid_range = {
             time: {
-                post_translational_modification: get_mid_range(
+                post_translational_modification: get_range(
                     time,
                     post_translational_modification,
-                    mid_range_thresholds,
+                    range_thresholds,
                     merge_sites,
                 )
                 for post_translational_modification in post_translational_modifications[
@@ -883,21 +882,25 @@ class ProteinProteinInteractionNetwork(nx.Graph):
                     ],
                 )
 
-    def get_modules(self, min_size=3, max_size=100, merge_sizes=max, weight=None):
+    def get_modules(self, min_size=3, max_size=100, weight=None):
         self.remove_nodes_from(list(nx.isolates(self)))
-        communities = list(nx.algorithms.components.connected_components(self))
+        communities = [
+            community
+            for community in list(nx.algorithms.components.connected_components(self))
+            if len(community) >= min_size
+        ]
 
-        while merge_sizes([len(community) for community in communities]) > max_size:
+        while max(len(community) for community in communities) > max_size:
             max_indices = [
                 communities.index(community)
                 for community in communities
-                if len(community) == max(len(community) for community in communities)
+                if len(community) > max_size
             ]
 
             subdivision = False
             for i in range(len(max_indices)):
                 subdivided_community = list(
-                    modularization.clauset_newman_moore(
+                    modularization.louvain(
                         self.subgraph(communities[max_indices[i]]), weight=weight
                     )
                 )
@@ -942,8 +945,8 @@ class ProteinProteinInteractionNetwork(nx.Graph):
     def get_module_change_enrichment(
         self,
         p=0.05,
-        mid_range_thresholds=(-1.0, 1.0),
-        get_mid_range=lambda time, ptm, mid_range_thresholds, merge_sites: mid_range_thresholds,
+        range_thresholds=(-1.0, 1.0),
+        get_range=lambda time, ptm, range_thresholds, merge_sites: range_thresholds,
         merge_sites=lambda sites: max(sites, key=abs),
         min_size=3,
         max_size=100,
@@ -968,11 +971,11 @@ class ProteinProteinInteractionNetwork(nx.Graph):
                     for i in modules
                 ]
 
-                mid_range = get_mid_range(
+                mid_range = get_range(
                     time,
                     ptm,
+                    range_thresholds,
                     merge_sites,
-                    mid_range_thresholds,
                 )
 
                 n = len(
@@ -1016,7 +1019,7 @@ class ProteinProteinInteractionNetwork(nx.Graph):
                     for i in range(len(modules))
                 }
 
-                # Benjamini-Hochberg p-value adjustment (Yekutieli & Benjamini (1999))
+                # Benjamini-Hochberg adjustment (Yekutieli & Benjamini (1999))
                 enrichments = sorted(
                     [[p_value, module] for module, p_value in p_values.items()]
                 )

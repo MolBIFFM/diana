@@ -1,11 +1,6 @@
 import networkx as nx
 
 
-def ratio(c_i, c_j):
-    # Wakita, Tsurumi (2007)
-    return min(len(c_i) / len(c_j), len(c_j) / len(c_i))
-
-
 def clauset_newman_moore(G, weight="weight"):
     # Clauset, Newman, Moore (2004), Newman (2004)
     A = nx.linalg.graphmatrix.adjacency_matrix(G, weight=weight)
@@ -26,8 +21,8 @@ def clauset_newman_moore(G, weight="weight"):
     max_entry = -1.0
     for i in range(n):
         for j in range(i):
-            if deltaQ[i][j] * ratio(communities[i], communities[j]) > max_entry:
-                max_entry = deltaQ[i][j] * ratio(communities[i], communities[j])
+            if deltaQ[i][j] > max_entry:
+                max_entry = deltaQ[i][j]
                 max_i = i
                 max_j = j
 
@@ -86,13 +81,8 @@ def clauset_newman_moore(G, weight="weight"):
             if communities[i]:
                 for j in range(i):
                     if communities[j]:
-                        if (
-                            deltaQ[i][j] * ratio(communities[i], communities[j])
-                            > max_entry
-                        ):
-                            max_entry = deltaQ[i][j] * ratio(
-                                communities[i], communities[j]
-                            )
+                        if deltaQ[i][j] > max_entry:
+                            max_entry = deltaQ[i][j]
                             max_i = i
                             max_j = j
 
@@ -125,18 +115,17 @@ def louvain(G, weight="weight"):
             modularity_optimization = False
 
             for i in range(n):
-                for l in range(n):
-                    k_in[l, community[i]] -= A[l, i]
-
                 sigma_tot[community[i]] -= A[i].sum()
+                sigma_in[community[i]] -= sum([A[i, l] for l in communities[1][i]])
 
-                sigma_in[community[i]] -= sum(
-                    [A[i, l] for l in range(n) if community[l] == community[i]]
-                )
+                k_in[i, community[i]] -= A[i, i]
 
                 deltaQ = {}
                 for j in range(n):
                     if A[i, j] and community[i] != community[j]:
+
+                        k_in[j, community[i]] -= A[j, i]
+
                         deltaQ[j] = (
                             (
                                 (sigma_in[community[j]] + k_in[i, community[j]])
@@ -161,9 +150,21 @@ def louvain(G, weight="weight"):
                             )
                         )
 
+                        k_in[j, community[i]] += A[j, i]
+
                 if deltaQ:
                     max_j = max(deltaQ.items(), key=lambda item: item[1])[0]
                     if deltaQ[max_j] > 0.0:
+                        for l in range(n):
+                            if l != i:
+                                k_in[l, community[i]] -= A[l, i]
+                            k_in[l, community[max_j]] += A[l, i]
+
+                        sigma_tot[community[max_j]] += A[i].sum()
+                        sigma_in[community[max_j]] += sum(
+                            [A[i, l] for l in communities[1][max_j]]
+                        )
+
                         communities[1][community[i]].remove(i)
                         communities[1][community[max_j]].add(i)
 
@@ -172,38 +173,17 @@ def louvain(G, weight="weight"):
                         modularity_optimization = True
                         community_aggregation = True
 
-                        for l in range(n):
-                            k_in[l, community[max_j]] += A[l, i]
-
-                        sigma_tot[community[max_j]] += A[i].sum()
-
-                        sigma_in[community[max_j]] += sum(
-                            [
-                                A[i, l]
-                                for l in range(n)
-                                if community[l] == community[max_j]
-                            ]
-                        )
-
                     else:
-                        for l in range(n):
-                            k_in[l, community[i]] += A[l, i]
-
+                        k_in[i, community[i]] += A[i, i]
                         sigma_tot[community[i]] += A[i].sum()
-
                         sigma_in[community[i]] += sum(
-                            [A[i, l] for l in range(n) if community[l] == community[i]]
+                            [A[i, l] for l in communities[1][i]]
                         )
 
                 else:
-                    for l in range(n):
-                        k_in[l, community[i]] += A[l, i]
-
+                    k_in[i, community[i]] += A[i, i]
                     sigma_tot[community[i]] += A[i].sum()
-
-                    sigma_in[community[i]] += sum(
-                        [A[i, l] for l in range(n) if community[l] == community[i]]
-                    )
+                    sigma_in[community[i]] += sum([A[i, l] for l in communities[1][i]])
 
         if community_aggregation:
             for ci in range(len(communities[1])):
@@ -224,8 +204,7 @@ def louvain(G, weight="weight"):
 
             for i in range(n):
                 for j in range(n):
-                    temp = k_in[i, community[j]]
-                    weights[community[i]][community[j]] += temp
+                    weights[community[i]][community[j]] += k_in[i, community[j]]
 
             weights = [
                 [

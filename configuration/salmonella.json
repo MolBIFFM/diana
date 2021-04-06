@@ -1,7 +1,5 @@
 [
     {
-      "network": "salmonella.graphml",
-      "styles": "salmonella.styles.xml",
       "PTM": [
         {
           "file": "data/salmonella/phosphorylation/Supplementary_Table_01.xlsx",
@@ -120,7 +118,7 @@
         "thresholds": [-1.0, 1.0],
         "merge sites": "max abs"
       },
-      "module detection": {
+      "module change enrichment": {
         "p": 0.5,
         "type": "z-score",
         "thresholds": [-2.0, 2.0],

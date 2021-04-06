@@ -1,7 +1,5 @@
 [
     {
-      "network": "shigella.graphml",
-      "styles": "shigella.styles.xml",
       "PTM": [
         {
           "file": "data/shigella/phosphorylation/mcp.M113.029918-2.xls",
@@ -144,7 +142,7 @@
         "thresholds": [-1.0, 1.0],
         "merge sites": "max abs"
       },
-      "module detection": {
+      "module change enrichment": {
         "p": 0.1,
         "type": "z-score",
         "thresholds": [-2.0, 2.0],
