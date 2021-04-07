@@ -312,7 +312,7 @@ class ProteinProteinInteractionNetwork(nx.Graph):
                     )
                 )
 
-    def get_changes(self, time, ptm, merge_sites=None):
+    def get_changes(self, time, ptm, merge_sites=lambda sites: max(sites, key=abs)):
         changes = []
         for protein in self:
             sites = [
@@ -337,7 +337,7 @@ class ProteinProteinInteractionNetwork(nx.Graph):
         time,
         ptm,
         threshold,
-        merge_sites=None,
+        merge_sites=lambda sites: max(sites, key=abs),
     ):
         changes = self.get_changes(time, ptm, merge_sites)
         mean = statistics.mean(changes)
@@ -349,7 +349,7 @@ class ProteinProteinInteractionNetwork(nx.Graph):
         time,
         post_translational_modification,
         threshold,
-        merge_sites=None,
+        merge_sites=lambda sites: max(sites, key=abs),
     ):
         changes = self.get_changes(time, post_translational_modification, merge_sites)
         percentiles = statistics.quantiles(changes, n=100, method="inclusive")
@@ -933,7 +933,7 @@ class ProteinProteinInteractionNetwork(nx.Graph):
         time,
         ptm,
         change_filter=lambda merged_sites: bool(merged_sites),
-        merge_sites=None,
+        merge_sites=lambda sites: max(sites, key=abs),
     ):
         proteins = []
         for protein in self:
@@ -954,7 +954,7 @@ class ProteinProteinInteractionNetwork(nx.Graph):
         p=0.05,
         change_range=(-1.0, 1.0),
         get_range=lambda time, ptm, change_range, merge_sites: change_range,
-        merge_sites=None,
+        merge_sites=lambda sites: max(sites, key=abs),
         size_range=(3, 100),
         weight="weight",
     ):
@@ -1035,49 +1035,14 @@ class ProteinProteinInteractionNetwork(nx.Graph):
 
         return modules_filtered, p_adjusted
 
-    def get_complex_enrichment(self, p=0.05, protein_complex_purification_method=[]):
-        protein_complexes = {}
-        for row in download.tabular_txt(
-            data.CORUM_ZIP_ARCHIVE,
-            zip_file=data.CORUM,
-            delimiter="\t",
-            header=0,
-            usecols=[
-                "ComplexName",
-                "Organism",
-                "subunits(UniProt IDs)",
-                "Protein complex purification method",
-            ],
-        ):
-            if row["Organism"] == "Human" and (
-                not protein_complex_purification_method
-                or any(
-                    method in protein_complex_purification_method
-                    for method in [
-                        entry.split("-")[1].lstrip()
-                        for entry in row["Protein complex purification method"].split(
-                            ";"
-                        )
-                    ]
-                )
-            ):
-                protein_complexes[row["ComplexName"]] = set(
-                    row["subunits(UniProt IDs)"].split(";")
-                )
+    def get_neighborhood(self, protein, k=1, isoforms=True):
+        if isoforms:
+            nodes = {p for p in self if p.split("-")[0] == protein.split("-")[0]}
+        else:
+            nodes = {protein.split("-")[0]}
 
-        M = len(set.union(*protein_complexes.values()))
-        n = len(set.union(*protein_complexes.values()).intersection(self))
+        for _ in range(k):
+            neighborhood = set.union(*(set(self.neighbors(node)) for node in nodes))
+            nodes.update(neighborhood)
 
-        p_values = {}
-        for protein_complex, proteins in protein_complexes.items():
-            p_values[protein_complex] = scipy.stats.hypergeom.sf(
-                len(proteins.intersection(self)) - 1, M, n, len(proteins)
-            )
-
-        return {
-            protein_complex: p_value
-            for protein_complex, p_value in enrichment.benjamini_hochberg(
-                p_values
-            ).items()
-            if p_value < p
-        }
+        return self.subgraph(nodes)

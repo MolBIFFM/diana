@@ -12,7 +12,18 @@ from pipeline.interface import convert, merge, extract
 from pipeline.protein_protein_interaction_network import (
     ProteinProteinInteractionNetwork,
 )
-from pipeline.utilities import export
+
+
+def export_network(network, basename, suffix=""):
+    nx.write_graphml_xml(network, "{0}{1}.graphml".format(basename, suffix))
+
+
+def export_styles(styles, basename, suffix=""):
+    styles.write(
+        "{0}{1}.xml".format(basename, suffix),
+        encoding="UTF-8",
+        xml_declaration=True,
+    )
 
 
 def main():
@@ -40,7 +51,7 @@ def main():
         with open(configuration_file) as configuration:
             configurations = json.load(configuration)
 
-        for i, configuration in enumerate(configurations):
+        for i, configuration in enumerate(configurations, start=1):
             network = ProteinProteinInteractionNetwork()
 
             for entry in configuration.get("PTM", {}):
@@ -258,11 +269,9 @@ def main():
                     get_range=lambda time, ptm, change_range, merge_sites: change_range,
                 )
 
-            export.export_network(
+            export_network(
                 network,
-                "{}.graphml".format(
-                    os.path.splitext(os.path.basename(configuration_file))[0]
-                ),
+                os.path.splitext(os.path.basename(configuration_file))[0],
                 ".{}".format(i) if len(configurations) > 1 else "",
             )
 
@@ -278,7 +287,7 @@ def main():
                     get_bar_chart_range=network.get_standard_score_range,
                     merge_sites=merge.MERGE.get(
                         configuration.get("Cytoscape", {}).get("merge sites"),
-                        None,
+                        merge.MERGE["mean"],
                     ),
                 )
             elif (
@@ -293,7 +302,7 @@ def main():
                     get_bar_chart_range=network.get_percentile_range,
                     merge_sites=merge.MERGE.get(
                         configuration.get("Cytoscape", {}).get("merge sites"),
-                        None,
+                        merge.MERGE["mean"],
                     ),
                 )
             else:
@@ -305,19 +314,35 @@ def main():
                     get_bar_chart_range=lambda time, ptm, change_range, merge_sites: change_range,
                     merge_sites=merge.MERGE.get(
                         configuration.get("Cytoscape", {}).get("merge sites"),
-                        None,
+                        merge.MERGE["mean"],
                     ),
                 )
 
-            export.export_styles(
+            export_styles(
                 styles,
-                "{}.xml".format(
-                    os.path.splitext(os.path.basename(configuration_file))[0]
-                ),
+                os.path.splitext(os.path.basename(configuration_file))[0],
                 ".{}".format(i) if len(configurations) > 1 else "",
             )
 
-            if "module change enrichment" in configuration:
+            if configuration.get("neighborhood"):
+                for protein in configuration["neighborhood"].get("proteins", []):
+                    export_network(
+                        network.get_neighborhood(
+                            protein,
+                            configuration["neighborhood"].get("distance", 1),
+                            configuration["neighborhood"].get("isoforms", True),
+                        ),
+                        os.path.splitext(os.path.basename(configuration_file))[0],
+                        ".{}.{}.{}".format(
+                            i, protein, network.nodes[protein]["gene name"]
+                        )
+                        if len(configurations) > 1
+                        else ".{}.{}".format(
+                            protein, network.nodes[protein]["gene name"]
+                        ),
+                    )
+
+            if configuration.get("module change enrichment"):
                 network.set_edge_weights(
                     weight=lambda confidence_scores: len(confidence_scores)
                 )
@@ -335,7 +360,7 @@ def main():
                             configuration["module change enrichment"].get(
                                 "merge sites"
                             ),
-                            None,
+                            merge.MERGE["mean"],
                         ),
                         size_range=configuration["module change enrichment"].get(
                             "module size range", (3, 100)
@@ -356,7 +381,7 @@ def main():
                             configuration["module change enrichment"].get(
                                 "merge sites"
                             ),
-                            None,
+                            merge.MERGE["mean"],
                         ),
                         size_range=configuration["module change enrichment"].get(
                             "module size range", (3, 100)
@@ -374,7 +399,7 @@ def main():
                             configuration["module change enrichment"].get(
                                 "merge sites"
                             ),
-                            None,
+                            merge.MERGE["mean"],
                         ),
                         size_range=configuration["module change enrichment"].get(
                             "module size range", (3, 100)
@@ -393,13 +418,11 @@ def main():
                                 )
                             )
 
-                            export.export_network(
+                            export_network(
                                 network.subgraph(modules[module]),
-                                "{}.graphml".format(
-                                    os.path.splitext(
-                                        os.path.basename(configuration_file)
-                                    )[0]
-                                ),
+                                os.path.splitext(os.path.basename(configuration_file))[
+                                    0
+                                ],
                                 ".{}.{}".format(i, module + 1)
                                 if len(configurations) > 1
                                 else ".{}".format(module + 1),
