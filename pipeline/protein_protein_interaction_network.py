@@ -335,11 +335,11 @@ class ProteinProteinInteractionNetwork(nx.Graph):
     def get_z_score_range(
         self,
         time,
-        ptm,
+        post_translational_modification,
         threshold,
         merge_sites=lambda sites: max(sites, key=abs),
     ):
-        changes = self.get_changes(time, ptm, merge_sites)
+        changes = self.get_changes(time, post_translational_modification, merge_sites)
         mean = statistics.mean(changes)
         std = statistics.pstdev(changes, mu=mean)
         return (-threshold * std + mean, threshold * std + mean)
