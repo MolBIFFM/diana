@@ -120,13 +120,8 @@
             "Two-hybrid"
           ]
         },
-        "CORUM": {
-        },
         "IntAct": {
           "MI score": 0.27
-        },
-        "Reactome": {
-          "Reactome score": 0.5
         },
         "STRING": {
           "experiments": 0.7,
@@ -141,11 +136,11 @@
         "merge sites": "max abs"
       },
       "module change enrichment": {
-        "p": 0.1,
+        "p": 0.05,
         "type": "z-score",
         "thresholds": [-2.0, 2.0],
-        "merge sites":"max abs",
-        "module size range": [3, 100]
+        "module size range": [3, 100],
+        "merge sites": "max abs"
       }
     }
   ]
