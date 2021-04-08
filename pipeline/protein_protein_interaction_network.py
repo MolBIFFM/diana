@@ -332,7 +332,7 @@ class ProteinProteinInteractionNetwork(nx.Graph):
 
         return changes
 
-    def get_standard_score_range(
+    def get_z_score_range(
         self,
         time,
         ptm,
@@ -342,9 +342,9 @@ class ProteinProteinInteractionNetwork(nx.Graph):
         changes = self.get_changes(time, ptm, merge_sites)
         mean = statistics.mean(changes)
         std = statistics.pstdev(changes, mu=mean)
-        return (threshold[0] * std + mean, threshold[1] * std + mean)
+        return (-threshold * std + mean, threshold * std + mean)
 
-    def get_percentile_range(
+    def get_p_value_range(
         self,
         time,
         post_translational_modification,
@@ -352,14 +352,36 @@ class ProteinProteinInteractionNetwork(nx.Graph):
         merge_sites=lambda sites: max(sites, key=abs),
     ):
         changes = self.get_changes(time, post_translational_modification, merge_sites)
-        percentiles = statistics.quantiles(changes, n=100, method="inclusive")
-        return (percentiles[threshold[0] - 1], percentiles[threshold[1] - 1])
+        p_value_range = [0.0, 0.0]
+
+        for i in range(len(changes)):
+            if (
+                len([change for change in changes if change <= changes[i]])
+                / len(changes)
+                > 0.5 * threshold
+            ):
+                p_value_range[0] = changes[i - 1]
+                break
+
+        for i in range(len(changes) - 1, -1, -1):
+            if (
+                len([change for change in changes if change >= changes[i]])
+                / len(changes)
+                > 0.5 * threshold
+            ):
+                p_value_range[1] = changes[i + 1]
+                break
+
+        return tuple(p_value_range)
 
     def set_change_data(
         self,
         merge_sites=lambda sites: max(sites, key=abs),
-        change_range=(-1.0, 1.0),
-        get_range=lambda time, post_translational_modification, change_range, merge_sites: change_range,
+        change=1.0,
+        get_range=lambda time, post_translational_modification, change, merge_sites: (
+            -change,
+            change,
+        ),
     ):
         times = self.get_times()
         post_translational_modifications = {
@@ -371,7 +393,7 @@ class ProteinProteinInteractionNetwork(nx.Graph):
                 post_translational_modification: get_range(
                     time,
                     post_translational_modification,
-                    change_range,
+                    change,
                     merge_sites,
                 )
                 for post_translational_modification in post_translational_modifications[
@@ -887,19 +909,19 @@ class ProteinProteinInteractionNetwork(nx.Graph):
                     ],
                 )
 
-    def get_modules(self, size_range=(3, 100), weight=None):
+    def get_modules(self, module_size_range=(3, 100), weight=None):
         self.remove_nodes_from(list(nx.isolates(self)))
         communities = [
             community
             for community in list(nx.algorithms.components.connected_components(self))
-            if len(community) >= size_range[0]
+            if len(community) >= module_size_range[0]
         ]
 
-        while max(len(community) for community in communities) > size_range[1]:
+        while max(len(community) for community in communities) > module_size_range[1]:
             max_indices = [
                 communities.index(community)
                 for community in communities
-                if len(community) > size_range[1]
+                if len(community) > module_size_range[1]
             ]
 
             subdivision = False
@@ -925,7 +947,9 @@ class ProteinProteinInteractionNetwork(nx.Graph):
                 break
 
         return [
-            community for community in communities if len(community) >= size_range[0]
+            community
+            for community in communities
+            if len(community) >= module_size_range[0]
         ]
 
     def get_proteins(
@@ -945,22 +969,26 @@ class ProteinProteinInteractionNetwork(nx.Graph):
                 and change.split(" ")[0] == str(time)
                 and change.split(" ")[1] == ptm
             ]
+
             if sites and change_filter(merge_sites(sites)):
                 proteins.append(protein)
+
         return proteins
 
     def get_module_change_enrichment(
         self,
         p=0.05,
-        change_range=(-1.0, 1.0),
-        get_range=lambda time, ptm, change_range, merge_sites: change_range,
+        change=1.0,
+        get_range=lambda time, ptm, change, merge_sites: (-change, change),
         merge_sites=lambda sites: max(sites, key=abs),
-        size_range=(3, 100),
+        module_size_range=(3, 100),
         weight="weight",
     ):
         modules = {
             i: module
-            for i, module in enumerate(self.get_modules(size_range, weight=weight))
+            for i, module in enumerate(
+                self.get_modules(module_size_range, weight=weight)
+            )
         }
 
         p_values = {}
@@ -978,7 +1006,7 @@ class ProteinProteinInteractionNetwork(nx.Graph):
                 mid_range = get_range(
                     time,
                     ptm,
-                    change_range,
+                    change,
                     merge_sites,
                 )
 
