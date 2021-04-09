@@ -9,7 +9,7 @@ import scipy.stats
 import pandas as pd
 
 from pipeline.configuration import data
-from pipeline.utilities import download, mitab, modularization, enrichment
+from pipeline.utilities import download, mitab, modularization, correction
 
 
 class ProteinProteinInteractionNetwork(nx.Graph):
@@ -1080,7 +1080,7 @@ class ProteinProteinInteractionNetwork(nx.Graph):
                     for i in range(len(modules))
                 }
 
-                for module, p_value in enrichment.benjamini_hochberg(p_values).items():
+                for module, p_value in correction.benjamini_hochberg(p_values).items():
                     if p_value < p:
                         if time not in p_adjusted:
                             p_adjusted[time] = {}
