@@ -341,8 +341,20 @@ class ProteinProteinInteractionNetwork(nx.Graph):
     ):
         changes = self.get_changes(time, post_translational_modification, merge_sites)
         mean = statistics.mean(changes)
-        std = statistics.pstdev(changes, mu=mean)
-        return (-threshold * std + mean, threshold * std + mean)
+        stdev = statistics.stdev(changes, xbar=mean)
+        return (-threshold * stdev + mean, threshold * stdev + mean)
+
+    def get_z_score(
+        self,
+        time,
+        post_translational_modification,
+        change,
+        merge_sites=lambda sites: max(sites, key=abs),
+    ):
+        changes = self.get_changes(time, post_translational_modification, merge_sites)
+        mean = statistics.mean(changes)
+        stdev = statistics.stdev(changes, xbar=mean)
+        return (change - mean) / stdev
 
     def get_p_value_range(
         self,
@@ -373,6 +385,22 @@ class ProteinProteinInteractionNetwork(nx.Graph):
                 break
 
         return tuple(p_value_range)
+
+    def get_p_value(
+        self,
+        time,
+        post_translational_modification,
+        change,
+        merge_sites=lambda sites: max(sites, key=abs),
+    ):
+        changes = self.get_changes(time, post_translational_modification, merge_sites)
+        return (
+            min(
+                len([c for c in changes if c <= change]),
+                len([c for c in changes if c >= change]),
+            )
+            / len(changes)
+        )
 
     def set_change_data(
         self,
