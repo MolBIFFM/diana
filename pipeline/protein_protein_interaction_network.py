@@ -395,7 +395,8 @@ class ProteinProteinInteractionNetwork(nx.Graph):
     ):
         changes = self.get_changes(time, post_translational_modification, merge_sites)
         return (
-            min(
+            2
+            * min(
                 len([c for c in changes if c <= change]),
                 len([c for c in changes if c >= change]),
             )
