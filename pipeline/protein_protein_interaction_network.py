@@ -312,7 +312,7 @@ class ProteinProteinInteractionNetwork(nx.Graph):
                     )
                 )
 
-    def get_changes(self, time, ptm, merge_sites=lambda sites: max(sites, key=abs)):
+    def get_changes(self, time, ptm, merge_sites=statistics.mean):
         changes = []
         for protein in self:
             sites = [
@@ -337,7 +337,7 @@ class ProteinProteinInteractionNetwork(nx.Graph):
         time,
         post_translational_modification,
         threshold,
-        merge_sites=lambda sites: max(sites, key=abs),
+        merge_sites=statistics.mean,
     ):
         changes = self.get_changes(time, post_translational_modification, merge_sites)
         mean = statistics.mean(changes)
@@ -349,62 +349,16 @@ class ProteinProteinInteractionNetwork(nx.Graph):
         time,
         post_translational_modification,
         change,
-        merge_sites=lambda sites: max(sites, key=abs),
+        merge_sites=statistics.mean,
     ):
         changes = self.get_changes(time, post_translational_modification, merge_sites)
         mean = statistics.mean(changes)
         stdev = statistics.stdev(changes, xbar=mean)
         return (change - mean) / stdev
 
-    def get_p_value_range(
-        self,
-        time,
-        post_translational_modification,
-        threshold,
-        merge_sites=lambda sites: max(sites, key=abs),
-    ):
-        changes = self.get_changes(time, post_translational_modification, merge_sites)
-        p_value_range = [0.0, 0.0]
-
-        for i in range(len(changes)):
-            if (
-                len([change for change in changes if change <= changes[i]])
-                / len(changes)
-                > 0.5 * threshold
-            ):
-                p_value_range[0] = changes[i - 1]
-                break
-
-        for i in range(len(changes) - 1, -1, -1):
-            if (
-                len([change for change in changes if change >= changes[i]])
-                / len(changes)
-                > 0.5 * threshold
-            ):
-                p_value_range[1] = changes[i + 1]
-                break
-
-        return tuple(p_value_range)
-
-    def get_p_value(
-        self,
-        time,
-        post_translational_modification,
-        change,
-        merge_sites=lambda sites: max(sites, key=abs),
-    ):
-        changes = self.get_changes(time, post_translational_modification, merge_sites)
-        return (
-            min(
-                len([c for c in changes if c <= change]),
-                len([c for c in changes if c >= change]),
-            )
-            / len(changes)
-        )
-
     def set_change_data(
         self,
-        merge_sites=lambda sites: max(sites, key=abs),
+        merge_sites=statistics.mean,
         change=1.0,
         get_range=lambda time, post_translational_modification, change, merge_sites: (
             -change,
@@ -983,7 +937,7 @@ class ProteinProteinInteractionNetwork(nx.Graph):
         time,
         ptm,
         change_filter=lambda merged_sites: bool(merged_sites),
-        merge_sites=lambda sites: max(sites, key=abs),
+        merge_sites=statistics.mean,
     ):
         proteins = []
         for protein in self:
@@ -1003,10 +957,10 @@ class ProteinProteinInteractionNetwork(nx.Graph):
 
     def get_module_change_enrichment(
         self,
-        p=0.05,
+        fdr=0.05,
         change=1.0,
         get_range=lambda time, ptm, change, merge_sites: (-change, change),
-        merge_sites=lambda sites: max(sites, key=abs),
+        merge_sites=statistics.mean,
         module_size=(3, 100),
         weight="weight",
     ):
@@ -1076,7 +1030,7 @@ class ProteinProteinInteractionNetwork(nx.Graph):
                 }
 
                 for module, p_value in correction.benjamini_hochberg(p_values).items():
-                    if p_value < p:
+                    if p_value < fdr:
                         if time not in p_adjusted:
                             p_adjusted[time] = {}
                         if ptm not in p_adjusted[time]:

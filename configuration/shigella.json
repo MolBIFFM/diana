@@ -8,8 +8,8 @@
           "time": 15,
           "sites": 5,
           "header": 1,
-          "protein column": "protein",
-          "protein format": 3,
+          "accession column": "protein",
+          "accession format": 3,
           "position column": "phosphosite",
           "position format": 4,
           "replicate columns": [
@@ -24,8 +24,8 @@
           "label": "P",
           "time": 60,
           "sites": 5,
-          "protein column": "protein",
-          "protein format": 3,
+          "accession column": "protein",
+          "accession format": 3,
           "position column": "phosphosite",
           "position format": 4,
           "replicate columns": [
@@ -40,8 +40,8 @@
           "label": "P",
           "time": 120,
           "sites": 5,
-          "protein column": "protein",
-          "protein format": 3,
+          "accession column": "protein",
+          "accession format": 3,
           "position column": "phosphosite",
           "position format": 4,
           "replicate columns": [
@@ -56,8 +56,8 @@
           "label": "U",
           "time": 15,
           "sites": 5,
-          "protein column": "Protein",
-          "protein format": 2,
+          "accession column": "Protein",
+          "accession format": 2,
           "position column": "Positions within proteins",
           "position format": 2,
           "replicate columns": [
@@ -74,8 +74,8 @@
           "label": "U",
           "time": 60,
           "sites": 5,
-          "protein column": "Protein",
-          "protein format": 2,
+          "accession column": "Protein",
+          "accession format": 2,
           "position column": "Positions within proteins",
           "position format": 2,
           "replicate columns": [
@@ -92,8 +92,8 @@
           "label": "U",
           "time": 120,
           "sites": 5,
-          "protein column": "Protein",
-          "protein format": 2,
+          "accession column": "Protein",
+          "accession format": 2,
           "position column": "Positions within proteins",
           "position format": 2,
           "replicate columns": [
@@ -130,17 +130,15 @@
       },
       "Cytoscape": {
         "bar chart": {
-          "range": [-2.0, 2.0]
+          "range": 2.0
         },
-        "thresholds": [-1.0, 1.0],
-        "merge sites": "max abs"
+        "threshold": 1.0
       },
       "module change enrichment": {
-        "p": 0.1,
+        "fdr": 0.1,
         "type": "z-score",
         "threshold": 2.0,
-        "module size": [5, 100],
-        "merge sites": "max abs"
+        "module size": [5, 100]
       }
     }
   ]

@@ -7,8 +7,8 @@
           "label": "P",
           "time": 30,
           "sites": 5,
-          "protein column": "Fasta.headers",
-          "protein format": 5,
+          "accession column": "Fasta.headers",
+          "accession format": 5,
           "position column": "Positions.within.proteins",
           "position format": 1,
           "replicate columns": [
@@ -27,8 +27,8 @@
           "label": "P",
           "time": 120,
           "sites": 5,
-          "protein column": "Fasta.headers",
-          "protein format": 5,
+          "accession column": "Fasta.headers",
+          "accession format": 5,
           "position column": "Positions.within.proteins",
           "position format": 1,
           "replicate columns": [
@@ -67,17 +67,15 @@
       },
       "Cytoscape": {
         "bar chart": {
-          "range": [-2.0, 2.0]
+          "range": 2.0
         },
-        "thresholds": [-1.0, 1.0],
-        "merge sites": "max abs"
+        "threshold": 1.0
       },
       "module change enrichment": {
-        "p": 0.1,
+        "fdr": 0.1,
         "type": "z-score",
         "threshold": 2.0,
-        "module size": [5, 100],
-        "merge sites": "max abs"
+        "module size": [5, 100]
       }
     }
   ]

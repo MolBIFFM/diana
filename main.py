@@ -64,11 +64,11 @@ def main():
                     entry["file"],
                     entry["label"],
                     entry["time"],
-                    protein_accession_column=entry["protein column"],
+                    protein_accession_column=entry["accession column"],
                     position_col=entry["position column"],
                     replicates=entry["replicate columns"],
                     protein_accession_format=extract.EXTRACT.get(
-                        entry["protein format"], lambda x: x
+                        entry["accession format"], lambda x: x
                     ),
                     position_format=extract.EXTRACT.get(
                         entry["position format"], lambda x: x
@@ -297,15 +297,6 @@ def main():
                     get_range=network.get_z_score_range,
                 )
 
-            elif configuration.get("Cytoscape", {}).get("type") == "p-value":
-                network.set_change_data(
-                    merge_sites=merge.MERGE[
-                        configuration.get("Cytoscape", {}).get("merge sites", "mean")
-                    ],
-                    change=configuration["Cytoscape"].get("threshold", 0.05),
-                    get_range=network.get_p_value_range,
-                )
-
             else:
                 network.set_change_data(
                     merge_sites=merge.MERGE[
@@ -336,21 +327,7 @@ def main():
                         merge.MERGE["mean"],
                     ),
                 )
-            elif (
-                configuration.get("Cytoscape", {}).get("bar chart", {}).get("type")
-                == "p-value"
-            ):
-                styles = CytoscapeStyles(
-                    network,
-                    bar_chart_range=configuration.get("Cytoscape", {})
-                    .get("bar chart", {})
-                    .get("range", [5, 95]),
-                    get_bar_chart_range=network.get_p_value_range,
-                    merge_sites=merge.MERGE.get(
-                        configuration.get("Cytoscape", {}).get("merge sites"),
-                        merge.MERGE["mean"],
-                    ),
-                )
+
             else:
                 styles = CytoscapeStyles(
                     network,
@@ -397,7 +374,7 @@ def main():
                 )
                 if configuration["module change enrichment"].get("type") == "z-score":
                     modules, p_values = network.get_module_change_enrichment(
-                        p=configuration["module change enrichment"].get("p", 0.05),
+                        fdr=configuration["module change enrichment"].get("fdr", 0.05),
                         change=configuration["module change enrichment"].get(
                             "threshold", 2.0
                         ),
@@ -413,27 +390,9 @@ def main():
                         ),
                     )
 
-                elif configuration["module change enrichment"].get("type") == "p-value":
-                    modules, p_values = network.get_module_change_enrichment(
-                        p=configuration["module change enrichment"].get("p", 0.05),
-                        change=configuration["module change enrichment"].get(
-                            "threshold", 0.05
-                        ),
-                        get_range=network.get_p_value_range,
-                        merge_sites=merge.MERGE.get(
-                            configuration["module change enrichment"].get(
-                                "merge sites"
-                            ),
-                            merge.MERGE["mean"],
-                        ),
-                        module_size=configuration["module change enrichment"].get(
-                            "module size", (3, 100)
-                        ),
-                    )
-
                 else:
                     modules, p_values = network.get_module_change_enrichment(
-                        p=configuration["module change enrichment"].get("p", 0.05),
+                        fdr=configuration["module change enrichment"].get("fdr", 0.05),
                         change=configuration["module change enrichment"].get(
                             "threshold", 1.0
                         ),
