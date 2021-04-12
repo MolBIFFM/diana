@@ -9,7 +9,7 @@ import scipy.stats
 import pandas as pd
 
 from pipeline.configuration import data
-from pipeline.utilities import download, mitab, modularization, correction
+from pipeline.utilities import fetch, mitab, modularization, correction
 
 
 class ProteinProteinInteractionNetwork(nx.Graph):
@@ -109,7 +109,7 @@ class ProteinProteinInteractionNetwork(nx.Graph):
         reviewed_proteins, primary_accession, gene_name, protein_name = {}, {}, {}, {}
         accessions, gene_names, protein_names = [], {}, {}
         recommended_name = False
-        for line in download.txt(data.UNIPROT_SWISS_PROT):
+        for line in fetch.txt(data.UNIPROT_SWISS_PROT):
             if line.split("   ")[0] == "AC":
                 accessions.extend(line.split("   ")[1].rstrip(";").split("; "))
 
@@ -527,7 +527,7 @@ class ProteinProteinInteractionNetwork(nx.Graph):
         self, experimental_system=[], multi_validated_physical=False
     ):
         uniprot = {}
-        for row in download.tabular_txt(
+        for row in fetch.tabular_txt(
             data.UNIPROT_ID_MAP,
             delimiter="\t",
             usecols=[0, 1, 2],
@@ -535,7 +535,7 @@ class ProteinProteinInteractionNetwork(nx.Graph):
             if row[1] == "BioGRID" and row[0] in self.nodes:
                 uniprot[int(row[2])] = row[0]
 
-        for row in download.tabular_txt(
+        for row in fetch.tabular_txt(
             data.BIOGRID_ID_MAP_ZIP_ARCHIVE,
             zip_file=data.BIOGRID_ID_MAP,
             delimiter="\t",
@@ -554,7 +554,7 @@ class ProteinProteinInteractionNetwork(nx.Graph):
             ):
                 uniprot[int(row["BIOGRID_ID"])] = row["IDENTIFIER_VALUE"]
 
-        for row in download.tabular_txt(
+        for row in fetch.tabular_txt(
             data.BIOGRID_MV_PHYSICAL_ZIP_ARCHIVE
             if multi_validated_physical
             else data.BIOGRID_ZIP_ARCHIVE,
@@ -605,7 +605,7 @@ class ProteinProteinInteractionNetwork(nx.Graph):
                 )
 
     def add_interactions_from_corum(self, protein_complex_purification_method=[]):
-        for row in download.tabular_txt(
+        for row in fetch.tabular_txt(
             data.CORUM_ZIP_ARCHIVE,
             zip_file=data.CORUM,
             delimiter="\t",
@@ -653,7 +653,7 @@ class ProteinProteinInteractionNetwork(nx.Graph):
     def add_interactions_from_intact(
         self, interaction_detection_methods=[], interaction_types=[], mi_score=0.0
     ):
-        for row in download.tabular_txt(
+        for row in fetch.tabular_txt(
             data.INTACT_ZIP_ARCHIVE,
             zip_file=data.INTACT,
             delimiter="\t",
@@ -752,7 +752,7 @@ class ProteinProteinInteractionNetwork(nx.Graph):
     def add_interactions_from_reactome(
         self, interaction_detection_methods=[], interaction_types=[], reactome_score=0.0
     ):
-        for row in download.tabular_txt(
+        for row in fetch.tabular_txt(
             data.REACTOME,
             delimiter="\t",
             header=0,
@@ -867,7 +867,7 @@ class ProteinProteinInteractionNetwork(nx.Graph):
     ):
 
         uniprot = {}
-        for row in download.tabular_txt(
+        for row in fetch.tabular_txt(
             data.UNIPROT_ID_MAP,
             delimiter="\t",
             usecols=[0, 1, 2],
@@ -875,7 +875,7 @@ class ProteinProteinInteractionNetwork(nx.Graph):
             if row[1] == "STRING" and row[0] in self.nodes:
                 uniprot[row[2]] = row[0]
 
-        for row in download.tabular_txt(data.STRING_ID_MAP, usecols=[1, 2]):
+        for row in fetch.tabular_txt(data.STRING_ID_MAP, usecols=[1, 2]):
             if row[1].split("|")[0] in self.nodes:
                 uniprot[row[2]] = row[1].split("|")[0]
 
@@ -900,7 +900,7 @@ class ProteinProteinInteractionNetwork(nx.Graph):
         }
         thresholds["combined_score"] = combined_score
 
-        for row in download.tabular_txt(
+        for row in fetch.tabular_txt(
             data.STRING_PHYSICAL if physical else data.STRING,
             delimiter=" ",
             header=0,
@@ -937,19 +937,19 @@ class ProteinProteinInteractionNetwork(nx.Graph):
                     ],
                 )
 
-    def get_modules(self, module_size_range=(3, 100), weight=None):
+    def get_modules(self, module_size=(3, 100), weight=None):
         self.remove_nodes_from(list(nx.isolates(self)))
         communities = [
             community
             for community in list(nx.algorithms.components.connected_components(self))
-            if len(community) >= module_size_range[0]
+            if len(community) >= module_size[0]
         ]
 
-        while max(len(community) for community in communities) > module_size_range[1]:
+        while max(len(community) for community in communities) > module_size[1]:
             max_indices = [
                 communities.index(community)
                 for community in communities
-                if len(community) > module_size_range[1]
+                if len(community) > module_size[1]
             ]
 
             subdivision = False
@@ -975,9 +975,7 @@ class ProteinProteinInteractionNetwork(nx.Graph):
                 break
 
         return [
-            community
-            for community in communities
-            if len(community) >= module_size_range[0]
+            community for community in communities if len(community) >= module_size[0]
         ]
 
     def get_proteins(
@@ -1009,14 +1007,12 @@ class ProteinProteinInteractionNetwork(nx.Graph):
         change=1.0,
         get_range=lambda time, ptm, change, merge_sites: (-change, change),
         merge_sites=lambda sites: max(sites, key=abs),
-        module_size_range=(3, 100),
+        module_size=(3, 100),
         weight="weight",
     ):
         modules = {
             i: module
-            for i, module in enumerate(
-                self.get_modules(module_size_range, weight=weight)
-            )
+            for i, module in enumerate(self.get_modules(module_size, weight=weight))
         }
 
         p_values = {}

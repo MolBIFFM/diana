@@ -86,7 +86,7 @@ def main():
                         "{}\t{}\t{}\t{}\t{}\t{}".format(
                             gene_name,
                             protein_name,
-                            protein,
+                            protein if "-" in protein else "{}  ".format(protein),
                             entry["time"],
                             entry["label"],
                             " ".join(["{:.2f}".format(site) for site in sites]),
@@ -121,7 +121,17 @@ def main():
                     ):
                         logger.info(
                             "{}\t{}\tBioGRID\t{:.3f}".format(
-                                *sorted([interactor_a, interactor_b]), score
+                                *sorted(
+                                    [
+                                        interactor_a
+                                        if "-" in interactor_a
+                                        else "{}  ".format(interactor_a),
+                                        interactor_b
+                                        if "-" in interactor_b
+                                        else "{}  ".format(interactor_b),
+                                    ]
+                                ),
+                                score
                             )
                         )
 
@@ -140,7 +150,17 @@ def main():
                     ):
                         logger.info(
                             "{}\t{}\tCORUM\t{:.3f}".format(
-                                *sorted([interactor_a, interactor_b]), score
+                                *sorted(
+                                    [
+                                        interactor_a
+                                        if "-" in interactor_a
+                                        else "{}  ".format(interactor_a),
+                                        interactor_b
+                                        if "-" in interactor_b
+                                        else "{}  ".format(interactor_b),
+                                    ]
+                                ),
+                                score
                             )
                         )
 
@@ -160,7 +180,17 @@ def main():
                     ):
                         logger.info(
                             "{}\t{}\tIntAct\t{:.3f}".format(
-                                *sorted([interactor_a, interactor_b]), score
+                                *sorted(
+                                    [
+                                        interactor_a
+                                        if "-" in interactor_a
+                                        else "{}  ".format(interactor_a),
+                                        interactor_b
+                                        if "-" in interactor_b
+                                        else "{}  ".format(interactor_b),
+                                    ]
+                                ),
+                                score
                             )
                         )
 
@@ -182,7 +212,17 @@ def main():
                     ):
                         logger.info(
                             "{}\t{}\tReactome\t{:.3f}".format(
-                                *sorted([interactor_a, interactor_b]), score
+                                *sorted(
+                                    [
+                                        interactor_a
+                                        if "-" in interactor_a
+                                        else "{}  ".format(interactor_a),
+                                        interactor_b
+                                        if "-" in interactor_b
+                                        else "{}  ".format(interactor_b),
+                                    ]
+                                ),
+                                score
                             )
                         )
 
@@ -232,7 +272,17 @@ def main():
                     ):
                         logger.info(
                             "{}\t{}\tSTRING\t{:.3f}".format(
-                                *sorted([interactor_a, interactor_b]), score
+                                *sorted(
+                                    [
+                                        interactor_a
+                                        if "-" in interactor_a
+                                        else "{}  ".format(interactor_a),
+                                        interactor_b
+                                        if "-" in interactor_b
+                                        else "{}  ".format(interactor_b),
+                                    ]
+                                ),
+                                score
                             )
                         )
 
@@ -358,8 +408,8 @@ def main():
                             ),
                             merge.MERGE["mean"],
                         ),
-                        module_size_range=configuration["module change enrichment"].get(
-                            "module size range", (3, 100)
+                        module_size=configuration["module change enrichment"].get(
+                            "module size", (3, 100)
                         ),
                     )
 
@@ -376,8 +426,8 @@ def main():
                             ),
                             merge.MERGE["mean"],
                         ),
-                        module_size_range=configuration["module change enrichment"].get(
-                            "module size range", (3, 100)
+                        module_size=configuration["module change enrichment"].get(
+                            "module size", (3, 100)
                         ),
                     )
 
@@ -397,8 +447,8 @@ def main():
                             ),
                             merge.MERGE["mean"],
                         ),
-                        module_size_range=configuration["module change enrichment"].get(
-                            "module size range", (3, 100)
+                        module_size=configuration["module change enrichment"].get(
+                            "module size", (3, 100)
                         ),
                     )
 

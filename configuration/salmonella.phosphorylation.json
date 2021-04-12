@@ -40,46 +40,6 @@
           "replicates": 2,
           "merge replicates": "mean",
           "log base": 2
-        },
-        {
-          "file": "data/salmonella/ubiquitination/20151119_HeLa_HCT116_05h_2h_all.xlsx",
-          "sheet": "20151119_HeLa_HCT116_05h_2h_all",
-          "label": "U",
-          "time": 30,
-          "sites": 5,
-          "protein column": "Proteins",
-          "protein format": 2,
-          "position column": "Positions within proteins",
-          "position format": 2,
-          "replicate columns": [
-            "Ratio H/L normalized HCT116_05_R1",
-            "Ratio H/L normalized HCT116_05_R2",
-            "Ratio H/L normalized HCT116_05_R3",
-            "Ratio H/L normalized HCT116_05_R4"
-          ],
-          "replicates": 2,
-          "merge replicates": "mean",
-          "log base": 2
-        },
-        {
-          "file": "data/salmonella/ubiquitination/20151119_HeLa_HCT116_05h_2h_all.xlsx",
-          "sheet": "20151119_HeLa_HCT116_05h_2h_all",
-          "label": "U",
-          "time": 120,
-          "sites": 5,
-          "protein column": "Proteins",
-          "protein format": 2,
-          "position column": "Positions within proteins",
-          "position format": 2,
-          "replicate columns": [
-            "Ratio H/L normalized HCT116_2_R1",
-            "Ratio H/L normalized HCT116_2_R2",
-            "Ratio H/L normalized HCT116_2_R3",
-            "Ratio H/L normalized HCT116_2_R4"
-          ],
-          "replicates": 2,
-          "merge replicates": "mean",
-          "log base": 2
         }
       ],
       "PPI": {

@@ -136,10 +136,10 @@
         "merge sites": "max abs"
       },
       "module change enrichment": {
-        "p": 0.05,
+        "p": 0.1,
         "type": "z-score",
-        "thresholds": [-2.0, 2.0],
-        "module size range": [3, 100],
+        "threshold": 2.0,
+        "module size": [5, 100],
         "merge sites": "max abs"
       }
     }
