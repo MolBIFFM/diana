@@ -3,6 +3,7 @@ import itertools
 import json
 import math
 import statistics
+import concurrent.futures
 
 import networkx as nx
 import scipy.stats
@@ -356,6 +357,52 @@ class ProteinProteinInteractionNetwork(nx.Graph):
         stdev = statistics.stdev(changes, xbar=mean)
         return (change - mean) / stdev
 
+    def get_proportion_range(
+        self,
+        time,
+        post_translational_modification,
+        threshold,
+        merge_sites=statistics.mean,
+    ):
+        changes = self.get_changes(time, post_translational_modification, merge_sites)
+        proportion_range = [0.0, 0.0]
+
+        for i in range(len(changes)):
+            if (
+                len([change for change in changes if change <= changes[i]])
+                / len(changes)
+                > threshold
+            ):
+                proportion_range[0] = changes[i - 1]
+                break
+
+        for i in range(len(changes) - 1, -1, -1):
+            if (
+                len([change for change in changes if change >= changes[i]])
+                / len(changes)
+                > threshold
+            ):
+                proportion_range[1] = changes[i + 1]
+                break
+
+        return tuple(proportion_range)
+
+    def get_p_value(
+        self,
+        time,
+        post_translational_modification,
+        change,
+        merge_sites=statistics.mean,
+    ):
+        changes = self.get_changes(time, post_translational_modification, merge_sites)
+        return (
+            min(
+                len([c for c in changes if c <= change]),
+                len([c for c in changes if c >= change]),
+            )
+            / len(changes)
+        )
+
     def set_change_data(
         self,
         merge_sites=statistics.mean,
@@ -463,7 +510,7 @@ class ProteinProteinInteractionNetwork(nx.Graph):
 
     def set_edge_weights(
         self,
-        weight=lambda confidence_scores: bool(confidence_scores),
+        weight=lambda confidence_scores: int(bool(confidence_scores)),
         attribute="weight",
     ):
         databases = self.get_databases()
@@ -491,7 +538,7 @@ class ProteinProteinInteractionNetwork(nx.Graph):
 
         for row in fetch.tabular_txt(
             data.BIOGRID_ID_MAP_ZIP_ARCHIVE,
-            zip_file=data.BIOGRID_ID_MAP,
+            file=data.BIOGRID_ID_MAP,
             delimiter="\t",
             header=20,
             usecols=[
@@ -512,9 +559,7 @@ class ProteinProteinInteractionNetwork(nx.Graph):
             data.BIOGRID_MV_PHYSICAL_ZIP_ARCHIVE
             if multi_validated_physical
             else data.BIOGRID_ZIP_ARCHIVE,
-            zip_file=data.BIOGRID_MV_PHYSICAL
-            if multi_validated_physical
-            else data.BIOGRID,
+            file=data.BIOGRID_MV_PHYSICAL if multi_validated_physical else data.BIOGRID,
             delimiter="\t",
             header=0,
             usecols=[
@@ -561,7 +606,7 @@ class ProteinProteinInteractionNetwork(nx.Graph):
     def add_interactions_from_corum(self, protein_complex_purification_method=[]):
         for row in fetch.tabular_txt(
             data.CORUM_ZIP_ARCHIVE,
-            zip_file=data.CORUM,
+            file=data.CORUM,
             delimiter="\t",
             header=0,
             usecols=[
@@ -609,7 +654,7 @@ class ProteinProteinInteractionNetwork(nx.Graph):
     ):
         for row in fetch.tabular_txt(
             data.INTACT_ZIP_ARCHIVE,
-            zip_file=data.INTACT,
+            file=data.INTACT,
             delimiter="\t",
             header=0,
             usecols=[
@@ -891,8 +936,7 @@ class ProteinProteinInteractionNetwork(nx.Graph):
                     ],
                 )
 
-    def get_modules(self, module_size=(3, 100), weight=None):
-        self.remove_nodes_from(list(nx.isolates(self)))
+    def get_modules(self, module_size=(5, 100), weight="weight"):
         communities = [
             community
             for community in list(nx.algorithms.components.connected_components(self))
@@ -907,23 +951,25 @@ class ProteinProteinInteractionNetwork(nx.Graph):
             ]
 
             subdivision = False
-            for i in range(len(max_indices)):
-                subdivided_community = list(
-                    modularization.louvain(
-                        self.subgraph(communities[max_indices[i]]), weight=weight
-                    )
-                )
 
-                if len(subdivided_community) > 1:
-                    communities[
-                        max_indices[i] : max_indices[i] + 1
-                    ] = subdivided_community
+            with concurrent.futures.ProcessPoolExecutor() as executor:
+                for i, subdivided_community in zip(
+                    max_indices,
+                    executor.map(
+                        modularization.louvain,
+                        (self.subgraph(communities[j]) for j in max_indices),
+                        itertools.repeat(weight),
+                    ),
+                ):
+                    if len(subdivided_community) > 1:
+                        communities[i : i + 1] = subdivided_community
 
-                    max_indices[i + 1 :] = [
-                        index + len(subdivided_community) - 1
-                        for index in max_indices[i + 1 :]
-                    ]
-                    subdivision = True
+                        max_indices[max_indices.index(i) + 1 :] = [
+                            k + len(subdivided_community) - 1
+                            for k in max_indices[max_indices.index(i) + 1 :]
+                        ]
+
+                        subdivision = True
 
             if not subdivision:
                 break
@@ -957,12 +1003,13 @@ class ProteinProteinInteractionNetwork(nx.Graph):
 
     def get_module_change_enrichment(
         self,
-        fdr=0.05,
+        p=0.05,
         change=1.0,
         get_range=lambda time, ptm, change, merge_sites: (-change, change),
         merge_sites=statistics.mean,
-        module_size=(3, 100),
+        module_size=(5, 100),
         weight="weight",
+        test="two-sided",
     ):
         modules = {
             i: module
@@ -988,41 +1035,90 @@ class ProteinProteinInteractionNetwork(nx.Graph):
                     merge_sites,
                 )
 
-                n = len(
-                    self.get_proteins(
-                        time,
-                        ptm,
-                        lambda change: change < mid_range[0],
-                        merge_sites=merge_sites,
-                    )
-                ) + len(
-                    self.get_proteins(
-                        time,
-                        ptm,
-                        lambda change: change > mid_range[1],
-                        merge_sites=merge_sites,
-                    )
-                )
-
-                k = [
-                    len(
-                        self.subgraph(modules[i]).get_proteins(
-                            time,
-                            ptm,
-                            lambda change: change < mid_range[0],
-                            merge_sites=merge_sites,
-                        )
-                    )
-                    + len(
-                        self.subgraph(modules[i]).get_proteins(
+                if test == "one-sided positive":
+                    n = len(
+                        self.get_proteins(
                             time,
                             ptm,
                             lambda change: change > mid_range[1],
                             merge_sites=merge_sites,
                         )
                     )
-                    for i in modules
-                ]
+
+                    k = [
+                        len(
+                            self.subgraph(modules[i]).get_proteins(
+                                time,
+                                ptm,
+                                lambda change: change > mid_range[1],
+                                merge_sites=merge_sites,
+                            )
+                        )
+                        for i in modules
+                    ]
+
+                elif test == "one-sided negative":
+                    n = len(
+                        self.get_proteins(
+                            time,
+                            ptm,
+                            lambda change: change < mid_range[0],
+                            merge_sites=merge_sites,
+                        )
+                    )
+
+                    k = [
+                        len(
+                            self.subgraph(modules[i]).get_proteins(
+                                time,
+                                ptm,
+                                lambda change: change < mid_range[0],
+                                merge_sites=merge_sites,
+                            )
+                        )
+                        for i in modules
+                    ]
+
+                elif test == "two-sided":
+                    n = len(
+                        self.get_proteins(
+                            time,
+                            ptm,
+                            lambda change: change < mid_range[0],
+                            merge_sites=merge_sites,
+                        )
+                    ) + len(
+                        self.get_proteins(
+                            time,
+                            ptm,
+                            lambda change: change > mid_range[1],
+                            merge_sites=merge_sites,
+                        )
+                    )
+
+                    k = [
+                        len(
+                            self.subgraph(modules[i]).get_proteins(
+                                time,
+                                ptm,
+                                lambda change: change < mid_range[0],
+                                merge_sites=merge_sites,
+                            )
+                        )
+                        + len(
+                            self.subgraph(modules[i]).get_proteins(
+                                time,
+                                ptm,
+                                lambda change: change > mid_range[1],
+                                merge_sites=merge_sites,
+                            )
+                        )
+                        for i in modules
+                    ]
+
+                else:
+                    n = 0
+                    k = [0 for _ in modules]
 
                 p_values = {
                     i: scipy.stats.hypergeom.sf(k[i] - 1, M, n, N[i])
@@ -1030,7 +1126,7 @@ class ProteinProteinInteractionNetwork(nx.Graph):
                 }
 
                 for module, p_value in correction.benjamini_hochberg(p_values).items():
-                    if p_value < fdr:
+                    if p_value < p:
                         if time not in p_adjusted:
                             p_adjusted[time] = {}
                         if ptm not in p_adjusted[time]:

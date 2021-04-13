@@ -53,7 +53,7 @@ def decompress_zip_file(compressed_file_name, file=None):
     return decompressed_file_name
 
 
-def download(url, zip_file=None):
+def download(url, file=None):
     if not os.path.exists(configuration.DOWNLOAD_DIRECTORY):
         os.mkdir(configuration.DOWNLOAD_DIRECTORY)
 
@@ -69,19 +69,21 @@ def download(url, zip_file=None):
     if file_name_extension == ".gz":
         local_file_name = decompress_gzip_file(local_file_name)
     elif file_name_extension == ".zip":
-        local_file_name = decompress_zip_file(local_file_name, zip_file)
+        local_file_name = decompress_zip_file(local_file_name, file)
 
     return local_file_name
 
 
-def txt(url, zip_file=None):
-    with open(download(url, zip_file), buffering=configuration.CHUNK_SIZE) as file:
-        for line in file:
+def txt(url, file=None):
+    local_file_name = download(url, file)
+
+    with open(local_file_name, buffering=configuration.CHUNK_SIZE) as local_file:
+        for line in local_file:
             yield line.rstrip("\n")
 
 
-def tabular_txt(url, zip_file=None, delimiter=None, header=None, usecols=[]):
-    local_file_name = download(url, zip_file)
+def tabular_txt(url, file=None, delimiter=None, header=None, usecols=[]):
+    local_file_name = download(url, file)
 
     if os.path.splitext(local_file_name)[1] == ".csv":
         delimiter = ","

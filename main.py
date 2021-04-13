@@ -123,12 +123,8 @@ def main():
                             "{}\t{}\tBioGRID\t{:.3f}".format(
                                 *sorted(
                                     [
-                                        interactor_a
-                                        if "-" in interactor_a
-                                        else "{}  ".format(interactor_a),
-                                        interactor_b
-                                        if "-" in interactor_b
-                                        else "{}  ".format(interactor_b),
+                                        interactor_a,
+                                        interactor_b,
                                     ]
                                 ),
                                 score
@@ -150,17 +146,7 @@ def main():
                     ):
                         logger.info(
                             "{}\t{}\tCORUM\t{:.3f}".format(
-                                *sorted(
-                                    [
-                                        interactor_a
-                                        if "-" in interactor_a
-                                        else "{}  ".format(interactor_a),
-                                        interactor_b
-                                        if "-" in interactor_b
-                                        else "{}  ".format(interactor_b),
-                                    ]
-                                ),
-                                score
+                                *sorted([interactor_a, interactor_b]), score
                             )
                         )
 
@@ -180,17 +166,7 @@ def main():
                     ):
                         logger.info(
                             "{}\t{}\tIntAct\t{:.3f}".format(
-                                *sorted(
-                                    [
-                                        interactor_a
-                                        if "-" in interactor_a
-                                        else "{}  ".format(interactor_a),
-                                        interactor_b
-                                        if "-" in interactor_b
-                                        else "{}  ".format(interactor_b),
-                                    ]
-                                ),
-                                score
+                                *sorted([interactor_a, interactor_b]), score
                             )
                         )
 
@@ -212,17 +188,7 @@ def main():
                     ):
                         logger.info(
                             "{}\t{}\tReactome\t{:.3f}".format(
-                                *sorted(
-                                    [
-                                        interactor_a
-                                        if "-" in interactor_a
-                                        else "{}  ".format(interactor_a),
-                                        interactor_b
-                                        if "-" in interactor_b
-                                        else "{}  ".format(interactor_b),
-                                    ]
-                                ),
-                                score
+                                *sorted([interactor_a, interactor_b]), score
                             )
                         )
 
@@ -272,17 +238,7 @@ def main():
                     ):
                         logger.info(
                             "{}\t{}\tSTRING\t{:.3f}".format(
-                                *sorted(
-                                    [
-                                        interactor_a
-                                        if "-" in interactor_a
-                                        else "{}  ".format(interactor_a),
-                                        interactor_b
-                                        if "-" in interactor_b
-                                        else "{}  ".format(interactor_b),
-                                    ]
-                                ),
-                                score
+                                *sorted([interactor_a, interactor_b]), score
                             )
                         )
 
@@ -297,13 +253,21 @@ def main():
                     get_range=network.get_z_score_range,
                 )
 
+            elif configuration.get("Cytoscape", {}).get("type") == "proportion":
+                network.set_change_data(
+                    merge_sites=merge.MERGE[
+                        configuration.get("Cytoscape", {}).get("merge sites", "mean")
+                    ],
+                    change=configuration["Cytoscape"].get("threshold", 0.05),
+                    get_range=network.get_proportion_range,
+                )
+
             else:
                 network.set_change_data(
                     merge_sites=merge.MERGE[
                         configuration.get("Cytoscape", {}).get("merge sites", "mean")
                     ],
                     change=configuration["Cytoscape"].get("threshold", 1.0),
-                    get_range=lambda time, ptm, change, merge_sites: (-change, change),
                 )
 
             export_network(
@@ -320,8 +284,24 @@ def main():
                     network,
                     bar_chart_range=configuration.get("Cytoscape", {})
                     .get("bar chart", {})
-                    .get("range", [-3.0, 3.0]),
+                    .get("range", 3.0),
                     get_bar_chart_range=network.get_z_score_range,
+                    merge_sites=merge.MERGE.get(
+                        configuration.get("Cytoscape", {}).get("merge sites"),
+                        merge.MERGE["mean"],
+                    ),
+                )
+
+            elif (
+                configuration.get("Cytoscape", {}).get("bar chart", {}).get("type")
+                == "proportion"
+            ):
+                styles = CytoscapeStyles(
+                    network,
+                    bar_chart_range=configuration.get("Cytoscape", {})
+                    .get("bar chart", {})
+                    .get("range", 0.05),
+                    get_bar_chart_range=network.get_propotion_range,
                     merge_sites=merge.MERGE.get(
                         configuration.get("Cytoscape", {}).get("merge sites"),
                         merge.MERGE["mean"],
@@ -333,11 +313,7 @@ def main():
                     network,
                     bar_chart_range=configuration.get("Cytoscape", {})
                     .get("bar chart", {})
-                    .get("range", [-3.0, 3.0]),
-                    get_bar_chart_range=lambda time, ptm, change, merge_sites: (
-                        -change,
-                        change,
-                    ),
+                    .get("range", 3.0),
                     merge_sites=merge.MERGE.get(
                         configuration.get("Cytoscape", {}).get("merge sites"),
                         merge.MERGE["mean"],
@@ -374,7 +350,7 @@ def main():
                 )
                 if configuration["module change enrichment"].get("type") == "z-score":
                     modules, p_values = network.get_module_change_enrichment(
-                        fdr=configuration["module change enrichment"].get("fdr", 0.05),
+                        p=configuration["module change enrichment"].get("p", 0.05),
                         change=configuration["module change enrichment"].get(
                             "threshold", 2.0
                         ),
@@ -386,13 +362,40 @@ def main():
                             merge.MERGE["mean"],
                         ),
                         module_size=configuration["module change enrichment"].get(
-                            "module size", (3, 100)
+                            "module size", (5, 100)
+                        ),
+                        test=configuration["module change enrichment"].get(
+                            "test", "two-sided"
+                        ),
+                    )
+
+                elif (
+                    configuration["module change enrichment"].get("type")
+                    == "proportion"
+                ):
+                    modules, p_values = network.get_module_change_enrichment(
+                        p=configuration["module change enrichment"].get("p", 0.05),
+                        change=configuration["module change enrichment"].get(
+                            "threshold", 0.05
+                        ),
+                        get_range=network.get_proportion_range,
+                        merge_sites=merge.MERGE.get(
+                            configuration["module change enrichment"].get(
+                                "merge sites"
+                            ),
+                            merge.MERGE["mean"],
+                        ),
+                        module_size=configuration["module change enrichment"].get(
+                            "module size", (5, 100)
+                        ),
+                        test=configuration["module change enrichment"].get(
+                            "test", "two-sided"
                         ),
                     )
 
                 else:
                     modules, p_values = network.get_module_change_enrichment(
-                        fdr=configuration["module change enrichment"].get("fdr", 0.05),
+                        p=configuration["module change enrichment"].get("p", 0.05),
                         change=configuration["module change enrichment"].get(
                             "threshold", 1.0
                         ),
@@ -407,7 +410,10 @@ def main():
                             merge.MERGE["mean"],
                         ),
                         module_size=configuration["module change enrichment"].get(
-                            "module size", (3, 100)
+                            "module size", (5, 100)
+                        ),
+                        test=configuration["module change enrichment"].get(
+                            "test", "two-sided"
                         ),
                     )
 

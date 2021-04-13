@@ -15,7 +15,6 @@
           "replicate columns": [
             "wt15minvscontrolratio"
           ],
-          "merge replicates": "mean",
           "log base": 10
         },
         {
@@ -31,7 +30,6 @@
           "replicate columns": [
             "wt60minvscontrolratio"
           ],
-          "merge replicates": "mean",
           "log base": 10
         },
         {
@@ -47,7 +45,6 @@
           "replicate columns": [
             "wt120minvscontrolratio"
           ],
-          "merge replicates": "mean",
           "log base": 10
         },
         {
@@ -65,8 +62,7 @@
             "Ratio H/L normalized Exp2",
             "Ratio H/L normalized Exp3"
           ],
-          "replicates": 2,
-          "merge replicates": "mean"
+          "replicates": 2
         },
         {
           "file": "data/shigella/ubiquitination/WT_vs_noninvasive_1h.xlsx",
@@ -83,8 +79,7 @@
             "Ratio H/L normalized Exp2",
             "Ratio H/L normalized Exp3"
           ],
-          "replicates": 2,
-          "merge replicates": "mean"
+          "replicates": 2
         },
         {
           "file": "data/shigella/ubiquitination/WT_vs_noninvasive_2h.xlsx",
@@ -135,7 +130,7 @@
         "threshold": 1.0
       },
       "module change enrichment": {
-        "fdr": 0.1,
+        "p": 0.1,
         "type": "z-score",
         "threshold": 2.0,
         "module size": [5, 100]
