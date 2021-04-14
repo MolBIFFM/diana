@@ -362,7 +362,7 @@ def main():
                             merge.MERGE["mean"],
                         ),
                         module_size=configuration["module change enrichment"].get(
-                            "module size", (5, 100)
+                            "module size", 50
                         ),
                         test=configuration["module change enrichment"].get(
                             "test", "two-sided"
@@ -410,7 +410,7 @@ def main():
                             merge.MERGE["mean"],
                         ),
                         module_size=configuration["module change enrichment"].get(
-                            "module size", (5, 100)
+                            "module size", 50
                         ),
                         test=configuration["module change enrichment"].get(
                             "test", "two-sided"

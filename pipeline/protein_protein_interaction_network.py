@@ -975,7 +975,7 @@ class ProteinProteinInteractionNetwork(nx.Graph):
             if not subdivision:
                 break
 
-        return communities
+        return [community for community in communities if len(community) > 1]
 
     def get_proteins(
         self,
