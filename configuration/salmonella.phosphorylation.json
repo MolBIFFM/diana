@@ -72,8 +72,7 @@
       "module change enrichment": {
         "p": 0.1,
         "type": "z-score",
-        "threshold": 2.0,
-        "module size": [5, 100]
+        "threshold": 2.0
       }
     }
   ]

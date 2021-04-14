@@ -387,7 +387,7 @@ class ProteinProteinInteractionNetwork(nx.Graph):
 
         return tuple(proportion_range)
 
-    def get_p_value(
+    def get_proportion(
         self,
         time,
         post_translational_modification,
@@ -936,18 +936,19 @@ class ProteinProteinInteractionNetwork(nx.Graph):
                     ],
                 )
 
-    def get_modules(self, module_size=(5, 100), weight="weight"):
+    def get_modules(self, module_size=50, merge_sizes=statistics.mean, weight="weight"):
+        self.remove_nodes_from(list(nx.isolates(self)))
+
         communities = [
             community
             for community in list(nx.algorithms.components.connected_components(self))
-            if len(community) >= module_size[0]
         ]
 
-        while max(len(community) for community in communities) > module_size[1]:
+        while merge_sizes([len(community) for community in communities]) > module_size:
             max_indices = [
                 communities.index(community)
                 for community in communities
-                if len(community) > module_size[1]
+                if len(community) == max(len(community) for community in communities)
             ]
 
             subdivision = False
@@ -974,9 +975,7 @@ class ProteinProteinInteractionNetwork(nx.Graph):
             if not subdivision:
                 break
 
-        return [
-            community for community in communities if len(community) >= module_size[0]
-        ]
+        return communities
 
     def get_proteins(
         self,
@@ -1007,13 +1006,16 @@ class ProteinProteinInteractionNetwork(nx.Graph):
         change=1.0,
         get_range=lambda time, ptm, change, merge_sites: (-change, change),
         merge_sites=statistics.mean,
-        module_size=(5, 100),
+        module_size=50,
+        merge_sizes=statistics.mean,
         weight="weight",
         test="two-sided",
     ):
         modules = {
             i: module
-            for i, module in enumerate(self.get_modules(module_size, weight=weight))
+            for i, module in enumerate(
+                self.get_modules(module_size, merge_sizes, weight=weight)
+            )
         }
 
         p_values = {}
