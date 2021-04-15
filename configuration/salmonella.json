@@ -75,7 +75,6 @@
             "Ratio H/L normalized HCT116_2_R4"
           ],
           "replicates": 2,
-          "merge replicates": "mean",
           "log base": 2
         }
       ],
@@ -104,14 +103,14 @@
       },
       "Cytoscape": {
         "bar chart": {
-          "range": 2.0
+          "range": [-2.0, 2.0]
         },
-        "threshold": 1.0
+        "thresholds": [-1.0, 1.0]
       },
       "module change enrichment": {
         "p": 0.1,
         "type": "z-score",
-        "threshold": 2.0
+        "thresholds": [-2.0, 2.0]
       }
     }
   ]

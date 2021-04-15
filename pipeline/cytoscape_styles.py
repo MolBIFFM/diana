@@ -104,7 +104,7 @@ class CytoscapeStyles(ET.ElementTree):
                             "{},{},c,0.00,0.00".format(*[("W", "E"), ("E", "W")][i]),
                         )
 
-    def get_bar_chart(self, time, ptm, sites, cy_range=(-3.0, 3.0)):
+    def get_bar_chart(self, time, ptm, sites, cy_range=(-2.0, 2.0)):
         bar_chart = json.dumps(
             {
                 "cy_range": cy_range,
