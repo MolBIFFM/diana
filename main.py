@@ -366,6 +366,12 @@ def main():
                         module_size=configuration["module change enrichment"].get(
                             "module size", 50
                         ),
+                        merge_sizes=merge.MERGE.get(
+                            configuration["module change enrichment"].get(
+                                "merge sites"
+                            ),
+                            merge.MERGE["mean"],
+                        ),
                         test=configuration["module change enrichment"].get(
                             "test", "two-sided"
                         ),
@@ -390,6 +396,12 @@ def main():
                         module_size=configuration["module change enrichment"].get(
                             "module size", 50
                         ),
+                        merge_sizes=merge.MERGE.get(
+                            configuration["module change enrichment"].get(
+                                "merge sites"
+                            ),
+                            merge.MERGE["mean"],
+                        ),
                         test=configuration["module change enrichment"].get(
                             "test", "two-sided"
                         ),
@@ -409,6 +421,12 @@ def main():
                         ),
                         module_size=configuration["module change enrichment"].get(
                             "module size", 50
+                        ),
+                        merge_sizes=merge.MERGE.get(
+                            configuration["module change enrichment"].get(
+                                "merge sites"
+                            ),
+                            merge.MERGE["mean"],
                         ),
                         test=configuration["module change enrichment"].get(
                             "test", "two-sided"

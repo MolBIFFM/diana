@@ -63,49 +63,34 @@ class ProteinProteinInteractionNetwork(nx.Graph):
                     int(position) for position in position_format(row[position_col])
                 ]
 
-                if len(protein_accessions) >= len(positions):
-                    positions.extend([0 for _ in range(len(positions), len(proteins))])
-
-                    for protein_accession, position in zip(
-                        protein_accessions, positions
-                    ):
-                        if "-" in protein_accession:
-                            protein, isoform = protein_accession.split("-")
-                        else:
-                            protein, isoform = protein_accession, "1"
-
-                        if protein not in proteins:
-                            proteins[protein] = {}
-                        if isoform not in proteins[protein]:
-                            proteins[protein][isoform] = []
-
-                        bisect.insort(
-                            proteins[protein][isoform],
-                            (
-                                position,
-                                convert_measurement(merge_replicates(measurements)),
-                            ),
+                if len(protein_accessions) != len(positions):
+                    if len(protein_accessions) > len(positions):
+                        positions.extend(
+                            [0 for _ in range(len(positions), len(proteins))]
                         )
-                else:
-                    for protein in proteins:
-                        for position in positions:
-                            if "-" in protein_accession:
-                                protein, isoform = protein_accession.split("-")
-                            else:
-                                protein, isoform = protein_accession, "1"
 
-                            if protein not in proteins:
-                                proteins[protein] = {}
-                            if isoform not in proteins[protein]:
-                                proteins[protein][isoform] = []
+                    else:
+                        continue
 
-                            bisect.insort(
-                                proteins[protein][isoform],
-                                (
-                                    position,
-                                    convert_measurement(merge_replicates(measurements)),
-                                ),
-                            )
+                for protein_accession, position in zip(protein_accessions, positions):
+                    if "-" in protein_accession:
+                        protein, isoform = protein_accession.split("-")
+                    else:
+                        protein, isoform = protein_accession, "1"
+
+                    if protein not in proteins:
+                        proteins[protein] = {}
+
+                    if isoform not in proteins[protein]:
+                        proteins[protein][isoform] = []
+
+                    bisect.insort(
+                        proteins[protein][isoform],
+                        (
+                            position,
+                            convert_measurement(merge_replicates(measurements)),
+                        ),
+                    )
 
         reviewed_proteins, primary_accession, gene_name, protein_name = {}, {}, {}, {}
         accessions, gene_names, protein_names = [], {}, {}
@@ -364,24 +349,24 @@ class ProteinProteinInteractionNetwork(nx.Graph):
         thresholds,
         merge_sites=statistics.mean,
     ):
-        changes = self.get_changes(time, post_translational_modification, merge_sites)
+        changes = sorted(
+            self.get_changes(time, post_translational_modification, merge_sites)
+        )
         proportion_range = [0.0, 0.0]
 
         for i in range(len(changes)):
-            if (
-                len([change for change in changes if change <= changes[i]])
-                / len(changes)
-                > thresholds[0]
-            ):
+            if changes[i] == changes[i + 1]:
+                continue
+
+            if i / len(changes) > thresholds[0]:
                 proportion_range[0] = changes[i - 1]
                 break
 
         for i in range(len(changes) - 1, -1, -1):
-            if (
-                len([change for change in changes if change >= changes[i]])
-                / len(changes)
-                > 1.0 - thresholds[1]
-            ):
+            if changes[i] == changes[i - 1]:
+                continue
+
+            if (len(changes) - i) / len(changes) > 1.0 - thresholds[1]:
                 proportion_range[1] = changes[i + 1]
                 break
 
@@ -1125,7 +1110,7 @@ class ProteinProteinInteractionNetwork(nx.Graph):
                 }
 
                 for module, p_value in correction.benjamini_hochberg(p_values).items():
-                    if p_value < p:
+                    if p_value <= p:
                         if time not in p_adjusted:
                             p_adjusted[time] = {}
                         if ptm not in p_adjusted[time]:
