@@ -158,14 +158,14 @@ def louvain(G, weight="weight"):
                     max_j = max(deltaQ.items(), key=lambda item: item[1])[0]
 
                     if deltaQ[max_j] > 0.0:
-                        for l in range(n):
-                            k_in[l, community[i]] -= A[l, i]
-                            k_in[l, community[max_j]] += A[l, i]
-
                         sigma_tot[community[max_j]] += A[i].sum()
                         sigma_in[community[max_j]] += sum(
                             [A[i, l] for l in communities[1][max_j]]
                         )
+
+                        for l in range(n):
+                            k_in[l, community[i]] -= A[l, i]
+                            k_in[l, community[max_j]] += A[l, i]
 
                         communities[1][community[i]].remove(i)
                         communities[1][community[max_j]].add(i)
@@ -176,16 +176,16 @@ def louvain(G, weight="weight"):
                         community_aggregation = True
 
                     else:
-                        k_in[i, community[i]] += A[i, i]
                         sigma_tot[community[i]] += A[i].sum()
                         sigma_in[community[i]] += sum(
                             [A[i, l] for l in communities[1][i]]
                         )
+                        k_in[i, community[i]] += A[i, i]
 
                 else:
-                    k_in[i, community[i]] += A[i, i]
                     sigma_tot[community[i]] += A[i].sum()
                     sigma_in[community[i]] += sum([A[i, l] for l in communities[1][i]])
+                    k_in[i, community[i]] += A[i, i]
 
         if community_aggregation:
             for ci in range(len(communities[1])):

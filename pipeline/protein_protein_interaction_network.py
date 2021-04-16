@@ -918,7 +918,13 @@ class ProteinProteinInteractionNetwork(nx.Graph):
                     ],
                 )
 
-    def get_modules(self, module_size=50, merge_sizes=statistics.mean, weight="weight"):
+    def get_modules(
+        self,
+        module_size=50,
+        merge_sizes=statistics.mean,
+        weight="weight",
+        algorithm=modularization.louvain,
+    ):
         self.remove_nodes_from(list(nx.isolates(self)))
 
         communities = [
@@ -927,29 +933,30 @@ class ProteinProteinInteractionNetwork(nx.Graph):
         ]
 
         while merge_sizes([len(community) for community in communities]) > module_size:
-            max_indices = [
+            max_community_size = max(len(community) for community in communities)
+            indices = [
                 communities.index(community)
                 for community in communities
-                if len(community) == max(len(community) for community in communities)
+                if len(community) == max_community_size
             ]
 
             subdivision = False
 
             with concurrent.futures.ProcessPoolExecutor() as executor:
                 for i, subdivided_community in zip(
-                    max_indices,
+                    indices,
                     executor.map(
-                        modularization.louvain,
-                        (self.subgraph(communities[j]) for j in max_indices),
+                        algorithm,
+                        (self.subgraph(communities[j]) for j in indices),
                         itertools.repeat(weight),
                     ),
                 ):
                     if len(subdivided_community) > 1:
                         communities[i : i + 1] = subdivided_community
 
-                        max_indices[max_indices.index(i) + 1 :] = [
+                        indices[indices.index(i) + 1 :] = [
                             k + len(subdivided_community) - 1
-                            for k in max_indices[max_indices.index(i) + 1 :]
+                            for k in indices[indices.index(i) + 1 :]
                         ]
 
                         subdivision = True
