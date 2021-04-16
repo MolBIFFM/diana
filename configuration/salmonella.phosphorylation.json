@@ -65,9 +65,12 @@
       },
       "Cytoscape": {
         "bar chart": {
-          "range": [-2.0, 2.0]
+          "range": [-3.0, 3.0]
         },
-        "thresholds": [-1.0, 1.0]
+        "node color": {
+          "type": "z-score",
+          "thresholds": [-2.0, 2.0]
+        }
       },
       "module change enrichment": {
         "p": 0.1,

@@ -244,32 +244,48 @@ def main():
 
             network.set_post_translational_modification()
 
-            if configuration.get("Cytoscape", {}).get("type") == "z-score":
+            if (
+                configuration.get("Cytoscape", {}).get("node color", {}).get("type")
+                == "z-score"
+            ):
                 network.set_change_data(
                     merge_sites=merge.MERGE[
-                        configuration.get("Cytoscape", {}).get("merge sites", "mean")
+                        configuration.get("Cytoscape", {})
+                        .get("node color", {})
+                        .get("merge sites", "mean")
                     ],
-                    changes=configuration["Cytoscape"].get("thresholds", (-2.0, 2.0)),
+                    changes=configuration["Cytoscape"]
+                    .get("node color", {})
+                    .get("thresholds", (-2.0, 2.0)),
                     get_range=network.get_z_score_range,
                 )
 
-            elif configuration.get("Cytoscape", {}).get("type") == "proportion":
+            elif (
+                configuration.get("Cytoscape", {}).get("node color", {}).get("type")
+                == "proportion"
+            ):
                 network.set_change_data(
                     merge_sites=merge.MERGE[
-                        configuration.get("Cytoscape", {}).get("merge sites", "mean")
+                        configuration.get("Cytoscape", {})
+                        .get("node color", {})
+                        .get("merge sites", "mean")
                     ],
-                    changes=configuration["Cytoscape"].get(
-                        "thresholds", (0.025, 0.975)
-                    ),
+                    changes=configuration["Cytoscape"]
+                    .get("node color", {})
+                    .get("thresholds", (0.025, 0.975)),
                     get_range=network.get_proportion_range,
                 )
 
             else:
                 network.set_change_data(
                     merge_sites=merge.MERGE[
-                        configuration.get("Cytoscape", {}).get("merge sites", "mean")
+                        configuration.get("Cytoscape", {})
+                        .get("node color", {})
+                        .get("merge sites", "mean")
                     ],
-                    changes=configuration["Cytoscape"].get("thresholds", (-1.0, 1.0)),
+                    changes=configuration["Cytoscape"]
+                    .get("node color", {})
+                    .get("thresholds", (-1.0, 1.0)),
                 )
 
             export_network(

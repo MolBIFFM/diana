@@ -149,7 +149,7 @@ SETTINGS = [
                 "NODE_LABEL": {
                     "default": "",
                     "passthroughMapping": {
-                        "attributeName": "gene name",
+                        "attributeName": "name",
                         "attributeType": "string",
                     },
                 },
@@ -335,7 +335,7 @@ SETTINGS = [
                 "NODE_LABEL": {
                     "default": "",
                     "passthroughMapping": {
-                        "attributeName": "gene name",
+                        "attributeName": "name",
                         "attributeType": "string",
                     },
                 },
