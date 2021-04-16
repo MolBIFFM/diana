@@ -1,6 +1,6 @@
 [
     {
-      "PTM": [
+      "post-translational modifications": [
         {
           "file": "data/salmonella/phosphorylation/Supplementary_Table_01.xlsx",
           "sheet": "Supplementary1",
@@ -78,7 +78,7 @@
           "log base": 2
         }
       ],
-      "PPI": {
+      "protein-protein interactions": {
         "BioGRID": {
           "experimental system": [
             "Affinity Capture-Luminescence",
@@ -109,10 +109,12 @@
           "thresholds": [-1.0, 1.0]
         }
       },
-      "module change enrichment": {
-        "p": 0.1,
-        "type": "z-score",
-        "thresholds": [-2.0, 2.0]
+      "post-processing": {
+        "module change enrichment": {
+          "p": 0.1,
+          "type": "z-score",
+          "thresholds": [-2.0, 2.0]
+        }
       }
     }
   ]

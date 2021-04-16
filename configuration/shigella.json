@@ -1,6 +1,6 @@
 [
     {
-      "PTM": [
+      "post-translational modifications": [
         {
           "file": "data/shigella/phosphorylation/mcp.M113.029918-2.xls",
           "sheet": "wt15min",
@@ -100,7 +100,7 @@
           "merge replicates": "mean"
         }
       ],
-      "PPI": {
+      "protein-protein interactions": {
         "BioGRID": {
           "experimental system": [
             "Affinity Capture-Luminescence",
@@ -131,10 +131,12 @@
           "thresholds": [-1.0, 1.0]
         }
       },
-      "module change enrichment": {
-        "p": 0.1,
-        "type": "z-score",
-        "thresholds": [-2.0, 2.0]
+      "post-processing": {
+        "module change enrichment": {
+          "p": 0.1,
+          "type": "z-score",
+          "thresholds": [-2.0, 2.0]
+        }
       }
     }
   ]
