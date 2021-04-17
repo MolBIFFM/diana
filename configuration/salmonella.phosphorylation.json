@@ -68,8 +68,7 @@
           "range": [-3.0, 3.0]
         },
         "node color": {
-          "type": "z-score",
-          "thresholds": [-2.0, 2.0]
+          "thresholds": [-1.0, 1.0]
         }
       },
       "post-processing": {

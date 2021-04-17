@@ -999,11 +999,14 @@ class ProteinProteinInteractionNetwork(nx.Graph):
         merge_sizes=statistics.mean,
         weight="weight",
         test="two-sided",
+        algorithm=modularization.louvain,
     ):
         modules = {
             i: module
             for i, module in enumerate(
-                self.get_modules(module_size, merge_sizes, weight=weight)
+                self.get_modules(
+                    module_size, merge_sizes, weight=weight, algorithm=algorithm
+                )
             )
         }
 

@@ -8,7 +8,7 @@ import xml.etree.ElementTree as ET
 import networkx as nx
 
 from pipeline.cytoscape_styles import CytoscapeStyles
-from pipeline.interface import convert, merge, extract
+from pipeline.interface import convert, merge, extract, algorithm
 from pipeline.protein_protein_interaction_network import (
     ProteinProteinInteractionNetwork,
 )
@@ -411,6 +411,12 @@ def main():
                             test=configuration["post-processing"][
                                 "module change enrichment"
                             ].get("test", "two-sided"),
+                            algorithm=algorithm.ALGORITHM.get(
+                                configuration["post-processing"][
+                                    "module change enrichment"
+                                ].get("algorithm"),
+                                algorithm.ALGORITHM["Louvain"],
+                            ),
                         )
 
                     elif (
@@ -445,6 +451,12 @@ def main():
                             test=configuration["post-processing"][
                                 "module change enrichment"
                             ].get("test", "two-sided"),
+                            algorithm=algorithm.ALGORITHM.get(
+                                configuration["post-processing"][
+                                    "module change enrichment"
+                                ].get("algorithm"),
+                                algorithm.ALGORITHM["Louvain"],
+                            ),
                         )
 
                     else:
@@ -473,6 +485,12 @@ def main():
                             test=configuration["post-processing"][
                                 "module change enrichment"
                             ].get("test", "two-sided"),
+                            algorithm=algorithm.ALGORITHM.get(
+                                configuration["post-processing"][
+                                    "module change enrichment"
+                                ].get("algorithm"),
+                                algorithm.ALGORITHM["Louvain"],
+                            ),
                         )
 
                     for time in p_values:
