@@ -68,14 +68,14 @@
           "range": [-3.0, 3.0]
         },
         "node color": {
-          "thresholds": [-1.0, 1.0]
+          "range": [-1.0, 1.0]
         }
       },
       "post-processing": {
-        "module change enrichment": {
-          "p": 0.1,
+        "enrichment analysis": {
+          "p": 0.05,
           "type": "z-score",
-          "thresholds": [-2.0, 2.0]
+          "range": [-2.0, 2.0]
         }
       }
     }

@@ -267,7 +267,7 @@ def main():
                         )
                     ],
                     changes=configuration["Cytoscape"]["node color"].get(
-                        "thresholds", (-2.0, 2.0)
+                        "range", (-2.0, 2.0)
                     ),
                     get_range=network.get_z_score_range,
                 )
@@ -283,7 +283,7 @@ def main():
                         )
                     ],
                     changes=configuration["Cytoscape"]["node color"].get(
-                        "thresholds", (0.025, 0.975)
+                        "range", (0.025, 0.975)
                     ),
                     get_range=network.get_proportion_range,
                 )
@@ -296,7 +296,7 @@ def main():
                         )
                     ],
                     changes=configuration["Cytoscape"]["node color"].get(
-                        "thresholds", (-1.0, 1.0)
+                        "range", (-1.0, 1.0)
                     ),
                 )
 
@@ -375,85 +375,85 @@ def main():
                     )
 
             if "post-processing" in configuration:
-                if "module change enrichment" in configuration["post-processing"]:
+                if "enrichment analysis" in configuration["post-processing"]:
                     network.set_edge_weights(
                         weight=lambda confidence_scores: len(confidence_scores)
                     )
                     if (
-                        configuration["post-processing"][
-                            "module change enrichment"
-                        ].get("type")
+                        configuration["post-processing"]["enrichment analysis"].get(
+                            "type"
+                        )
                         == "z-score"
                     ):
                         modules, p_values = network.get_module_change_enrichment(
                             p=configuration["post-processing"][
-                                "module change enrichment"
+                                "enrichment analysis"
                             ].get("p", 0.05),
                             changes=configuration["post-processing"][
-                                "module change enrichment"
-                            ].get("thresholds", (-2.0, 2.0)),
+                                "enrichment analysis"
+                            ].get("range", (-2.0, 2.0)),
                             get_range=network.get_z_score_range,
                             merge_sites=merge.MERGE.get(
                                 configuration["post-processing"][
-                                    "module change enrichment"
+                                    "enrichment analysis"
                                 ].get("merge sites"),
                                 merge.MERGE["mean"],
                             ),
                             module_size=configuration["post-processing"][
-                                "module change enrichment"
+                                "enrichment analysis"
                             ].get("module size", 50),
                             merge_sizes=merge.MERGE.get(
                                 configuration["post-processing"][
-                                    "module change enrichment"
+                                    "enrichment analysis"
                                 ].get("merge sites"),
                                 merge.MERGE["mean"],
                             ),
                             test=configuration["post-processing"][
-                                "module change enrichment"
+                                "enrichment analysis"
                             ].get("test", "two-sided"),
                             algorithm=algorithm.ALGORITHM.get(
                                 configuration["post-processing"][
-                                    "module change enrichment"
+                                    "enrichment analysis"
                                 ].get("algorithm"),
                                 algorithm.ALGORITHM["Louvain"],
                             ),
                         )
 
                     elif (
-                        configuration["post-processing"][
-                            "module change enrichment"
-                        ].get("type")
+                        configuration["post-processing"]["enrichment analysis"].get(
+                            "type"
+                        )
                         == "proportion"
                     ):
                         modules, p_values = network.get_module_change_enrichment(
                             p=configuration["post-processing"][
-                                "module change enrichment"
+                                "enrichment analysis"
                             ].get("p", 0.05),
                             changes=configuration["post-processing"][
-                                "module change enrichment"
-                            ].get("thresholds", (0.025, 0.975)),
+                                "enrichment analysis"
+                            ].get("range", (0.025, 0.975)),
                             get_range=network.get_proportion_range,
                             merge_sites=merge.MERGE.get(
                                 configuration["post-processing"][
-                                    "module change enrichment"
+                                    "enrichment analysis"
                                 ].get("merge sites"),
                                 merge.MERGE["mean"],
                             ),
                             module_size=configuration["post-processing"][
-                                "module change enrichment"
+                                "enrichment analysis"
                             ].get("module size", 50),
                             merge_sizes=merge.MERGE.get(
                                 configuration["post-processing"][
-                                    "module change enrichment"
+                                    "enrichment analysis"
                                 ].get("merge sites"),
                                 merge.MERGE["mean"],
                             ),
                             test=configuration["post-processing"][
-                                "module change enrichment"
+                                "enrichment analysis"
                             ].get("test", "two-sided"),
                             algorithm=algorithm.ALGORITHM.get(
                                 configuration["post-processing"][
-                                    "module change enrichment"
+                                    "enrichment analysis"
                                 ].get("algorithm"),
                                 algorithm.ALGORITHM["Louvain"],
                             ),
@@ -462,32 +462,32 @@ def main():
                     else:
                         modules, p_values = network.get_module_change_enrichment(
                             p=configuration["post-processing"][
-                                "module change enrichment"
+                                "enrichment analysis"
                             ].get("p", 0.05),
                             changes=configuration["post-processing"][
-                                "module change enrichment"
-                            ].get("thresholds", (-1.0, 1.0)),
+                                "enrichment analysis"
+                            ].get("range", (-1.0, 1.0)),
                             merge_sites=merge.MERGE.get(
                                 configuration["post-processing"][
-                                    "module change enrichment"
+                                    "enrichment analysis"
                                 ].get("merge sites"),
                                 merge.MERGE["mean"],
                             ),
                             module_size=configuration["post-processing"][
-                                "module change enrichment"
+                                "enrichment analysis"
                             ].get("module size", 50),
                             merge_sizes=merge.MERGE.get(
                                 configuration["post-processing"][
-                                    "module change enrichment"
+                                    "enrichment analysis"
                                 ].get("merge sites"),
                                 merge.MERGE["mean"],
                             ),
                             test=configuration["post-processing"][
-                                "module change enrichment"
+                                "enrichment analysis"
                             ].get("test", "two-sided"),
                             algorithm=algorithm.ALGORITHM.get(
                                 configuration["post-processing"][
-                                    "module change enrichment"
+                                    "enrichment analysis"
                                 ].get("algorithm"),
                                 algorithm.ALGORITHM["Louvain"],
                             ),

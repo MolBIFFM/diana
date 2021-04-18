@@ -265,9 +265,7 @@ class ProteinProteinInteractionNetwork(nx.Graph):
                 change.split(" ")[1]
                 for protein in self
                 for change in self.nodes[protein]
-                if len(change.split(" ")) == 3
-                and change.split(" ")[0].isnumeric()
-                and change.split(" ")[0] == str(time)
+                if len(change.split(" ")) == 3 and change.split(" ")[0] == str(time)
             )
         )
 
@@ -277,7 +275,6 @@ class ProteinProteinInteractionNetwork(nx.Graph):
             for protein in self
             for change in self.nodes[protein]
             if len(change.split(" ")) == 3
-            and change.split(" ")[0].isnumeric()
             and change.split(" ")[0] == str(time)
             and change.split(" ")[1] == ptm
         )
@@ -305,16 +302,12 @@ class ProteinProteinInteractionNetwork(nx.Graph):
                 self.nodes[protein][change]
                 for change in self.nodes[protein]
                 if len(change.split(" ")) == 3
-                and change.split(" ")[0].isnumeric()
                 and change.split(" ")[0] == str(time)
                 and change.split(" ")[1] == ptm
             ]
 
             if sites:
-                if merge_sites:
-                    changes.append(merge_sites(sites))
-                else:
-                    changes.extend(sites)
+                changes.append(merge_sites(sites))
 
         return changes
 
@@ -424,7 +417,6 @@ class ProteinProteinInteractionNetwork(nx.Graph):
                         self.nodes[protein][change]
                         for change in self.nodes[protein]
                         if len(change.split(" ")) == 3
-                        and change.split(" ")[0].isnumeric()
                         and change.split(" ")[0] == str(time)
                         and change.split(" ")[1] == post_translational_modification
                     ]
@@ -979,7 +971,6 @@ class ProteinProteinInteractionNetwork(nx.Graph):
                 self.nodes[protein][change]
                 for change in self.nodes[protein]
                 if len(change.split(" ")) == 3
-                and change.split(" ")[0].isnumeric()
                 and change.split(" ")[0] == str(time)
                 and change.split(" ")[1] == ptm
             ]
