@@ -2,13 +2,12 @@
     {
       "post-translational modifications": [
         {
-          "file": "data/salmonella/phosphorylation/Supplementary_Table_01.xlsx",
-          "sheet": "Supplementary1",
           "label": "P",
           "time": 30,
-          "sites": 5,
+          "file": "data/salmonella/phosphorylation/Supplementary_Table_01.xlsx",
+          "sheet": "Supplementary1",
           "accession column": "Fasta.headers",
-          "accession format": 5,
+          "accession format": 3,
           "position column": "Positions.within.proteins",
           "position format": 1,
           "replicate columns": [
@@ -21,13 +20,12 @@
           "log base": 2
         },
         {
-          "file": "data/salmonella/phosphorylation/Supplementary_Table_01.xlsx",
-          "sheet": "Supplementary1",
           "label": "P",
           "time": 120,
-          "sites": 5,
+          "file": "data/salmonella/phosphorylation/Supplementary_Table_01.xlsx",
+          "sheet": "Supplementary1",
           "accession column": "Fasta.headers",
-          "accession format": 5,
+          "accession format": 3,
           "position column": "Positions.within.proteins",
           "position format": 1,
           "replicate columns": [
@@ -40,11 +38,10 @@
           "log base": 2
         },
         {
-          "file": "data/salmonella/ubiquitination/20151119_HeLa_HCT116_05h_2h_all.xlsx",
-          "sheet": "20151119_HeLa_HCT116_05h_2h_all",
           "label": "U",
           "time": 30,
-          "sites": 5,
+          "file": "data/salmonella/ubiquitination/20151119_HeLa_HCT116_05h_2h_all.xlsx",
+          "sheet": "20151119_HeLa_HCT116_05h_2h_all",
           "accession column": "Proteins",
           "accession format": 2,
           "position column": "Positions within proteins",
@@ -59,11 +56,10 @@
           "log base": 2
         },
         {
-          "file": "data/salmonella/ubiquitination/20151119_HeLa_HCT116_05h_2h_all.xlsx",
-          "sheet": "20151119_HeLa_HCT116_05h_2h_all",
           "label": "U",
           "time": 120,
-          "sites": 5,
+          "file": "data/salmonella/ubiquitination/20151119_HeLa_HCT116_05h_2h_all.xlsx",
+          "sheet": "20151119_HeLa_HCT116_05h_2h_all",
           "accession column": "Proteins",
           "accession format": 2,
           "position column": "Positions within proteins",

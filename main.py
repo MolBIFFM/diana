@@ -75,7 +75,7 @@ def main():
                     ),
                     sheet_name=entry.get("sheet", 0),
                     header=entry.get("header", 1) - 1,
-                    num_sites=entry.get("sites", 5),
+                    num_sites=entry.get("sites", 0),
                     num_replicates=entry.get("replicates", 2),
                     merge_replicates=merge.MERGE.get(
                         entry.get("merge replicates", "mean"), merge.MERGE["mean"]
@@ -86,7 +86,7 @@ def main():
                         "{}\t{}\t{}\t{}\t{}\t{}".format(
                             gene_name,
                             protein_name,
-                            protein if "-" in protein else "{}  ".format(protein),
+                            protein,
                             entry["time"],
                             entry["label"],
                             " ".join(["{:.2f}".format(site) for site in sites]),

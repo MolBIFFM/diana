@@ -2,57 +2,10 @@
     {
       "post-translational modifications": [
         {
-          "file": "data/shigella/phosphorylation/mcp.M113.029918-2.xls",
-          "sheet": "wt15min",
-          "label": "P",
+          "label": "U",
           "time": 15,
-          "sites": 5,
-          "header": 1,
-          "accession column": "protein",
-          "accession format": 3,
-          "position column": "phosphosite",
-          "position format": 4,
-          "replicate columns": [
-            "wt15minvscontrolratio"
-          ],
-          "log base": 10
-        },
-        {
-          "file": "data/shigella/phosphorylation/mcp.M113.029918-2.xls",
-          "sheet": "wt60min",
-          "label": "P",
-          "time": 60,
-          "sites": 5,
-          "accession column": "protein",
-          "accession format": 3,
-          "position column": "phosphosite",
-          "position format": 4,
-          "replicate columns": [
-            "wt60minvscontrolratio"
-          ],
-          "log base": 10
-        },
-        {
-          "file": "data/shigella/phosphorylation/mcp.M113.029918-2.xls",
-          "sheet": "wt120min",
-          "label": "P",
-          "time": 120,
-          "sites": 5,
-          "accession column": "protein",
-          "accession format": 3,
-          "position column": "phosphosite",
-          "position format": 4,
-          "replicate columns": [
-            "wt120minvscontrolratio"
-          ],
-          "log base": 10
-        },
-        {
           "file": "data/shigella/ubiquitination/WT_vs_noninvasive_15min.xlsx",
           "sheet": "GlyGly (K) stringentSites",
-          "label": "U",
-          "time": 15,
-          "sites": 5,
           "accession column": "Protein",
           "accession format": 2,
           "position column": "Positions within proteins",
@@ -65,12 +18,11 @@
           "replicates": 2
         },
         {
-          "file": "data/shigella/ubiquitination/WT_vs_noninvasive_1h.xlsx",
-          "sheet": "GlyGly (K) stringentSites",
           "label": "U",
           "time": 60,
-          "sites": 5,
-          "accession column": "Protein",
+          "file": "data/shigella/ubiquitination/WT_vs_noninvasive_1h.xlsx",
+          "sheet": "GlyGly (K) stringentSites",
+          "accession column": "Proteins",
           "accession format": 2,
           "position column": "Positions within proteins",
           "position format": 2,
@@ -82,12 +34,11 @@
           "replicates": 2
         },
         {
-          "file": "data/shigella/ubiquitination/WT_vs_noninvasive_2h.xlsx",
-          "sheet": "GlyGly (K) stringentSites",
           "label": "U",
           "time": 120,
-          "sites": 5,
-          "accession column": "Protein",
+          "file": "data/shigella/ubiquitination/WT_vs_noninvasive_2h.xlsx",
+          "sheet": "GlyGly (K) stringentSites",
+          "accession column": "Proteins",
           "accession format": 2,
           "position column": "Positions within proteins",
           "position format": 2,

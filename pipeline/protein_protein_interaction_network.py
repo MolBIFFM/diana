@@ -29,7 +29,7 @@ class ProteinProteinInteractionNetwork(nx.Graph):
         position_format,
         sheet_name=0,
         header=0,
-        num_sites=1,
+        num_sites=0,
         num_replicates=1,
         merge_replicates=statistics.mean,
         convert_measurement=math.log2,
@@ -59,6 +59,7 @@ class ProteinProteinInteractionNetwork(nx.Graph):
                         row[protein_accession_column]
                     )
                 ]
+
                 positions = [
                     int(position) for position in position_format(row[position_col])
                 ]
@@ -66,17 +67,16 @@ class ProteinProteinInteractionNetwork(nx.Graph):
                 if len(protein_accessions) != len(positions):
                     if len(protein_accessions) > len(positions):
                         positions.extend(
-                            [0 for _ in range(len(positions), len(proteins))]
+                            [0 for _ in range(len(positions), len(protein_accessions))]
                         )
-
                     else:
-                        continue
+                        positions = positions[: len(protein_accessions)]
 
                 for protein_accession, position in zip(protein_accessions, positions):
                     if "-" in protein_accession:
                         protein, isoform = protein_accession.split("-")
                     else:
-                        protein, isoform = protein_accession, "1"
+                        protein, isoform = protein_accession, None
 
                     if protein not in proteins:
                         proteins[protein] = {}
@@ -173,9 +173,9 @@ class ProteinProteinInteractionNetwork(nx.Graph):
                             )
                         ]:
                             positions = [
-                                secondary_position
-                                if not primary_position
-                                else primary_position
+                                primary_position
+                                if primary_position
+                                else secondary_position
                                 for primary_position, secondary_position in zip(
                                     sorted(primary_positions.keys()),
                                     sorted(secondary_positions.keys()),
@@ -195,7 +195,6 @@ class ProteinProteinInteractionNetwork(nx.Graph):
                         )
 
                         del proteins[protein][secondary_isoform]
-                        break
 
                 if not proteins[protein]:
                     del proteins[protein]
@@ -208,7 +207,7 @@ class ProteinProteinInteractionNetwork(nx.Graph):
 
         for protein in proteins:
             for isoform in proteins[protein]:
-                if isoform != "1":
+                if isoform:
                     self.add_node("-".join([protein, isoform]))
                     self.nodes["-".join([protein, isoform])]["gene name"] = gene_name[
                         protein
@@ -221,16 +220,19 @@ class ProteinProteinInteractionNetwork(nx.Graph):
                     self.nodes[protein]["gene name"] = gene_name[protein]
                     self.nodes[protein]["protein name"] = protein_name[protein]
 
-                if len(proteins[protein][isoform]) > num_sites:
+                if num_sites and len(proteins[protein][isoform]) > num_sites:
                     proteins[protein][isoform] = sorted(
                         sorted(
                             proteins[protein][isoform],
-                            key=lambda tp: tp[1],
+                            key=lambda item: item[1],
                             reverse=True,
                         )[:num_sites]
                     )
+                else:
+                    proteins[protein][isoform] = sorted(proteins[protein][isoform])
+
                 for i in range(len(proteins[protein][isoform])):
-                    if isoform != "1":
+                    if isoform:
                         self.nodes["-".join([protein, isoform])][
                             "{} {} {}".format(time, ptm, i + 1)
                         ] = proteins[protein][isoform][i][1]
@@ -241,7 +243,7 @@ class ProteinProteinInteractionNetwork(nx.Graph):
 
                 yield [
                     gene_name[protein],
-                    "-".join([protein, isoform]) if isoform != "1" else protein,
+                    "-".join([protein, isoform]) if isoform else protein,
                     protein_name[protein],
                     [
                         proteins[protein][isoform][i][1]
