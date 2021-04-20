@@ -914,7 +914,7 @@ class ProteinProteinInteractionNetwork(nx.Graph):
 
     def get_modules(
         self,
-        module_size=50,
+        module_size=35,
         merge_sizes=statistics.mean,
         weight="weight",
         algorithm=modularization.louvain,
@@ -988,7 +988,7 @@ class ProteinProteinInteractionNetwork(nx.Graph):
         changes=(-1.0, 1.0),
         get_range=lambda time, ptm, changes, merge_sites: changes,
         merge_sites=statistics.mean,
-        module_size=50,
+        module_size=35,
         merge_sizes=statistics.mean,
         weight="weight",
         test="two-sided",

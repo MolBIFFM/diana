@@ -401,7 +401,7 @@ def main():
                             ),
                             module_size=configuration["post-processing"][
                                 "enrichment analysis"
-                            ].get("module size", 50),
+                            ].get("module size", 35),
                             merge_sizes=merge.MERGE.get(
                                 configuration["post-processing"][
                                     "enrichment analysis"
@@ -441,7 +441,7 @@ def main():
                             ),
                             module_size=configuration["post-processing"][
                                 "enrichment analysis"
-                            ].get("module size", 50),
+                            ].get("module size", 35),
                             merge_sizes=merge.MERGE.get(
                                 configuration["post-processing"][
                                     "enrichment analysis"
@@ -475,7 +475,7 @@ def main():
                             ),
                             module_size=configuration["post-processing"][
                                 "enrichment analysis"
-                            ].get("module size", 50),
+                            ].get("module size", 35),
                             merge_sizes=merge.MERGE.get(
                                 configuration["post-processing"][
                                     "enrichment analysis"
