@@ -13,7 +13,7 @@ from pipeline.configuration import data
 from pipeline.utilities import fetch, mitab, modularization, correction
 
 
-class ProteinProteinInteractionNetwork(nx.Graph):
+class ProteinInteractionNetwork(nx.Graph):
     def __init__(self):
         super().__init__()
 
@@ -29,7 +29,7 @@ class ProteinProteinInteractionNetwork(nx.Graph):
         position_format,
         sheet_name=0,
         header=0,
-        num_sites=0,
+        num_sites=1000,
         num_replicates=1,
         merge_replicates=statistics.mean,
         convert_measurement=math.log2,
@@ -220,16 +220,13 @@ class ProteinProteinInteractionNetwork(nx.Graph):
                     self.nodes[protein]["gene name"] = gene_name[protein]
                     self.nodes[protein]["protein name"] = protein_name[protein]
 
-                if num_sites and len(proteins[protein][isoform]) > num_sites:
-                    proteins[protein][isoform] = sorted(
-                        sorted(
-                            proteins[protein][isoform],
-                            key=lambda item: item[1],
-                            reverse=True,
-                        )[:num_sites]
-                    )
-                else:
-                    proteins[protein][isoform] = sorted(proteins[protein][isoform])
+                proteins[protein][isoform] = sorted(
+                    sorted(
+                        proteins[protein][isoform],
+                        key=lambda item: item[1],
+                        reverse=True,
+                    )[:num_sites]
+                )
 
                 for i in range(len(proteins[protein][isoform])):
                     if isoform:
@@ -928,6 +925,7 @@ class ProteinProteinInteractionNetwork(nx.Graph):
 
         while merge_sizes([len(community) for community in communities]) > module_size:
             max_community_size = max(len(community) for community in communities)
+
             indices = [
                 communities.index(community)
                 for community in communities
@@ -1126,7 +1124,9 @@ class ProteinProteinInteractionNetwork(nx.Graph):
 
     def get_neighborhood(self, protein, k=1, isoforms=True):
         if isoforms:
-            nodes = {p for p in self if p.split("-")[0] == protein.split("-")[0]}
+            nodes = {
+                node for node in self if node.split("-")[0] == protein.split("-")[0]
+            }
         else:
             nodes = {protein.split("-")[0]}
 

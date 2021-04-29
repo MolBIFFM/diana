@@ -10,7 +10,7 @@ import networkx as nx
 from pipeline.cytoscape_styles import CytoscapeStyles
 from pipeline.interface import convert, merge, extract, algorithm
 from pipeline.protein_protein_interaction_network import (
-    ProteinProteinInteractionNetwork,
+    ProteinInteractionNetwork,
 )
 
 
@@ -52,7 +52,7 @@ def main():
             configurations = json.load(configuration)
 
         for i, configuration in enumerate(configurations, start=1):
-            network = ProteinProteinInteractionNetwork()
+            network = ProteinInteractionNetwork()
 
             for entry in configuration.get("post-translational modifications", {}):
                 for (
