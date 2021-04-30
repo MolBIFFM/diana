@@ -6,4 +6,10 @@ EXTRACT = {
         for subentry in entry.rstrip(";").split(";")
         if "|" in subentry
     ],
+    4: lambda entry: [entry.split("|")[1]],
+    5: lambda entry: [
+        subentry.split("_")[0]
+        for subentry in entry.rstrip(",").split(",")
+        if "_" in subentry
+    ],
 }

@@ -2,6 +2,49 @@
     {
       "post-translational modifications": [
         {
+          "time": 15,
+          "label": "P",
+          "file": "data/shigella/phosphorylation/mcp.M113.029918-2.xls",
+          "sheet": "wt15min",
+          "header": 1,
+          "accession column": "protein",
+          "accession format": 4,
+          "position column": "phosphosite",
+          "position format": 5,
+          "replicate columns": [
+            "wt15minvscontrolratio"
+          ],
+          "log base": 10
+        },
+        {
+          "time": 60,
+          "label": "P",
+          "file": "data/shigella/phosphorylation/mcp.M113.029918-2.xls",
+          "sheet": "wt60min",
+          "accession column": "protein",
+          "accession format": 4,
+          "position column": "phosphosite",
+          "position format": 5,
+          "replicate columns": [
+            "wt60minvscontrolratio"
+          ],
+          "log base": 10
+        },
+        {
+          "time": 120,
+          "label": "P",
+          "file": "data/shigella/phosphorylation/mcp.M113.029918-2.xls",
+          "sheet": "wt120min",
+          "accession column": "protein",
+          "accession format": 4,
+          "position column": "phosphosite",
+          "position format": 5,
+          "replicate columns": [
+            "wt120minvscontrolratio"
+          ],
+          "log base": 10
+        },
+        {
           "label": "U",
           "time": 15,
           "file": "data/shigella/ubiquitination/WT_vs_noninvasive_15min.xlsx",
