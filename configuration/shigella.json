@@ -2,8 +2,8 @@
     {
       "post-translational modifications": [
         {
-          "time": 15,
           "label": "P",
+          "time": 15,
           "file": "data/shigella/phosphorylation/mcp.M113.029918-2.xls",
           "sheet": "wt15min",
           "header": 1,
@@ -17,8 +17,8 @@
           "log base": 10
         },
         {
-          "time": 60,
           "label": "P",
+          "time": 60,
           "file": "data/shigella/phosphorylation/mcp.M113.029918-2.xls",
           "sheet": "wt60min",
           "accession column": "protein",
@@ -31,8 +31,8 @@
           "log base": 10
         },
         {
-          "time": 120,
           "label": "P",
+          "time": 120,
           "file": "data/shigella/phosphorylation/mcp.M113.029918-2.xls",
           "sheet": "wt120min",
           "accession column": "protein",
