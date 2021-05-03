@@ -1131,7 +1131,6 @@ class ProteinInteractionNetwork(nx.Graph):
             nodes = {protein.split("-")[0]}
 
         for _ in range(k):
-            neighborhood = set.union(*(set(self.neighbors(node)) for node in nodes))
-            nodes.update(neighborhood)
+            nodes.update(set.union(*(set(self.neighbors(node)) for node in nodes)))
 
         return self.subgraph(nodes)
