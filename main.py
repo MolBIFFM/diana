@@ -75,7 +75,7 @@ def main():
                     ),
                     sheet_name=entry.get("sheet", 0),
                     header=entry.get("header", 1) - 1,
-                    num_sites=entry.get("sites", 0),
+                    num_sites=entry.get("sites", 1000),
                     num_replicates=entry.get("replicates", 2),
                     merge_replicates=merge.MERGE.get(
                         entry.get("merge replicates", "mean"), merge.MERGE["mean"]
