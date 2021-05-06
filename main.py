@@ -67,6 +67,7 @@ def main():
                     ),
                     sheet_name=entry.get("sheet", 0),
                     header=entry.get("header", 1) - 1,
+                    organism=entry.get("organism", 9606),
                 ):
                     logger.info(
                         "{}\t{}\t{}".format(
@@ -103,6 +104,7 @@ def main():
                         entry.get("merge replicates", "mean"), merge.MERGE["mean"]
                     ),
                     convert_measurement=convert.LOG_BASE[entry.get("log base")],
+                    organism=entry.get("organism", 9606),
                 ):
                     logger.info(
                         "{}\t{}\t{}\t{}\t{}\t{}".format(

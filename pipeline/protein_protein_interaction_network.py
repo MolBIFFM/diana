@@ -24,6 +24,7 @@ class ProteinInteractionNetwork(nx.Graph):
         gene_accession_format,
         sheet_name=0,
         header=0,
+        organism=9606,
     ):
         genes = []
         for _, row in pd.read_excel(
@@ -46,36 +47,53 @@ class ProteinInteractionNetwork(nx.Graph):
                 ]
             )
 
+        proteins, gene_name, protein_name = [], {}, {}
+
         accessions, gene_names, protein_names = [], {}, {}
-
-        proteins, gene_name, protein_name = {}, {}, {}
-        rec_name = False
+        rec_name, ncbi_tax_id = False, 0
         for line in fetch.txt(data.UNIPROT_SWISS_PROT):
-            if line.split("   ")[0] == "AC":
-                accessions.extend(line.split("   ")[1].rstrip(";").split("; "))
+            if not line.strip():
+                continue
+            if line.split(maxsplit=1)[0] == "AC":
+                if len(line.split(maxsplit=1)) == 1:
+                    continue
 
-            elif line.split("   ")[0] == "GN":
-                for entry in line.split("   ")[1].rstrip(";").split("; "):
+                accessions.extend(line.split(maxsplit=1)[1].rstrip(";").split("; "))
+
+            elif line.split(maxsplit=1)[0] == "GN":
+                if len(line.split(maxsplit=1)) == 1:
+                    continue
+
+                for entry in line.split(maxsplit=1)[1].rstrip(";").split("; "):
                     if "=" in entry:
                         gene_names[entry.split("=")[0]] = (
                             entry.split("=")[1].split("{")[0].rstrip()
                         )
 
-            elif line.split("   ")[0] == "DE":
-                if line.split(" ", 1)[1].lstrip().split(":", 1)[0] == "RecName":
-                    entries = line.split(":", 1)[1].lstrip().rstrip(";").split("; ")
+            elif line.split(maxsplit=1)[0] == "DE":
+                if len(line.split(maxsplit=1)) == 1:
+                    continue
+
+                if line.split(maxsplit=1)[1].split(":", 1)[0] == "RecName":
+                    entries = (
+                        line.split(maxsplit=1)[1]
+                        .split(":", 1)[1]
+                        .lstrip()
+                        .rstrip(";")
+                        .split("; ")
+                    )
                     rec_name = True
-                elif line.split(" ", 1)[1].lstrip().split(":", 1)[0] == "AltName":
+                elif line.split(maxsplit=1)[1].split(":", 1)[0] == "AltName":
                     entries = []
                     rec_name = False
-                elif line.split(" ", 1)[1].lstrip().split(":", 1)[0] == "Contains":
+                elif line.split(maxsplit=1)[1].split(":", 1)[0] == "Contains":
                     entries = []
                     rec_name = False
-                elif line.split(" ", 1)[1].lstrip().split(":", 1)[0] == "Flags":
+                elif line.split(maxsplit=1)[1].split(":", 1)[0] == "Flags":
                     entries = []
                     rec_name = False
                 elif rec_name:
-                    entries = line.split(" ", 1)[1].lstrip().rstrip(";").split("; ")
+                    entries = line.split(maxsplit=1)[1].rstrip(";").split("; ")
 
                 for entry in entries:
                     if "=" in entry:
@@ -83,15 +101,39 @@ class ProteinInteractionNetwork(nx.Graph):
                             entry.split("=")[1].split("{")[0].rstrip()
                         )
 
+            elif line.split(maxsplit=1)[0] == "OX":
+                if len(line.split(maxsplit=1)) == 1:
+                    continue
+
+                if (
+                    line.split(maxsplit=1)[1].split(";")[0].split("=")[0]
+                    == "NCBI_TaxID"
+                ):
+                    if (
+                        line.split(maxsplit=1)[1]
+                        .split(";")[0]
+                        .split("=")[1]
+                        .split("{")[0]
+                        .isnumeric()
+                    ):
+                        ncbi_tax_id = int(
+                            line.split(maxsplit=1)[1]
+                            .split(";")[0]
+                            .split("=")[1]
+                            .split("{")[0]
+                        )
+
             elif line == "//":
-                if gene_names.get("Name") in genes:
-                    proteins[accessions[0]] = accessions[0]
-                    gene_name[accessions[0]] = gene_names.get("Name")
+                if ncbi_tax_id == organism and gene_names.get("Name") in genes:
+                    proteins.append(accessions[0])
+                    gene_name[accessions[0]] = gene_names["Name"]
                     protein_name[accessions[0]] = protein_names.get("Full", "NA")
 
                 accessions.clear()
                 gene_names.clear()
                 protein_names.clear()
+
+                rec_name, ncbi_tax_id = False, 0
 
         for protein in proteins:
             self.add_node(protein)
@@ -120,6 +162,7 @@ class ProteinInteractionNetwork(nx.Graph):
         num_replicates=1,
         merge_replicates=statistics.mean,
         convert_measurement=math.log2,
+        organism=9606,
     ):
         proteins = {}
         for _, row in pd.read_excel(
@@ -179,36 +222,54 @@ class ProteinInteractionNetwork(nx.Graph):
                         ),
                     )
 
-        accessions, gene_names, protein_names = [], {}, {}
-
         reviewed_proteins, primary_accession, gene_name, protein_name = {}, {}, {}, {}
-        rec_name = False
-        for line in fetch.txt(data.UNIPROT_SWISS_PROT):
-            if line.split("   ")[0] == "AC":
-                accessions.extend(line.split("   ")[1].rstrip(";").split("; "))
 
-            elif line.split("   ")[0] == "GN":
-                for entry in line.split("   ")[1].rstrip(";").split("; "):
+        accessions, gene_names, protein_names = [], {}, {}
+        rec_name, ncbi_tax_id = False, 0
+        for line in fetch.txt(data.UNIPROT_SWISS_PROT):
+            if not line.strip():
+                continue
+
+            if line.split(maxsplit=1)[0] == "AC":
+                if len(line.split(maxsplit=1)) == 1:
+                    continue
+
+                accessions.extend(line.split(maxsplit=1)[1].rstrip(";").split("; "))
+
+            elif line.split(maxsplit=1)[0] == "GN":
+                if len(line.split(maxsplit=1)) == 1:
+                    continue
+
+                for entry in line.split(maxsplit=1)[1].rstrip(";").split("; "):
                     if "=" in entry:
                         gene_names[entry.split("=")[0]] = (
                             entry.split("=")[1].split("{")[0].rstrip()
                         )
 
-            elif line.split("   ")[0] == "DE":
-                if line.split(" ", 1)[1].lstrip().split(":", 1)[0] == "RecName":
-                    entries = line.split(":", 1)[1].lstrip().rstrip(";").split("; ")
+            elif line.split(maxsplit=1)[0] == "DE":
+                if len(line.split(maxsplit=1)) == 1:
+                    continue
+
+                if line.split(maxsplit=1)[1].split(":", 1)[0] == "RecName":
+                    entries = (
+                        line.split(maxsplit=1)[1]
+                        .split(":", 1)[1]
+                        .lstrip()
+                        .rstrip(";")
+                        .split("; ")
+                    )
                     rec_name = True
-                elif line.split(" ", 1)[1].lstrip().split(":", 1)[0] == "AltName":
+                elif line.split(maxsplit=1)[1].split(":", 1)[0] == "AltName":
                     entries = []
                     rec_name = False
-                elif line.split(" ", 1)[1].lstrip().split(":", 1)[0] == "Contains":
+                elif line.split(maxsplit=1)[1].split(":", 1)[0] == "Contains":
                     entries = []
                     rec_name = False
-                elif line.split(" ", 1)[1].lstrip().split(":", 1)[0] == "Flags":
+                elif line.split(maxsplit=1)[1].split(":", 1)[0] == "Flags":
                     entries = []
                     rec_name = False
                 elif rec_name:
-                    entries = line.split(" ", 1)[1].lstrip().rstrip(";").split("; ")
+                    entries = line.split(maxsplit=1)[1].rstrip(";").split("; ")
 
                 for entry in entries:
                     if "=" in entry:
@@ -216,17 +277,43 @@ class ProteinInteractionNetwork(nx.Graph):
                             entry.split("=")[1].split("{")[0].rstrip()
                         )
 
+            elif line.split(maxsplit=1)[0] == "OX":
+                if len(line.split(maxsplit=1)) == 1:
+                    continue
+
+                if (
+                    line.split(maxsplit=1)[1].split(";")[0].split("=")[0]
+                    == "NCBI_TaxID"
+                ):
+                    if (
+                        line.split(maxsplit=1)[1]
+                        .split(";")[0]
+                        .split("=")[1]
+                        .split("{")[0]
+                        .isnumeric()
+                    ):
+                        ncbi_tax_id = int(
+                            line.split(maxsplit=1)[1]
+                            .split(";")[0]
+                            .split("=")[1]
+                            .split("{")[0]
+                        )
+
             elif line == "//":
-                for i, accession in enumerate(accessions):
-                    if accession in proteins:
-                        reviewed_proteins[accession] = proteins[accession]
-                        gene_name[accession] = gene_names.get("Name", "NA")
-                        protein_name[accession] = protein_names.get("Full", "NA")
-                        if i > 0:
-                            primary_accession[accession] = accessions[0]
+                if ncbi_tax_id == organism:
+                    for i, accession in enumerate(accessions):
+                        if accession in proteins:
+                            reviewed_proteins[accession] = proteins[accession]
+                            gene_name[accession] = gene_names.get("Name", "NA")
+                            protein_name[accession] = protein_names.get("Full", "NA")
+                            if i > 0:
+                                primary_accession[accession] = accessions[0]
+
                 accessions.clear()
                 gene_names.clear()
                 protein_names.clear()
+
+                rec_name, ncbi_tax_id = False, 0
 
         proteins = reviewed_proteins
 
