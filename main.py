@@ -54,7 +54,29 @@ def main():
         for i, configuration in enumerate(configurations, start=1):
             network = ProteinInteractionNetwork()
 
-            for entry in configuration.get("post-translational modifications", {}):
+            for entry in configuration.get("genes", {}):
+                for (
+                    gene_name,
+                    protein,
+                    protein_name,
+                ) in network.add_genes_from_spreadsheet(
+                    entry["file"],
+                    gene_accession_column=entry["accession column"],
+                    gene_accession_format=extract.EXTRACT.get(
+                        entry.get("accession format"), lambda x: [x]
+                    ),
+                    sheet_name=entry.get("sheet", 0),
+                    header=entry.get("header", 1) - 1,
+                ):
+                    logger.info(
+                        "{}\t{}\t{}".format(
+                            gene_name,
+                            protein_name,
+                            protein,
+                        )
+                    )
+
+            for entry in configuration.get("proteins", {}):
                 for (
                     gene_name,
                     protein,
@@ -65,13 +87,13 @@ def main():
                     entry["label"],
                     entry["time"],
                     protein_accession_column=entry["accession column"],
-                    position_col=entry["position column"],
+                    position_column=entry["position column"],
                     replicates=entry["replicate columns"],
                     protein_accession_format=extract.EXTRACT.get(
-                        entry["accession format"], lambda x: x
+                        entry.get("accession format"), lambda x: [x]
                     ),
                     position_format=extract.EXTRACT.get(
-                        entry["position format"], lambda x: x
+                        entry.get("position format"), lambda x: [x]
                     ),
                     sheet_name=entry.get("sheet", 0),
                     header=entry.get("header", 1) - 1,
@@ -117,6 +139,9 @@ def main():
                                 "Two-hybrid",
                             ],
                         ),
+                        organism=configuration["protein-protein interactions"][
+                            "BioGRID"
+                        ].get("organism", 9606),
                         multi_validated_physical=configuration[
                             "protein-protein interactions"
                         ]["BioGRID"].get("multi-validated physical", False),
@@ -144,7 +169,10 @@ def main():
                         ]["CORUM"].get(
                             "protein complex purification method",
                             [],
-                        )
+                        ),
+                        organism=configuration["protein-protein interactions"][
+                            "CORUM"
+                        ].get("organism", "Human"),
                     ):
                         logger.info(
                             "{}\t{}\tCORUM\t{:.3f}".format(
@@ -167,6 +195,9 @@ def main():
                         mi_score=configuration["protein-protein interactions"][
                             "IntAct"
                         ].get("MI score", 0.27),
+                        organism=configuration["protein-protein interactions"][
+                            "IntAct"
+                        ].get("organism", 9606),
                     ):
                         logger.info(
                             "{}\t{}\tIntAct\t{:.3f}".format(
@@ -189,6 +220,9 @@ def main():
                         reactome_score=configuration["protein-protein interactions"][
                             "Reactome"
                         ].get("Reactome score", 0.0),
+                        organism=configuration["protein-protein interactions"][
+                            "Reactome"
+                        ].get("organism", 9606),
                     ):
                         logger.info(
                             "{}\t{}\tReactome\t{:.3f}".format(
@@ -244,6 +278,9 @@ def main():
                         combined_score=configuration["protein-protein interactions"][
                             "STRING"
                         ].get("combined score", 0.7),
+                        organism=configuration["protein-protein interactions"][
+                            "STRING"
+                        ].get("organism", 9606),
                         physical=configuration["protein-protein interactions"][
                             "STRING"
                         ].get("physical", False),
@@ -254,51 +291,52 @@ def main():
                             )
                         )
 
-            network.set_post_translational_modification()
+            if "Cytoscape" in configuration:
+                network.set_post_translational_modification()
 
-            if (
-                configuration.get("Cytoscape", {}).get("node color", {}).get("type")
-                == "z-score"
-            ):
-                network.set_change_data(
-                    merge_sites=merge.MERGE[
-                        configuration["Cytoscape"]["node color"].get(
-                            "merge sites", "mean"
-                        )
-                    ],
-                    changes=configuration["Cytoscape"]["node color"].get(
-                        "range", (-2.0, 2.0)
-                    ),
-                    get_range=network.get_z_score_range,
-                )
+                if (
+                    configuration["Cytoscape"].get("node color", {}).get("type")
+                    == "z-score"
+                ):
+                    network.set_changes(
+                        merge_sites=merge.MERGE[
+                            configuration["Cytoscape"]["node color"].get(
+                                "merge sites", "mean"
+                            )
+                        ],
+                        changes=configuration["Cytoscape"]["node color"].get(
+                            "range", (-2.0, 2.0)
+                        ),
+                        get_range=network.get_z_score_range,
+                    )
 
-            elif (
-                configuration.get("Cytoscape", {}).get("node color", {}).get("type")
-                == "proportion"
-            ):
-                network.set_change_data(
-                    merge_sites=merge.MERGE[
-                        configuration["Cytoscape"]["node color"].get(
-                            "merge sites", "mean"
-                        )
-                    ],
-                    changes=configuration["Cytoscape"]["node color"].get(
-                        "range", (0.025, 0.975)
-                    ),
-                    get_range=network.get_proportion_range,
-                )
+                elif (
+                    configuration["Cytoscape"].get("node color", {}).get("type")
+                    == "proportion"
+                ):
+                    network.set_changes(
+                        merge_sites=merge.MERGE[
+                            configuration["Cytoscape"]["node color"].get(
+                                "merge sites", "mean"
+                            )
+                        ],
+                        changes=configuration["Cytoscape"]["node color"].get(
+                            "range", (0.025, 0.975)
+                        ),
+                        get_range=network.get_proportion_range,
+                    )
 
-            else:
-                network.set_change_data(
-                    merge_sites=merge.MERGE[
-                        configuration["Cytoscape"]["node color"].get(
-                            "merge sites", "mean"
-                        )
-                    ],
-                    changes=configuration["Cytoscape"]["node color"].get(
-                        "range", (-1.0, 1.0)
-                    ),
-                )
+                else:
+                    network.set_changes(
+                        merge_sites=merge.MERGE[
+                            configuration["Cytoscape"]["node color"].get(
+                                "merge sites", "mean"
+                            )
+                        ],
+                        changes=configuration["Cytoscape"]["node color"].get(
+                            "range", (-1.0, 1.0)
+                        ),
+                    )
 
             export_network(
                 network,

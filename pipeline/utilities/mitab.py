@@ -23,28 +23,28 @@ def parse(entry):
         return values
 
 
-def get_id_from_namespace(entry, namespace):
+def get_identifier_from_namespace(entry, namespace):
     return list(parse(entry).get(namespace, [{None: ""}])[0].keys())[0]
 
 
-def namespace_has_id(entry, namespace, identifier):
+def namespace_has_identifier(entry, namespace, identifier):
     if values := parse(entry):
-        return any(identifier in value.keys() for value in values[namespace])
+        return any(str(identifier) in value.keys() for value in values[namespace])
     else:
         return False
 
 
-def namespace_has_term(entry, namespace, identifier):
+def namespace_has_term(entry, namespace, term):
     if values := parse(entry):
-        return any(identifier in value.values() for value in values[namespace])
+        return any(term in value.values() for value in values[namespace])
     else:
         return False
 
 
-def namespace_has_any_id_from(entry, namespace, identifiers):
+def namespace_has_any_identifier_from(entry, namespace, identifiers):
     if values := parse(entry):
         return any(
-            identifier in value.keys()
+            str(identifier) in value.keys()
             for value in values[namespace]
             for identifier in identifiers
         )
@@ -52,12 +52,10 @@ def namespace_has_any_id_from(entry, namespace, identifiers):
         return False
 
 
-def namespace_has_any_term_from(entry, namespace, identifiers):
+def namespace_has_any_term_from(entry, namespace, terms):
     if values := parse(entry):
         return any(
-            identifier in value.values()
-            for value in values[namespace]
-            for identifier in identifiers
+            term in value.values() for value in values[namespace] for term in terms
         )
     else:
         return False

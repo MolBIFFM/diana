@@ -15,13 +15,11 @@ INTACT_ZIP_ARCHIVE = (
 )
 INTACT = "intact.txt"
 
-REACTOME = "https://reactome.org/download/current/interactors/reactome.homo_sapiens.interactions.psi-mitab.txt"
+REACTOME = "https://reactome.org/download/current/interactors/reactome.all_species.interactions.psi-mitab.txt"
 
-STRING_ID_MAP = (
-    "https://string-db.org/mapping_files/uniprot/human.uniprot_2_string.2018.tsv.gz"
-)
-STRING = "https://stringdb-static.org/download/protein.links.full.v11.0/9606.protein.links.full.v11.0.txt.gz"
-STRING_PHYSICAL = "https://stringdb-static.org/download/protein.physical.links.full.v11.0/9606.protein.links.full.v11.0.txt.gz"
+STRING_ID_MAP = "https://string-db.org/mapping_files/uniprot/all_organisms.uniprot_2_string.2018.tsv.gz"
+STRING = "https://stringdb-static.org/download/protein.links.full.v11.0/{organism}.protein.links.full.v11.0.txt.gz"
+STRING_PHYSICAL = "https://stringdb-static.org/download/protein.physical.links.full.v11.0/{organism}.protein.links.full.v11.0.txt.gz"
 
-UNIPROT_ID_MAP = "ftp://ftp.expasy.org/databases/uniprot/current_release/knowledgebase/idmapping/by_organism/HUMAN_9606_idmapping.dat.gz"
-UNIPROT_SWISS_PROT = "ftp://ftp.expasy.org/databases/uniprot/current_release/knowledgebase/complete/uniprot_sprot.dat.gz"
+UNIPROT_ID_MAP = "https://ftp.uniprot.org/pub/databases/uniprot/current_release/knowledgebase/idmapping/idmapping.dat.gz"
+UNIPROT_SWISS_PROT = "https://ftp.uniprot.org/pub/databases/uniprot/current_release/knowledgebase/complete/uniprot_sprot.dat.gz"
