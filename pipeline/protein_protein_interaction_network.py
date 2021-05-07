@@ -49,7 +49,7 @@ class ProteinInteractionNetwork(nx.Graph):
 
         proteins, gene_name, protein_name = [], {}, {}
 
-        accessions, gene_names, protein_names = [], {}, {}
+        accessions, entry_gene_name, entry_protein_name = [], {}, {}
         rec_name, ncbi_tax_id = False, 0
         for line in fetch.txt(data.UNIPROT_SWISS_PROT):
             if not line.strip():
@@ -66,7 +66,7 @@ class ProteinInteractionNetwork(nx.Graph):
 
                 for entry in line.split(maxsplit=1)[1].rstrip(";").split("; "):
                     if "=" in entry:
-                        gene_names[entry.split("=")[0]] = (
+                        entry_gene_name[entry.split("=")[0]] = (
                             entry.split("=")[1].split("{")[0].rstrip()
                         )
 
@@ -97,7 +97,7 @@ class ProteinInteractionNetwork(nx.Graph):
 
                 for entry in entries:
                     if "=" in entry:
-                        protein_names[entry.split("=")[0]] = (
+                        entry_protein_name[entry.split("=")[0]] = (
                             entry.split("=")[1].split("{")[0].rstrip()
                         )
 
@@ -124,14 +124,14 @@ class ProteinInteractionNetwork(nx.Graph):
                         )
 
             elif line == "//":
-                if ncbi_tax_id == organism and gene_names.get("Name") in genes:
+                if ncbi_tax_id == organism and entry_gene_name.get("Name") in genes:
                     proteins.append(accessions[0])
-                    gene_name[accessions[0]] = gene_names["Name"]
-                    protein_name[accessions[0]] = protein_names.get("Full", "NA")
+                    gene_name[accessions[0]] = entry_gene_name["Name"]
+                    protein_name[accessions[0]] = entry_protein_name.get("Full", "NA")
 
                 accessions.clear()
-                gene_names.clear()
-                protein_names.clear()
+                entry_gene_name.clear()
+                entry_protein_name.clear()
 
                 rec_name, ncbi_tax_id = False, 0
 
@@ -140,22 +140,22 @@ class ProteinInteractionNetwork(nx.Graph):
             self.nodes[protein]["gene name"] = gene_name[protein]
             self.nodes[protein]["protein name"] = protein_name[protein]
 
-            yield [
+            yield (
                 self.nodes[protein]["gene name"],
                 protein,
                 self.nodes[protein]["protein name"],
-            ]
+            )
 
     def add_proteins_from_spreadsheet(
         self,
         file_name,
-        ptm,
-        time,
         protein_accession_column,
-        position_column,
-        replicates,
-        protein_accession_format,
-        position_format,
+        protein_accession_format=lambda entry: [entry],
+        time=0,
+        ptm="",
+        position_column="",
+        position_format=lambda entry: [entry],
+        replicates=[],
         sheet_name=0,
         header=0,
         num_sites=1000,
@@ -169,20 +169,75 @@ class ProteinInteractionNetwork(nx.Graph):
             file_name,
             sheet_name=sheet_name,
             header=header,
-            usecols=[protein_accession_column, position_column] + replicates,
+            usecols=[protein_accession_column]
+            + [column for column in (position_column,) if column]
+            + replicates,
             dtype={
                 protein_accession_column: str,
-                position_column: str,
-                **{replicate: float for replicate in replicates},
+                **{column: str for column in (position_column,) if column},
+                **{column: float for column in replicates},
             },
         ).iterrows():
 
-            if pd.isna(row[protein_accession_column]) or pd.isna(row[position_column]):
+            if pd.isna(row[protein_accession_column]):
                 continue
 
-            measurements = [row[repl] for repl in replicates if not pd.isna(row[repl])]
+            if position_column and pd.isna(row[position_column]):
+                continue
 
-            if len(measurements) >= min(num_replicates, len(replicates)):
+            if replicates:
+                measurements = [
+                    row[repl] for repl in replicates if not pd.isna(row[repl])
+                ]
+
+                if len(measurements) >= min(num_replicates, len(replicates)):
+                    protein_accessions = [
+                        str(protein_accession)
+                        for protein_accession in protein_accession_format(
+                            row[protein_accession_column]
+                        )
+                    ]
+
+                    positions = [
+                        int(position)
+                        for position in position_format(row[position_column])
+                    ]
+
+                    if len(protein_accessions) != len(positions):
+                        if len(protein_accessions) > len(positions):
+                            positions.extend(
+                                [
+                                    0
+                                    for _ in range(
+                                        len(positions), len(protein_accessions)
+                                    )
+                                ]
+                            )
+                        else:
+                            positions = positions[: len(protein_accessions)]
+
+                    for protein_accession, position in zip(
+                        protein_accessions, positions
+                    ):
+                        if "-" in protein_accession:
+                            protein, isoform = protein_accession.split("-")
+                        else:
+                            protein, isoform = protein_accession, None
+
+                        if protein not in proteins:
+                            proteins[protein] = {}
+
+                        if isoform not in proteins[protein]:
+                            proteins[protein][isoform] = []
+
+                        bisect.insort(
+                            proteins[protein][isoform],
+                            (
+                                position,
+                                convert_measurement(merge_replicates(measurements)),
+                            ),
+                        )
+            else:
                 protein_accessions = [
                     str(protein_accession)
                     for protein_accession in protein_accession_format(
@@ -190,19 +245,7 @@ class ProteinInteractionNetwork(nx.Graph):
                     )
                 ]
 
-                positions = [
-                    int(position) for position in position_format(row[position_column])
-                ]
-
-                if len(protein_accessions) != len(positions):
-                    if len(protein_accessions) > len(positions):
-                        positions.extend(
-                            [0 for _ in range(len(positions), len(protein_accessions))]
-                        )
-                    else:
-                        positions = positions[: len(protein_accessions)]
-
-                for protein_accession, position in zip(protein_accessions, positions):
+                for protein_accession in protein_accessions:
                     if "-" in protein_accession:
                         protein, isoform = protein_accession.split("-")
                     else:
@@ -214,17 +257,9 @@ class ProteinInteractionNetwork(nx.Graph):
                     if isoform not in proteins[protein]:
                         proteins[protein][isoform] = []
 
-                    bisect.insort(
-                        proteins[protein][isoform],
-                        (
-                            position,
-                            convert_measurement(merge_replicates(measurements)),
-                        ),
-                    )
+        swissprot_proteins, primary_accession, gene_name, protein_name = {}, {}, {}, {}
 
-        reviewed_proteins, primary_accession, gene_name, protein_name = {}, {}, {}, {}
-
-        accessions, gene_names, protein_names = [], {}, {}
+        accessions, entry_gene_name, entry_protein_name = [], {}, {}
         rec_name, ncbi_tax_id = False, 0
         for line in fetch.txt(data.UNIPROT_SWISS_PROT):
             if not line.strip():
@@ -242,7 +277,7 @@ class ProteinInteractionNetwork(nx.Graph):
 
                 for entry in line.split(maxsplit=1)[1].rstrip(";").split("; "):
                     if "=" in entry:
-                        gene_names[entry.split("=")[0]] = (
+                        entry_gene_name[entry.split("=")[0]] = (
                             entry.split("=")[1].split("{")[0].rstrip()
                         )
 
@@ -273,7 +308,7 @@ class ProteinInteractionNetwork(nx.Graph):
 
                 for entry in entries:
                     if "=" in entry:
-                        protein_names[entry.split("=")[0]] = (
+                        entry_protein_name[entry.split("=")[0]] = (
                             entry.split("=")[1].split("{")[0].rstrip()
                         )
 
@@ -303,19 +338,21 @@ class ProteinInteractionNetwork(nx.Graph):
                 if ncbi_tax_id == organism:
                     for i, accession in enumerate(accessions):
                         if accession in proteins:
-                            reviewed_proteins[accession] = proteins[accession]
-                            gene_name[accession] = gene_names.get("Name", "NA")
-                            protein_name[accession] = protein_names.get("Full", "NA")
+                            swissprot_proteins[accession] = proteins[accession]
+                            gene_name[accession] = entry_gene_name.get("Name", "NA")
+                            protein_name[accession] = entry_protein_name.get(
+                                "Full", "NA"
+                            )
                             if i > 0:
                                 primary_accession[accession] = accessions[0]
 
                 accessions.clear()
-                gene_names.clear()
-                protein_names.clear()
+                entry_gene_name.clear()
+                entry_protein_name.clear()
 
                 rec_name, ncbi_tax_id = False, 0
 
-        proteins = reviewed_proteins
+        proteins = swissprot_proteins
 
         for protein in primary_accession:
             if primary_accession[protein] in proteins:
@@ -414,15 +451,15 @@ class ProteinInteractionNetwork(nx.Graph):
                             "{} {} {}".format(time, ptm, i + 1)
                         ] = proteins[protein][isoform][i][1]
 
-                yield [
-                    self.nodes[protein]["gene name"],
-                    "-".join([protein, isoform]) if isoform else protein,
-                    self.nodes[protein]["protein name"],
-                    [
-                        proteins[protein][isoform][i][1]
-                        for i in range(len(proteins[protein][isoform]))
+                yield (
+                    self.nodes["-".join([protein, isoform]) if isoform else protein][
+                        "gene name"
                     ],
-                ]
+                    "-".join([protein, isoform]) if isoform else protein,
+                    self.nodes["-".join([protein, isoform]) if isoform else protein][
+                        "protein name"
+                    ],
+                )
 
     def get_times(self):
         return sorted(

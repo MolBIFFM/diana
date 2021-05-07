@@ -2,7 +2,7 @@
     {
       "proteins": [
         {
-          "label": "P",
+          "post-translational modification": "P",
           "time": 30,
           "file": "data/salmonella/phosphorylation/Supplementary_Table_01.xlsx",
           "sheet": "Supplementary1",
@@ -20,7 +20,7 @@
           "log base": 2
         },
         {
-          "label": "P",
+          "post-translational modification": "P",
           "time": 120,
           "file": "data/salmonella/phosphorylation/Supplementary_Table_01.xlsx",
           "sheet": "Supplementary1",
@@ -38,7 +38,7 @@
           "log base": 2
         },
         {
-          "label": "U",
+          "post-translational modification": "U",
           "time": 30,
           "file": "data/salmonella/ubiquitination/20151119_HeLa_HCT116_05h_2h_all.xlsx",
           "sheet": "20151119_HeLa_HCT116_05h_2h_all",
@@ -56,7 +56,7 @@
           "log base": 2
         },
         {
-          "label": "U",
+          "post-translational modification": "U",
           "time": 120,
           "file": "data/salmonella/ubiquitination/20151119_HeLa_HCT116_05h_2h_all.xlsx",
           "sheet": "20151119_HeLa_HCT116_05h_2h_all",

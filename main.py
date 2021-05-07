@@ -69,53 +69,37 @@ def main():
                     header=entry.get("header", 1) - 1,
                     organism=entry.get("organism", 9606),
                 ):
-                    logger.info(
-                        "{}\t{}\t{}".format(
-                            gene_name,
-                            protein_name,
-                            protein,
-                        )
-                    )
+                    logger.info("{}\t{}\t{}".format(protein, gene_name, protein_name))
 
             for entry in configuration.get("proteins", {}):
                 for (
                     gene_name,
                     protein,
                     protein_name,
-                    sites,
                 ) in network.add_proteins_from_spreadsheet(
                     entry["file"],
-                    entry["label"],
-                    entry["time"],
                     protein_accession_column=entry["accession column"],
-                    position_column=entry["position column"],
-                    replicates=entry["replicate columns"],
                     protein_accession_format=extract.EXTRACT.get(
                         entry.get("accession format"), lambda x: [x]
                     ),
+                    time=entry.get("time", 0),
+                    ptm=entry.get("post-translational modification", ""),
+                    position_column=entry.get("position column", ""),
                     position_format=extract.EXTRACT.get(
                         entry.get("position format"), lambda x: [x]
                     ),
+                    replicates=entry.get("replicate columns", []),
                     sheet_name=entry.get("sheet", 0),
                     header=entry.get("header", 1) - 1,
                     num_sites=entry.get("sites", 1000),
-                    num_replicates=entry.get("replicates", 2),
+                    num_replicates=entry.get("replicates", 1),
                     merge_replicates=merge.MERGE.get(
                         entry.get("merge replicates", "mean"), merge.MERGE["mean"]
                     ),
                     convert_measurement=convert.LOG_BASE[entry.get("log base")],
                     organism=entry.get("organism", 9606),
                 ):
-                    logger.info(
-                        "{}\t{}\t{}\t{}\t{}\t{}".format(
-                            gene_name,
-                            protein_name,
-                            protein,
-                            entry["time"],
-                            entry["label"],
-                            " ".join(["{:.2f}".format(site) for site in sites]),
-                        )
-                    )
+                    logger.info("{}\t{}\t{}".format(protein, gene_name, protein_name))
 
             if "protein-protein interactions" in configuration:
                 if "BioGRID" in configuration["protein-protein interactions"]:
