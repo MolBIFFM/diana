@@ -198,10 +198,13 @@ class ProteinInteractionNetwork(nx.Graph):
                         )
                     ]
 
-                    positions = [
-                        int(position)
-                        for position in position_format(row[position_column])
-                    ]
+                    if position_column:
+                        positions = [
+                            int(position)
+                            for position in position_format(row[position_column])
+                        ]
+                    else:
+                        positions = []
 
                     if len(protein_accessions) != len(positions):
                         if len(protein_accessions) > len(positions):
