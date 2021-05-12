@@ -2,8 +2,8 @@
     {
       "proteins": [
         {
-          "post-translational modification": "P",
           "time": 30,
+          "post-translational modification": "P",
           "file": "data/salmonella/phosphorylation/Supplementary_Table_01.xlsx",
           "sheet": "Supplementary1",
           "accession column": "Fasta.headers",
@@ -20,8 +20,8 @@
           "log base": 2
         },
         {
-          "post-translational modification": "P",
           "time": 120,
+          "post-translational modification": "P",
           "file": "data/salmonella/phosphorylation/Supplementary_Table_01.xlsx",
           "sheet": "Supplementary1",
           "accession column": "Fasta.headers",
@@ -38,8 +38,8 @@
           "log base": 2
         },
         {
-          "post-translational modification": "U",
           "time": 30,
+          "post-translational modification": "U",
           "file": "data/salmonella/ubiquitination/20151119_HeLa_HCT116_05h_2h_all.xlsx",
           "sheet": "20151119_HeLa_HCT116_05h_2h_all",
           "accession column": "Proteins",
@@ -56,8 +56,8 @@
           "log base": 2
         },
         {
-          "post-translational modification": "U",
           "time": 120,
+          "post-translational modification": "U",
           "file": "data/salmonella/ubiquitination/20151119_HeLa_HCT116_05h_2h_all.xlsx",
           "sheet": "20151119_HeLa_HCT116_05h_2h_all",
           "accession column": "Proteins",

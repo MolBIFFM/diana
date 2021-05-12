@@ -160,7 +160,7 @@ class ProteinInteractionNetwork(nx.Graph):
         header=0,
         num_sites=1000,
         num_replicates=1,
-        merge_replicates=statistics.mean,
+        combine_replicates=statistics.mean,
         convert_measurement=math.log2,
         organism=9606,
     ):
@@ -237,7 +237,7 @@ class ProteinInteractionNetwork(nx.Graph):
                             proteins[protein][isoform],
                             (
                                 position,
-                                convert_measurement(merge_replicates(measurements)),
+                                convert_measurement(combine_replicates(measurements)),
                             ),
                         )
             else:
@@ -510,7 +510,7 @@ class ProteinInteractionNetwork(nx.Graph):
                     )
                 )
 
-    def get_changes(self, time, ptm, merge_sites=statistics.mean):
+    def get_changes(self, time, ptm, combine_sites=statistics.mean):
         changes = []
         for protein in self:
             sites = [
@@ -522,7 +522,7 @@ class ProteinInteractionNetwork(nx.Graph):
             ]
 
             if sites:
-                changes.append(merge_sites(sites))
+                changes.append(combine_sites(sites))
 
         return changes
 
@@ -531,9 +531,9 @@ class ProteinInteractionNetwork(nx.Graph):
         time,
         post_translational_modification,
         thresholds,
-        merge_sites=statistics.mean,
+        combine_sites=statistics.mean,
     ):
-        changes = self.get_changes(time, post_translational_modification, merge_sites)
+        changes = self.get_changes(time, post_translational_modification, combine_sites)
         mean = statistics.mean(changes)
         stdev = statistics.stdev(changes, xbar=mean)
         return (thresholds[0] * stdev + mean, thresholds[1] * stdev + mean)
@@ -543,9 +543,9 @@ class ProteinInteractionNetwork(nx.Graph):
         time,
         post_translational_modification,
         change,
-        merge_sites=statistics.mean,
+        combine_sites=statistics.mean,
     ):
-        changes = self.get_changes(time, post_translational_modification, merge_sites)
+        changes = self.get_changes(time, post_translational_modification, combine_sites)
         mean = statistics.mean(changes)
         stdev = statistics.stdev(changes, xbar=mean)
         return (change - mean) / stdev
@@ -555,10 +555,10 @@ class ProteinInteractionNetwork(nx.Graph):
         time,
         post_translational_modification,
         thresholds,
-        merge_sites=statistics.mean,
+        combine_sites=statistics.mean,
     ):
         changes = sorted(
-            self.get_changes(time, post_translational_modification, merge_sites)
+            self.get_changes(time, post_translational_modification, combine_sites)
         )
         proportion_range = [0.0, 0.0]
 
@@ -585,9 +585,9 @@ class ProteinInteractionNetwork(nx.Graph):
         time,
         post_translational_modification,
         change,
-        merge_sites=statistics.mean,
+        combine_sites=statistics.mean,
     ):
-        changes = self.get_changes(time, post_translational_modification, merge_sites)
+        changes = self.get_changes(time, post_translational_modification, combine_sites)
         return (
             min(
                 len([c for c in changes if c <= change]),
@@ -598,9 +598,9 @@ class ProteinInteractionNetwork(nx.Graph):
 
     def set_changes(
         self,
-        merge_sites=statistics.mean,
+        combine_sites=statistics.mean,
         changes=(-1.0, 1.0),
-        get_range=lambda time, post_translational_modification, changes, merge_sites: changes,
+        get_range=lambda time, post_translational_modification, changes, combine_sites: changes,
     ):
         times = self.get_times()
         post_translational_modifications = {
@@ -613,7 +613,7 @@ class ProteinInteractionNetwork(nx.Graph):
                     time,
                     post_translational_modification,
                     changes,
-                    merge_sites,
+                    combine_sites,
                 )
                 for post_translational_modification in post_translational_modifications[
                     time
@@ -637,7 +637,7 @@ class ProteinInteractionNetwork(nx.Graph):
                     ]
 
                     if sites:
-                        ptms[post_translational_modification] = merge_sites(sites)
+                        ptms[post_translational_modification] = combine_sites(sites)
 
                 if ptms:
                     if all(
@@ -1149,7 +1149,7 @@ class ProteinInteractionNetwork(nx.Graph):
     def get_modules(
         self,
         module_size=35,
-        merge_sizes=statistics.mean,
+        combine_sizes=statistics.mean,
         weight="weight",
         algorithm=modularization.louvain,
     ):
@@ -1163,7 +1163,9 @@ class ProteinInteractionNetwork(nx.Graph):
             for community in list(nx.algorithms.components.connected_components(self))
         ]
 
-        while merge_sizes([len(community) for community in communities]) > module_size:
+        while (
+            combine_sizes([len(community) for community in communities]) > module_size
+        ):
             max_community_size = max(len(community) for community in communities)
 
             indices = [
@@ -1202,8 +1204,8 @@ class ProteinInteractionNetwork(nx.Graph):
         self,
         time,
         ptm,
-        change_filter=lambda merged_sites: bool(merged_sites),
-        merge_sites=statistics.mean,
+        change_filter=lambda combined_sites: bool(combined_sites),
+        combine_sites=statistics.mean,
     ):
         proteins = []
         for protein in self:
@@ -1215,7 +1217,7 @@ class ProteinInteractionNetwork(nx.Graph):
                 and change.split(" ")[1] == ptm
             ]
 
-            if sites and change_filter(merge_sites(sites)):
+            if sites and change_filter(combine_sites(sites)):
                 proteins.append(protein)
 
         return proteins
@@ -1224,10 +1226,10 @@ class ProteinInteractionNetwork(nx.Graph):
         self,
         p=0.05,
         changes=(-1.0, 1.0),
-        get_range=lambda time, ptm, changes, merge_sites: changes,
-        merge_sites=statistics.mean,
+        get_range=lambda time, ptm, changes, combine_sites: changes,
+        combine_sites=statistics.mean,
         module_size=35,
-        merge_sizes=statistics.mean,
+        combine_sizes=statistics.mean,
         weight="weight",
         test="two-sided",
         algorithm=modularization.louvain,
@@ -1236,7 +1238,7 @@ class ProteinInteractionNetwork(nx.Graph):
             i: module
             for i, module in enumerate(
                 self.get_modules(
-                    module_size, merge_sizes, weight=weight, algorithm=algorithm
+                    module_size, combine_sizes, weight=weight, algorithm=algorithm
                 )
             )
         }
@@ -1257,7 +1259,7 @@ class ProteinInteractionNetwork(nx.Graph):
                     time,
                     ptm,
                     changes,
-                    merge_sites,
+                    combine_sites,
                 )
 
                 if test == "one-sided positive":
@@ -1266,7 +1268,7 @@ class ProteinInteractionNetwork(nx.Graph):
                             time,
                             ptm,
                             lambda change: change > mid_range[1],
-                            merge_sites=merge_sites,
+                            combine_sites=combine_sites,
                         )
                     )
 
@@ -1276,7 +1278,7 @@ class ProteinInteractionNetwork(nx.Graph):
                                 time,
                                 ptm,
                                 lambda change: change > mid_range[1],
-                                merge_sites=merge_sites,
+                                combine_sites=combine_sites,
                             )
                         )
                         for i in modules
@@ -1288,7 +1290,7 @@ class ProteinInteractionNetwork(nx.Graph):
                             time,
                             ptm,
                             lambda change: change < mid_range[0],
-                            merge_sites=merge_sites,
+                            combine_sites=combine_sites,
                         )
                     )
 
@@ -1298,7 +1300,7 @@ class ProteinInteractionNetwork(nx.Graph):
                                 time,
                                 ptm,
                                 lambda change: change < mid_range[0],
-                                merge_sites=merge_sites,
+                                combine_sites=combine_sites,
                             )
                         )
                         for i in modules
@@ -1310,14 +1312,14 @@ class ProteinInteractionNetwork(nx.Graph):
                             time,
                             ptm,
                             lambda change: change < mid_range[0],
-                            merge_sites=merge_sites,
+                            combine_sites=combine_sites,
                         )
                     ) + len(
                         self.get_proteins(
                             time,
                             ptm,
                             lambda change: change > mid_range[1],
-                            merge_sites=merge_sites,
+                            combine_sites=combine_sites,
                         )
                     )
 
@@ -1327,7 +1329,7 @@ class ProteinInteractionNetwork(nx.Graph):
                                 time,
                                 ptm,
                                 lambda change: change < mid_range[0],
-                                merge_sites=merge_sites,
+                                combine_sites=combine_sites,
                             )
                         )
                         + len(
@@ -1335,7 +1337,7 @@ class ProteinInteractionNetwork(nx.Graph):
                                 time,
                                 ptm,
                                 lambda change: change > mid_range[1],
-                                merge_sites=merge_sites,
+                                combine_sites=combine_sites,
                             )
                         )
                         for i in modules

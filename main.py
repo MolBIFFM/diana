@@ -8,7 +8,7 @@ import xml.etree.ElementTree as ET
 import networkx as nx
 
 from pipeline.cytoscape_styles import CytoscapeStyles
-from pipeline.interface import convert, merge, extract, algorithm
+from pipeline.interface import algorithm, convert, combine, extract
 from pipeline.protein_protein_interaction_network import (
     ProteinInteractionNetwork,
 )
@@ -93,8 +93,8 @@ def main():
                     header=entry.get("header", 1) - 1,
                     num_sites=entry.get("sites", 1000),
                     num_replicates=entry.get("replicates", 1),
-                    merge_replicates=merge.MERGE.get(
-                        entry.get("merge replicates", "mean"), merge.MERGE["mean"]
+                    combine_replicates=combine.COMBINE.get(
+                        entry.get("combine replicates", "mean"), combine.COMBINE["mean"]
                     ),
                     convert_measurement=convert.LOG_BASE[entry.get("log base")],
                     organism=entry.get("organism", 9606),
@@ -285,9 +285,9 @@ def main():
                     == "z-score"
                 ):
                     network.set_changes(
-                        merge_sites=merge.MERGE[
+                        combine_sites=combine.COMBINE[
                             configuration["Cytoscape"]["node color"].get(
-                                "merge sites", "mean"
+                                "combine sites", "mean"
                             )
                         ],
                         changes=configuration["Cytoscape"]["node color"].get(
@@ -301,9 +301,9 @@ def main():
                     == "proportion"
                 ):
                     network.set_changes(
-                        merge_sites=merge.MERGE[
+                        combine_sites=combine.COMBINE[
                             configuration["Cytoscape"]["node color"].get(
-                                "merge sites", "mean"
+                                "combine sites", "mean"
                             )
                         ],
                         changes=configuration["Cytoscape"]["node color"].get(
@@ -314,9 +314,9 @@ def main():
 
                 else:
                     network.set_changes(
-                        merge_sites=merge.MERGE[
+                        combine_sites=combine.COMBINE[
                             configuration["Cytoscape"]["node color"].get(
-                                "merge sites", "mean"
+                                "combine sites", "mean"
                             )
                         ],
                         changes=configuration["Cytoscape"]["node color"].get(
@@ -340,9 +340,9 @@ def main():
                         "range", (-2.0, 2.0)
                     ),
                     get_bar_chart_range=network.get_z_score_range,
-                    merge_sites=merge.MERGE.get(
-                        configuration["Cytoscape"]["bar chart"].get("merge sites"),
-                        merge.MERGE["mean"],
+                    combine_sites=combine.COMBINE.get(
+                        configuration["Cytoscape"]["bar chart"].get("combine sites"),
+                        combine.COMBINE["mean"],
                     ),
                 )
 
@@ -356,9 +356,9 @@ def main():
                         "range", (0.025, 0.975)
                     ),
                     get_bar_chart_range=network.get_propotion_range,
-                    merge_sites=merge.MERGE.get(
-                        configuration["Cytoscape"]["bar chart"].get("merge sites"),
-                        merge.MERGE["mean"],
+                    combine_sites=combine.COMBINE.get(
+                        configuration["Cytoscape"]["bar chart"].get("combine sites"),
+                        combine.COMBINE["mean"],
                     ),
                 )
 
@@ -368,9 +368,9 @@ def main():
                     bar_chart_range=configuration["Cytoscape"]["bar chart"].get(
                         "range", (-1.0, 1.0)
                     ),
-                    merge_sites=merge.MERGE.get(
-                        configuration["Cytoscape"]["bar chart"].get("merge sites"),
-                        merge.MERGE["mean"],
+                    combine_sites=combine.COMBINE.get(
+                        configuration["Cytoscape"]["bar chart"].get("combine sites"),
+                        combine.COMBINE["mean"],
                     ),
                 )
 
@@ -417,20 +417,20 @@ def main():
                                 "enrichment analysis"
                             ].get("range", (-2.0, 2.0)),
                             get_range=network.get_z_score_range,
-                            merge_sites=merge.MERGE.get(
+                            combine_sites=combine.COMBINE.get(
                                 configuration["post-processing"][
                                     "enrichment analysis"
-                                ].get("merge sites"),
-                                merge.MERGE["mean"],
+                                ].get("combine sites"),
+                                combine.COMBINE["mean"],
                             ),
                             module_size=configuration["post-processing"][
                                 "enrichment analysis"
                             ].get("module size", 35),
-                            merge_sizes=merge.MERGE.get(
+                            combine_sizes=combine.COMBINE.get(
                                 configuration["post-processing"][
                                     "enrichment analysis"
-                                ].get("merge sites"),
-                                merge.MERGE["mean"],
+                                ].get("combine sites"),
+                                combine.COMBINE["mean"],
                             ),
                             test=configuration["post-processing"][
                                 "enrichment analysis"
@@ -457,20 +457,20 @@ def main():
                                 "enrichment analysis"
                             ].get("range", (0.025, 0.975)),
                             get_range=network.get_proportion_range,
-                            merge_sites=merge.MERGE.get(
+                            combine_sites=combine.COMBINE.get(
                                 configuration["post-processing"][
                                     "enrichment analysis"
-                                ].get("merge sites"),
-                                merge.MERGE["mean"],
+                                ].get("combine sites"),
+                                combine.COMBINE["mean"],
                             ),
                             module_size=configuration["post-processing"][
                                 "enrichment analysis"
                             ].get("module size", 35),
-                            merge_sizes=merge.MERGE.get(
+                            combine_sizes=combine.COMBINE.get(
                                 configuration["post-processing"][
                                     "enrichment analysis"
-                                ].get("merge sites"),
-                                merge.MERGE["mean"],
+                                ].get("combine sites"),
+                                combine.COMBINE["mean"],
                             ),
                             test=configuration["post-processing"][
                                 "enrichment analysis"
@@ -491,20 +491,20 @@ def main():
                             changes=configuration["post-processing"][
                                 "enrichment analysis"
                             ].get("range", (-1.0, 1.0)),
-                            merge_sites=merge.MERGE.get(
+                            combine_sites=combine.COMBINE.get(
                                 configuration["post-processing"][
                                     "enrichment analysis"
-                                ].get("merge sites"),
-                                merge.MERGE["mean"],
+                                ].get("combine sites"),
+                                combine.COMBINE["mean"],
                             ),
                             module_size=configuration["post-processing"][
                                 "enrichment analysis"
                             ].get("module size", 35),
-                            merge_sizes=merge.MERGE.get(
+                            combine_sizes=combine.COMBINE.get(
                                 configuration["post-processing"][
                                     "enrichment analysis"
-                                ].get("merge sites"),
-                                merge.MERGE["mean"],
+                                ].get("combine sites"),
+                                combine.COMBINE["mean"],
                             ),
                             test=configuration["post-processing"][
                                 "enrichment analysis"

@@ -1,6 +1,6 @@
 import statistics
 
-MERGE = {
+COMBINE = {
     "max": max,
     "min": min,
     "maxabs": lambda changes: max(changes, key=abs),
@@ -8,4 +8,5 @@ MERGE = {
     "mean": statistics.mean,
     "median": statistics.median,
     "sum": sum,
+    "sumabs": lambda changes: sum(abs(change) for change in changes),
 }
