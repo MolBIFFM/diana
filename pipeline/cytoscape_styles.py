@@ -9,8 +9,8 @@ class CytoscapeStyles(ET.ElementTree):
         self,
         ppi_network,
         bar_chart_range=(-3.0, 3.0),
-        get_bar_chart_range=lambda time, ptm, bar_chart_range, merge_sites: bar_chart_range,
-        merge_sites=lambda sites: max(sites, key=abs),
+        get_bar_chart_range=lambda time, ptm, bar_chart_range, combine_sites: bar_chart_range,
+        combine_sites=lambda sites: max(sites, key=abs),
     ):
         super(CytoscapeStyles, self).__init__(
             ET.Element("vizmap", attrib={"id": "VizMap", "documentVersion": "3.0"})
@@ -92,7 +92,7 @@ class CytoscapeStyles(ET.ElementTree):
                                 ptm,
                                 ppi_network.get_sites(time, ptm),
                                 cy_range=get_bar_chart_range(
-                                    time, ptm, bar_chart_range, merge_sites
+                                    time, ptm, bar_chart_range, combine_sites
                                 ),
                             ),
                         )

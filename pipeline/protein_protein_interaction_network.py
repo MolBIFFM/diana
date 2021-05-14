@@ -1,6 +1,6 @@
 import bisect
 import itertools
-import json
+import os
 import math
 import statistics
 import concurrent.futures
@@ -17,7 +17,7 @@ class ProteinInteractionNetwork(nx.Graph):
     def __init__(self):
         super().__init__()
 
-    def add_genes_from_spreadsheet(
+    def add_genes_from_table(
         self,
         file_name,
         gene_accession_column,
@@ -26,15 +26,32 @@ class ProteinInteractionNetwork(nx.Graph):
         header=0,
         organism=9606,
     ):
-        genes = []
-        for _, row in pd.read_excel(
-            file_name,
-            sheet_name=sheet_name,
-            header=header,
-            usecols=[gene_accession_column],
-            dtype={gene_accession_column: str},
-        ).iterrows():
+        if os.path.splitext(file_name)[1] in (
+            "xls",
+            "xlsx",
+            "xlsm",
+            "xlsb",
+            "odf",
+            "ods",
+            "odt",
+        ):
+            table = pd.read_excel(
+                file_name,
+                sheet_name=sheet_name,
+                header=header,
+                usecols=[gene_accession_column],
+                dtype={gene_accession_column: str},
+            )
+        else:
+            table = pd.read_table(
+                file_name,
+                header=header,
+                usecols=[gene_accession_column],
+                dtype={gene_accession_column: str},
+            )
 
+        genes = []
+        for _, row in table.iterrows():
             if pd.isna(row[gene_accession_column]):
                 continue
 
@@ -146,7 +163,7 @@ class ProteinInteractionNetwork(nx.Graph):
                 self.nodes[protein]["protein name"],
             )
 
-    def add_proteins_from_spreadsheet(
+    def add_proteins_from_table(
         self,
         file_name,
         protein_accession_column,
@@ -164,21 +181,44 @@ class ProteinInteractionNetwork(nx.Graph):
         convert_measurement=math.log2,
         organism=9606,
     ):
-        proteins = {}
-        for _, row in pd.read_excel(
-            file_name,
-            sheet_name=sheet_name,
-            header=header,
-            usecols=[protein_accession_column]
-            + [column for column in (position_column,) if column]
-            + replicates,
-            dtype={
-                protein_accession_column: str,
-                **{column: str for column in (position_column,) if column},
-                **{column: float for column in replicates},
-            },
-        ).iterrows():
+        if os.path.splitext(file_name)[1] in (
+            "xls",
+            "xlsx",
+            "xlsm",
+            "xlsb",
+            "odf",
+            "ods",
+            "odt",
+        ):
+            table = pd.read_excel(
+                file_name,
+                sheet_name=sheet_name,
+                header=header,
+                usecols=[protein_accession_column]
+                + [column for column in (position_column,) if column]
+                + replicates,
+                dtype={
+                    protein_accession_column: str,
+                    **{column: str for column in (position_column,) if column},
+                    **{column: float for column in replicates},
+                },
+            )
+        else:
+            table = pd.read_table(
+                file_name,
+                header=header,
+                usecols=[protein_accession_column]
+                + [column for column in (position_column,) if column]
+                + replicates,
+                dtype={
+                    protein_accession_column: str,
+                    **{column: str for column in (position_column,) if column},
+                    **{column: float for column in replicates},
+                },
+            )
 
+        proteins = {}
+        for _, row in table.iterrows():
             if pd.isna(row[protein_accession_column]):
                 continue
 

@@ -55,11 +55,7 @@ def main():
             network = ProteinInteractionNetwork()
 
             for entry in configuration.get("genes", {}):
-                for (
-                    gene_name,
-                    protein,
-                    protein_name,
-                ) in network.add_genes_from_spreadsheet(
+                for (gene_name, protein, protein_name,) in network.add_genes_from_table(
                     entry["file"],
                     gene_accession_column=entry["accession column"],
                     gene_accession_format=extract.EXTRACT.get(
@@ -76,7 +72,7 @@ def main():
                     gene_name,
                     protein,
                     protein_name,
-                ) in network.add_proteins_from_spreadsheet(
+                ) in network.add_proteins_from_table(
                     entry["file"],
                     protein_accession_column=entry["accession column"],
                     protein_accession_format=extract.EXTRACT.get(
