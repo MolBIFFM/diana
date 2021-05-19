@@ -82,7 +82,7 @@ def txt(url, file=None):
             yield line.rstrip("\n")
 
 
-def tabular_txt(url, file=None, delimiter=None, header=None, usecols=[]):
+def tabular_txt(url, file=None, delimiter=None, header=None, skiprows=0, usecols=[]):
     local_file_name = download(url, file)
 
     if os.path.splitext(local_file_name)[1] == ".csv":
@@ -92,8 +92,9 @@ def tabular_txt(url, file=None, delimiter=None, header=None, usecols=[]):
 
     for chunk in pd.read_csv(
         local_file_name,
-        sep=delimiter,
+        delimiter=delimiter,
         header=header,
+        skiprows=skiprows,
         usecols=usecols,
         chunksize=configuration.CHUNK_SIZE,
     ):

@@ -63,7 +63,7 @@ def main():
                     ),
                     sheet_name=entry.get("sheet", 0),
                     header=entry.get("header", 1) - 1,
-                    organism=entry.get("organism", 9606),
+                    taxon_identifier=entry.get("taxon identifier", 9606),
                 ):
                     logger.info("{}\t{}\t{}".format(protein, gene_name, protein_name))
 
@@ -93,7 +93,7 @@ def main():
                         entry.get("combine replicates", "mean"), combine.COMBINE["mean"]
                     ),
                     convert_measurement=convert.LOG_BASE[entry.get("log base")],
-                    organism=entry.get("organism", 9606),
+                    taxon_identifier=entry.get("taxon identifier", 9606),
                 ):
                     logger.info("{}\t{}\t{}".format(protein, gene_name, protein_name))
 
@@ -121,9 +121,17 @@ def main():
                                 "Two-hybrid",
                             ],
                         ),
-                        organism=configuration["protein-protein interactions"][
+                        experimental_system_type=configuration[
+                            "protein-protein interactions"
+                        ]["BioGRID"].get(
+                            "experimental system type",
+                            [
+                                "physical",
+                            ],
+                        ),
+                        taxon_identifier=configuration["protein-protein interactions"][
                             "BioGRID"
-                        ].get("organism", 9606),
+                        ].get("taxon identifier", 9606),
                         multi_validated_physical=configuration[
                             "protein-protein interactions"
                         ]["BioGRID"].get("multi-validated physical", False),
@@ -151,10 +159,7 @@ def main():
                         ]["CORUM"].get(
                             "protein complex purification method",
                             [],
-                        ),
-                        organism=configuration["protein-protein interactions"][
-                            "CORUM"
-                        ].get("organism", "Human"),
+                        )
                     ):
                         logger.info(
                             "{}\t{}\tCORUM\t{:.3f}".format(
@@ -173,13 +178,10 @@ def main():
                         ]["IntAct"].get("interaction detection methods", []),
                         interaction_types=configuration["protein-protein interactions"][
                             "IntAct"
-                        ].get("interaction_types", []),
+                        ].get("interaction types", []),
                         mi_score=configuration["protein-protein interactions"][
                             "IntAct"
                         ].get("MI score", 0.27),
-                        organism=configuration["protein-protein interactions"][
-                            "IntAct"
-                        ].get("organism", 9606),
                     ):
                         logger.info(
                             "{}\t{}\tIntAct\t{:.3f}".format(
@@ -193,18 +195,15 @@ def main():
                         interactor_b,
                         score,
                     ) in network.add_interactions_from_reactome(
-                        interaction_detection_methods=configuration[
+                        interaction_context=configuration[
                             "protein-protein interactions"
-                        ]["Reactome"].get("interaction detection methods", []),
-                        interaction_types=configuration["protein-protein interactions"][
+                        ]["Reactome"].get("interaction context", []),
+                        interaction_type=configuration["protein-protein interactions"][
                             "Reactome"
-                        ].get("interaction_types", []),
-                        reactome_score=configuration["protein-protein interactions"][
+                        ].get("interaction type", []),
+                        taxon_identifier=configuration["protein-protein interactions"][
                             "Reactome"
-                        ].get("Reactome score", 0.0),
-                        organism=configuration["protein-protein interactions"][
-                            "Reactome"
-                        ].get("organism", 9606),
+                        ].get("taxon identifier", 9606),
                     ):
                         logger.info(
                             "{}\t{}\tReactome\t{:.3f}".format(
@@ -260,9 +259,9 @@ def main():
                         combined_score=configuration["protein-protein interactions"][
                             "STRING"
                         ].get("combined score", 0.7),
-                        organism=configuration["protein-protein interactions"][
+                        taxon_identifier=configuration["protein-protein interactions"][
                             "STRING"
-                        ].get("organism", 9606),
+                        ].get("taxon identifier", 9606),
                         physical=configuration["protein-protein interactions"][
                             "STRING"
                         ].get("physical", False),
@@ -274,6 +273,62 @@ def main():
                         )
 
             if "Cytoscape" in configuration:
+                if (
+                    configuration["Cytoscape"].get("bar chart", {}).get("type")
+                    == "z-score"
+                ):
+                    styles = CytoscapeStyles(
+                        network,
+                        bar_chart_range=configuration["Cytoscape"]["bar chart"].get(
+                            "range", (-2.0, 2.0)
+                        ),
+                        get_bar_chart_range=network.get_z_score_range,
+                        combine_sites=combine.COMBINE.get(
+                            configuration["Cytoscape"]["bar chart"].get(
+                                "combine sites"
+                            ),
+                            combine.COMBINE["mean"],
+                        ),
+                    )
+
+                elif (
+                    configuration["Cytoscape"].get("bar chart", {}).get("type")
+                    == "proportion"
+                ):
+                    styles = CytoscapeStyles(
+                        network,
+                        bar_chart_range=configuration["Cytoscape"]["bar chart"].get(
+                            "range", (0.025, 0.975)
+                        ),
+                        get_bar_chart_range=network.get_propotion_range,
+                        combine_sites=combine.COMBINE.get(
+                            configuration["Cytoscape"]["bar chart"].get(
+                                "combine sites"
+                            ),
+                            combine.COMBINE["mean"],
+                        ),
+                    )
+
+                else:
+                    styles = CytoscapeStyles(
+                        network,
+                        bar_chart_range=configuration["Cytoscape"]["bar chart"].get(
+                            "range", (-1.0, 1.0)
+                        ),
+                        combine_sites=combine.COMBINE.get(
+                            configuration["Cytoscape"]["bar chart"].get(
+                                "combine sites"
+                            ),
+                            combine.COMBINE["mean"],
+                        ),
+                    )
+
+                export_styles(
+                    styles,
+                    os.path.splitext(os.path.basename(configuration_file))[0],
+                    ".{}".format(i) if len(configurations) > 1 else "",
+                )
+
                 network.set_post_translational_modification()
 
                 if (
@@ -326,57 +381,7 @@ def main():
                 ".{}".format(i) if len(configurations) > 1 else "",
             )
 
-            if (
-                configuration.get("Cytoscape", {}).get("bar chart", {}).get("type")
-                == "z-score"
-            ):
-                styles = CytoscapeStyles(
-                    network,
-                    bar_chart_range=configuration["Cytoscape"]["bar chart"].get(
-                        "range", (-2.0, 2.0)
-                    ),
-                    get_bar_chart_range=network.get_z_score_range,
-                    combine_sites=combine.COMBINE.get(
-                        configuration["Cytoscape"]["bar chart"].get("combine sites"),
-                        combine.COMBINE["mean"],
-                    ),
-                )
-
-            elif (
-                configuration.get("Cytoscape", {}).get("bar chart", {}).get("type")
-                == "proportion"
-            ):
-                styles = CytoscapeStyles(
-                    network,
-                    bar_chart_range=configuration["Cytoscape"]["bar chart"].get(
-                        "range", (0.025, 0.975)
-                    ),
-                    get_bar_chart_range=network.get_propotion_range,
-                    combine_sites=combine.COMBINE.get(
-                        configuration["Cytoscape"]["bar chart"].get("combine sites"),
-                        combine.COMBINE["mean"],
-                    ),
-                )
-
-            else:
-                styles = CytoscapeStyles(
-                    network,
-                    bar_chart_range=configuration["Cytoscape"]["bar chart"].get(
-                        "range", (-1.0, 1.0)
-                    ),
-                    combine_sites=combine.COMBINE.get(
-                        configuration["Cytoscape"]["bar chart"].get("combine sites"),
-                        combine.COMBINE["mean"],
-                    ),
-                )
-
-            export_styles(
-                styles,
-                os.path.splitext(os.path.basename(configuration_file))[0],
-                ".{}".format(i) if len(configurations) > 1 else "",
-            )
-
-            if configuration.get("neighborhood"):
+            if "neighborhood" in configuration:
                 for protein in configuration["neighborhood"].get("proteins", []):
                     export_network(
                         network.get_neighborhood(

@@ -1,5 +1,6 @@
+import os
 import tempfile
 
 CHUNK_SIZE = 10 * 2 ** 20
-USER_AGENT = "lucas.fein@stud.uni-frankfurt.de"
-DOWNLOAD_DIRECTORY = tempfile.gettempdir()
+USER_AGENT = "pipeline"
+DOWNLOAD_DIRECTORY = os.path.join(tempfile.gettempdir(), "pipeline")
