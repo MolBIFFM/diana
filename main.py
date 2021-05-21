@@ -1,9 +1,8 @@
 import argparse
 import json
-import logging
 import os
-import sys
 import xml.etree.ElementTree as ET
+import logging
 
 import networkx as nx
 
@@ -31,21 +30,18 @@ def main():
     parser.add_argument(
         "-c",
         "--configurations",
-        help="JSON configuration files specifying protein-protein interaction network assembly and analysis",
+        help="JSON configuration files",
         nargs="+",
         required=True,
     )
-    parser.add_argument("-l", "--log", help="file name for log")
+    parser.add_argument("-l", "--log", help="log file")
     args = parser.parse_args()
 
-    logging.basicConfig(stream=sys.stdout, level=logging.DEBUG, format="%(message)s")
-
-    logger = logging.getLogger("root")
-
     if args.log:
-        log_file = logging.FileHandler(args.log, mode="w")
-        log_file.setFormatter(logging.Formatter(fmt="%(message)s"))
-        logger.addHandler(log_file)
+        logger = logging.getLogger("root")
+        logging.basicConfig(
+            filename=args.log, filemode="w", level=logging.DEBUG, format="%(message)s"
+        )
 
     for configuration_file in args.configurations:
         with open(configuration_file) as configuration:
@@ -55,7 +51,7 @@ def main():
             network = ProteinInteractionNetwork()
 
             for entry in configuration.get("genes", {}):
-                for (gene_name, protein, protein_name,) in network.add_genes_from_table(
+                network.add_genes_from_table(
                     entry["file"],
                     gene_accession_column=entry["accession column"],
                     gene_accession_format=extract.EXTRACT.get(
@@ -64,15 +60,10 @@ def main():
                     sheet_name=entry.get("sheet", 0),
                     header=entry.get("header", 1) - 1,
                     taxon_identifier=entry.get("taxon identifier", 9606),
-                ):
-                    logger.info("{}\t{}\t{}".format(protein, gene_name, protein_name))
+                )
 
             for entry in configuration.get("proteins", {}):
-                for (
-                    gene_name,
-                    protein,
-                    protein_name,
-                ) in network.add_proteins_from_table(
+                network.add_proteins_from_table(
                     entry["file"],
                     protein_accession_column=entry["accession column"],
                     protein_accession_format=extract.EXTRACT.get(
@@ -94,16 +85,15 @@ def main():
                     ),
                     convert_measurement=convert.LOG_BASE[entry.get("log base")],
                     taxon_identifier=entry.get("taxon identifier", 9606),
-                ):
-                    logger.info("{}\t{}\t{}".format(protein, gene_name, protein_name))
+                )
 
             if "protein-protein interactions" in configuration:
-                if "BioGRID" in configuration["protein-protein interactions"]:
-                    for (
-                        interactor_a,
-                        interactor_b,
-                        score,
-                    ) in network.add_interactions_from_biogrid(
+                if "BioGRID" in configuration[
+                    "protein-protein interactions"
+                ] and configuration["protein-protein interactions"]["BioGRID"].get(
+                    "neighbors", False
+                ):
+                    network.add_proteins_from_biogrid(
                         experimental_system=configuration[
                             "protein-protein interactions"
                         ]["BioGRID"].get(
@@ -135,44 +125,28 @@ def main():
                         multi_validated_physical=configuration[
                             "protein-protein interactions"
                         ]["BioGRID"].get("multi-validated physical", False),
-                    ):
-                        logger.info(
-                            "{}\t{}\tBioGRID\t{:.3f}".format(
-                                *sorted(
-                                    [
-                                        interactor_a,
-                                        interactor_b,
-                                    ]
-                                ),
-                                score
-                            )
-                        )
+                    )
 
-                if "CORUM" in configuration["protein-protein interactions"]:
-                    for (
-                        interactor_a,
-                        interactor_b,
-                        score,
-                    ) in network.add_interactions_from_corum(
+                if "CORUM" in configuration[
+                    "protein-protein interactions"
+                ] and configuration["protein-protein interactions"]["CORUM"].get(
+                    "neighbors", False
+                ):
+                    network.add_proteins_from_corum(
                         protein_complex_purification_method=configuration[
                             "protein-protein interactions"
                         ]["CORUM"].get(
                             "protein complex purification method",
                             [],
-                        )
-                    ):
-                        logger.info(
-                            "{}\t{}\tCORUM\t{:.3f}".format(
-                                *sorted([interactor_a, interactor_b]), score
-                            )
-                        )
+                        ),
+                    )
 
-                if "IntAct" in configuration["protein-protein interactions"]:
-                    for (
-                        interactor_a,
-                        interactor_b,
-                        score,
-                    ) in network.add_interactions_from_intact(
+                if "IntAct" in configuration[
+                    "protein-protein interactions"
+                ] and configuration["protein-protein interactions"]["IntAct"].get(
+                    "neighbors", False
+                ):
+                    network.add_proteins_from_intact(
                         interaction_detection_methods=configuration[
                             "protein-protein interactions"
                         ]["IntAct"].get("interaction detection methods", []),
@@ -182,19 +156,14 @@ def main():
                         mi_score=configuration["protein-protein interactions"][
                             "IntAct"
                         ].get("MI score", 0.27),
-                    ):
-                        logger.info(
-                            "{}\t{}\tIntAct\t{:.3f}".format(
-                                *sorted([interactor_a, interactor_b]), score
-                            )
-                        )
+                    )
 
-                if "Reactome" in configuration["protein-protein interactions"]:
-                    for (
-                        interactor_a,
-                        interactor_b,
-                        score,
-                    ) in network.add_interactions_from_reactome(
+                if "Reactome" in configuration[
+                    "protein-protein interactions"
+                ] and configuration["protein-protein interactions"]["Reactome"].get(
+                    "neighbors", False
+                ):
+                    network.add_proteins_from_reactome(
                         interaction_context=configuration[
                             "protein-protein interactions"
                         ]["Reactome"].get("interaction context", []),
@@ -204,19 +173,14 @@ def main():
                         taxon_identifier=configuration["protein-protein interactions"][
                             "Reactome"
                         ].get("taxon identifier", 9606),
-                    ):
-                        logger.info(
-                            "{}\t{}\tReactome\t{:.3f}".format(
-                                *sorted([interactor_a, interactor_b]), score
-                            )
-                        )
+                    )
 
-                if "STRING" in configuration["protein-protein interactions"]:
-                    for (
-                        interactor_a,
-                        interactor_b,
-                        score,
-                    ) in network.add_interactions_from_string(
+                if "STRING" in configuration[
+                    "protein-protein interactions"
+                ] and configuration["protein-protein interactions"]["STRING"].get(
+                    "neighbors", False
+                ):
+                    network.add_proteins_from_string(
                         neighborhood=configuration["protein-protein interactions"][
                             "STRING"
                         ].get("neighborhood", 0.0),
@@ -265,12 +229,138 @@ def main():
                         physical=configuration["protein-protein interactions"][
                             "STRING"
                         ].get("physical", False),
-                    ):
-                        logger.info(
-                            "{}\t{}\tSTRING\t{:.3f}".format(
-                                *sorted([interactor_a, interactor_b]), score
-                            )
-                        )
+                    )
+
+                if any(
+                    configuration["protein-protein interactions"]
+                    .get(database, {})
+                    .get("neighbors", False)
+                    for database in {"BioGRID", "CORUM", "IntAct", "Reactome", "STRING"}
+                ):
+                    network.annotate_proteins()
+
+                if "BioGRID" in configuration["protein-protein interactions"]:
+                    network.add_interactions_from_biogrid(
+                        experimental_system=configuration[
+                            "protein-protein interactions"
+                        ]["BioGRID"].get(
+                            "experimental system",
+                            [
+                                "Affinity Capture-Luminescence",
+                                "Affinity Capture-MS",
+                                "Affinity Capture-RNA",
+                                "Affinity Capture-Western",
+                                "Biochemical Activity",
+                                "Co-crystal Structure",
+                                "Co-purification",
+                                "FRET",
+                                "PCA",
+                                "Two-hybrid",
+                            ],
+                        ),
+                        experimental_system_type=configuration[
+                            "protein-protein interactions"
+                        ]["BioGRID"].get(
+                            "experimental system type",
+                            [
+                                "physical",
+                            ],
+                        ),
+                        taxon_identifier=configuration["protein-protein interactions"][
+                            "BioGRID"
+                        ].get("taxon identifier", 9606),
+                        multi_validated_physical=configuration[
+                            "protein-protein interactions"
+                        ]["BioGRID"].get("multi-validated physical", False),
+                    )
+
+                if "CORUM" in configuration["protein-protein interactions"]:
+                    network.add_interactions_from_corum(
+                        protein_complex_purification_method=configuration[
+                            "protein-protein interactions"
+                        ]["CORUM"].get(
+                            "protein complex purification method",
+                            [],
+                        ),
+                    )
+
+                if "IntAct" in configuration["protein-protein interactions"]:
+                    network.add_interactions_from_intact(
+                        interaction_detection_methods=configuration[
+                            "protein-protein interactions"
+                        ]["IntAct"].get("interaction detection methods", []),
+                        interaction_types=configuration["protein-protein interactions"][
+                            "IntAct"
+                        ].get("interaction types", []),
+                        mi_score=configuration["protein-protein interactions"][
+                            "IntAct"
+                        ].get("MI score", 0.27),
+                    )
+
+                if "Reactome" in configuration["protein-protein interactions"]:
+                    network.add_interactions_from_reactome(
+                        interaction_context=configuration[
+                            "protein-protein interactions"
+                        ]["Reactome"].get("interaction context", []),
+                        interaction_type=configuration["protein-protein interactions"][
+                            "Reactome"
+                        ].get("interaction type", []),
+                        taxon_identifier=configuration["protein-protein interactions"][
+                            "Reactome"
+                        ].get("taxon identifier", 9606),
+                    )
+
+                if "STRING" in configuration["protein-protein interactions"]:
+                    network.add_interactions_from_string(
+                        neighborhood=configuration["protein-protein interactions"][
+                            "STRING"
+                        ].get("neighborhood", 0.0),
+                        neighborhood_transferred=configuration[
+                            "protein-protein interactions"
+                        ]["STRING"].get("neighborhood transferred", 0.0),
+                        fusion=configuration["protein-protein interactions"][
+                            "STRING"
+                        ].get("fusion", 0.0),
+                        cooccurence=configuration["protein-protein interactions"][
+                            "STRING"
+                        ].get("cooccurence", 0.0),
+                        homology=configuration["protein-protein interactions"][
+                            "STRING"
+                        ].get("homology", 0.0),
+                        coexpression=configuration["protein-protein interactions"][
+                            "STRING"
+                        ].get("coexpression", 0.0),
+                        coexpression_transferred=configuration[
+                            "protein-protein interactions"
+                        ]["STRING"].get("coexpression transferred", 0.0),
+                        experiments=configuration["protein-protein interactions"][
+                            "STRING"
+                        ].get("experiments", 0.7),
+                        experiments_transferred=configuration[
+                            "protein-protein interactions"
+                        ]["STRING"].get("experiments transferred", 0.0),
+                        database=configuration["protein-protein interactions"][
+                            "STRING"
+                        ].get("database", 0.0),
+                        database_transferred=configuration[
+                            "protein-protein interactions"
+                        ]["STRING"].get("database transferred", 0.0),
+                        textmining=configuration["protein-protein interactions"][
+                            "STRING"
+                        ].get("textmining", 0.0),
+                        textmining_transferred=configuration[
+                            "protein-protein interactions"
+                        ]["STRING"].get("textmining transferred", 0.0),
+                        combined_score=configuration["protein-protein interactions"][
+                            "STRING"
+                        ].get("combined score", 0.7),
+                        taxon_identifier=configuration["protein-protein interactions"][
+                            "STRING"
+                        ].get("taxon identifier", 9606),
+                        physical=configuration["protein-protein interactions"][
+                            "STRING"
+                        ].get("physical", False),
+                    )
 
             if "Cytoscape" in configuration:
                 if (
@@ -529,7 +619,6 @@ def main():
                                         p_values[time][ptm][module],
                                     )
                                 )
-
                                 export_network(
                                     network.subgraph(modules[module]),
                                     os.path.splitext(
