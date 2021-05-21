@@ -70,32 +70,9 @@ class ProteinInteractionNetwork(nx.Graph):
                             entry.split("=")[1].split("{")[0].rstrip()
                         )
 
-            elif line.split(maxsplit=1)[0] == "OX":
-                if len(line.split(maxsplit=1)) == 1:
-                    continue
-
-                if (
-                    line.split(maxsplit=1)[1].split(";")[0].split("=")[0]
-                    == "NCBI_TaxID"
-                ):
-                    if (
-                        line.split(maxsplit=1)[1]
-                        .split(";")[0]
-                        .split("=")[1]
-                        .split("{")[0]
-                        .isnumeric()
-                    ):
-                        taxon_id = int(
-                            line.split(maxsplit=1)[1]
-                            .split(";")[0]
-                            .split("=")[1]
-                            .split("{")[0]
-                        )
-
             elif line == "//":
                 for protein in self:
                     if protein.split("-")[0] in accessions:
-
                         self.nodes[protein]["gene name"] = entry_gene_name.get(
                             "Name", "NA"
                         )
@@ -265,7 +242,6 @@ class ProteinInteractionNetwork(nx.Graph):
         num_replicates=1,
         combine_replicates=statistics.mean,
         convert_measurement=math.log2,
-        taxon_identifier=9606,
     ):
         if os.path.splitext(file_name)[1].lstrip(".") in (
             "xls",
@@ -389,7 +365,7 @@ class ProteinInteractionNetwork(nx.Graph):
         swissprot_proteins, primary_accession, gene_name, protein_name = {}, {}, {}, {}
 
         accessions, entry_gene_name, entry_protein_name = [], {}, {}
-        rec_name, taxon_id = False, 0
+        rec_name = False
         for line in fetch.txt(data.UNIPROT_SWISS_PROT):
             if not line.strip():
                 continue
@@ -441,45 +417,21 @@ class ProteinInteractionNetwork(nx.Graph):
                             entry.split("=")[1].split("{")[0].rstrip()
                         )
 
-            elif line.split(maxsplit=1)[0] == "OX":
-                if len(line.split(maxsplit=1)) == 1:
-                    continue
-
-                if (
-                    line.split(maxsplit=1)[1].split(";")[0].split("=")[0]
-                    == "NCBI_TaxID"
-                ):
-                    if (
-                        line.split(maxsplit=1)[1]
-                        .split(";")[0]
-                        .split("=")[1]
-                        .split("{")[0]
-                        .isnumeric()
-                    ):
-                        taxon_id = int(
-                            line.split(maxsplit=1)[1]
-                            .split(";")[0]
-                            .split("=")[1]
-                            .split("{")[0]
-                        )
-
             elif line == "//":
-                if taxon_id == taxon_identifier:
-                    for i, accession in enumerate(accessions):
-                        if accession in proteins:
-                            swissprot_proteins[accession] = proteins[accession]
-                            gene_name[accession] = entry_gene_name.get("Name", "NA")
-                            protein_name[accession] = entry_protein_name.get(
-                                "Full", "NA"
-                            )
-                            if i > 0:
-                                primary_accession[accession] = accessions[0]
+                for i, accession in enumerate(accessions):
+                    if accession in proteins:
+                        swissprot_proteins[accession] = proteins[accession]
+                        gene_name[accession] = entry_gene_name.get("Name", "NA")
+                        protein_name[accession] = entry_protein_name.get("Full", "NA")
+
+                        if i > 0:
+                            primary_accession[accession] = accessions[0]
 
                 accessions.clear()
                 entry_gene_name.clear()
                 entry_protein_name.clear()
 
-                rec_name, taxon_id = False, 0
+                rec_name = False
 
         proteins = swissprot_proteins
 
