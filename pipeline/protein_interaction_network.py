@@ -73,10 +73,8 @@ class ProteinInteractionNetwork(nx.Graph):
             elif line == "//":
                 for protein in self:
                     if protein.split("-")[0] in accessions:
-                        self.nodes[protein]["gene name"] = entry_gene_name.get(
-                            "Name", "NA"
-                        )
-                        self.nodes[protein]["protein name"] = entry_protein_name.get(
+                        self.nodes[protein]["gene"] = entry_gene_name.get("Name", "NA")
+                        self.nodes[protein]["protein"] = entry_protein_name.get(
                             "Full", "NA"
                         )
 
@@ -119,12 +117,12 @@ class ProteinInteractionNetwork(nx.Graph):
                 dtype={gene_accession_column: str},
             )
 
-        genes = []
+        genes = set()
         for _, row in table.iterrows():
             if pd.isna(row[gene_accession_column]):
                 continue
 
-            genes.extend(
+            genes.update(
                 [
                     str(gene_accession)
                     for gene_accession in gene_accession_format(
@@ -213,10 +211,10 @@ class ProteinInteractionNetwork(nx.Graph):
                     and entry_gene_name.get("Name") in genes
                 ):
                     self.add_node(accessions[0])
-                    self.nodes[accessions[0]]["gene name"] = entry_gene_name.get(
+                    self.nodes[accessions[0]]["gene"] = entry_gene_name.get(
                         "Name", "NA"
                     )
-                    self.nodes[accessions[0]]["protein name"] = entry_protein_name.get(
+                    self.nodes[accessions[0]]["protein"] = entry_protein_name.get(
                         "Full", "NA"
                     )
 
@@ -503,18 +501,16 @@ class ProteinInteractionNetwork(nx.Graph):
             for isoform in proteins[protein]:
                 if isoform:
                     self.add_node("-".join([protein, isoform]))
+                    self.nodes["-".join([protein, isoform])]["gene"] = gene_name.get(
+                        protein, "NA"
+                    )
                     self.nodes["-".join([protein, isoform])][
-                        "gene name"
-                    ] = gene_name.get(protein, "NA")
-                    self.nodes["-".join([protein, isoform])][
-                        "protein name"
+                        "protein"
                     ] = protein_name.get(protein, "NA")
                 else:
                     self.add_node(protein)
-                    self.nodes[protein]["gene name"] = gene_name.get(protein, "NA")
-                    self.nodes[protein]["protein name"] = protein_name.get(
-                        protein, "NA"
-                    )
+                    self.nodes[protein]["gene"] = gene_name.get(protein, "NA")
+                    self.nodes[protein]["protein"] = protein_name.get(protein, "NA")
 
                 proteins[protein][isoform] = sorted(
                     sorted(
@@ -840,8 +836,7 @@ class ProteinInteractionNetwork(nx.Graph):
             if (
                 row["BioGRID ID Interactor A"] in uniprot
                 and row["BioGRID ID Interactor B"] in uniprot
-                and uniprot[row["BioGRID ID Interactor A"]]
-                != uniprot[row["BioGRID ID Interactor B"]]
+                and row["Organism ID Interactor A"] == row["Organism ID Interactor B"]
                 and (
                     not experimental_system
                     or row["Experimental System"] in experimental_system
@@ -855,7 +850,7 @@ class ProteinInteractionNetwork(nx.Graph):
                     uniprot[row["BioGRID ID Interactor A"]] in self
                     and uniprot[row["BioGRID ID Interactor B"]] not in self
                     and self.nodes[uniprot[row["BioGRID ID Interactor A"]]].get(
-                        "protein name"
+                        "protein"
                     )
                 ):
                     self.add_node(uniprot[row["BioGRID ID Interactor B"]])
@@ -864,7 +859,7 @@ class ProteinInteractionNetwork(nx.Graph):
                     uniprot[row["BioGRID ID Interactor A"]] not in self
                     and uniprot[row["BioGRID ID Interactor B"]] in self
                     and self.nodes[uniprot[row["BioGRID ID Interactor B"]]].get(
-                        "protein name"
+                        "protein"
                     )
                 ):
                     self.add_node(uniprot[row["BioGRID ID Interactor A"]])
@@ -885,7 +880,7 @@ class ProteinInteractionNetwork(nx.Graph):
             delimiter="\t",
             usecols=[0, 1, 2],
         ):
-            if row[1] == "BioGRID":
+            if row[1] == "BioGRID" and row[0] in self:
                 uniprot[int(row[2])] = row[0]
 
         for row in fetch.tabular_txt(
@@ -899,7 +894,10 @@ class ProteinInteractionNetwork(nx.Graph):
                 "IDENTIFIER_TYPE",
             ],
         ):
-            if row["IDENTIFIER_TYPE"] in ("UNIPROT-ACCESSION", "UNIPROT-ISOFORM"):
+            if (
+                row["IDENTIFIER_TYPE"] in ("UNIPROT-ACCESSION", "UNIPROT-ISOFORM")
+                and row["IDENTIFIER_VALUE"] in self
+            ):
                 uniprot[int(row["BIOGRID_ID"])] = row["IDENTIFIER_VALUE"]
 
         for row in fetch.tabular_txt(
@@ -970,14 +968,14 @@ class ProteinInteractionNetwork(nx.Graph):
                     if (
                         interactor_a in self
                         and interactor_b not in self
-                        and self.nodes[interactor_a].get("protein name")
+                        and self.nodes[interactor_a].get("protein")
                     ):
                         self.add_node(interactor_b)
 
                     elif (
                         interactor_a not in self
                         and interactor_b in self
-                        and self.nodes[interactor_b].get("protein name")
+                        and self.nodes[interactor_b].get("protein")
                     ):
                         self.add_node(interactor_a)
 
@@ -1036,63 +1034,57 @@ class ProteinInteractionNetwork(nx.Graph):
             ],
         ):
 
-            if not (
-                interactor_a := mitab.get_identifier_from_namespace(
-                    row["#ID(s) interactor A"], "uniprotkb"
-                )
-            ):
-                continue
-
-            if not (
-                interactor_b := mitab.get_identifier_from_namespace(
-                    row["ID(s) interactor B"], "uniprotkb"
-                )
-            ):
-                continue
-
-            if interactor_a == interactor_b:
-                continue
-
-            if not (
-                not interaction_detection_methods
-                or mitab.namespace_has_any_term_from(
-                    row["Interaction detection method(s)"],
-                    "psi-mi",
-                    interaction_detection_methods,
-                )
-            ):
-                continue
-
-            if not (
-                not interaction_types
-                or mitab.namespace_has_any_term_from(
-                    row["Interaction type(s)"], "psi-mi", interaction_types
-                )
-            ):
-                continue
-
-            if score := mitab.get_identifier_from_namespace(
-                row["Confidence value(s)"], "intact-miscore"
-            ):
-                score = float(score)
-                if score < mi_score:
-                    continue
-            else:
-                continue
-
             if (
-                interactor_a in self
-                and interactor_b not in self
-                and self.nodes[interactor_a].get("protein name")
+                (
+                    interactor_a := mitab.get_identifier_from_namespace(
+                        row["#ID(s) interactor A"], "uniprotkb"
+                    )
+                )
+                and (
+                    interactor_b := mitab.get_identifier_from_namespace(
+                        row["ID(s) interactor B"], "uniprotkb"
+                    )
+                )
+                and mitab.get_identifier_from_namespace(
+                    row["Taxid interactor A"], "taxid"
+                )
+                == mitab.get_identifier_from_namespace(
+                    row["Taxid interactor B"], "taxid"
+                )
+                and (
+                    not interaction_detection_methods
+                    or mitab.namespace_has_any_term_from(
+                        row["Interaction detection method(s)"],
+                        "psi-mi",
+                        interaction_detection_methods,
+                    )
+                )
+                and (
+                    not interaction_types
+                    or mitab.namespace_has_any_term_from(
+                        row["Interaction type(s)"], "psi-mi", interaction_types
+                    )
+                )
+                and (
+                    score := mitab.get_identifier_from_namespace(
+                        row["Confidence value(s)"], "intact-miscore"
+                    )
+                )
+                and float(score) >= mi_score
             ):
-                self.add_node(interactor_b)
+                if (
+                    interactor_a in self
+                    and interactor_b not in self
+                    and self.nodes[interactor_a].get("protein")
+                ):
+                    self.add_node(interactor_b)
 
-            elif (
-                interactor_a not in self
-                and interactor_b in self
-                and self.nodes[interactor_b].get("protein name")
-            ):
-                self.add_node(interactor_a)
+                elif (
+                    interactor_a not in self
+                    and interactor_b in self
+                    and self.nodes[interactor_b].get("protein")
+                ):
+                    self.add_node(interactor_a)
 
     def add_interactions_from_intact(
         self,
@@ -1119,61 +1111,51 @@ class ProteinInteractionNetwork(nx.Graph):
             ],
         ):
 
-            if not (
-                interactor_a := mitab.get_identifier_from_namespace(
-                    row["#ID(s) interactor A"], "uniprotkb"
-                )
-            ):
-                continue
-
-            if not (
-                interactor_b := mitab.get_identifier_from_namespace(
-                    row["ID(s) interactor B"], "uniprotkb"
-                )
-            ):
-                continue
-
             if (
-                interactor_a == interactor_b
-                or interactor_a not in self
-                or interactor_b not in self
-            ):
-                continue
-
-            if not (
-                not interaction_detection_methods
-                or mitab.namespace_has_any_term_from(
-                    row["Interaction detection method(s)"],
-                    "psi-mi",
-                    interaction_detection_methods,
+                (
+                    interactor_a := mitab.get_identifier_from_namespace(
+                        row["#ID(s) interactor A"], "uniprotkb"
+                    )
                 )
-            ):
-                continue
-
-            if not (
-                not interaction_types
-                or mitab.namespace_has_any_term_from(
-                    row["Interaction type(s)"], "psi-mi", interaction_types
+                and (
+                    interactor_b := mitab.get_identifier_from_namespace(
+                        row["ID(s) interactor B"], "uniprotkb"
+                    )
                 )
-            ):
-                continue
-
-            if score := mitab.get_identifier_from_namespace(
-                row["Confidence value(s)"], "intact-miscore"
+                and interactor_a != interactor_b
+                and (
+                    not interaction_detection_methods
+                    or mitab.namespace_has_any_term_from(
+                        row["Interaction detection method(s)"],
+                        "psi-mi",
+                        interaction_detection_methods,
+                    )
+                )
+                and (
+                    not interaction_types
+                    or mitab.namespace_has_any_term_from(
+                        row["Interaction type(s)"], "psi-mi", interaction_types
+                    )
+                )
+                and (
+                    score := mitab.get_identifier_from_namespace(
+                        row["Confidence value(s)"], "intact-miscore"
+                    )
+                )
+                and interactor_a in self
+                and interactor_b in self
             ):
                 score = float(score)
-                if score < mi_score:
-                    continue
-            else:
-                continue
 
-            if self.has_edge(interactor_a, interactor_b):
-                self.edges[interactor_a, interactor_b]["IntAct"] = max(
-                    score, self.edges[interactor_a, interactor_b].get("IntAct", 0.0)
-                )
-            else:
-                self.add_edge(interactor_a, interactor_b)
-                self.edges[interactor_a, interactor_b]["IntAct"] = score
+                if score >= mi_score:
+                    if self.has_edge(interactor_a, interactor_b):
+                        self.edges[interactor_a, interactor_b]["IntAct"] = max(
+                            score,
+                            self.edges[interactor_a, interactor_b].get("IntAct", 0.0),
+                        )
+                    else:
+                        self.add_edge(interactor_a, interactor_b)
+                        self.edges[interactor_a, interactor_b]["IntAct"] = score
 
     def add_proteins_from_reactome(
         self,
@@ -1202,27 +1184,22 @@ class ProteinInteractionNetwork(nx.Graph):
                 interactor_b = row["Interactor 2 uniprot id"].split(":")[1]
 
                 if (
-                    interactor_a != interactor_b
-                    and (
-                        not interaction_type
-                        or row["Interaction type"] in interaction_type
-                    )
-                    and (
-                        not interaction_context
-                        or row["Interaction context"] in interaction_context
-                    )
+                    not interaction_type or row["Interaction type"] in interaction_type
+                ) and (
+                    not interaction_context
+                    or row["Interaction context"] in interaction_context
                 ):
                     if (
                         interactor_a in self
                         and interactor_b not in self
-                        and self.nodes[interactor_a].get("protein name")
+                        and self.nodes[interactor_a].get("protein")
                     ):
                         self.add_node(interactor_b)
 
                     elif (
                         interactor_a not in self
                         and interactor_b in self
-                        and self.nodes[interactor_b].get("protein name")
+                        and self.nodes[interactor_b].get("protein")
                     ):
                         self.add_node(interactor_a)
 
@@ -1255,8 +1232,6 @@ class ProteinInteractionNetwork(nx.Graph):
 
                 if (
                     interactor_a != interactor_b
-                    and interactor_a in self
-                    and interactor_b in self
                     and (
                         not interaction_type
                         or row["Interaction type"] in interaction_type
@@ -1265,6 +1240,8 @@ class ProteinInteractionNetwork(nx.Graph):
                         not interaction_context
                         or row["Interaction context"] in interaction_context
                     )
+                    and interactor_a in self
+                    and interactor_b in self
                 ):
 
                     self.add_edge(interactor_a, interactor_b)
@@ -1306,9 +1283,10 @@ class ProteinInteractionNetwork(nx.Graph):
             data.STRING_ID_MAP.format(taxon_identifier=taxon_identifier),
             delimiter="\t",
             skiprows=1,
-            usecols=[0, 1],
+            usecols=[0, 1, 2],
         ):
-            uniprot[row[0]] = row[1]
+            if "BLAST_UniProt_AC" in row[2].split():
+                uniprot[row[0]] = row[1]
 
         thresholds = {
             column: threshold
@@ -1350,14 +1328,14 @@ class ProteinInteractionNetwork(nx.Graph):
                 if (
                     uniprot[row["protein1"]] in self
                     and uniprot[row["protein2"]] not in self
-                    and self.nodes[uniprot[row["protein1"]]].get("protein name")
+                    and self.nodes[uniprot[row["protein1"]]].get("protein")
                 ):
                     self.add_node(uniprot[row["protein2"]])
 
                 elif (
                     uniprot[row["protein1"]] not in self
                     and uniprot[row["protein2"]] in self
-                    and self.nodes[uniprot[row["protein2"]]].get("protein name")
+                    and self.nodes[uniprot[row["protein2"]]].get("protein")
                 ):
                     self.add_node(uniprot[row["protein1"]])
 
@@ -1390,16 +1368,17 @@ class ProteinInteractionNetwork(nx.Graph):
             delimiter="\t",
             usecols=[0, 1, 2],
         ):
-            if row[1] == "STRING":
+            if row[1] == "STRING" and row[0] in self:
                 uniprot[row[2]] = row[0]
 
         for row in fetch.tabular_txt(
             data.STRING_ID_MAP.format(taxon_identifier=taxon_identifier),
             delimiter="\t",
             skiprows=1,
-            usecols=[0, 1],
+            usecols=[0, 1, 2],
         ):
-            uniprot[row[0]] = row[1]
+            if "BLAST_UniProt_AC" in row[2].split() and row[1] in self:
+                uniprot[row[0]] = row[1]
 
         thresholds = {
             column: threshold

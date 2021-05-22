@@ -8,7 +8,7 @@ import networkx as nx
 
 from pipeline.cytoscape_styles import CytoscapeStyles
 from pipeline.interface import algorithm, convert, combine, extract
-from pipeline.protein_protein_interaction_network import (
+from pipeline.protein_interaction_network import (
     ProteinInteractionNetwork,
 )
 
@@ -55,7 +55,7 @@ def main():
                     entry["file"],
                     gene_accession_column=entry["accession column"],
                     gene_accession_format=extract.EXTRACT.get(
-                        entry.get("accession format"), lambda x: [x]
+                        entry.get("accession format"), lambda entry: [entry]
                     ),
                     sheet_name=entry.get("sheet", 0),
                     header=entry.get("header", 1) - 1,
@@ -67,13 +67,13 @@ def main():
                     entry["file"],
                     protein_accession_column=entry["accession column"],
                     protein_accession_format=extract.EXTRACT.get(
-                        entry.get("accession format"), lambda x: [x]
+                        entry.get("accession format"), lambda entry: [entry]
                     ),
                     time=entry.get("time", 0),
                     ptm=entry.get("post-translational modification", ""),
                     position_column=entry.get("position column", ""),
                     position_format=extract.EXTRACT.get(
-                        entry.get("position format"), lambda x: [x]
+                        entry.get("position format"), lambda entry: [entry]
                     ),
                     replicates=entry.get("replicate columns", []),
                     sheet_name=entry.get("sheet", 0),
