@@ -335,10 +335,10 @@ class ProteinInteractionNetwork(nx.Graph):
 
                         bisect.insort(
                             proteins[protein][isoform],
-                            (
+                            [
                                 position,
                                 convert_measurement(combine_replicates(measurements)),
-                            ),
+                            ],
                         )
             else:
                 protein_accessions = [
@@ -435,67 +435,50 @@ class ProteinInteractionNetwork(nx.Graph):
 
         for protein in primary_accession:
             if primary_accession[protein] in proteins:
-                for primary_isoform in list(proteins[primary_accession[protein]]):
-                    primary_positions = {}
-                    for position, measurement in proteins[primary_accession[protein]][
-                        primary_isoform
-                    ]:
-                        if position not in primary_positions:
-                            primary_positions[position] = set()
-                        primary_positions[position].add(measurement)
-
-                    for secondary_isoform in list(proteins[protein]):
-                        secondary_positions = {}
-                        for position, measurement in proteins[protein][
-                            secondary_isoform
-                        ]:
-                            if position not in secondary_positions:
-                                secondary_positions[position] = set()
-                            secondary_positions[position].add(measurement)
-
-                        if [
-                            measurements
-                            for position, measurements in sorted(
-                                secondary_positions.items()
-                            )
-                        ] == [
-                            measurements
-                            for position, measurements in sorted(
-                                primary_positions.items()
-                            )
-                        ]:
-                            positions = [
-                                primary_position
-                                if primary_position
-                                else secondary_position
-                                for primary_position, secondary_position in zip(
-                                    sorted(primary_positions.keys()),
-                                    sorted(secondary_positions.keys()),
+                for isoform in proteins[protein]:
+                    for primary_isoform in proteins[primary_accession[protein]]:
+                        for i in range(len(proteins[protein][isoform])):
+                            for j in range(
+                                len(
+                                    proteins[primary_accession[protein]][
+                                        primary_isoform
+                                    ]
                                 )
-                            ]
+                            ):
+                                if not proteins[protein][isoform][i]:
+                                    continue
 
-                        proteins[primary_accession[protein]][primary_isoform] = sorted(
-                            zip(
-                                positions,
-                                [
-                                    measurement
-                                    for position, measurement in proteins[
-                                        primary_accession[protein]
-                                    ][primary_isoform]
-                                ],
+                                if (
+                                    proteins[protein][isoform][i][1]
+                                    == proteins[primary_accession[protein]][
+                                        primary_isoform
+                                    ][j][1]
+                                ):
+                                    if not proteins[primary_accession[protein]][
+                                        primary_isoform
+                                    ][j][0]:
+                                        proteins[primary_accession[protein]][
+                                            primary_isoform
+                                        ][j][0] = proteins[protein][isoform][i][0]
+
+                                    proteins[protein][isoform][i] = []
+
+                    if not isoform in proteins[primary_accession[protein]]:
+                        proteins[primary_accession[protein]][isoform] = []
+
+                    for measurement in proteins[protein][isoform]:
+                        if measurement:
+                            bisect.insort(
+                                proteins[primary_accession[protein]][isoform],
+                                measurement,
                             )
-                        )
-
-                        del proteins[protein][secondary_isoform]
-
-                if not proteins[protein]:
-                    del proteins[protein]
-                    if protein in gene_name:
-                        del gene_name[protein]
             else:
-                proteins[primary_accession[protein]] = proteins.pop(protein)
-                gene_name[primary_accession[protein]] = gene_name.pop(protein)
-                protein_name[primary_accession[protein]] = protein_name.pop(protein)
+                proteins[primary_accession[protein]] = proteins[protein]
+                gene_name[primary_accession[protein]] = gene_name[protein]
+                protein_name[primary_accession[protein]] = protein_name[protein]
+
+        for protein in primary_accession:
+            del proteins[protein]
 
         for protein in proteins:
             for isoform in proteins[protein]:

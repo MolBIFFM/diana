@@ -84,7 +84,6 @@ def main():
                         entry.get("combine replicates", "mean"), combine.COMBINE["mean"]
                     ),
                     convert_measurement=convert.LOG_BASE[entry.get("log base")],
-                    taxon_identifier=entry.get("taxon identifier", 9606),
                 )
 
             if "protein-protein interactions" in configuration:
