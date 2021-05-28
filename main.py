@@ -80,8 +80,9 @@ def main():
                     header=entry.get("header", 1) - 1,
                     num_sites=entry.get("sites", 1000),
                     num_replicates=entry.get("replicates", 1),
-                    combine_replicates=combine.COMBINE.get(
-                        entry.get("combine replicates", "mean"), combine.COMBINE["mean"]
+                    combine_replicates=combine.COMBINE_CHANGES.get(
+                        entry.get("combine replicates", "mean"),
+                        combine.COMBINE_CHANGES["mean"],
                     ),
                     convert_measurement=convert.LOG_BASE[entry.get("log base")],
                 )
@@ -375,11 +376,11 @@ def main():
                             "range", (-2.0, 2.0)
                         ),
                         get_bar_chart_range=network.get_z_score_range,
-                        combine_sites=combine.COMBINE.get(
+                        combine_sites=combine.COMBINE_CHANGES.get(
                             configuration["Cytoscape"]["bar chart"].get(
                                 "combine sites"
                             ),
-                            combine.COMBINE["mean"],
+                            combine.COMBINE_CHANGES["mean"],
                         ),
                     )
 
@@ -393,11 +394,11 @@ def main():
                             "range", (0.025, 0.975)
                         ),
                         get_bar_chart_range=network.get_propotion_range,
-                        combine_sites=combine.COMBINE.get(
+                        combine_sites=combine.COMBINE_CHANGES.get(
                             configuration["Cytoscape"]["bar chart"].get(
                                 "combine sites"
                             ),
-                            combine.COMBINE["mean"],
+                            combine.COMBINE_CHANGES["mean"],
                         ),
                     )
 
@@ -407,11 +408,11 @@ def main():
                         bar_chart_range=configuration["Cytoscape"]["bar chart"].get(
                             "range", (-1.0, 1.0)
                         ),
-                        combine_sites=combine.COMBINE.get(
+                        combine_sites=combine.COMBINE_CHANGES.get(
                             configuration["Cytoscape"]["bar chart"].get(
                                 "combine sites"
                             ),
-                            combine.COMBINE["mean"],
+                            combine.COMBINE_CHANGES["mean"],
                         ),
                     )
 
@@ -428,7 +429,7 @@ def main():
                     == "z-score"
                 ):
                     network.set_changes(
-                        combine_sites=combine.COMBINE[
+                        combine_sites=combine.COMBINE_CHANGES[
                             configuration["Cytoscape"]["node color"].get(
                                 "combine sites", "mean"
                             )
@@ -444,7 +445,7 @@ def main():
                     == "proportion"
                 ):
                     network.set_changes(
-                        combine_sites=combine.COMBINE[
+                        combine_sites=combine.COMBINE_CHANGES[
                             configuration["Cytoscape"]["node color"].get(
                                 "combine sites", "mean"
                             )
@@ -457,7 +458,7 @@ def main():
 
                 else:
                     network.set_changes(
-                        combine_sites=combine.COMBINE[
+                        combine_sites=combine.COMBINE_CHANGES[
                             configuration["Cytoscape"]["node color"].get(
                                 "combine sites", "mean"
                             )
@@ -494,7 +495,11 @@ def main():
             if "post-processing" in configuration:
                 if "enrichment analysis" in configuration["post-processing"]:
                     network.set_edge_weights(
-                        weight=lambda confidence_scores: len(confidence_scores)
+                        weight=combine.COMBINE_CONFIDENCE_SCORES[
+                            configuration["post-processing"]["enrichment analysis"].get(
+                                "edge weight", "number"
+                            )
+                        ]
                     )
                     if (
                         configuration["post-processing"]["enrichment analysis"].get(
@@ -510,20 +515,20 @@ def main():
                                 "enrichment analysis"
                             ].get("range", (-2.0, 2.0)),
                             get_range=network.get_z_score_range,
-                            combine_sites=combine.COMBINE.get(
+                            combine_sites=combine.COMBINE_CHANGES.get(
                                 configuration["post-processing"][
                                     "enrichment analysis"
                                 ].get("combine sites"),
-                                combine.COMBINE["mean"],
+                                combine.COMBINE_CHANGES["mean"],
                             ),
                             module_size=configuration["post-processing"][
                                 "enrichment analysis"
                             ].get("module size", 35),
-                            combine_sizes=combine.COMBINE.get(
+                            combine_sizes=combine.COMBINE_CHANGES.get(
                                 configuration["post-processing"][
                                     "enrichment analysis"
                                 ].get("combine sites"),
-                                combine.COMBINE["mean"],
+                                combine.COMBINE_CHANGES["mean"],
                             ),
                             test=configuration["post-processing"][
                                 "enrichment analysis"
@@ -550,20 +555,20 @@ def main():
                                 "enrichment analysis"
                             ].get("range", (0.025, 0.975)),
                             get_range=network.get_proportion_range,
-                            combine_sites=combine.COMBINE.get(
+                            combine_sites=combine.COMBINE_CHANGES.get(
                                 configuration["post-processing"][
                                     "enrichment analysis"
                                 ].get("combine sites"),
-                                combine.COMBINE["mean"],
+                                combine.COMBINE_CHANGES["mean"],
                             ),
                             module_size=configuration["post-processing"][
                                 "enrichment analysis"
                             ].get("module size", 35),
-                            combine_sizes=combine.COMBINE.get(
+                            combine_sizes=combine.COMBINE_CHANGES.get(
                                 configuration["post-processing"][
                                     "enrichment analysis"
                                 ].get("combine sites"),
-                                combine.COMBINE["mean"],
+                                combine.COMBINE_CHANGES["mean"],
                             ),
                             test=configuration["post-processing"][
                                 "enrichment analysis"
@@ -584,20 +589,20 @@ def main():
                             changes=configuration["post-processing"][
                                 "enrichment analysis"
                             ].get("range", (-1.0, 1.0)),
-                            combine_sites=combine.COMBINE.get(
+                            combine_sites=combine.COMBINE_CHANGES.get(
                                 configuration["post-processing"][
                                     "enrichment analysis"
                                 ].get("combine sites"),
-                                combine.COMBINE["mean"],
+                                combine.COMBINE_CHANGES["mean"],
                             ),
                             module_size=configuration["post-processing"][
                                 "enrichment analysis"
                             ].get("module size", 35),
-                            combine_sizes=combine.COMBINE.get(
+                            combine_sizes=combine.COMBINE_CHANGES.get(
                                 configuration["post-processing"][
                                     "enrichment analysis"
                                 ].get("combine sites"),
-                                combine.COMBINE["mean"],
+                                combine.COMBINE_CHANGES["mean"],
                             ),
                             test=configuration["post-processing"][
                                 "enrichment analysis"

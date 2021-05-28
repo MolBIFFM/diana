@@ -17,10 +17,10 @@ class ProteinInteractionNetwork(nx.Graph):
     def __init__(self):
         super().__init__()
 
-    def annotate_proteins(self):
+    def annotate_proteins(self, remove_unannotated=True):
         accessions, entry_gene_name, entry_protein_name = [], {}, {}
         rec_name = False
-        for line in fetch.txt(data.UNIPROT_SWISS_PROT):
+        for line in fetch.txt(data.UNIPROT_SWISSPROT):
             if not line.strip():
                 continue
             if line.split(maxsplit=1)[0] == "AC":
@@ -71,18 +71,34 @@ class ProteinInteractionNetwork(nx.Graph):
                         )
 
             elif line == "//":
-                for protein in self:
+                for protein in tuple(self):
                     if protein.split("-")[0] in accessions:
-                        self.nodes[protein]["gene"] = entry_gene_name.get("Name", "NA")
-                        self.nodes[protein]["protein"] = entry_protein_name.get(
-                            "Full", "NA"
-                        )
+                        if accessions.index(protein.split("-")[0]) == 0:
+                            self.nodes[protein]["gene"] = entry_gene_name.get(
+                                "Name", "NA"
+                            )
+                            self.nodes[protein]["protein"] = entry_protein_name.get(
+                                "Full", "NA"
+                            )
+                        else:
+                            nx.relabel_nodes(self, {protein: accessions[0]}, copy=False)
+                            self.nodes[accessions[0]]["gene"] = entry_gene_name.get(
+                                "Name", "NA"
+                            )
+                            self.nodes[accessions[0]][
+                                "protein"
+                            ] = entry_protein_name.get("Full", "NA")
 
                 accessions.clear()
                 entry_gene_name.clear()
                 entry_protein_name.clear()
 
                 rec_name = False
+
+        if remove_unannotated:
+            self.remove_nodes_from(
+                [node for node in self if not self.nodes[node].get("protein")]
+            )
 
     def add_genes_from_table(
         self,
@@ -133,7 +149,7 @@ class ProteinInteractionNetwork(nx.Graph):
 
         accessions, entry_gene_name, entry_protein_name = [], {}, {}
         rec_name, taxon_id = False, 0
-        for line in fetch.txt(data.UNIPROT_SWISS_PROT):
+        for line in fetch.txt(data.UNIPROT_SWISSPROT):
             if not line.strip():
                 continue
             if line.split(maxsplit=1)[0] == "AC":
@@ -325,7 +341,7 @@ class ProteinInteractionNetwork(nx.Graph):
                         if "-" in protein_accession:
                             protein, isoform = protein_accession.split("-")
                         else:
-                            protein, isoform = protein_accession, None
+                            protein, isoform = protein_accession, "0"
 
                         if protein not in proteins:
                             proteins[protein] = {}
@@ -352,7 +368,7 @@ class ProteinInteractionNetwork(nx.Graph):
                     if "-" in protein_accession:
                         protein, isoform = protein_accession.split("-")
                     else:
-                        protein, isoform = protein_accession, None
+                        protein, isoform = protein_accession, "0"
 
                     if protein not in proteins:
                         proteins[protein] = {}
@@ -364,7 +380,7 @@ class ProteinInteractionNetwork(nx.Graph):
 
         accessions, entry_gene_name, entry_protein_name = [], {}, {}
         rec_name = False
-        for line in fetch.txt(data.UNIPROT_SWISS_PROT):
+        for line in fetch.txt(data.UNIPROT_SWISSPROT):
             if not line.strip():
                 continue
 
@@ -449,7 +465,8 @@ class ProteinInteractionNetwork(nx.Graph):
                                     continue
 
                                 if (
-                                    proteins[protein][isoform][i][1]
+                                    isoform == primary_isoform
+                                    and proteins[protein][isoform][i][1]
                                     == proteins[primary_accession[protein]][
                                         primary_isoform
                                     ][j][1]
@@ -743,7 +760,7 @@ class ProteinInteractionNetwork(nx.Graph):
         return sorted(
             set(
                 database for edge in self.edges for database in self.edges[edge]
-            ).intersection({"BioGRID", "IntAct", "STRING", "Reactome", "CORUM"})
+            ).intersection({"BioGRID", "CORUM", "IntAct", "Reactome", "STRING"})
         )
 
     def set_edge_weights(
@@ -1422,14 +1439,14 @@ class ProteinInteractionNetwork(nx.Graph):
         weight="weight",
         algorithm=modularization.louvain,
     ):
-        self.remove_nodes_from(list(nx.isolates(self)))
+        self.remove_nodes_from(tuple(nx.isolates(self)))
 
         if self.number_of_nodes() == 0:
             return []
 
         communities = [
             community
-            for community in list(nx.algorithms.components.connected_components(self))
+            for community in tuple(nx.algorithms.components.connected_components(self))
         ]
 
         while (

@@ -1,28 +1,11 @@
 [
     {
       "genes": [
-        {
-          "file": "data/il-22/STAT2.xlsx",
-          "sheet": "STAT2_targets.human",
-          "accession column": "# TF"
-        },
-        {
-          "file": "data/il-22/STAT2.xlsx",
-          "sheet": "STAT2_targets.human",
-          "accession column": "Target"
-        },
-        {
-          "file": "data/il-22/STAT2.xlsx",
-          "sheet": "ChIP",
-          "accession column": "TF"
-        },
-        {
-          "file": "data/il-22/STAT2.xlsx",
-          "sheet": "ChIP",
-          "accession column": "TARGETS",
-          "accession format": 6
-        }
-      ],
+          {
+            "file": "data/il22/genes.txt",
+            "accession column": "genes"
+          }
+        ],
       "protein-protein interactions": {
         "BioGRID": {
           "experimental system": [

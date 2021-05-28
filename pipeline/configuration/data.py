@@ -22,7 +22,7 @@ STRING = "https://stringdb-static.org/download/protein.links.full.v11.0/{taxon_i
 STRING_PHYSICAL = "https://stringdb-static.org/download/protein.physical.links.full.v11.0/{taxon_identifier}.protein.links.full.v11.0.txt.gz"
 
 UNIPROT_ID_MAP = "https://ftp.uniprot.org/pub/databases/uniprot/current_release/knowledgebase/idmapping/by_organism/{organism}_{taxon_identifier}_idmapping.dat.gz"
-UNIPROT_SWISS_PROT = "https://ftp.uniprot.org/pub/databases/uniprot/current_release/knowledgebase/complete/uniprot_sprot.dat.gz"
+UNIPROT_SWISSPROT = "https://ftp.uniprot.org/pub/databases/uniprot/current_release/knowledgebase/complete/uniprot_sprot.dat.gz"
 
 ORGANISM = {
     9606: {BIOGRID: "Homo_sapiens", REACTOME: "homo_sapiens", UNIPROT_ID_MAP: "HUMAN"},
