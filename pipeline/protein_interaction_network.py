@@ -17,7 +17,7 @@ class ProteinInteractionNetwork(nx.Graph):
     def __init__(self):
         super().__init__()
 
-    def annotate_proteins(self, remove_unannotated=True):
+    def annotate_proteins(self):
         accessions, entry_gene_name, entry_protein_name = [], {}, {}
         rec_name = False
         for line in fetch.txt(data.UNIPROT_SWISSPROT):
@@ -95,10 +95,10 @@ class ProteinInteractionNetwork(nx.Graph):
 
                 rec_name = False
 
-        if remove_unannotated:
-            self.remove_nodes_from(
-                [node for node in self if not self.nodes[node].get("protein")]
-            )
+    def remove_unannotated_proteins(self):
+        self.remove_nodes_from(
+            [node for node in self if not self.nodes[node].get("protein")]
+        )
 
     def add_genes_from_table(
         self,

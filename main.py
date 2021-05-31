@@ -240,6 +240,7 @@ def main():
                         )
 
                     network.annotate_proteins()
+                    network.remove_unannotated_proteins()
                     k += 1
 
                 if "BioGRID" in configuration["protein-protein interactions"]:
