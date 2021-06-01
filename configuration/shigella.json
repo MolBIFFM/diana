@@ -4,6 +4,7 @@
         {
           "time": 15,
           "post-translational modification": "P",
+          "sites": 5,
           "file": "data/shigella/phosphorylation/mcp.M113.029918-2.xls",
           "sheet": "wt15min",
           "header": 1,
@@ -19,6 +20,7 @@
         {
           "time": 60,
           "post-translational modification": "P",
+          "sites": 5,
           "file": "data/shigella/phosphorylation/mcp.M113.029918-2.xls",
           "sheet": "wt60min",
           "accession column": "protein",
@@ -33,6 +35,7 @@
         {
           "time": 120,
           "post-translational modification": "P",
+          "sites": 5,
           "file": "data/shigella/phosphorylation/mcp.M113.029918-2.xls",
           "sheet": "wt120min",
           "accession column": "protein",
@@ -47,6 +50,7 @@
         {
           "time": 15,
           "post-translational modification": "U",
+          "sites": 5,
           "file": "data/shigella/ubiquitination/WT_vs_noninvasive_15min.xlsx",
           "sheet": "GlyGly (K) stringentSites",
           "accession column": "Protein",
@@ -63,6 +67,7 @@
         {
           "time": 60,
           "post-translational modification": "U",
+          "sites": 5,
           "file": "data/shigella/ubiquitination/WT_vs_noninvasive_1h.xlsx",
           "sheet": "GlyGly (K) stringentSites",
           "accession column": "Proteins",
@@ -79,6 +84,7 @@
         {
           "time": 120,
           "post-translational modification": "U",
+          "sites": 5,
           "file": "data/shigella/ubiquitination/WT_vs_noninvasive_2h.xlsx",
           "sheet": "GlyGly (K) stringentSites",
           "accession column": "Proteins",

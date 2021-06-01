@@ -499,7 +499,7 @@ class ProteinInteractionNetwork(nx.Graph):
 
         for protein in proteins:
             for isoform in proteins[protein]:
-                if isoform:
+                if isoform != "0":
                     self.add_node("-".join([protein, isoform]))
                     self.nodes["-".join([protein, isoform])]["gene"] = gene_name.get(
                         protein, "NA"
@@ -521,7 +521,7 @@ class ProteinInteractionNetwork(nx.Graph):
                 )
 
                 for i in range(len(proteins[protein][isoform])):
-                    if isoform:
+                    if isoform != "0":
                         self.nodes["-".join([protein, isoform])][
                             "{} {} {}".format(time, ptm, i + 1)
                         ] = proteins[protein][isoform][i][1]
