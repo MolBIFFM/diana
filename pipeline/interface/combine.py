@@ -16,6 +16,14 @@ COMBINE_CHANGES = {
     / len(changes),
 }
 
+COMBINE_MODULE_SIZES = {
+    "max": max,
+    "mean": statistics.mean,
+    "median": statistics.median,
+    "min": min,
+}
+
+
 COMBINE_CONFIDENCE_SCORES = {
     "max": lambda confidence_scores: max(confidence_scores.values()),
     "mean": lambda confidence_scores: statistics.mean(confidence_scores.values()),

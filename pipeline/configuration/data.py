@@ -6,7 +6,7 @@ BIOGRID_MV_PHYSICAL_ZIP_ARCHIVE = "https://downloads.thebiogrid.org/Download/Bio
 BIOGRID_MV_PHYSICAL = r"BIOGRID-MV-Physical-[0-9]\.[0-9]\.[0-9]{3}\.tab3\.txt"
 
 CORUM_ZIP_ARCHIVE = (
-    "http://mips.helmholtz-muenchen.de/corum/download/allComplexes.txt.zip"
+    "https://mips.helmholtz-muenchen.de/corum/download/allComplexes.txt.zip"
 )
 CORUM = "allComplexes.txt"
 

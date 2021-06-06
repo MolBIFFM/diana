@@ -73,6 +73,10 @@ class ProteinInteractionNetwork(nx.Graph):
             elif line == "//":
                 for protein in tuple(self):
                     if protein.split("-")[0] in accessions:
+                        if not protein.split("-")[1].isnumeric():
+                            nx.relabel_nodes(self, {protein: protein.split("-")[0]}, copy=False)
+                            protein = protein.split("-")[0]
+
                         if accessions.index(protein.split("-")[0]) == 0:
                             self.nodes[protein]["gene"] = entry_gene_name.get(
                                 "Name", "NA"
@@ -1439,15 +1443,13 @@ class ProteinInteractionNetwork(nx.Graph):
         weight="weight",
         algorithm=modularization.louvain,
     ):
-        self.remove_nodes_from(tuple(nx.isolates(self)))
+        G = self.copy()
+        G.remove_nodes_from(tuple(nx.isolates(G)))
 
-        if self.number_of_nodes() == 0:
+        if G.number_of_nodes() == 0:
             return []
 
-        communities = [
-            community
-            for community in tuple(nx.algorithms.components.connected_components(self))
-        ]
+        communities = algorithm(G, weight=weight)
 
         while (
             combine_sizes([len(community) for community in communities]) > module_size
@@ -1467,7 +1469,7 @@ class ProteinInteractionNetwork(nx.Graph):
                     indices,
                     executor.map(
                         algorithm,
-                        (self.subgraph(communities[j]) for j in indices),
+                        (G.subgraph(communities[j]) for j in indices),
                         itertools.repeat(weight),
                     ),
                 ):

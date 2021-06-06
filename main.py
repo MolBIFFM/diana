@@ -11,18 +11,7 @@ from pipeline.interface import algorithm, convert, combine, extract
 from pipeline.protein_interaction_network import (
     ProteinInteractionNetwork,
 )
-
-
-def export_network(network, basename, suffix=""):
-    nx.write_graphml_xml(network, "{0}{1}.graphml".format(basename, suffix))
-
-
-def export_styles(styles, basename, suffix=""):
-    styles.write(
-        "{0}{1}.xml".format(basename, suffix),
-        encoding="UTF-8",
-        xml_declaration=True,
-    )
+from pipeline.utilities import export
 
 
 def main():
@@ -417,7 +406,7 @@ def main():
                         ),
                     )
 
-                export_styles(
+                export.export_styles(
                     styles,
                     os.path.splitext(os.path.basename(configuration_file))[0],
                     ".{}".format(i) if len(configurations) > 1 else "",
@@ -469,31 +458,68 @@ def main():
                         ),
                     )
 
-            export_network(
+            export.export_network(
                 network,
                 os.path.splitext(os.path.basename(configuration_file))[0],
                 ".{}".format(i) if len(configurations) > 1 else "",
             )
 
-            if "neighborhood" in configuration:
-                for protein in configuration["neighborhood"].get("proteins", []):
-                    export_network(
-                        network.get_neighborhood(
-                            protein,
-                            configuration["neighborhood"].get("distance", 1),
-                            configuration["neighborhood"].get("isoforms", True),
-                        ),
-                        os.path.splitext(os.path.basename(configuration_file))[0],
-                        ".{}.{}.{}".format(
-                            i, protein, network.nodes[protein]["gene name"]
+            if "post-processing" in configuration:
+                if "neighborhood extraction" in configuration:
+                    for protein in configuration["neighborhood"].get("proteins", []):
+                        export.export_network(
+                            network.get_neighborhood(
+                                protein,
+                                configuration["neighborhood"].get("distance", 1),
+                                configuration["neighborhood"].get("isoforms", True),
+                            ),
+                            os.path.splitext(os.path.basename(configuration_file))[0],
+                            ".{}.{}.{}".format(
+                                i, protein, network.nodes[protein]["gene name"]
+                            )
+                            if len(configurations) > 1
+                            else ".{}.{}".format(
+                                protein, network.nodes[protein]["gene name"]
+                            ),
                         )
-                        if len(configurations) > 1
-                        else ".{}.{}".format(
-                            protein, network.nodes[protein]["gene name"]
-                        ),
+
+                if "module detection" in configuration["post-processing"]:
+                    network.set_edge_weights(
+                        weight=combine.COMBINE_CONFIDENCE_SCORES[
+                            configuration["post-processing"]["module detection"].get(
+                                "edge weight", "number"
+                            )
+                        ]
                     )
 
-            if "post-processing" in configuration:
+                    for j, module in enumerate(
+                        network.get_modules(
+                            module_size=configuration["post-processing"][
+                                "module detection"
+                            ].get("module size", 35),
+                            combine_sizes=combine.COMBINE_MODULE_SIZES.get(
+                                configuration["post-processing"][
+                                    "module detection"
+                                ].get("combine sizes"),
+                                combine.COMBINE_MODULE_SIZES["mean"],
+                            ),
+                            algorithm=algorithm.ALGORITHM.get(
+                                configuration["post-processing"][
+                                    "module detection"
+                                ].get("algorithm"),
+                                algorithm.ALGORITHM["Louvain"],
+                            ),
+                        ),
+                        start=1,
+                    ):
+                        export.export_network(
+                            network.subgraph(module),
+                            os.path.splitext(os.path.basename(configuration_file))[0],
+                            ".{}.{}".format(i, j)
+                            if len(configurations) > 1
+                            else ".{}".format(j),
+                        )
+
                 if "enrichment analysis" in configuration["post-processing"]:
                     network.set_edge_weights(
                         weight=combine.COMBINE_CONFIDENCE_SCORES[
@@ -502,6 +528,7 @@ def main():
                             )
                         ]
                     )
+
                     if (
                         configuration["post-processing"]["enrichment analysis"].get(
                             "type"
@@ -618,23 +645,23 @@ def main():
 
                     for time in p_values:
                         for ptm in sorted(p_values[time]):
-                            for module in sorted(p_values[time][ptm]):
+                            for j in sorted(p_values[time][ptm]):
                                 logger.info(
                                     "{}\t{}\t{}\t{:.2E}".format(
                                         time,
                                         ptm,
-                                        module + 1,
-                                        p_values[time][ptm][module],
+                                        j + 1,
+                                        p_values[time][ptm][j],
                                     )
                                 )
-                                export_network(
-                                    network.subgraph(modules[module]),
+                                export.export_network(
+                                    network.subgraph(modules[j]),
                                     os.path.splitext(
                                         os.path.basename(configuration_file)
                                     )[0],
-                                    ".{}.{}".format(i, module + 1)
+                                    ".{}.{}".format(i, j + 1)
                                     if len(configurations) > 1
-                                    else ".{}".format(module + 1),
+                                    else ".{}".format(j + 1),
                                 )
 
 
