@@ -74,7 +74,9 @@ class ProteinInteractionNetwork(nx.Graph):
                 for protein in tuple(self):
                     if protein.split("-")[0] in accessions:
                         if not protein.split("-")[1].isnumeric():
-                            nx.relabel_nodes(self, {protein: protein.split("-")[0]}, copy=False)
+                            nx.relabel_nodes(
+                                self, {protein: protein.split("-")[0]}, copy=False
+                            )
                             protein = protein.split("-")[0]
 
                         if accessions.index(protein.split("-")[0]) == 0:
