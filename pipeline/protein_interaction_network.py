@@ -66,9 +66,10 @@ class ProteinInteractionNetwork(nx.Graph):
 
                 for entry in entries:
                     if "=" in entry:
-                        entry_protein_name[entry.split("=")[0]] = (
-                            entry.split("=")[1].split("{")[0].rstrip()
-                        )
+                        if entry.split("=")[0] not in entry_protein_name:
+                            entry_protein_name[entry.split("=")[0]] = (
+                                entry.split("=")[1].split("{")[0].rstrip()
+                            )
 
             elif line == "//":
                 for protein in tuple(self):
@@ -201,9 +202,10 @@ class ProteinInteractionNetwork(nx.Graph):
 
                 for entry in entries:
                     if "=" in entry:
-                        entry_protein_name[entry.split("=")[0]] = (
-                            entry.split("=")[1].split("{")[0].rstrip()
-                        )
+                        if entry.split("=")[0] not in entry_protein_name:
+                            entry_protein_name[entry.split("=")[0]] = (
+                                entry.split("=")[1].split("{")[0].rstrip()
+                            )
 
             elif line.split(maxsplit=1)[0] == "OX":
                 if len(line.split(maxsplit=1)) == 1:
@@ -433,9 +435,10 @@ class ProteinInteractionNetwork(nx.Graph):
 
                 for entry in entries:
                     if "=" in entry:
-                        entry_protein_name[entry.split("=")[0]] = (
-                            entry.split("=")[1].split("{")[0].rstrip()
-                        )
+                        if entry.split("=")[0] not in entry_protein_name:
+                            entry_protein_name[entry.split("=")[0]] = (
+                                entry.split("=")[1].split("{")[0].rstrip()
+                            )
 
             elif line == "//":
                 for i, accession in enumerate(accessions):

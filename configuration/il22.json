@@ -37,6 +37,11 @@
           "combined score": 0.7,
           "neighbors": 1
         }
+      },
+      "post-processing": {
+        "module detection": {
+          "module size": 1000
+        }
       }
     }
   ]
