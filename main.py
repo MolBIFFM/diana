@@ -5,6 +5,7 @@ import xml.etree.ElementTree as ET
 import logging
 
 import networkx as nx
+from networkx.algorithms.centrality.load import edge_load_centrality
 
 from pipeline.cytoscape_styles import CytoscapeStyles
 from pipeline.interface import algorithm, convert, combine, extract
@@ -40,16 +41,23 @@ def main():
             network = ProteinInteractionNetwork()
 
             for entry in configuration.get("genes", {}):
-                network.add_genes_from_table(
-                    entry["file"],
-                    gene_accession_column=entry["accession column"],
-                    gene_accession_format=extract.EXTRACT.get(
-                        entry.get("accession format"), lambda entry: [entry]
-                    ),
-                    sheet_name=entry.get("sheet", 0),
-                    header=entry.get("header", 1) - 1,
-                    taxon_identifier=entry.get("taxon identifier", 9606),
-                )
+                if "file" in entry and "accession column" in entry:
+                    network.add_genes_from_table(
+                        file=entry["file"],
+                        gene_accession_column=entry["accession column"],
+                        gene_accession_format=extract.EXTRACT.get(
+                            entry.get("accession format"), lambda entry: [entry]
+                        ),
+                        sheet_name=entry.get("sheet", 0),
+                        header=entry.get("header", 1) - 1,
+                        taxon_identifier=entry.get("taxon identifier", 9606),
+                    )
+
+                elif "accessions" in entry:
+                    network.add_genes_from(
+                        genes=entry["accessions"],
+                        taxon_identifier=entry.get("taxon identifier", 9606),
+                    )
 
             for entry in configuration.get("proteins", {}):
                 network.add_proteins_from_table(

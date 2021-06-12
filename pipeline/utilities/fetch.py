@@ -30,6 +30,8 @@ def decompress_gzip_file(compressed_file_name):
                 while chunk := compressed_file.read(configuration.CHUNK_SIZE):
                     decompressed_file.write(chunk)
 
+    os.remove(compressed_file_name)
+
     return decompressed_file_name
 
 
@@ -50,10 +52,12 @@ def decompress_zip_file(compressed_file_name, file=None):
                 configuration.DOWNLOAD_DIRECTORY, file
             )
 
+    os.remove(compressed_file_name)
+
     return decompressed_file_name
 
 
-def download(url, file=None):
+def get_file(url, file=None):
     if not os.path.exists(configuration.DOWNLOAD_DIRECTORY):
         os.mkdir(configuration.DOWNLOAD_DIRECTORY)
 
@@ -75,15 +79,18 @@ def download(url, file=None):
 
 
 def txt(url, file=None):
-    local_file_name = download(url, file)
+    local_file_name = get_file(url, file)
 
     with open(local_file_name, buffering=configuration.CHUNK_SIZE) as local_file:
         for line in local_file:
             yield line.rstrip("\n")
 
+    os.remove(local_file_name)
+    os.rmdir(configuration.DOWNLOAD_DIRECTORY)
+
 
 def tabular_txt(url, file=None, delimiter=None, header=None, skiprows=0, usecols=[]):
-    local_file_name = download(url, file)
+    local_file_name = get_file(url, file)
 
     if os.path.splitext(local_file_name)[1] == ".csv":
         delimiter = ","
@@ -100,3 +107,6 @@ def tabular_txt(url, file=None, delimiter=None, header=None, skiprows=0, usecols
     ):
         for _, row in chunk.iterrows():
             yield row
+
+    os.remove(local_file_name)
+    os.rmdir(configuration.DOWNLOAD_DIRECTORY)

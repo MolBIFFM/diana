@@ -2,8 +2,17 @@
     {
       "genes": [
           {
-            "file": "data/il22/genes.txt",
-            "accession column": "genes"
+            "accessions": [
+              "IL22",
+              "IL22RA1",
+              "IL22RA2",
+              "IL10RB",
+              "JAK1",
+              "SOCS3",
+              "STAT1",
+              "STAT3",
+              "TYK2"
+            ]
           }
         ],
       "protein-protein interactions": {

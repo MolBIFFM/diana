@@ -9,7 +9,7 @@ COMBINE_CHANGES = {
     "median": statistics.median,
     "min": min,
     "minabs": lambda changes: min(changes, key=abs),
-    "number": lambda changes: len(changes),
+    "number": len,
     "sum": sum,
     "sumabs": lambda changes: sum(abs(change) for change in changes),
     "up": lambda changes: len([change for change in changes if change > 0.0])
