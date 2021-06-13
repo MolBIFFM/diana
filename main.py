@@ -4,9 +4,6 @@ import os
 import xml.etree.ElementTree as ET
 import logging
 
-import networkx as nx
-from networkx.algorithms.centrality.load import edge_load_centrality
-
 from pipeline.cytoscape_styles import CytoscapeStyles
 from pipeline.interface import algorithm, convert, combine, extract
 from pipeline.protein_interaction_network import (
@@ -43,7 +40,7 @@ def main():
             for entry in configuration.get("genes", {}):
                 if "file" in entry and "accession column" in entry:
                     network.add_genes_from_table(
-                        file=entry["file"],
+                        file_name=entry["file"],
                         gene_accession_column=entry["accession column"],
                         gene_accession_format=extract.EXTRACT.get(
                             entry.get("accession format"), lambda entry: [entry]
@@ -60,29 +57,35 @@ def main():
                     )
 
             for entry in configuration.get("proteins", {}):
-                network.add_proteins_from_table(
-                    entry["file"],
-                    protein_accession_column=entry["accession column"],
-                    protein_accession_format=extract.EXTRACT.get(
-                        entry.get("accession format"), lambda entry: [entry]
-                    ),
-                    time=entry.get("time", 0),
-                    ptm=entry.get("post-translational modification", ""),
-                    position_column=entry.get("position column", ""),
-                    position_format=extract.EXTRACT.get(
-                        entry.get("position format"), lambda entry: [entry]
-                    ),
-                    replicates=entry.get("replicate columns", []),
-                    sheet_name=entry.get("sheet", 0),
-                    header=entry.get("header", 1) - 1,
-                    num_sites=entry.get("sites", 1000),
-                    num_replicates=entry.get("replicates", 1),
-                    combine_replicates=combine.COMBINE_CHANGES.get(
-                        entry.get("combine replicates", "mean"),
-                        combine.COMBINE_CHANGES["mean"],
-                    ),
-                    convert_measurement=convert.LOG_BASE[entry.get("log base")],
-                )
+                if "file" in entry and "accession column" in entry:
+                    network.add_proteins_from_table(
+                        file_name=entry["file"],
+                        protein_accession_column=entry["accession column"],
+                        protein_accession_format=extract.EXTRACT.get(
+                            entry.get("accession format"), lambda entry: [entry]
+                        ),
+                        time=entry.get("time", 0),
+                        ptm=entry.get("post-translational modification", ""),
+                        position_column=entry.get("position column", ""),
+                        position_format=extract.EXTRACT.get(
+                            entry.get("position format"), lambda entry: [entry]
+                        ),
+                        replicates=entry.get("replicate columns", []),
+                        sheet_name=entry.get("sheet", 0),
+                        header=entry.get("header", 1) - 1,
+                        num_sites=entry.get("sites", 1000),
+                        num_replicates=entry.get("replicates", 1),
+                        combine_replicates=combine.COMBINE_CHANGES.get(
+                            entry.get("combine replicates", "mean"),
+                            combine.COMBINE_CHANGES["mean"],
+                        ),
+                        convert_measurement=convert.LOG_BASE[entry.get("log base")],
+                    )
+
+                elif "accessions" in entry:
+                    network.add_proteins_from(
+                        proteins=entry["accessions"],
+                    )
 
             if "protein-protein interactions" in configuration:
                 k = 0

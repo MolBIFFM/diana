@@ -3,10 +3,10 @@
       "genes": [
           {
             "accessions": [
+              "IL10RB",
               "IL22",
               "IL22RA1",
               "IL22RA2",
-              "IL10RB",
               "JAK1",
               "SOCS3",
               "STAT1",

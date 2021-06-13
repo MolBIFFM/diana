@@ -31,9 +31,16 @@ class ProteinInteractionNetwork(nx.Graph):
                         self.nodes[protein]["gene"] = gene_name
                         self.nodes[protein]["protein"] = protein_name
                     else:
-                        nx.relabel_nodes(self, {protein: accessions[0]}, copy=False)
-                        self.nodes[accessions[0]]["gene"] = gene_name
-                        self.nodes[accessions[0]]["protein"] = protein_name
+                        if "-" in protein:
+                            primary_protein = "{}-{}".format(
+                                accessions[0], protein.split("-")[1]
+                            )
+                        else:
+                            primary_protein = accessions[0]
+
+                        nx.relabel_nodes(self, {protein: primary_protein}, copy=False)
+                        self.nodes[primary_protein]["gene"] = gene_name
+                        self.nodes[primary_protein]["protein"] = protein_name
 
     def remove_unannotated_proteins(self):
         self.remove_nodes_from(
@@ -102,6 +109,46 @@ class ProteinInteractionNetwork(nx.Graph):
 
         self.add_genes_from(genes, taxon_identifier)
 
+    def add_proteins_from(self, proteins):
+        proteins_isoform = {}
+
+        for protein_accession in proteins:
+            if "-" in protein_accession and protein_accession.split("-")[1].isnumeric():
+                protein, isoform = protein_accession.split("-")
+            else:
+                protein, isoform = protein_accession, "0"
+
+            if protein not in proteins_isoform:
+                proteins_isoform[protein] = set()
+
+            proteins_isoform[protein].add(isoform)
+
+        primary_accession = {}
+        for accessions, gene_name, protein_name, _ in uniprot.swissprot():
+            for i, accession in enumerate(accessions):
+                if accession in proteins_isoform:
+                    for isoform in proteins_isoform[accession]:
+                        if isoform == "0":
+                            self.add_node(accessions[0])
+                            self.nodes[accessions[0]]["gene"] = gene_name
+                            self.nodes[accessions[0]]["protein"] = protein_name
+                        else:
+                            self.add_node("{}-{}".format(accessions[0], isoform))
+                            self.nodes["{}-{}".format(accessions[0], isoform)][
+                                "gene"
+                            ] = gene_name
+                            self.nodes["{}-{}".format(accessions[0], isoform)][
+                                "protein"
+                            ] = protein_name
+
+                    if i > 0:
+                        if accession not in primary_accession:
+                            primary_accession[accession] = set()
+
+                        primary_accession[accession].add(accessions[0])
+
+        return primary_accession
+
     def add_proteins_from_table(
         self,
         file_name,
@@ -160,178 +207,104 @@ class ProteinInteractionNetwork(nx.Graph):
             if pd.isna(row[protein_accession_column]):
                 continue
 
-            if position_column and pd.isna(row[position_column]):
-                continue
+            protein_accessions = [
+                str(protein_accession)
+                for protein_accession in protein_accession_format(
+                    row[protein_accession_column]
+                )
+            ]
 
             if replicates:
+                if position_column:
+                    positions = [
+                        int(position)
+                        for position in position_format(row[position_column])
+                        if not pd.isna(row[position_column])
+                    ]
+                else:
+                    positions = []
+
+                if len(protein_accessions) != len(positions):
+                    if len(protein_accessions) > len(positions):
+                        positions.extend(
+                            [0 for _ in range(len(positions), len(protein_accessions))]
+                        )
+                    else:
+                        positions = positions[: len(protein_accessions)]
+
                 measurements = [
-                    row[repl] for repl in replicates if not pd.isna(row[repl])
+                    row[replicate]
+                    for replicate in replicates
+                    if not pd.isna(row[replicate])
                 ]
 
                 if len(measurements) >= min(num_replicates, len(replicates)):
-                    protein_accessions = [
-                        str(protein_accession)
-                        for protein_accession in protein_accession_format(
-                            row[protein_accession_column]
-                        )
-                    ]
-
-                    if position_column:
-                        positions = [
-                            int(position)
-                            for position in position_format(row[position_column])
-                        ]
-                    else:
-                        positions = []
-
-                    if len(protein_accessions) != len(positions):
-                        if len(protein_accessions) > len(positions):
-                            positions.extend(
-                                [
-                                    0
-                                    for _ in range(
-                                        len(positions), len(protein_accessions)
-                                    )
-                                ]
-                            )
-                        else:
-                            positions = positions[: len(protein_accessions)]
-
                     for protein_accession, position in zip(
                         protein_accessions, positions
                     ):
-                        if "-" in protein_accession:
-                            protein, isoform = protein_accession.split("-")
-                        else:
-                            protein, isoform = protein_accession, "0"
-
-                        if protein not in proteins:
-                            proteins[protein] = {}
-
-                        if isoform not in proteins[protein]:
-                            proteins[protein][isoform] = []
+                        if protein_accession not in proteins:
+                            proteins[protein_accession] = []
 
                         bisect.insort(
-                            proteins[protein][isoform],
-                            [
+                            proteins[protein_accession],
+                            (
                                 position,
                                 convert_measurement(combine_replicates(measurements)),
-                            ],
+                            ),
                         )
             else:
-                protein_accessions = [
-                    str(protein_accession)
-                    for protein_accession in protein_accession_format(
-                        row[protein_accession_column]
-                    )
-                ]
-
                 for protein_accession in protein_accessions:
-                    if "-" in protein_accession:
-                        protein, isoform = protein_accession.split("-")
+                    if protein_accession not in proteins:
+                        proteins[protein_accession] = []
+
+        primary_accession = self.add_proteins_from(proteins.keys())
+
+        for protein in tuple(proteins):
+            if protein.split("-")[0] in primary_accession:
+                for accession in sorted(primary_accession[protein.split("-")[0]]):
+                    if "-" in protein:
+                        primary_protein = "{}-{}".format(
+                            accession, protein.split("-")[1]
+                        )
                     else:
-                        protein, isoform = protein_accession, "0"
+                        primary_protein = accession
 
-                    if protein not in proteins:
-                        proteins[protein] = {}
-
-                    if isoform not in proteins[protein]:
-                        proteins[protein][isoform] = []
-
-        swissprot_proteins, primary_accession, gene_name, protein_name = {}, {}, {}, {}
-
-        for accessions, gene_name, protein_name, _ in uniprot.swissprot():
-            for i, accession in enumerate(accessions):
-                if accession in proteins:
-                    swissprot_proteins[accession] = proteins[accession]
-                    gene_name[accession] = gene_name
-                    protein_name[accession] = protein_name
-
-                    if i > 0:
-                        primary_accession[accession] = accessions[0]
-
-        proteins = swissprot_proteins
-
-        for protein in primary_accession:
-            if primary_accession[protein] in proteins:
-                for isoform in proteins[protein]:
-                    for primary_isoform in proteins[primary_accession[protein]]:
-                        for i in range(len(proteins[protein][isoform])):
-                            for j in range(
-                                len(
-                                    proteins[primary_accession[protein]][
-                                        primary_isoform
-                                    ]
-                                )
-                            ):
-                                if not proteins[protein][isoform][i]:
-                                    continue
-
+                    if primary_protein in proteins:
+                        for mi in range(len(proteins[protein])):
+                            for mj in range(len(proteins[primary_protein])):
                                 if (
-                                    isoform == primary_isoform
-                                    and proteins[protein][isoform][i][1]
-                                    == proteins[primary_accession[protein]][
-                                        primary_isoform
-                                    ][j][1]
+                                    proteins[protein][mi]
+                                    and proteins[protein][mi][1]
+                                    == proteins[primary_protein][mj][1]
                                 ):
-                                    if not proteins[primary_accession[protein]][
-                                        primary_isoform
-                                    ][j][0]:
-                                        proteins[primary_accession[protein]][
-                                            primary_isoform
-                                        ][j][0] = proteins[protein][isoform][i][0]
+                                    proteins[protein][mi] = tuple()
 
-                                    proteins[protein][isoform][i] = []
+                        for measurement in proteins[protein]:
+                            if measurement:
+                                bisect.insort(
+                                    proteins[primary_protein],
+                                    measurement,
+                                )
 
-                    if not isoform in proteins[primary_accession[protein]]:
-                        proteins[primary_accession[protein]][isoform] = []
-
-                    for measurement in proteins[protein][isoform]:
-                        if measurement:
-                            bisect.insort(
-                                proteins[primary_accession[protein]][isoform],
-                                measurement,
-                            )
-            else:
-                proteins[primary_accession[protein]] = proteins[protein]
-                gene_name[primary_accession[protein]] = gene_name[protein]
-                protein_name[primary_accession[protein]] = protein_name[protein]
-
-        for protein in primary_accession:
-            del proteins[protein]
-
-        for protein in proteins:
-            for isoform in proteins[protein]:
-                if isoform != "0":
-                    self.add_node("-".join([protein, isoform]))
-                    self.nodes["-".join([protein, isoform])]["gene"] = gene_name.get(
-                        protein, "NA"
-                    )
-                    self.nodes["-".join([protein, isoform])][
-                        "protein"
-                    ] = protein_name.get(protein, "NA")
-                else:
-                    self.add_node(protein)
-                    self.nodes[protein]["gene"] = gene_name.get(protein, "NA")
-                    self.nodes[protein]["protein"] = protein_name.get(protein, "NA")
-
-                proteins[protein][isoform] = sorted(
-                    sorted(
-                        proteins[protein][isoform],
-                        key=lambda item: item[1],
-                        reverse=True,
-                    )[:num_sites]
-                )
-
-                for i in range(len(proteins[protein][isoform])):
-                    if isoform != "0":
-                        self.nodes["-".join([protein, isoform])][
-                            "{} {} {}".format(time, ptm, i + 1)
-                        ] = proteins[protein][isoform][i][1]
                     else:
-                        self.nodes[protein][
-                            "{} {} {}".format(time, ptm, i + 1)
-                        ] = proteins[protein][isoform][i][1]
+                        proteins[primary_protein] = proteins[protein]
+
+        for protein in self:
+            if protein not in proteins:
+                continue
+
+            proteins[protein] = sorted(
+                sorted(
+                    proteins[protein],
+                    key=lambda item: item[1],
+                    reverse=True,
+                )[:num_sites]
+            )
+
+            for i in range(len(proteins[protein])):
+                self.nodes[protein]["{} {} {}".format(time, ptm, i + 1)] = proteins[
+                    protein
+                ][i][1]
 
     def get_times(self):
         return tuple(
