@@ -13,7 +13,8 @@ def swissprot():
             if len(line.split(maxsplit=1)) == 1:
                 continue
 
-            accessions.extend(line.split(maxsplit=1)[1].rstrip(";").split("; "))
+            accessions.extend(
+                line.split(maxsplit=1)[1].rstrip(";").split("; "))
 
         elif line.split(maxsplit=1)[0] == "GN":
             if len(line.split(maxsplit=1)) == 1:
@@ -22,21 +23,15 @@ def swissprot():
             for entry in line.split(maxsplit=1)[1].rstrip(";").split("; "):
                 if "=" in entry:
                     entry_gene_name[entry.split("=")[0]] = (
-                        entry.split("=")[1].split("{")[0].rstrip()
-                    )
+                        entry.split("=")[1].split("{")[0].rstrip())
 
         elif line.split(maxsplit=1)[0] == "DE":
             if len(line.split(maxsplit=1)) == 1:
                 continue
 
             if line.split(maxsplit=1)[1].split(":", 1)[0] == "RecName":
-                entries = (
-                    line.split(maxsplit=1)[1]
-                    .split(":", 1)[1]
-                    .lstrip()
-                    .rstrip(";")
-                    .split("; ")
-                )
+                entries = (line.split(maxsplit=1)[1].split(
+                    ":", 1)[1].lstrip().rstrip(";").split("; "))
                 rec_name = True
             elif line.split(maxsplit=1)[1].split(":", 1)[0] == "AltName":
                 entries = []
@@ -57,27 +52,19 @@ def swissprot():
                 if "=" in entry:
                     if entry.split("=")[0] not in entry_protein_name:
                         entry_protein_name[entry.split("=")[0]] = (
-                            entry.split("=")[1].split("{")[0].rstrip()
-                        )
+                            entry.split("=")[1].split("{")[0].rstrip())
 
         elif line.split(maxsplit=1)[0] == "OX":
             if len(line.split(maxsplit=1)) == 1:
                 continue
 
-            if line.split(maxsplit=1)[1].split(";")[0].split("=")[0] == "NCBI_TaxID":
-                if (
-                    line.split(maxsplit=1)[1]
-                    .split(";")[0]
-                    .split("=")[1]
-                    .split("{")[0]
-                    .isnumeric()
-                ):
+            if line.split(
+                    maxsplit=1)[1].split(";")[0].split("=")[0] == "NCBI_TaxID":
+                if (line.split(maxsplit=1)[1].split(";")[0].split("=")
+                    [1].split("{")[0].isnumeric()):
                     taxon_identifier = int(
-                        line.split(maxsplit=1)[1]
-                        .split(";")[0]
-                        .split("=")[1]
-                        .split("{")[0]
-                    )
+                        line.split(maxsplit=1)[1].split(";")[0].split("=")
+                        [1].split("{")[0])
 
         elif line == "//":
             yield (

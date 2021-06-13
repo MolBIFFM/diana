@@ -3,16 +3,13 @@ def parse(entry):
         return {}
     else:
         values = {}
-        for namespace, identifier in (
-            namespace_identifier.split(":", 1)
-            for namespace_identifier in entry.split("|")
-        ):
+        for namespace, identifier in (namespace_identifier.split(
+                ":", 1) for namespace_identifier in entry.split("|")):
 
             identifiers = identifier.split("(")
             identifiers = {
-                identifiers[0].strip('"'): identifiers[1].rstrip(")")
-                if len(identifiers) == 2
-                else None
+                identifiers[0].strip('"'):
+                identifiers[1].rstrip(")") if len(identifiers) == 2 else None
             }
 
             if namespace in values:
@@ -29,7 +26,8 @@ def get_identifier_from_namespace(entry, namespace):
 
 def namespace_has_identifier(entry, namespace, identifier):
     if values := parse(entry):
-        return any(str(identifier) in value.keys() for value in values[namespace])
+        return any(
+            str(identifier) in value.keys() for value in values[namespace])
     else:
         return False
 
@@ -44,18 +42,15 @@ def namespace_has_term(entry, namespace, term):
 def namespace_has_any_identifier_from(entry, namespace, identifiers):
     if values := parse(entry):
         return any(
-            str(identifier) in value.keys()
-            for value in values[namespace]
-            for identifier in identifiers
-        )
+            str(identifier) in value.keys() for value in values[namespace]
+            for identifier in identifiers)
     else:
         return False
 
 
 def namespace_has_any_term_from(entry, namespace, terms):
     if values := parse(entry):
-        return any(
-            term in value.values() for value in values[namespace] for term in terms
-        )
+        return any(term in value.values() for value in values[namespace]
+                   for term in terms)
     else:
         return False

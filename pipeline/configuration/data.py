@@ -6,13 +6,11 @@ BIOGRID_MV_PHYSICAL_ZIP_ARCHIVE = "https://downloads.thebiogrid.org/Download/Bio
 BIOGRID_MV_PHYSICAL = r"BIOGRID-MV-Physical-[0-9]\.[0-9]\.[0-9]{3}\.tab3\.txt"
 
 CORUM_ZIP_ARCHIVE = (
-    "https://mips.helmholtz-muenchen.de/corum/download/allComplexes.txt.zip"
-)
+    "https://mips.helmholtz-muenchen.de/corum/download/allComplexes.txt.zip")
 CORUM = "allComplexes.txt"
 
 INTACT_ZIP_ARCHIVE = (
-    "ftp://ftp.ebi.ac.uk/pub/databases/intact/current/psimitab/intact.zip"
-)
+    "ftp://ftp.ebi.ac.uk/pub/databases/intact/current/psimitab/intact.zip")
 INTACT = "intact.txt"
 
 REACTOME = "https://reactome.org/download/current/interactors/reactome.{organism}.interactions.tab-delimited.txt"
@@ -25,5 +23,9 @@ UNIPROT_ID_MAP = "https://ftp.uniprot.org/pub/databases/uniprot/current_release/
 UNIPROT_SWISSPROT = "https://ftp.uniprot.org/pub/databases/uniprot/current_release/knowledgebase/complete/uniprot_sprot.dat.gz"
 
 ORGANISM = {
-    9606: {BIOGRID: "Homo_sapiens", REACTOME: "homo_sapiens", UNIPROT_ID_MAP: "HUMAN"},
+    9606: {
+        BIOGRID: "Homo_sapiens",
+        REACTOME: "homo_sapiens",
+        UNIPROT_ID_MAP: "HUMAN"
+    },
 }

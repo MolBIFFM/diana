@@ -12,8 +12,7 @@ from ..configuration import configuration
 
 def download_file(url, local_file_name):
     request = urllib.request.Request(
-        url, headers={"User-Agent": configuration.USER_AGENT}
-    )
+        url, headers={"User-Agent": configuration.USER_AGENT})
 
     with urllib.request.urlopen(request) as response:
         with open(local_file_name, "wb") as local_file:
@@ -43,14 +42,13 @@ def decompress_zip_file(compressed_file_name, file=None):
             regex = re.compile(file)
             file = next(filter(regex.match, archive.namelist()))
 
-        if not os.path.exists(os.path.join(configuration.DOWNLOAD_DIRECTORY, file)):
+        if not os.path.exists(
+                os.path.join(configuration.DOWNLOAD_DIRECTORY, file)):
             decompressed_file_name = archive.extract(
-                file, path=configuration.DOWNLOAD_DIRECTORY
-            )
+                file, path=configuration.DOWNLOAD_DIRECTORY)
         else:
             decompressed_file_name = os.path.join(
-                configuration.DOWNLOAD_DIRECTORY, file
-            )
+                configuration.DOWNLOAD_DIRECTORY, file)
 
     os.remove(compressed_file_name)
 
@@ -81,7 +79,8 @@ def get_file(url, file=None):
 def txt(url, file=None):
     local_file_name = get_file(url, file)
 
-    with open(local_file_name, buffering=configuration.CHUNK_SIZE) as local_file:
+    with open(local_file_name,
+              buffering=configuration.CHUNK_SIZE) as local_file:
         for line in local_file:
             yield line.rstrip("\n")
 
@@ -89,7 +88,12 @@ def txt(url, file=None):
     os.rmdir(configuration.DOWNLOAD_DIRECTORY)
 
 
-def tabular_txt(url, file=None, delimiter=None, header=None, skiprows=0, usecols=[]):
+def tabular_txt(url,
+                file=None,
+                delimiter=None,
+                header=None,
+                skiprows=0,
+                usecols=[]):
     local_file_name = get_file(url, file)
 
     if os.path.splitext(local_file_name)[1] == ".csv":
@@ -98,12 +102,12 @@ def tabular_txt(url, file=None, delimiter=None, header=None, skiprows=0, usecols
         delimiter = "\t"
 
     for chunk in pd.read_csv(
-        local_file_name,
-        delimiter=delimiter,
-        header=header,
-        skiprows=skiprows,
-        usecols=usecols,
-        chunksize=configuration.CHUNK_SIZE,
+            local_file_name,
+            delimiter=delimiter,
+            header=header,
+            skiprows=skiprows,
+            usecols=usecols,
+            chunksize=configuration.CHUNK_SIZE,
     ):
         for _, row in chunk.iterrows():
             yield row
