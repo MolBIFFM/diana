@@ -96,7 +96,7 @@ def main():
                     if "BioGRID" in configuration[
                             "protein-protein interactions"] and configuration[
                                 "protein-protein interactions"]["BioGRID"].get(
-                                    "neighbors", 0):
+                                    "neighbors", 0) > k:
                         network.add_proteins_from_biogrid(
                             experimental_system=configuration[
                                 "protein-protein interactions"]["BioGRID"].get(
@@ -132,7 +132,7 @@ def main():
                     if "CORUM" in configuration[
                             "protein-protein interactions"] and configuration[
                                 "protein-protein interactions"]["CORUM"].get(
-                                    "neighbors", 0):
+                                    "neighbors", 0) > k:
                         network.add_proteins_from_corum(
                             protein_complex_purification_method=configuration[
                                 "protein-protein interactions"]["CORUM"].get(
@@ -143,7 +143,7 @@ def main():
                     if "IntAct" in configuration[
                             "protein-protein interactions"] and configuration[
                                 "protein-protein interactions"]["IntAct"].get(
-                                    "neighbors", 0):
+                                    "neighbors", 0) > k:
                         network.add_proteins_from_intact(
                             interaction_detection_methods=configuration[
                                 "protein-protein interactions"]["IntAct"].get(
@@ -159,7 +159,7 @@ def main():
                     if "Reactome" in configuration[
                             "protein-protein interactions"] and configuration[
                                 "protein-protein interactions"][
-                                    "Reactome"].get("neighbors", 0):
+                                    "Reactome"].get("neighbors", 0) > k:
                         network.add_proteins_from_reactome(
                             interaction_context=configuration[
                                 "protein-protein interactions"]
@@ -175,7 +175,7 @@ def main():
                     if "STRING" in configuration[
                             "protein-protein interactions"] and configuration[
                                 "protein-protein interactions"]["STRING"].get(
-                                    "neighbors", 0):
+                                    "neighbors", 0) > k:
                         network.add_proteins_from_string(
                             neighborhood=configuration[
                                 "protein-protein interactions"]["STRING"].get(
@@ -229,6 +229,7 @@ def main():
 
                     network.annotate_proteins()
                     network.remove_unannotated_proteins()
+
                     k += 1
 
                 if "BioGRID" in configuration["protein-protein interactions"]:
