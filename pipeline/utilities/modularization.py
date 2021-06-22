@@ -137,7 +137,6 @@ def louvain(G, weight="weight"):
                 deltaQ = {}
                 for j in range(n):
                     if A[i, j] and community[i] != community[j]:
-
                         deltaQ[j] = (
                             ((sigma_in[community[j]] + k_in[i, community[j]]) /
                              (2 * m) - ((sigma_tot[community[j]] + k[i]) /
@@ -153,6 +152,11 @@ def louvain(G, weight="weight"):
                              (sigma_tot[community[i]] /
                               (2 * m))**2 - (k[i] / (2 * m))**2))
 
+                sigma_tot[community[i]] += A[i].sum()
+                sigma_in[community[i]] += sum([
+                    A[i, l] for l in range(n) if community[l] == community[i]
+                ])
+
                 k_in[i, community[i]] += A[i, i]
 
                 if deltaQ:
@@ -162,10 +166,16 @@ def louvain(G, weight="weight"):
                         modularity_optimization = True
                         community_aggregation = True
 
+                        sigma_tot[community[i]] -= A[i].sum()
                         sigma_tot[community[max_j]] += A[i].sum()
-                        sigma_in[community[max_j]] += sum([
+
+                        sigma_in[community[i]] -= sum([
                             A[i, l] for l in range(n)
                             if community[l] == community[i]
+                        ])
+                        sigma_in[community[max_j]] += sum([
+                            A[i, l] for l in range(n)
+                            if community[l] == community[max_j]
                         ])
 
                         for l in range(n):
@@ -176,22 +186,6 @@ def louvain(G, weight="weight"):
                         communities[1][community[max_j]].add(i)
 
                         community[i] = community[max_j]
-
-                    else:
-                        sigma_tot[community[i]] += A[i].sum()
-                        sigma_in[community[i]] += sum([
-                            A[i, l] for l in range(n)
-                            if community[l] == community[i]
-                        ])
-                        k_in[i, community[i]] += A[i, i]
-
-                else:
-                    sigma_tot[community[i]] += A[i].sum()
-                    sigma_in[community[i]] += sum([
-                        A[i, l] for l in range(n)
-                        if community[l] == community[i]
-                    ])
-                    k_in[i, community[i]] += A[i, i]
 
         if community_aggregation:
             for ci in range(len(communities[1])):
