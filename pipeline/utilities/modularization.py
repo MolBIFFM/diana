@@ -128,16 +128,15 @@ def louvain(G, weight="weight"):
 
             for i in range(n):
                 sigma_tot[community[i]] -= A[i].sum()
-                sigma_in[community[i]] -= sum(
-                    [A[i, l] for l in communities[1][i]])
+                sigma_in[community[i]] -= sum([
+                    A[i, l] for l in range(n) if community[l] == community[i]
+                ])
 
                 k_in[i, community[i]] -= A[i, i]
 
                 deltaQ = {}
                 for j in range(n):
                     if A[i, j] and community[i] != community[j]:
-
-                        k_in[j, community[i]] -= A[j, i]
 
                         deltaQ[j] = (
                             ((sigma_in[community[j]] + k_in[i, community[j]]) /
@@ -154,17 +153,20 @@ def louvain(G, weight="weight"):
                              (sigma_tot[community[i]] /
                               (2 * m))**2 - (k[i] / (2 * m))**2))
 
-                        k_in[j, community[i]] += A[j, i]
-
                 k_in[i, community[i]] += A[i, i]
 
                 if deltaQ:
                     max_j = max(deltaQ.items(), key=lambda item: item[1])[0]
 
                     if deltaQ[max_j] > 0.0:
+                        modularity_optimization = True
+                        community_aggregation = True
+
                         sigma_tot[community[max_j]] += A[i].sum()
-                        sigma_in[community[max_j]] += sum(
-                            [A[i, l] for l in communities[1][max_j]])
+                        sigma_in[community[max_j]] += sum([
+                            A[i, l] for l in range(n)
+                            if community[l] == community[i]
+                        ])
 
                         for l in range(n):
                             k_in[l, community[i]] -= A[l, i]
@@ -175,19 +177,20 @@ def louvain(G, weight="weight"):
 
                         community[i] = community[max_j]
 
-                        modularity_optimization = True
-                        community_aggregation = True
-
                     else:
                         sigma_tot[community[i]] += A[i].sum()
-                        sigma_in[community[i]] += sum(
-                            [A[i, l] for l in communities[1][i]])
+                        sigma_in[community[i]] += sum([
+                            A[i, l] for l in range(n)
+                            if community[l] == community[i]
+                        ])
                         k_in[i, community[i]] += A[i, i]
 
                 else:
                     sigma_tot[community[i]] += A[i].sum()
-                    sigma_in[community[i]] += sum(
-                        [A[i, l] for l in communities[1][i]])
+                    sigma_in[community[i]] += sum([
+                        A[i, l] for l in range(n)
+                        if community[l] == community[i]
+                    ])
                     k_in[i, community[i]] += A[i, i]
 
         if community_aggregation:
@@ -228,9 +231,9 @@ def louvain(G, weight="weight"):
                         G.add_edge(ci,
                                    cj,
                                    weight=weights[ci][cj] + weights[cj][ci])
-        else:
-            break
 
-    return [
-        set(name[node] for node in community) for community in communities[0]
-    ]
+        else:
+            return [
+                set(name[node] for node in community)
+                for community in communities[0]
+            ]
