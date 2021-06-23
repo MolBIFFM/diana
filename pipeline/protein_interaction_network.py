@@ -295,9 +295,8 @@ class ProteinInteractionNetwork(nx.Graph):
             proteins[protein] = sorted(
                 sorted(
                     proteins[protein],
-                    key=lambda item: item[1],
-                    reverse=True,
-                )[:num_sites])
+                    key=lambda item: abs(item[1]),
+                )[-num_sites:])
 
             for i in range(len(proteins[protein])):
                 self.nodes[protein]["{} {} {}".format(
@@ -1086,7 +1085,7 @@ class ProteinInteractionNetwork(nx.Graph):
 
     def get_modules(
         self,
-        module_size=35,
+        module_size=0,
         combine_sizes=statistics.mean,
         weight="weight",
         algorithm=modularization.louvain,
@@ -1098,6 +1097,9 @@ class ProteinInteractionNetwork(nx.Graph):
             return []
 
         communities = algorithm(G, weight=weight)
+
+        if not module_size:
+            return communities
 
         while (combine_sizes([len(community)
                               for community in communities]) > module_size):
@@ -1161,7 +1163,7 @@ class ProteinInteractionNetwork(nx.Graph):
         changes=(-1.0, 1.0),
         get_range=lambda time, ptm, changes, combine_sites: changes,
         combine_sites=statistics.mean,
-        module_size=35,
+        module_size=0,
         combine_sizes=statistics.mean,
         weight="weight",
         test="two-sided",

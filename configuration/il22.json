@@ -49,7 +49,7 @@
       },
       "post-processing": {
         "module detection": {
-          "module size": 1000
+          
         }
       }
     }

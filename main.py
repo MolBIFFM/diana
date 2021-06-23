@@ -462,7 +462,7 @@ def main():
                     for j, module in enumerate(
                             network.get_modules(
                                 module_size=configuration["post-processing"]
-                                ["module detection"].get("module size", 35),
+                                ["module detection"].get("module size", 0),
                                 combine_sizes=combine.COMBINE_MODULE_SIZES.get(
                                     configuration["post-processing"]
                                     ["module detection"].get("combine sizes"),
@@ -505,7 +505,7 @@ def main():
                                 combine.COMBINE_CHANGES["mean"],
                             ),
                             module_size=configuration["post-processing"]
-                            ["enrichment analysis"].get("module size", 35),
+                            ["enrichment analysis"].get("module size", 0),
                             combine_sizes=combine.COMBINE_CHANGES.get(
                                 configuration["post-processing"]
                                 ["enrichment analysis"].get("combine sites"),
@@ -535,7 +535,7 @@ def main():
                                 combine.COMBINE_CHANGES["mean"],
                             ),
                             module_size=configuration["post-processing"]
-                            ["enrichment analysis"].get("module size", 35),
+                            ["enrichment analysis"].get("module size", 0),
                             combine_sizes=combine.COMBINE_CHANGES.get(
                                 configuration["post-processing"]
                                 ["enrichment analysis"].get("combine sites"),
@@ -562,7 +562,7 @@ def main():
                                 combine.COMBINE_CHANGES["mean"],
                             ),
                             module_size=configuration["post-processing"]
-                            ["enrichment analysis"].get("module size", 35),
+                            ["enrichment analysis"].get("module size", 0),
                             combine_sizes=combine.COMBINE_CHANGES.get(
                                 configuration["post-processing"]
                                 ["enrichment analysis"].get("combine sites"),

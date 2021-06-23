@@ -201,9 +201,11 @@ def louvain(G, weight="weight"):
                        for ci in range(len(communities[0]))]
 
             for i in range(n):
-                for j in range(n):
-                    weights[community[i]][community[j]] += k_in[i,
-                                                                community[j]]
+                weights[community[i]][community[i]] += 2 * A[i, i]
+
+                for j in range(i):
+                    weights[community[i]][community[j]] += A[i, j]
+                    weights[community[j]][community[i]] += A[j, i]
 
             weights = [[
                 weights[ci][cj] for cj in range(len(communities[0]))
@@ -219,12 +221,11 @@ def louvain(G, weight="weight"):
 
             for ci in range(len(communities[0])):
                 if weights[ci][ci]:
-                    G.add_edge(ci, ci, weight=2.0 * weights[ci][ci])
+                    G.add_edge(ci, ci, weight=weights[ci][ci])
+
                 for cj in range(ci):
-                    if weights[ci][cj] or weights[cj][ci]:
-                        G.add_edge(ci,
-                                   cj,
-                                   weight=weights[ci][cj] + weights[cj][ci])
+                    if weights[ci][cj]:
+                        G.add_edge(ci, cj, weight=weights[ci][cj])
 
         else:
             return [
