@@ -201,7 +201,7 @@ def louvain(G, weight="weight"):
                        for ci in range(len(communities[0]))]
 
             for i in range(n):
-                weights[community[i]][community[i]] += 2 * A[i, i]
+                weights[community[i]][community[i]] += A[i, i]
 
                 for j in range(i):
                     weights[community[i]][community[j]] += A[i, j]
