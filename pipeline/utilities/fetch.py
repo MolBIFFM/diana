@@ -29,8 +29,6 @@ def decompress_gzip_file(compressed_file_name):
                 while chunk := compressed_file.read(configuration.CHUNK_SIZE):
                     decompressed_file.write(chunk)
 
-    os.remove(compressed_file_name)
-
     return decompressed_file_name
 
 
@@ -49,8 +47,6 @@ def decompress_zip_file(compressed_file_name, file=None):
         else:
             decompressed_file_name = os.path.join(
                 configuration.DOWNLOAD_DIRECTORY, file)
-
-    os.remove(compressed_file_name)
 
     return decompressed_file_name
 
@@ -84,8 +80,8 @@ def txt(url, file=None):
         for line in local_file:
             yield line.rstrip("\n")
 
-    os.remove(local_file_name)
-    os.rmdir(configuration.DOWNLOAD_DIRECTORY)
+    if os.path.splitext(urllib.parse.urlparse(url).path)[1] in (".gz", ".zip"):
+        os.remove(local_file_name)
 
 
 def tabular_txt(url,
@@ -112,5 +108,5 @@ def tabular_txt(url,
         for _, row in chunk.iterrows():
             yield row
 
-    os.remove(local_file_name)
-    os.rmdir(configuration.DOWNLOAD_DIRECTORY)
+    if os.path.splitext(urllib.parse.urlparse(url).path)[1] in (".gz", ".zip"):
+        os.remove(local_file_name)
