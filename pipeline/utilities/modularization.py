@@ -106,7 +106,11 @@ def louvain(G, weight="weight"):
     name = list(G.nodes())
     communities = [[set([i]) for i in range(G.number_of_nodes())]]
 
-    while True:
+    community_aggregation = True
+
+    while community_aggregation:
+        community_aggregation = False
+
         A = nx.linalg.graphmatrix.adjacency_matrix(G, weight=weight)
         n = G.number_of_nodes()
         k = [A[i].sum() for i in range(n)]
@@ -120,7 +124,6 @@ def louvain(G, weight="weight"):
         community = [i for i in range(n)]
         communities.append([set([i]) for i in range(n)])
 
-        community_aggregation = False
         modularity_optimization = True
 
         while modularity_optimization:
@@ -227,8 +230,7 @@ def louvain(G, weight="weight"):
                     if weights[ci][cj]:
                         G.add_edge(ci, cj, weight=weights[ci][cj])
 
-        else:
-            return [
-                set(name[node] for node in community)
-                for community in communities[0]
-            ]
+    return [
+        set(name[node] for node in community)
+            for community in communities[0]
+    ]
