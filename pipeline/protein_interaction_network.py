@@ -215,11 +215,10 @@ class ProteinInteractionNetwork(nx.Graph):
             ]
 
             if replicates:
-                if position_column:
+                if position_column and not pd.isna(row[position_column]):
                     positions = [
                         int(position)
                         for position in position_format(row[position_column])
-                        if not pd.isna(row[position_column])
                     ]
                 else:
                     positions = []

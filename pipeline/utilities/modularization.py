@@ -231,6 +231,5 @@ def louvain(G, weight="weight"):
                         G.add_edge(ci, cj, weight=weights[ci][cj])
 
     return [
-        set(name[node] for node in community)
-            for community in communities[0]
+        set(name[node] for node in community) for community in communities[0]
     ]
