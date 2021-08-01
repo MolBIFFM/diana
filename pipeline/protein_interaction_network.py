@@ -339,7 +339,10 @@ class ProteinInteractionNetwork(nx.Graph):
                                     if len(change.split(" ")) == 3
                                     and change.split(" ")[0] == str(time))))
 
-    def get_changes(self, time, ptm, combine_sites=statistics.mean):
+    def get_changes(self,
+                    time,
+                    ptm,
+                    combine_sites=lambda sites: max(sites, key=abs)):
         changes = []
         for protein in self:
             sites = [
@@ -354,41 +357,37 @@ class ProteinInteractionNetwork(nx.Graph):
         return changes
 
     def get_z_score_range(
-        self,
-        time,
-        post_translational_modification,
-        thresholds,
-        combine_sites=statistics.mean,
+            self,
+            time,
+            modification,
+            thresholds,
+            combine_sites=lambda sites: max(sites, key=abs),
     ):
-        changes = self.get_changes(time, post_translational_modification,
-                                   combine_sites)
+        changes = self.get_changes(time, modification, combine_sites)
         mean = statistics.mean(changes)
         stdev = statistics.stdev(changes, xbar=mean)
         return (thresholds[0] * stdev + mean, thresholds[1] * stdev + mean)
 
     def get_z_score(
-        self,
-        time,
-        post_translational_modification,
-        change,
-        combine_sites=statistics.mean,
+            self,
+            time,
+            modification,
+            change,
+            combine_sites=lambda sites: max(sites, key=abs),
     ):
-        changes = self.get_changes(time, post_translational_modification,
-                                   combine_sites)
+        changes = self.get_changes(time, modification, combine_sites)
         mean = statistics.mean(changes)
         stdev = statistics.stdev(changes, xbar=mean)
         return (change - mean) / stdev
 
     def get_proportion_range(
-        self,
-        time,
-        post_translational_modification,
-        thresholds,
-        combine_sites=statistics.mean,
+            self,
+            time,
+            modification,
+            thresholds,
+            combine_sites=lambda sites: max(sites, key=abs),
     ):
-        changes = sorted(
-            self.get_changes(time, post_translational_modification,
-                             combine_sites))
+        changes = sorted(self.get_changes(time, modification, combine_sites))
         proportion_range = [0.0, 0.0]
 
         for i in range(len(changes)):
@@ -410,14 +409,13 @@ class ProteinInteractionNetwork(nx.Graph):
         return tuple(proportion_range)
 
     def get_proportion(
-        self,
-        time,
-        post_translational_modification,
-        change,
-        combine_sites=statistics.mean,
+            self,
+            time,
+            modification,
+            change,
+            combine_sites=lambda sites: max(sites, key=abs),
     ):
-        changes = self.get_changes(time, post_translational_modification,
-                                   combine_sites)
+        changes = self.get_changes(time, modification, combine_sites)
         return (min(
             len([c for c in changes if c <= change]),
             len([c for c in changes if c >= change]),
@@ -425,89 +423,98 @@ class ProteinInteractionNetwork(nx.Graph):
 
     def set_changes(
         self,
-        combine_sites=statistics.mean,
+        combine_sites=lambda sites: max(sites, key=abs),
         changes=(-1.0, 1.0),
-        get_range=lambda time, post_translational_modification, changes,
-        combine_sites: changes,
+        get_range=lambda time, modification, changes, combine_sites: changes,
     ):
         times = self.get_times()
-        post_translational_modifications = {
+        modifications = {
             time: self.get_post_translational_modifications(time)
             for time in times
         }
 
         mid_range = {
             time: {
-                post_translational_modification: get_range(
+                modification: get_range(
                     time,
-                    post_translational_modification,
+                    modification,
                     changes,
                     combine_sites,
                 )
-                for post_translational_modification in
-                post_translational_modifications[time]
+                for modification in modifications[time]
             }
             for time in times
         }
 
         for time in times:
             for protein in self:
-                ptms = {}
-                for post_translational_modification in post_translational_modifications[
-                        time]:
+                ptm = {}
+                for modification in modifications[time]:
                     sites = [
                         self.nodes[protein][change]
                         for change in self.nodes[protein]
-                        if len(change.split(" ")) == 3
-                        and change.split(" ")[0] == str(time) and change.split(
-                            " ")[1] == post_translational_modification
+                        if len(change.split(" ")) == 3 and change.split(" ")[0]
+                        == str(time) and change.split(" ")[1] == modification
                     ]
 
                     if sites:
-                        ptms[post_translational_modification] = combine_sites(
-                            sites)
+                        combined_change = combine_sites(sites)
 
-                if ptms:
-                    if all(change >= 0.5 *
-                           mid_range[time][post_translational_modification][1]
-                           for change in ptms.values()):
-                        if any(change >= mid_range[time]
-                               [post_translational_modification][1]
-                               for change in ptms.values()):
-                            self.nodes[protein]["change {}".format(
-                                time)] = "up"
+                        if combined_change >= 1.0 * mid_range[time][
+                                modification][1]:
+                            ptm[modification] = "up"
+                        elif 1.0 * mid_range[time][modification][
+                                1] > combined_change >= 0.5 * mid_range[time][
+                                    modification][1]:
+                            ptm[modification] = "mid_up"
+                        elif 0.5 * mid_range[time][modification][
+                                1] > combined_change > 0.5 * mid_range[time][
+                                    modification][0]:
+                            ptm[modification] = "mid"
+                        elif 0.5 * mid_range[time][modification][
+                                0] >= combined_change > 1.0 * mid_range[time][
+                                    modification][0]:
+                            ptm[modification] = "mid_down"
                         else:
-                            self.nodes[protein]["change {}".format(
-                                time)] = "mid up"
+                            ptm[modification] = "down"
 
-                    elif all(
-                            change <= 0.5 *
-                            mid_range[time][post_translational_modification][0]
-                            for change in ptms.values()):
-                        if any(change <= mid_range[time]
-                               [post_translational_modification][0]
-                               for change in ptms.values()):
-                            self.nodes[protein]["change {}".format(
-                                time)] = "down"
-                        else:
-                            self.nodes[protein]["change {}".format(
-                                time)] = "mid down"
+                if ptm:
+                    if set(ptm.values()) == {"up"}:
+                        self.nodes[protein]["change {}".format(time)] = "up"
+                    elif set(ptm.values()) == {"mid_up", "up"}:
+                        self.nodes[protein]["change {}".format(time)] = "up"
+                    elif set(ptm.values()) == {"mid", "mid_up", "up"}:
+                        self.nodes[protein]["change {}".format(time)] = "up"
 
-                    elif all(
-                            change <= 0.5 *
-                            mid_range[time][post_translational_modification][0]
-                            or change >= 0.5 *
-                            mid_range[time][post_translational_modification][1]
-                            for change in ptms.values()):
+                    elif set(ptm.values()) == {"mid_up"}:
+                        self.nodes[protein]["change {}".format(
+                            time)] = "mid_up"
+                    elif set(ptm.values()) == {"mid", "mid_up"}:
+                        self.nodes[protein]["change {}".format(
+                            time)] = "mid_up"
+
+                    elif set(ptm.values()) == {"mid"}:
+                        self.nodes[protein]["change {}".format(time)] = "mid"
+
+                    elif set(ptm.values()) == {"mid", "mid_down"}:
+                        self.nodes[protein]["change {}".format(
+                            time)] = "mid_down"
+                    elif set(ptm.values()) == {"mid_down"}:
+                        self.nodes[protein]["change {}".format(
+                            time)] = "mid_down"
+
+                    elif set(ptm.values()) == {"mid", "mid_down", "down"}:
+                        self.nodes[protein]["change {}".format(time)] = "down"
+                    elif set(ptm.values()) == {"mid_down", "down"}:
+                        self.nodes[protein]["change {}".format(time)] = "down"
+                    elif set(ptm.values()) == {"down"}:
+                        self.nodes[protein]["change {}".format(time)] = "down"
+                    else:
                         self.nodes[protein]["change {}".format(
                             time)] = " ".join(
-                                sorted([
-                                    "{} up".format(ptm)
-                                    if change > 0.0 else "{} down".format(ptm)
-                                    for ptm, change in ptms.items()
-                                ]))
-                    else:
-                        self.nodes[protein]["change {}".format(time)] = "mid"
+                                "{}_{}".format(modification, ptm[modification])
+                                for modification in sorted(ptm.keys()))
+
                 else:
                     self.nodes[protein]["change {}".format(time)] = "mid"
 
@@ -1085,7 +1092,7 @@ class ProteinInteractionNetwork(nx.Graph):
     def get_modules(
         self,
         module_size=0,
-        combine_sizes=statistics.mean,
+        combine_module_sizes=statistics.mean,
         weight="weight",
         algorithm=modularization.louvain,
     ):
@@ -1100,8 +1107,8 @@ class ProteinInteractionNetwork(nx.Graph):
         if not module_size:
             return communities
 
-        while (combine_sizes([len(community)
-                              for community in communities]) > module_size):
+        while (combine_module_sizes(
+            [len(community) for community in communities]) > module_size):
             max_community_size = max(
                 len(community) for community in communities)
 
@@ -1137,11 +1144,11 @@ class ProteinInteractionNetwork(nx.Graph):
         return [community for community in communities if len(community) > 1]
 
     def get_proteins(
-        self,
-        time,
-        ptm,
-        change_filter=lambda combined_sites: bool(combined_sites),
-        combine_sites=statistics.mean,
+            self,
+            time,
+            ptm,
+            change_filter=lambda combined_sites: bool(combined_sites),
+            combine_sites=lambda sites: max(sites, key=abs),
     ):
         proteins = []
         for protein in self:
@@ -1161,9 +1168,9 @@ class ProteinInteractionNetwork(nx.Graph):
         p=0.05,
         changes=(-1.0, 1.0),
         get_range=lambda time, ptm, changes, combine_sites: changes,
-        combine_sites=statistics.mean,
+        combine_sites=lambda sites: max(sites, key=abs),
         module_size=0,
-        combine_sizes=statistics.mean,
+        combine_module_sizes=statistics.mean,
         weight="weight",
         test="two-sided",
         algorithm=modularization.louvain,
@@ -1172,7 +1179,7 @@ class ProteinInteractionNetwork(nx.Graph):
             i: module
             for i, module in enumerate(
                 self.get_modules(module_size,
-                                 combine_sizes,
+                                 combine_module_sizes,
                                  weight=weight,
                                  algorithm=algorithm))
         }

@@ -96,8 +96,7 @@
             "Ratio H/L normalized Exp2",
             "Ratio H/L normalized Exp3"
           ],
-          "replicates": 2,
-          "merge replicates": "mean"
+          "replicates": 2
         }
       ],
       "protein-protein interactions": {
@@ -129,13 +128,6 @@
         },
         "node color": {
           "range": [-1.0, 1.0]
-        }
-      },
-      "post-processing": {
-        "enrichment analysis": {
-          "p": 0.05,
-          "type": "z-score",
-          "range": [-2.0, 2.0]
         }
       }
     }

@@ -1,3 +1,7 @@
+def hex_encoding(r=0, g=0, b=0):
+    return "#{:02X}{:02X}{:02X}".format(r, g, b)
+
+
 SETTINGS = [
     {
         "edge": {
@@ -280,16 +284,16 @@ SETTINGS = [
                     "default": "0.0"
                 },
                 "NODE_FILL_COLOR": {
-                    "default": "#808080",
+                    "default": hex_encoding(128, 128, 128),
                     "discreteMapping": {
                         "attributeName": "change {time}",
                         "attributeType": "string",
                         "discreteMappingEntry": {
-                            "up": "#FF0000",
-                            "mid up": "#FF6666",
-                            "down": "#0000FF",
-                            "mid down": "#6666FF",
-                            "mid": "#808080",
+                            "up": hex_encoding(255, 0, 0),
+                            "mid_up": hex_encoding(255, 102, 102),
+                            "mid": hex_encoding(128, 128, 128),
+                            "mid_down": hex_encoding(102, 102, 255),
+                            "down": hex_encoding(0, 0, 255),
                         },
                     },
                 },
@@ -649,18 +653,53 @@ SETTINGS = [
                     "default": "0.0"
                 },
                 "NODE_FILL_COLOR": {
-                    "default": "#808080",
+                    "default": hex_encoding(128, 128, 128),
                     "discreteMapping": {
                         "attributeName": "change {time}",
                         "attributeType": "string",
                         "discreteMappingEntry": {
-                            "up": "#FF0000",
-                            "mid up": "#FF6666",
-                            "down": "#0000FF",
-                            "mid down": "#6666FF",
-                            "{ptms[0]} up {ptms[1]} down": "#00FF00",
-                            "{ptms[0]} down {ptms[1]} up": "#FFFF00",
-                            "mid": "#808080",
+                            "up":
+                            hex_encoding(255, 0, 0),
+                            "mid_up":
+                            hex_encoding(255, 102, 102),
+                            "mid":
+                            hex_encoding(128, 128, 128),
+                            "mid_down":
+                            hex_encoding(102, 102, 255),
+                            "down":
+                            hex_encoding(0, 0, 255),
+                            "{ptms[0]}_up {ptms[1]}_down":
+                            hex_encoding(0, 255, 0),
+                            "{ptms[0]}_up {ptms[1]}_mid_down":
+                            hex_encoding(0, 255, 0),
+                            "{ptms[0]}_mid_up {ptms[1]}_down":
+                            hex_encoding(0, 255, 0),
+                            "{ptms[0]}_mid_up {ptms[1]}_mid_down":
+                            hex_encoding(0, 255, 0),
+                            "{ptms[0]}_down {ptms[1]}_up":
+                            hex_encoding(255, 255, 0),
+                            "{ptms[0]}_down {ptms[1]}_mid_up":
+                            hex_encoding(255, 255, 0),
+                            "{ptms[0]}_mid_down {ptms[1]}_up":
+                            hex_encoding(255, 255, 0),
+                            "{ptms[0]}_mid_down {ptms[1]}_mid_up":
+                            hex_encoding(255, 255, 0),
+                            "{ptms[0]}_up {ptms[1]}_mid":
+                            hex_encoding(255, 0, 0),
+                            "{ptms[0]}_mid_up {ptms[1]}_mid":
+                            hex_encoding(255, 102, 102),
+                            "{ptms[0]}_mid_down {ptms[1]}_mid":
+                            hex_encoding(102, 102, 255),
+                            "{ptms[0]}_down {ptms[1]}_mid":
+                            hex_encoding(0, 0, 255),
+                            "{ptms[0]}_mid {ptms[1]}_up":
+                            hex_encoding(255, 0, 0),
+                            "{ptms[0]}_mid {ptms[1]}_mid_up":
+                            hex_encoding(255, 102, 102),
+                            "{ptms[0]}_mid {ptms[1]}_mid_down":
+                            hex_encoding(102, 102, 255),
+                            "{ptms[0]}_mid {ptms[1]}_down":
+                            hex_encoding(0, 0, 255),
                         },
                     },
                 },

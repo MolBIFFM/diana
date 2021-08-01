@@ -1,12 +1,12 @@
 import statistics
 
-COMBINE_CHANGES = {
+COMBINE_SITES = {
     "down":
     lambda changes: len([change for change in changes
                          if change < 0.0]) / len(changes),
     "max":
     max,
-    "maxabs":
+    "absmax":
     lambda changes: max(changes, key=abs),
     "mean":
     statistics.mean,
@@ -14,17 +14,22 @@ COMBINE_CHANGES = {
     statistics.median,
     "min":
     min,
-    "minabs":
+    "absmin":
     lambda changes: min(changes, key=abs),
     "number":
     len,
     "sum":
     sum,
-    "sumabs":
+    "abssum":
     lambda changes: sum(abs(change) for change in changes),
     "up":
     lambda changes: len([change for change in changes
                          if change > 0.0]) / len(changes),
+}
+
+COMBINE_REPLICATES = {
+    "mean": statistics.mean,
+    "median": statistics.median,
 }
 
 COMBINE_MODULE_SIZES = {
