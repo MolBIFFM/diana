@@ -9,8 +9,9 @@ import networkx as nx
 import scipy.stats
 import pandas as pd
 
-from pipeline.configuration import data
-from pipeline.utilities import fetch, mitab, modularization, correction, uniprot
+from pipeline.utilities import download, mitab, correction, uniprot
+from pipeline.databases import biogrid, corum, intact, reactome, string
+from pipeline.modularization import louvain
 
 
 class ProteinInteractionNetwork(nx.Graph):
@@ -545,72 +546,9 @@ class ProteinInteractionNetwork(nx.Graph):
         taxon_identifier=9606,
         multi_validated_physical=False,
     ):
-        uniprot = {}
-        for row in fetch.tabular_txt(
-                data.UNIPROT_ID_MAP.format(
-                    organism=data.ORGANISM[taxon_identifier][
-                        data.UNIPROT_ID_MAP],
-                    taxon_identifier=taxon_identifier,
-                ),
-                delimiter="\t",
-                usecols=[0, 1, 2],
-        ):
-            if row[1] == "BioGRID":
-                uniprot[int(row[2])] = row[0]
-
-        for row in fetch.tabular_txt(
-                data.BIOGRID_ID_MAP_ZIP_ARCHIVE,
-                file=data.BIOGRID_ID_MAP,
-                delimiter="\t",
-                header=20,
-                usecols=[
-                    "BIOGRID_ID",
-                    "IDENTIFIER_VALUE",
-                    "IDENTIFIER_TYPE",
-                ],
-        ):
-            if row["IDENTIFIER_TYPE"] in ("UNIPROT-ACCESSION",
-                                          "UNIPROT-ISOFORM"):
-                uniprot[int(row["BIOGRID_ID"])] = row["IDENTIFIER_VALUE"]
-
-        for row in fetch.tabular_txt(
-                data.BIOGRID_MV_PHYSICAL_ZIP_ARCHIVE
-                if multi_validated_physical else data.BIOGRID_ZIP_ARCHIVE,
-                file=data.BIOGRID_MV_PHYSICAL
-                if multi_validated_physical else data.BIOGRID.format(
-                    organism=data.ORGANISM[taxon_identifier][data.BIOGRID]),
-                delimiter="\t",
-                header=0,
-                usecols=[
-                    "BioGRID ID Interactor A",
-                    "BioGRID ID Interactor B",
-                    "Experimental System",
-                    "Experimental System Type",
-                    "Organism ID Interactor A",
-                    "Organism ID Interactor B",
-                    "Throughput",
-                ],
-        ):
-            if (row["BioGRID ID Interactor A"] in uniprot
-                    and row["BioGRID ID Interactor B"] in uniprot
-                    and row["Organism ID Interactor A"]
-                    == row["Organism ID Interactor B"]
-                    and (not experimental_system
-                         or row["Experimental System"] in experimental_system)
-                    and
-                (not experimental_system_type or
-                 row["Experimental System Type"] in experimental_system_type)):
-                if (uniprot[row["BioGRID ID Interactor A"]] in self
-                        and uniprot[row["BioGRID ID Interactor B"]] not in self
-                        and self.nodes[uniprot[
-                            row["BioGRID ID Interactor A"]]].get("protein")):
-                    self.add_node(uniprot[row["BioGRID ID Interactor B"]])
-
-                elif (uniprot[row["BioGRID ID Interactor A"]] not in self
-                      and uniprot[row["BioGRID ID Interactor B"]] in self
-                      and self.nodes[uniprot[
-                          row["BioGRID ID Interactor B"]]].get("protein")):
-                    self.add_node(uniprot[row["BioGRID ID Interactor A"]])
+        biogrid.add_proteins(self, experimental_system,
+                             experimental_system_type, taxon_identifier,
+                             multi_validated_physical)
 
     def add_interactions_from_biogrid(
         self,
@@ -619,72 +557,12 @@ class ProteinInteractionNetwork(nx.Graph):
         taxon_identifier=9606,
         multi_validated_physical=False,
     ):
-        uniprot = {}
-        for row in fetch.tabular_txt(
-                data.UNIPROT_ID_MAP.format(
-                    organism=data.ORGANISM[taxon_identifier][
-                        data.UNIPROT_ID_MAP],
-                    taxon_identifier=taxon_identifier,
-                ),
-                delimiter="\t",
-                usecols=[0, 1, 2],
-        ):
-            if row[1] == "BioGRID" and row[0] in self:
-                uniprot[int(row[2])] = row[0]
-
-        for row in fetch.tabular_txt(
-                data.BIOGRID_ID_MAP_ZIP_ARCHIVE,
-                file=data.BIOGRID_ID_MAP,
-                delimiter="\t",
-                header=20,
-                usecols=[
-                    "BIOGRID_ID",
-                    "IDENTIFIER_VALUE",
-                    "IDENTIFIER_TYPE",
-                ],
-        ):
-            if (row["IDENTIFIER_TYPE"]
-                    in ("UNIPROT-ACCESSION", "UNIPROT-ISOFORM")
-                    and row["IDENTIFIER_VALUE"] in self):
-                uniprot[int(row["BIOGRID_ID"])] = row["IDENTIFIER_VALUE"]
-
-        for row in fetch.tabular_txt(
-                data.BIOGRID_MV_PHYSICAL_ZIP_ARCHIVE
-                if multi_validated_physical else data.BIOGRID_ZIP_ARCHIVE,
-                file=data.BIOGRID_MV_PHYSICAL
-                if multi_validated_physical else data.BIOGRID.format(
-                    organism=data.ORGANISM[taxon_identifier][data.BIOGRID]),
-                delimiter="\t",
-                header=0,
-                usecols=[
-                    "BioGRID ID Interactor A",
-                    "BioGRID ID Interactor B",
-                    "Experimental System",
-                    "Experimental System Type",
-                    "Organism ID Interactor A",
-                    "Organism ID Interactor B",
-                    "Throughput",
-                ],
-        ):
-            if (row["BioGRID ID Interactor A"] in uniprot
-                    and row["BioGRID ID Interactor B"] in uniprot
-                    and uniprot[row["BioGRID ID Interactor A"]] !=
-                    uniprot[row["BioGRID ID Interactor B"]]
-                    and (not experimental_system
-                         or row["Experimental System"] in experimental_system)
-                    and
-                (not experimental_system_type or
-                 row["Experimental System Type"] in experimental_system_type)):
-                self.add_edge(
-                    uniprot[row["BioGRID ID Interactor A"]],
-                    uniprot[row["BioGRID ID Interactor B"]],
-                )
-                self.edges[
-                    uniprot[row["BioGRID ID Interactor A"]],
-                    uniprot[row["BioGRID ID Interactor B"]], ]["BioGRID"] = 0.5
+        biogrid.add_interactions(self, experimental_system,
+                                 experimental_system_type, taxon_identifier,
+                                 multi_validated_physical)
 
     def add_proteins_from_corum(self, protein_complex_purification_method=[]):
-        for row in fetch.tabular_txt(
+        for row in download.tabular_txt(
                 data.CORUM_ZIP_ARCHIVE,
                 file=data.CORUM,
                 delimiter="\t",
@@ -694,25 +572,11 @@ class ProteinInteractionNetwork(nx.Graph):
                     "Protein complex purification method",
                 ],
         ):
-            if not protein_complex_purification_method or any(
-                    method in protein_complex_purification_method
-                    for method in [
-                        entry.split("-")[1].lstrip() for entry in
-                        row["Protein complex purification method"].split(";")
-                    ]):
-                for interactor_a, interactor_b in itertools.combinations(
-                        row["subunits(UniProt IDs)"].split(";"), 2):
-                    if (interactor_a in self and interactor_b not in self
-                            and self.nodes[interactor_a].get("protein")):
-                        self.add_node(interactor_b)
-
-                    elif (interactor_a not in self and interactor_b in self
-                          and self.nodes[interactor_b].get("protein")):
-                        self.add_node(interactor_a)
+            corum.add_proteins(self, protein_complex_purification_method)
 
     def add_interactions_from_corum(self,
                                     protein_complex_purification_method=[]):
-        for row in fetch.tabular_txt(
+        for row in download.tabular_txt(
                 data.CORUM_ZIP_ARCHIVE,
                 file=data.CORUM,
                 delimiter="\t",
@@ -722,20 +586,7 @@ class ProteinInteractionNetwork(nx.Graph):
                     "Protein complex purification method",
                 ],
         ):
-            if not protein_complex_purification_method or any(
-                    method in protein_complex_purification_method
-                    for method in [
-                        entry.split("-")[1].lstrip() for entry in
-                        row["Protein complex purification method"].split(";")
-                    ]):
-                for interactor_a, interactor_b in itertools.combinations(
-                        row["subunits(UniProt IDs)"].split(";"), 2):
-                    if interactor_a in self and interactor_b in self:
-                        self.add_edge(
-                            interactor_a,
-                            interactor_b,
-                        )
-                        self.edges[interactor_a, interactor_b, ]["CORUM"] = 0.5
+            corum.add_interactions(self, protein_complex_purification_method)
 
     def add_proteins_from_intact(
         self,
@@ -743,50 +594,8 @@ class ProteinInteractionNetwork(nx.Graph):
         interaction_types=[],
         mi_score=0.0,
     ):
-        for row in fetch.tabular_txt(
-                data.INTACT_ZIP_ARCHIVE,
-                file=data.INTACT,
-                delimiter="\t",
-                header=0,
-                usecols=[
-                    "#ID(s) interactor A",
-                    "ID(s) interactor B",
-                    "Alt. ID(s) interactor A",
-                    "Alt. ID(s) interactor B",
-                    "Taxid interactor A",
-                    "Taxid interactor B",
-                    "Interaction detection method(s)",
-                    "Interaction type(s)",
-                    "Confidence value(s)",
-                ],
-        ):
-
-            if ((interactor_a := mitab.get_identifier_from_namespace(
-                    row["#ID(s) interactor A"], "uniprotkb"))
-                    and (interactor_b := mitab.get_identifier_from_namespace(
-                        row["ID(s) interactor B"], "uniprotkb"))
-                    and mitab.get_identifier_from_namespace(
-                        row["Taxid interactor A"],
-                        "taxid") == mitab.get_identifier_from_namespace(
-                            row["Taxid interactor B"], "taxid")
-                    and (not interaction_detection_methods
-                         or mitab.namespace_has_any_term_from(
-                             row["Interaction detection method(s)"],
-                             "psi-mi",
-                             interaction_detection_methods,
-                         )) and
-                (not interaction_types or mitab.namespace_has_any_term_from(
-                    row["Interaction type(s)"], "psi-mi", interaction_types))
-                    and (score := mitab.get_identifier_from_namespace(
-                        row["Confidence value(s)"], "intact-miscore"))
-                    and float(score) >= mi_score):
-                if (interactor_a in self and interactor_b not in self
-                        and self.nodes[interactor_a].get("protein")):
-                    self.add_node(interactor_b)
-
-                elif (interactor_a not in self and interactor_b in self
-                      and self.nodes[interactor_b].get("protein")):
-                    self.add_node(interactor_a)
+        intact.add_proteins(self, interaction_detection_methods,
+                            interaction_types, mi_score)
 
     def add_interactions_from_intact(
         self,
@@ -794,54 +603,8 @@ class ProteinInteractionNetwork(nx.Graph):
         interaction_types=[],
         mi_score=0.0,
     ):
-
-        for row in fetch.tabular_txt(
-                data.INTACT_ZIP_ARCHIVE,
-                file=data.INTACT,
-                delimiter="\t",
-                header=0,
-                usecols=[
-                    "#ID(s) interactor A",
-                    "ID(s) interactor B",
-                    "Alt. ID(s) interactor A",
-                    "Alt. ID(s) interactor B",
-                    "Taxid interactor A",
-                    "Taxid interactor B",
-                    "Interaction detection method(s)",
-                    "Interaction type(s)",
-                    "Confidence value(s)",
-                ],
-        ):
-
-            if ((interactor_a := mitab.get_identifier_from_namespace(
-                    row["#ID(s) interactor A"], "uniprotkb"))
-                    and (interactor_b := mitab.get_identifier_from_namespace(
-                        row["ID(s) interactor B"], "uniprotkb"))
-                    and interactor_a != interactor_b
-                    and (not interaction_detection_methods
-                         or mitab.namespace_has_any_term_from(
-                             row["Interaction detection method(s)"],
-                             "psi-mi",
-                             interaction_detection_methods,
-                         )) and
-                (not interaction_types or mitab.namespace_has_any_term_from(
-                    row["Interaction type(s)"], "psi-mi", interaction_types))
-                    and (score := mitab.get_identifier_from_namespace(
-                        row["Confidence value(s)"], "intact-miscore"))
-                    and interactor_a in self and interactor_b in self):
-                score = float(score)
-
-                if score >= mi_score:
-                    if self.has_edge(interactor_a, interactor_b):
-                        self.edges[interactor_a, interactor_b]["IntAct"] = max(
-                            score,
-                            self.edges[interactor_a,
-                                       interactor_b].get("IntAct", 0.0),
-                        )
-                    else:
-                        self.add_edge(interactor_a, interactor_b)
-                        self.edges[interactor_a,
-                                   interactor_b]["IntAct"] = score
+        intact.add_interactions(self, interaction_detection_methods,
+                                interaction_types, mi_score)
 
     def add_proteins_from_reactome(
         self,
@@ -849,35 +612,9 @@ class ProteinInteractionNetwork(nx.Graph):
         interaction_context=[],
         taxon_identifier=9606,
     ):
-        for row in fetch.tabular_txt(
-                data.REACTOME.format(
-                    organism=data.ORGANISM[taxon_identifier][data.REACTOME]),
-                delimiter="\t",
-                header=0,
-                usecols=[
-                    "# Interactor 1 uniprot id",
-                    "Interactor 2 uniprot id",
-                    "Interaction type",
-                    "Interaction context",
-                ],
-        ):
-            if (row["# Interactor 1 uniprot id"].split(":")[0] == "uniprotkb"
-                    and row["Interactor 2 uniprot id"].split(":")[0]
-                    == "uniprotkb"):
-                interactor_a = row["# Interactor 1 uniprot id"].split(":")[1]
-                interactor_b = row["Interactor 2 uniprot id"].split(":")[1]
 
-                if (not interaction_type or row["Interaction type"]
-                        in interaction_type) and (not interaction_context
-                                                  or row["Interaction context"]
-                                                  in interaction_context):
-                    if (interactor_a in self and interactor_b not in self
-                            and self.nodes[interactor_a].get("protein")):
-                        self.add_node(interactor_b)
-
-                    elif (interactor_a not in self and interactor_b in self
-                          and self.nodes[interactor_b].get("protein")):
-                        self.add_node(interactor_a)
+        reactome.add_proteins(self, interaction_type, interaction_context,
+                              taxon_identifier)
 
     def add_interactions_from_reactome(
         self,
@@ -886,34 +623,8 @@ class ProteinInteractionNetwork(nx.Graph):
         taxon_identifier=9606,
     ):
 
-        for row in fetch.tabular_txt(
-                data.REACTOME.format(
-                    organism=data.ORGANISM[taxon_identifier][data.REACTOME]),
-                delimiter="\t",
-                header=0,
-                usecols=[
-                    "# Interactor 1 uniprot id",
-                    "Interactor 2 uniprot id",
-                    "Interaction type",
-                    "Interaction context",
-                ],
-        ):
-            if (row["# Interactor 1 uniprot id"].split(":")[0] == "uniprotkb"
-                    and row["Interactor 2 uniprot id"].split(":")[0]
-                    == "uniprotkb"):
-                interactor_a = row["# Interactor 1 uniprot id"].split(":")[1]
-                interactor_b = row["Interactor 2 uniprot id"].split(":")[1]
-
-                if (interactor_a != interactor_b
-                        and (not interaction_type
-                             or row["Interaction type"] in interaction_type)
-                        and
-                    (not interaction_context
-                     or row["Interaction context"] in interaction_context)
-                        and interactor_a in self and interactor_b in self):
-
-                    self.add_edge(interactor_a, interactor_b)
-                    self.edges[interactor_a, interactor_b]["Reactome"] = 0.5
+        reactome.add_interactions(self, interaction_type, interaction_context,
+                                  taxon_identifier)
 
     def add_proteins_from_string(
         self,
@@ -934,70 +645,13 @@ class ProteinInteractionNetwork(nx.Graph):
         taxon_identifier=9606,
         physical=False,
     ):
-
-        uniprot = {}
-        for row in fetch.tabular_txt(
-                data.UNIPROT_ID_MAP.format(
-                    organism=data.ORGANISM[taxon_identifier][
-                        data.UNIPROT_ID_MAP],
-                    taxon_identifier=taxon_identifier,
-                ),
-                delimiter="\t",
-                usecols=[0, 1, 2],
-        ):
-            if row[1] == "STRING":
-                uniprot[row[2]] = row[0]
-
-        for row in fetch.tabular_txt(
-                data.STRING_ID_MAP.format(taxon_identifier=taxon_identifier),
-                delimiter="\t",
-                skiprows=1,
-                usecols=[0, 1, 2],
-        ):
-            if "BLAST_UniProt_AC" in row[2].split():
-                uniprot[row[0]] = row[1]
-
-        thresholds = {
-            column: threshold
-            for column, threshold in {
-                "neighborhood": neighborhood,
-                "neighborhood_transferred": neighborhood_transferred,
-                "fusion": fusion,
-                "cooccurence": cooccurence,
-                "homology": homology,
-                "coexpression": coexpression,
-                "coexpression_transferred": coexpression_transferred,
-                "experiments": experiments,
-                "experiments_transferred": experiments_transferred,
-                "database": database,
-                "database_transferred": database_transferred,
-                "textmining": textmining,
-                "textmining_transferred": textmining_transferred,
-            }.items() if threshold
-        }
-        thresholds["combined_score"] = combined_score
-
-        for row in fetch.tabular_txt(
-                data.STRING_PHYSICAL.format(taxon_identifier=taxon_identifier)
-                if physical else data.STRING.format(
-                    taxon_identifier=taxon_identifier),
-                delimiter=" ",
-                header=0,
-                usecols=["protein1", "protein2"] + list(thresholds.keys()),
-        ):
-            if (row["protein1"] in uniprot and row["protein2"] in uniprot
-                    and uniprot[row["protein1"]] != uniprot[row["protein2"]]
-                    and all(row[column] / 1000 >= thresholds[column]
-                            for column in thresholds)):
-                if (uniprot[row["protein1"]] in self
-                        and uniprot[row["protein2"]] not in self and
-                        self.nodes[uniprot[row["protein1"]]].get("protein")):
-                    self.add_node(uniprot[row["protein2"]])
-
-                elif (uniprot[row["protein1"]] not in self
-                      and uniprot[row["protein2"]] in self
-                      and self.nodes[uniprot[row["protein2"]]].get("protein")):
-                    self.add_node(uniprot[row["protein1"]])
+        string.add_proteins(self, neighborhood, neighborhood_transferred,
+                            fusion, cooccurence, homology, coexpression,
+                            coexpression_transferred, experiments,
+                            experiments_transferred, database,
+                            database_transferred, textmining,
+                            textmining_transferred, combined_score,
+                            taxon_identifier, physical)
 
     def add_interactions_from_string(
         self,
@@ -1018,83 +672,20 @@ class ProteinInteractionNetwork(nx.Graph):
         taxon_identifier=9606,
         physical=False,
     ):
-
-        uniprot = {}
-        for row in fetch.tabular_txt(
-                data.UNIPROT_ID_MAP.format(
-                    organism=data.ORGANISM[taxon_identifier][
-                        data.UNIPROT_ID_MAP],
-                    taxon_identifier=taxon_identifier,
-                ),
-                delimiter="\t",
-                usecols=[0, 1, 2],
-        ):
-            if row[1] == "STRING" and row[0] in self:
-                uniprot[row[2]] = row[0]
-
-        for row in fetch.tabular_txt(
-                data.STRING_ID_MAP.format(taxon_identifier=taxon_identifier),
-                delimiter="\t",
-                skiprows=1,
-                usecols=[0, 1, 2],
-        ):
-            if "BLAST_UniProt_AC" in row[2].split() and row[1] in self:
-                uniprot[row[0]] = row[1]
-
-        thresholds = {
-            column: threshold
-            for column, threshold in {
-                "neighborhood": neighborhood,
-                "neighborhood_transferred": neighborhood_transferred,
-                "fusion": fusion,
-                "cooccurence": cooccurence,
-                "homology": homology,
-                "coexpression": coexpression,
-                "coexpression_transferred": coexpression_transferred,
-                "experiments": experiments,
-                "experiments_transferred": experiments_transferred,
-                "database": database,
-                "database_transferred": database_transferred,
-                "textmining": textmining,
-                "textmining_transferred": textmining_transferred,
-            }.items() if threshold
-        }
-        thresholds["combined_score"] = combined_score
-
-        for row in fetch.tabular_txt(
-                data.STRING_PHYSICAL.format(taxon_identifier=taxon_identifier)
-                if physical else data.STRING.format(
-                    taxon_identifier=taxon_identifier),
-                delimiter=" ",
-                header=0,
-                usecols=["protein1", "protein2"] + list(thresholds.keys()),
-        ):
-            if (row["protein1"] in uniprot and row["protein2"] in uniprot
-                    and uniprot[row["protein1"]] != uniprot[row["protein2"]]
-                    and all(row[column] / 1000 >= thresholds[column]
-                            for column in thresholds)):
-                if self.has_edge(uniprot[row["protein1"]],
-                                 uniprot[row["protein2"]]):
-                    self.edges[uniprot[row["protein1"]],
-                               uniprot[row["protein2"]]]["STRING"] = max(
-                                   row["combined_score"] / 1000,
-                                   self.edges[uniprot[row["protein1"]],
-                                              uniprot[row["protein2"]]].get(
-                                                  "STRING", 0.0),
-                               )
-                else:
-                    self.add_edge(uniprot[row["protein1"]],
-                                  uniprot[row["protein2"]])
-                    self.edges[uniprot[row["protein1"]],
-                               uniprot[row["protein2"]]]["STRING"] = (
-                                   row["combined_score"] / 1000)
+        string.add_interactions(self, neighborhood, neighborhood_transferred,
+                                fusion, cooccurence, homology, coexpression,
+                                coexpression_transferred, experiments,
+                                experiments_transferred, database,
+                                database_transferred, textmining,
+                                textmining_transferred, combined_score,
+                                taxon_identifier, physical)
 
     def get_modules(
         self,
         module_size=0,
         combine_module_sizes=statistics.mean,
         weight="weight",
-        algorithm=modularization.louvain,
+        algorithm=louvain.louvain,
     ):
         G = self.copy()
         G.remove_nodes_from(tuple(nx.isolates(G)))
@@ -1173,7 +764,7 @@ class ProteinInteractionNetwork(nx.Graph):
         combine_module_sizes=statistics.mean,
         weight="weight",
         test="two-sided",
-        algorithm=modularization.louvain,
+        algorithm=louvain.louvain,
     ):
         modules = {
             i: module

@@ -1,6 +1,7 @@
-from ..utilities import modularization
+from ..modularization import clauset_newman_moore
+from ..modularization import louvain
 
 ALGORITHM = {
-    "Clauset-Newman-Moore": modularization.clauset_newman_moore,
-    "Louvain": modularization.louvain,
+    "Clauset-Newman-Moore": clauset_newman_moore.clauset_newman_moore,
+    "Louvain": louvain.louvain,
 }

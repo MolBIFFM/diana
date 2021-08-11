@@ -1,11 +1,12 @@
-from ..utilities import fetch
-from ..configuration import data
+from ..utilities import download
+
+UNIPROT_SWISSPROT = "https://ftp.uniprot.org/pub/databases/uniprot/current_release/knowledgebase/complete/uniprot_sprot.dat.gz"
 
 
 def swissprot():
     accessions, entry_gene_name, entry_protein_name = [], {}, {}
     rec_name, taxon_identifier = False, 0
-    for line in fetch.txt(data.UNIPROT_SWISSPROT):
+    for line in download.txt(UNIPROT_SWISSPROT):
         if not line.strip():
             continue
 
