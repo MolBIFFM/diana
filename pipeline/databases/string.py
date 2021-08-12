@@ -56,6 +56,7 @@ def add_proteins(
     }
     thresholds["combined_score"] = combined_score
 
+    nodes_to_add = set()
     for row in download.tabular_txt(
             STRING_PHYSICAL.format(taxon_identifier=taxon_identifier)
             if physical else STRING.format(taxon_identifier=taxon_identifier),
@@ -68,14 +69,13 @@ def add_proteins(
                 and all(row[column] / 1000 >= thresholds[column]
                         for column in thresholds)):
             if (uniprot[row["protein1"]] in network
-                    and uniprot[row["protein2"]] not in network and
-                    network.nodes[uniprot[row["protein1"]]].get("protein")):
-                network.add_node(uniprot[row["protein2"]])
+                    and uniprot[row["protein2"]] not in network):
+                nodes_to_add.add(uniprot[row["protein2"]])
 
             elif (uniprot[row["protein1"]] not in network
-                  and uniprot[row["protein2"]] in network
-                  and network.nodes[uniprot[row["protein2"]]].get("protein")):
-                network.add_node(uniprot[row["protein1"]])
+                  and uniprot[row["protein2"]] in network):
+                nodes_to_add.add(uniprot[row["protein1"]])
+    network.add_nodes_from(nodes_to_add)
 
 
 def add_interactions(

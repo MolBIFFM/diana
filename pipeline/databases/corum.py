@@ -9,6 +9,7 @@ CORUM = "allComplexes.txt"
 
 
 def add_proteins(network, protein_complex_purification_method=[]):
+    nodes_to_add = set()
     for row in download.tabular_txt(
             CORUM_ZIP_ARCHIVE,
             file=CORUM,
@@ -26,13 +27,12 @@ def add_proteins(network, protein_complex_purification_method=[]):
                 ]):
             for interactor_a, interactor_b in itertools.combinations(
                     row["subunits(UniProt IDs)"].split(";"), 2):
-                if (interactor_a in network and interactor_b not in network
-                        and network.nodes[interactor_a].get("protein")):
-                    network.add_node(interactor_b)
+                if (interactor_a in network and interactor_b not in network):
+                    nodes_to_add.add(interactor_b)
 
-                elif (interactor_a not in network and interactor_b in network
-                      and network.nodes[interactor_b].get("protein")):
-                    network.add_node(interactor_a)
+                elif (interactor_a not in network and interactor_b in network):
+                    nodes_to_add.add(interactor_a)
+    network.add_nodes_from(nodes_to_add)
 
 
 def add_interactions(network, protein_complex_purification_method=[]):

@@ -30,7 +30,7 @@ def add_proteins(
                 "Confidence value(s)",
             ],
     ):
-
+        nodes_to_add = set()
         if ((interactor_a := mitab.get_identifier_from_namespace(
                 row["#ID(s) interactor A"], "uniprotkb"))
                 and (interactor_b := mitab.get_identifier_from_namespace(
@@ -50,13 +50,12 @@ def add_proteins(
                 and (score := mitab.get_identifier_from_namespace(
                     row["Confidence value(s)"], "intact-miscore"))
                 and float(score) >= mi_score):
-            if (interactor_a in network and interactor_b not in network
-                    and network.nodes[interactor_a].get("protein")):
-                network.add_node(interactor_b)
+            if (interactor_a in network and interactor_b not in network):
+                nodes_to_add.add(interactor_b)
 
-            elif (interactor_a not in network and interactor_b in network
-                  and network.nodes[interactor_b].get("protein")):
-                network.add_node(interactor_a)
+            elif (interactor_a not in network and interactor_b in network):
+                nodes_to_add.add(interactor_a)
+    network.add_nodes_from(nodes_to_add)
 
 
 def add_interactions(

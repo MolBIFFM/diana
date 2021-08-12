@@ -38,6 +38,7 @@ def add_proteins(
         if row["IDENTIFIER_TYPE"] in ("UNIPROT-ACCESSION", "UNIPROT-ISOFORM"):
             uniprot[int(row["BIOGRID_ID"])] = row["IDENTIFIER_VALUE"]
 
+    nodes_to_add = set()
     for row in download.tabular_txt(
             BIOGRID_MV_PHYSICAL_ZIP_ARCHIVE
             if multi_validated_physical else BIOGRID_ZIP_ARCHIVE,
@@ -66,14 +67,13 @@ def add_proteins(
                     (not experimental_system_type
                      or row["Experimental System Type"]
                      in experimental_system_type)):
-                    if (interactor_a in network and interactor_b not in network
-                            and network.nodes[interactor_a].get("protein")):
-                        network.add_node(interactor_b)
+                    if (interactor_a in network
+                            and interactor_b not in network):
+                        nodes_to_add.add(interactor_b)
 
                     elif (interactor_a not in network
-                          and interactor_b in network
-                          and network.nodes[interactor_b].get("protein")):
-                        network.add_node(interactor_a)
+                          and interactor_b in network):
+                        nodes_to_add.add(interactor_a)
 
         if (uniprot.get(row["BioGRID ID Interactor A"]) in network
                 or uniprot.get(row["BioGRID ID Interactor B"]) in network
@@ -84,18 +84,15 @@ def add_proteins(
             (not experimental_system_type
              or row["Experimental System Type"] in experimental_system_type)):
             if (uniprot.get(row["BioGRID ID Interactor A"]) in network
-                    and row["BioGRID ID Interactor B"] in uniprot
-                    and uniprot[row["BioGRID ID Interactor B"]] not in network
-                    and network.nodes[uniprot["BioGRID ID Interactor A"]].get(
-                        "protein")):
-                network.add_node(uniprot[row["BioGRID ID Interactor B"]])
+                    and row["BioGRID ID Interactor B"] in uniprot and
+                    uniprot[row["BioGRID ID Interactor B"]] not in network):
+                nodes_to_add.add(uniprot[row["BioGRID ID Interactor B"]])
 
             elif (row["BioGRID ID Interactor A"] in uniprot
                   and uniprot[row["BioGRID ID Interactor A"]] not in network
-                  and uniprot[row["BioGRID ID Interactor B"]] in network
-                  and network.nodes[uniprot[
-                      row["BioGRID ID Interactor B"]]].get("protein")):
-                network.add_node(uniprot[row["BioGRID ID Interactor A"]])
+                  and uniprot[row["BioGRID ID Interactor B"]] in network):
+                nodes_to_add.add(uniprot[row["BioGRID ID Interactor A"]])
+    network.add_nodes_from(nodes_to_add)
 
 
 def add_interactions(

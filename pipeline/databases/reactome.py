@@ -28,6 +28,7 @@ def add_proteins(
                 "Interaction context",
             ],
     ):
+        nodes_to_add = set()
         if (row["# Interactor 1 uniprot id"].split(":")[0] == "uniprotkb" and
                 row["Interactor 2 uniprot id"].split(":")[0] == "uniprotkb"):
             interactor_a = row["# Interactor 1 uniprot id"].split(":")[1]
@@ -37,13 +38,12 @@ def add_proteins(
                     or row["Interaction type"] in interaction_type) and (
                         not interaction_context
                         or row["Interaction context"] in interaction_context):
-                if (interactor_a in network and interactor_b not in network
-                        and network.nodes[interactor_a].get("protein")):
-                    network.add_node(interactor_b)
+                if (interactor_a in network and interactor_b not in network):
+                    nodes_to_add.add(interactor_b)
 
-                elif (interactor_a not in network and interactor_b in network
-                      and network.nodes[interactor_b].get("protein")):
-                    network.add_node(interactor_a)
+                elif (interactor_a not in network and interactor_b in network):
+                    nodes_to_add.add(interactor_a)
+    network.add_nodes_from(nodes_to_add)
 
 
 def add_interactions(
