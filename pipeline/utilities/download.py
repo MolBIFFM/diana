@@ -32,12 +32,12 @@ def decompress_gzip_file(compressed_file_name):
     return decompressed_file_name
 
 
-def decompress_zip_file(compressed_file_name, file=None):
+def decompress_zip_file(compressed_file_name, file_from_zip_archive=None):
     with zipfile.ZipFile(compressed_file_name) as archive:
-        if not file:
+        if not file_from_zip_archive:
             file = archive.namelist()[0]
         else:
-            regex = re.compile(file)
+            regex = re.compile(file_from_zip_archive)
             file = next(filter(regex.match, archive.namelist()))
 
         if not os.path.exists(
@@ -51,7 +51,7 @@ def decompress_zip_file(compressed_file_name, file=None):
     return decompressed_file_name
 
 
-def get_file(url, file=None):
+def get_file(url, file_from_zip_archive=None):
     if not os.path.exists(configuration.DOWNLOAD_DIRECTORY):
         os.mkdir(configuration.DOWNLOAD_DIRECTORY)
 
@@ -67,13 +67,13 @@ def get_file(url, file=None):
     if file_name_extension == ".gz":
         local_file_name = decompress_gzip_file(local_file_name)
     elif file_name_extension == ".zip":
-        local_file_name = decompress_zip_file(local_file_name, file)
+        local_file_name = decompress_zip_file(local_file_name, file_from_zip_archive)
 
     return local_file_name
 
 
-def txt(url, file=None):
-    local_file_name = get_file(url, file)
+def txt(url, file_from_zip_archive=None):
+    local_file_name = get_file(url, file_from_zip_archive)
 
     with open(local_file_name,
               buffering=configuration.CHUNK_SIZE) as local_file:
@@ -85,12 +85,12 @@ def txt(url, file=None):
 
 
 def tabular_txt(url,
-                file=None,
+                file_from_zip_archive=None,
                 delimiter=None,
                 header=None,
                 skiprows=0,
                 usecols=[]):
-    local_file_name = get_file(url, file)
+    local_file_name = get_file(url, file_from_zip_archive)
 
     if os.path.splitext(local_file_name)[1] == ".csv":
         delimiter = ","

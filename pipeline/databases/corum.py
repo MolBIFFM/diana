@@ -12,7 +12,7 @@ def add_proteins(network, protein_complex_purification_method=[]):
     nodes_to_add = set()
     for row in download.tabular_txt(
             CORUM_ZIP_ARCHIVE,
-            file=CORUM,
+            file_from_zip_archive=CORUM,
             delimiter="\t",
             header=0,
             usecols=[
@@ -38,7 +38,7 @@ def add_proteins(network, protein_complex_purification_method=[]):
 def add_interactions(network, protein_complex_purification_method=[]):
     for row in download.tabular_txt(
             CORUM_ZIP_ARCHIVE,
-            file=CORUM,
+            file_from_zip_archive=CORUM,
             delimiter="\t",
             header=0,
             usecols=[

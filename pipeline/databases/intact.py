@@ -15,7 +15,7 @@ def add_proteins(
 ):
     for row in download.tabular_txt(
             INTACT_ZIP_ARCHIVE,
-            file=INTACT,
+            file_from_zip_archive=INTACT,
             delimiter="\t",
             header=0,
             usecols=[
@@ -67,7 +67,7 @@ def add_interactions(
 
     for row in download.tabular_txt(
             INTACT_ZIP_ARCHIVE,
-            file=INTACT,
+            file_from_zip_archive=INTACT,
             delimiter="\t",
             header=0,
             usecols=[

@@ -26,7 +26,7 @@ def add_proteins(
     uniprot = {}
     for row in download.tabular_txt(
             BIOGRID_ID_MAP_ZIP_ARCHIVE,
-            file=BIOGRID_ID_MAP,
+            file_from_zip_archive=BIOGRID_ID_MAP,
             delimiter="\t",
             header=20,
             usecols=[
@@ -42,7 +42,7 @@ def add_proteins(
     for row in download.tabular_txt(
             BIOGRID_MV_PHYSICAL_ZIP_ARCHIVE
             if multi_validated_physical else BIOGRID_ZIP_ARCHIVE,
-            file=BIOGRID_MV_PHYSICAL if multi_validated_physical else
+            file_from_zip_archive=BIOGRID_MV_PHYSICAL if multi_validated_physical else
             BIOGRID.format(organism=ORGANISM[taxon_identifier][BIOGRID]),
             delimiter="\t",
             header=0,
@@ -105,7 +105,7 @@ def add_interactions(
     uniprot = {}
     for row in download.tabular_txt(
             BIOGRID_ID_MAP_ZIP_ARCHIVE,
-            file=BIOGRID_ID_MAP,
+            file_from_zip_archive=BIOGRID_ID_MAP,
             delimiter="\t",
             header=20,
             usecols=[
@@ -120,7 +120,7 @@ def add_interactions(
     for row in download.tabular_txt(
             BIOGRID_MV_PHYSICAL_ZIP_ARCHIVE
             if multi_validated_physical else BIOGRID_ZIP_ARCHIVE,
-            file=BIOGRID_MV_PHYSICAL if multi_validated_physical else
+            file_from_zip_archive=BIOGRID_MV_PHYSICAL if multi_validated_physical else
             BIOGRID.format(organism=ORGANISM[taxon_identifier][BIOGRID]),
             delimiter="\t",
             header=0,
