@@ -42,8 +42,9 @@ def add_proteins(
     for row in download.tabular_txt(
             BIOGRID_MV_PHYSICAL_ZIP_ARCHIVE
             if multi_validated_physical else BIOGRID_ZIP_ARCHIVE,
-            file_from_zip_archive=BIOGRID_MV_PHYSICAL if multi_validated_physical else
-            BIOGRID.format(organism=ORGANISM[taxon_identifier][BIOGRID]),
+            file_from_zip_archive=BIOGRID_MV_PHYSICAL
+            if multi_validated_physical else BIOGRID.format(
+                organism=ORGANISM[taxon_identifier][BIOGRID]),
             delimiter="\t",
             header=0,
             usecols=[
@@ -120,8 +121,9 @@ def add_interactions(
     for row in download.tabular_txt(
             BIOGRID_MV_PHYSICAL_ZIP_ARCHIVE
             if multi_validated_physical else BIOGRID_ZIP_ARCHIVE,
-            file_from_zip_archive=BIOGRID_MV_PHYSICAL if multi_validated_physical else
-            BIOGRID.format(organism=ORGANISM[taxon_identifier][BIOGRID]),
+            file_from_zip_archive=BIOGRID_MV_PHYSICAL
+            if multi_validated_physical else BIOGRID.format(
+                organism=ORGANISM[taxon_identifier][BIOGRID]),
             delimiter="\t",
             header=0,
             usecols=[

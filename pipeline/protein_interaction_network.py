@@ -273,10 +273,10 @@ class ProteinInteractionNetwork(nx.Graph):
                     if primary_protein in proteins:
                         for mi in range(len(proteins[protein])):
                             for mj in range(len(proteins[primary_protein])):
-                                if (proteins[protein][mi]
-                                        and proteins[protein][mi][1]
-                                        == proteins[primary_protein][mj][1]):
+                                if (proteins[protein][mi][1] ==
+                                        proteins[primary_protein][mj][1]):
                                     proteins[protein][mi] = tuple()
+                                    break
 
                         for measurement in proteins[protein]:
                             if measurement:
@@ -287,6 +287,8 @@ class ProteinInteractionNetwork(nx.Graph):
 
                     else:
                         proteins[primary_protein] = proteins[protein]
+
+                del proteins[protein]
 
         for protein in self:
             if protein not in proteins:

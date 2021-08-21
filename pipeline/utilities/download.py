@@ -67,7 +67,8 @@ def get_file(url, file_from_zip_archive=None):
     if file_name_extension == ".gz":
         local_file_name = decompress_gzip_file(local_file_name)
     elif file_name_extension == ".zip":
-        local_file_name = decompress_zip_file(local_file_name, file_from_zip_archive)
+        local_file_name = decompress_zip_file(local_file_name,
+                                              file_from_zip_archive)
 
     return local_file_name
 
