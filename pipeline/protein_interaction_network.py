@@ -564,31 +564,11 @@ class ProteinInteractionNetwork(nx.Graph):
                                  multi_validated_physical)
 
     def add_proteins_from_corum(self, protein_complex_purification_method=[]):
-        for row in download.tabular_txt(
-                data.CORUM_ZIP_ARCHIVE,
-                file=data.CORUM,
-                delimiter="\t",
-                header=0,
-                usecols=[
-                    "subunits(UniProt IDs)",
-                    "Protein complex purification method",
-                ],
-        ):
-            corum.add_proteins(self, protein_complex_purification_method)
+        corum.add_proteins(self, protein_complex_purification_method)
 
     def add_interactions_from_corum(self,
                                     protein_complex_purification_method=[]):
-        for row in download.tabular_txt(
-                data.CORUM_ZIP_ARCHIVE,
-                file=data.CORUM,
-                delimiter="\t",
-                header=0,
-                usecols=[
-                    "subunits(UniProt IDs)",
-                    "Protein complex purification method",
-                ],
-        ):
-            corum.add_interactions(self, protein_complex_purification_method)
+        corum.add_interactions(self, protein_complex_purification_method)
 
     def add_proteins_from_intact(
         self,
