@@ -141,7 +141,8 @@ def main():
                                 "protein-protein interactions"]["CORUM"].get(
                                     "protein complex purification method",
                                     [],
-                                ), )
+                                ),
+                        )
 
                     if "IntAct" in configuration[
                             "protein-protein interactions"] and configuration[
@@ -279,7 +280,8 @@ def main():
                             "protein-protein interactions"]["CORUM"].get(
                                 "protein complex purification method",
                                 [],
-                            ), )
+                            ),
+                    )
 
                 if "IntAct" in configuration["protein-protein interactions"]:
                     intact.add_interactions(
