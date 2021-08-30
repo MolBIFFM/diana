@@ -9,8 +9,7 @@ import networkx as nx
 import scipy.stats
 import pandas as pd
 
-from pipeline.utilities import download, mitab, correction, uniprot
-from pipeline.databases import biogrid, corum, intact, reactome, string
+from pipeline.utilities import correction, uniprot
 from pipeline.modularization import louvain
 
 
@@ -540,127 +539,6 @@ class ProteinInteractionNetwork(nx.Graph):
                 database: self.edges[edge][database]
                 for database in databases if database in self.edges[edge]
             })
-
-    def add_proteins_from_biogrid(
-        self,
-        experimental_system=[],
-        experimental_system_type=["physical"],
-        taxon_identifier=9606,
-        multi_validated_physical=False,
-    ):
-        biogrid.add_proteins(self, experimental_system,
-                             experimental_system_type, taxon_identifier,
-                             multi_validated_physical)
-
-    def add_interactions_from_biogrid(
-        self,
-        experimental_system=[],
-        experimental_system_type=["physical"],
-        taxon_identifier=9606,
-        multi_validated_physical=False,
-    ):
-        biogrid.add_interactions(self, experimental_system,
-                                 experimental_system_type, taxon_identifier,
-                                 multi_validated_physical)
-
-    def add_proteins_from_corum(self, protein_complex_purification_method=[]):
-        corum.add_proteins(self, protein_complex_purification_method)
-
-    def add_interactions_from_corum(self,
-                                    protein_complex_purification_method=[]):
-        corum.add_interactions(self, protein_complex_purification_method)
-
-    def add_proteins_from_intact(
-        self,
-        interaction_detection_methods=[],
-        interaction_types=[],
-        mi_score=0.0,
-    ):
-        intact.add_proteins(self, interaction_detection_methods,
-                            interaction_types, mi_score)
-
-    def add_interactions_from_intact(
-        self,
-        interaction_detection_methods=[],
-        interaction_types=[],
-        mi_score=0.0,
-    ):
-        intact.add_interactions(self, interaction_detection_methods,
-                                interaction_types, mi_score)
-
-    def add_proteins_from_reactome(
-        self,
-        interaction_type=[],
-        interaction_context=[],
-        taxon_identifier=9606,
-    ):
-
-        reactome.add_proteins(self, interaction_type, interaction_context,
-                              taxon_identifier)
-
-    def add_interactions_from_reactome(
-        self,
-        interaction_type=[],
-        interaction_context=[],
-        taxon_identifier=9606,
-    ):
-
-        reactome.add_interactions(self, interaction_type, interaction_context,
-                                  taxon_identifier)
-
-    def add_proteins_from_string(
-        self,
-        neighborhood=0.0,
-        neighborhood_transferred=0.0,
-        fusion=0.0,
-        cooccurence=0.0,
-        homology=0.0,
-        coexpression=0.0,
-        coexpression_transferred=0.0,
-        experiments=0.0,
-        experiments_transferred=0.0,
-        database=0.0,
-        database_transferred=0.0,
-        textmining=0.0,
-        textmining_transferred=0.0,
-        combined_score=0.0,
-        taxon_identifier=9606,
-        physical=False,
-    ):
-        string.add_proteins(self, neighborhood, neighborhood_transferred,
-                            fusion, cooccurence, homology, coexpression,
-                            coexpression_transferred, experiments,
-                            experiments_transferred, database,
-                            database_transferred, textmining,
-                            textmining_transferred, combined_score,
-                            taxon_identifier, physical)
-
-    def add_interactions_from_string(
-        self,
-        neighborhood=0.0,
-        neighborhood_transferred=0.0,
-        fusion=0.0,
-        cooccurence=0.0,
-        homology=0.0,
-        coexpression=0.0,
-        coexpression_transferred=0.0,
-        experiments=0.0,
-        experiments_transferred=0.0,
-        database=0.0,
-        database_transferred=0.0,
-        textmining=0.0,
-        textmining_transferred=0.0,
-        combined_score=0.0,
-        taxon_identifier=9606,
-        physical=False,
-    ):
-        string.add_interactions(self, neighborhood, neighborhood_transferred,
-                                fusion, cooccurence, homology, coexpression,
-                                coexpression_transferred, experiments,
-                                experiments_transferred, database,
-                                database_transferred, textmining,
-                                textmining_transferred, combined_score,
-                                taxon_identifier, physical)
 
     def get_modules(
         self,

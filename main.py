@@ -9,6 +9,7 @@ from pipeline.interface import algorithm, convert, combine, extract
 from pipeline.protein_interaction_network import (
     ProteinInteractionNetwork, )
 from pipeline.utilities import export
+from pipeline.databases import biogrid, corum, intact, reactome, string
 
 
 def main():
@@ -97,7 +98,8 @@ def main():
                             "protein-protein interactions"] and configuration[
                                 "protein-protein interactions"]["BioGRID"].get(
                                     "neighbors", 0) > k:
-                        network.add_proteins_from_biogrid(
+                        biogrid.add_proteins(
+                            network,
                             experimental_system=configuration[
                                 "protein-protein interactions"]["BioGRID"].get(
                                     "experimental system",
@@ -133,7 +135,8 @@ def main():
                             "protein-protein interactions"] and configuration[
                                 "protein-protein interactions"]["CORUM"].get(
                                     "neighbors", 0) > k:
-                        network.add_proteins_from_corum(
+                        corum.add_proteins(
+                            network,
                             protein_complex_purification_method=configuration[
                                 "protein-protein interactions"]["CORUM"].get(
                                     "protein complex purification method",
@@ -144,7 +147,8 @@ def main():
                             "protein-protein interactions"] and configuration[
                                 "protein-protein interactions"]["IntAct"].get(
                                     "neighbors", 0) > k:
-                        network.add_proteins_from_intact(
+                        intact.add_proteins(
+                            network,
                             interaction_detection_methods=configuration[
                                 "protein-protein interactions"]["IntAct"].get(
                                     "interaction detection methods", []),
@@ -160,7 +164,8 @@ def main():
                             "protein-protein interactions"] and configuration[
                                 "protein-protein interactions"][
                                     "Reactome"].get("neighbors", 0) > k:
-                        network.add_proteins_from_reactome(
+                        reactome.add_proteins(
+                            network,
                             interaction_context=configuration[
                                 "protein-protein interactions"]
                             ["Reactome"].get("interaction context", []),
@@ -176,7 +181,8 @@ def main():
                             "protein-protein interactions"] and configuration[
                                 "protein-protein interactions"]["STRING"].get(
                                     "neighbors", 0) > k:
-                        network.add_proteins_from_string(
+                        string.add_proteins(
+                            network,
                             neighborhood=configuration[
                                 "protein-protein interactions"]["STRING"].get(
                                     "neighborhood", 0.0),
@@ -233,7 +239,8 @@ def main():
                     k += 1
 
                 if "BioGRID" in configuration["protein-protein interactions"]:
-                    network.add_interactions_from_biogrid(
+                    biogrid.add_interactions(
+                        network,
                         experimental_system=configuration[
                             "protein-protein interactions"]["BioGRID"].get(
                                 "experimental system",
@@ -266,7 +273,8 @@ def main():
                     )
 
                 if "CORUM" in configuration["protein-protein interactions"]:
-                    network.add_interactions_from_corum(
+                    corum.add_interactions(
+                        network,
                         protein_complex_purification_method=configuration[
                             "protein-protein interactions"]["CORUM"].get(
                                 "protein complex purification method",
@@ -274,7 +282,8 @@ def main():
                             ), )
 
                 if "IntAct" in configuration["protein-protein interactions"]:
-                    network.add_interactions_from_intact(
+                    intact.add_interactions(
+                        network,
                         interaction_detection_methods=configuration[
                             "protein-protein interactions"]["IntAct"].get(
                                 "interaction detection methods", []),
@@ -286,7 +295,8 @@ def main():
                     )
 
                 if "Reactome" in configuration["protein-protein interactions"]:
-                    network.add_interactions_from_reactome(
+                    reactome.add_interactions(
+                        network,
                         interaction_context=configuration[
                             "protein-protein interactions"]["Reactome"].get(
                                 "interaction context", []),
@@ -299,7 +309,8 @@ def main():
                     )
 
                 if "STRING" in configuration["protein-protein interactions"]:
-                    network.add_interactions_from_string(
+                    string.add_interactions(
+                        network,
                         neighborhood=configuration[
                             "protein-protein interactions"]["STRING"].get(
                                 "neighborhood", 0.0),
