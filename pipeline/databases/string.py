@@ -26,7 +26,7 @@ def add_proteins(
     taxon_identifier=9606,
     physical=False,
 ):
-    uniprot = []
+    uniprot = {}
     for row in download.tabular_txt(
             STRING_ID_MAP.format(taxon_identifier=taxon_identifier),
             delimiter="\t",
