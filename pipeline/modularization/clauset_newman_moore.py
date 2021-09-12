@@ -9,7 +9,7 @@ def clauset_newman_moore(G, weight="weight"):
     m = sum(k) / 2.0
     a = [k[i] / (2.0 * m) for i in range(len(k))]
 
-    communities = [[node] for node in G.nodes()]
+    communities = [{node} for node in G.nodes()]
     connected = [[bool(A[i, j]) for j in range(i)] for i in range(n)]
 
     deltaQ = [[0.0 for j in range(i)] for i in range(n)]
@@ -27,8 +27,8 @@ def clauset_newman_moore(G, weight="weight"):
                 max_j = j
 
     while deltaQ[max_i][max_j] > 0.0:
-        communities[max_j].extend(communities[max_i])
-        communities[max_i] = []
+        communities[max_j].update(communities[max_i])
+        communities[max_i] = set()
 
         deltaQprime = [deltaQ[i][:] for i in range(len(deltaQ))]
 
@@ -98,4 +98,4 @@ def clauset_newman_moore(G, weight="weight"):
                             max_i = i
                             max_j = j
 
-    return [set(community) for community in communities if community]
+    return [community for community in communities if community]
