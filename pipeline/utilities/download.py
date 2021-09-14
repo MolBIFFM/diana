@@ -4,6 +4,7 @@ import urllib.parse
 import urllib.request
 import zipfile
 import re
+import tempfile
 
 import pandas as pd
 
@@ -29,6 +30,7 @@ def decompress_gzip_file(compressed_file_name):
                 while chunk := compressed_file.read(configuration.CHUNK_SIZE):
                     decompressed_file.write(chunk)
 
+    os.remove(compressed_file_name)
     return decompressed_file_name
 
 
@@ -40,23 +42,22 @@ def decompress_zip_file(compressed_file_name, file_from_zip_archive=None):
             regex = re.compile(file_from_zip_archive)
             file = next(filter(regex.match, archive.namelist()))
 
-        if not os.path.exists(
-                os.path.join(configuration.DOWNLOAD_DIRECTORY, file)):
+        if not os.path.exists(os.path.join(tempfile.gettempdir(), file)):
             decompressed_file_name = archive.extract(
-                file, path=configuration.DOWNLOAD_DIRECTORY)
+                file, path=tempfile.gettempdir())
         else:
-            decompressed_file_name = os.path.join(
-                configuration.DOWNLOAD_DIRECTORY, file)
+            decompressed_file_name = os.path.join(tempfile.gettempdir(), file)
 
+    os.remove(compressed_file_name)
     return decompressed_file_name
 
 
 def get_file(url, file_from_zip_archive=None):
-    if not os.path.exists(configuration.DOWNLOAD_DIRECTORY):
-        os.mkdir(configuration.DOWNLOAD_DIRECTORY)
+    if not os.path.exists(tempfile.gettempdir()):
+        os.mkdir(tempfile.gettempdir())
 
     local_file_name = os.path.join(
-        configuration.DOWNLOAD_DIRECTORY,
+        tempfile.gettempdir(),
         os.path.split(urllib.parse.urlparse(url).path)[1],
     )
 
@@ -81,8 +82,7 @@ def txt(url, file_from_zip_archive=None):
         for line in local_file:
             yield line.rstrip("\n")
 
-    if os.path.splitext(urllib.parse.urlparse(url).path)[1] in (".gz", ".zip"):
-        os.remove(local_file_name)
+    os.remove(local_file_name)
 
 
 def tabular_txt(url,
@@ -109,5 +109,4 @@ def tabular_txt(url,
         for _, row in chunk.iterrows():
             yield row
 
-    if os.path.splitext(urllib.parse.urlparse(url).path)[1] in (".gz", ".zip"):
-        os.remove(local_file_name)
+    os.remove(local_file_name)

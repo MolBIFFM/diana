@@ -1,7 +1,6 @@
 def benjamini_hochberg(p_values):
     # Benjamini-Hochberg p-value adjustment (Benjamini, Heller, Yekutieli (2009))
-    adj_p_values = sorted([[key, p_value]
-                           for key, p_value in p_values.items()],
+    adj_p_values = sorted([list(item) for item in p_values.items()],
                           key=lambda item: item[1])
     m = len(adj_p_values)
 
