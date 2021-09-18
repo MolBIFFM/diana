@@ -18,7 +18,8 @@ class ProteinInteractionNetwork(nx.Graph):
         super().__init__()
 
     def annotate_proteins(self):
-        for accessions, gene_name, protein_name, _ in uniprot.swissprot():
+        for accessions, gene_name, protein_name, _ in uniprot.get_swissprot_entries(
+        ):
             for protein in tuple(self):
                 if protein.split("-")[0] in accessions:
                     if "-" in protein and not protein.split(
@@ -51,7 +52,8 @@ class ProteinInteractionNetwork(nx.Graph):
         ])
 
     def add_genes_from(self, genes, taxon_identifier=9606):
-        for accessions, gene_name, protein_name, taxon in uniprot.swissprot():
+        for accessions, gene_name, protein_name, taxon in uniprot.get_swissprot_entries(
+        ):
             if taxon == taxon_identifier and gene_name in genes:
                 self.add_node(accessions[0])
                 self.nodes[accessions[0]]["gene"] = gene_name
@@ -118,7 +120,8 @@ class ProteinInteractionNetwork(nx.Graph):
             proteins_isoform[protein].add(isoform)
 
         primary_accession = {}
-        for accessions, gene_name, protein_name, _ in uniprot.swissprot():
+        for accessions, gene_name, protein_name, _ in uniprot.get_swissprot_entries(
+        ):
             for i, accession in enumerate(accessions):
                 if accession in proteins_isoform:
                     for isoform in proteins_isoform[accession]:

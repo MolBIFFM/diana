@@ -8,7 +8,7 @@ import tempfile
 
 import pandas as pd
 
-from ..configuration import configuration
+from pipeline.configuration import configuration
 
 
 def download_file(url, local_file_name):
@@ -42,22 +42,30 @@ def decompress_zip_file(compressed_file_name, file_from_zip_archive=None):
             regex = re.compile(file_from_zip_archive)
             file = next(filter(regex.match, archive.namelist()))
 
-        if not os.path.exists(os.path.join(tempfile.gettempdir(), file)):
+        if not os.path.exists(
+                os.path.join(tempfile.gettempdir(), configuration.USER_AGENT,
+                             file)):
             decompressed_file_name = archive.extract(
-                file, path=tempfile.gettempdir())
+                file,
+                path=os.path.join(tempfile.gettempdir(),
+                                  configuration.USER_AGENT))
         else:
-            decompressed_file_name = os.path.join(tempfile.gettempdir(), file)
+            decompressed_file_name = os.path.join(tempfile.gettempdir(),
+                                                  configuration.USER_AGENT,
+                                                  file)
 
     os.remove(compressed_file_name)
     return decompressed_file_name
 
 
 def get_file(url, file_from_zip_archive=None):
-    if not os.path.exists(tempfile.gettempdir()):
-        os.mkdir(tempfile.gettempdir())
+    if not os.path.exists(
+            os.path.join(tempfile.gettempdir(), configuration.USER_AGENT)):
+        os.mkdir(os.path.join(tempfile.gettempdir(), configuration.USER_AGENT))
 
     local_file_name = os.path.join(
         tempfile.gettempdir(),
+        configuration.USER_AGENT,
         os.path.split(urllib.parse.urlparse(url).path)[1],
     )
 
