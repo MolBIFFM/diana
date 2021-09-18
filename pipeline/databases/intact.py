@@ -1,4 +1,3 @@
-from os import PRIO_PGRP
 from pipeline.utilities import download, mitab, uniprot
 
 INTACT_ZIP_ARCHIVE = (

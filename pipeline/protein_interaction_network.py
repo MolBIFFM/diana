@@ -1,16 +1,16 @@
 import bisect
-import itertools
-import os
-import math
-import statistics
 import concurrent.futures
+import itertools
+import math
+import os
+import statistics
 
 import networkx as nx
-import scipy.stats
 import pandas as pd
+import scipy.stats
 
-from pipeline.utilities import correction, uniprot
 from pipeline.modularization import louvain
+from pipeline.utilities import correction, uniprot
 
 
 class ProteinInteractionNetwork(nx.Graph):

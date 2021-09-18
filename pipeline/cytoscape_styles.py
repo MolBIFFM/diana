@@ -1,5 +1,5 @@
-import xml.etree.ElementTree as ET
 import json
+import xml.etree.ElementTree as ET
 
 import pipeline.configuration.cytoscape_styles
 

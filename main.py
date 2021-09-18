@@ -1,15 +1,15 @@
 import argparse
 import json
-import os
-import xml.etree.ElementTree as ET
 import logging
+import os
+import tempfile
+import uuid
 
 from pipeline.cytoscape_styles import CytoscapeStyles
-from pipeline.interface import algorithm, convert, combine, extract
-from pipeline.protein_interaction_network import (
-    ProteinInteractionNetwork, )
-from pipeline.utilities import export
 from pipeline.databases import biogrid, corum, intact, reactome, string
+from pipeline.interface import algorithm, combine, convert, extract
+from pipeline.protein_interaction_network import ProteinInteractionNetwork
+from pipeline.utilities import download, export
 
 
 def main():
@@ -21,7 +21,17 @@ def main():
         nargs="+",
         required=True,
     )
-    parser.add_argument("-l", "--log", help="log file")
+    parser.add_argument("--chunk-size",
+                        help="file processing rate (default: {})".format(
+                            download.CHUNK_SIZE),
+                        type=int)
+    parser.add_argument("-l", "--log", help="log file", type=str)
+    parser.add_argument(
+        "-u",
+        "--user-agent",
+        help="identity to download sources (default: {})".format(
+            download.USER_AGENT),
+        type=str)
     args = parser.parse_args()
 
     if args.log:
@@ -30,6 +40,12 @@ def main():
                             filemode="w",
                             level=logging.DEBUG,
                             format="%(message)s")
+
+    if args.chunk_size:
+        download.CHUNK_SIZE = args.chunk_size
+
+    if args.user_agent:
+        download.USER_AGENT = args.user_agent
 
     for configuration_file in args.configurations:
         with open(configuration_file) as configuration:

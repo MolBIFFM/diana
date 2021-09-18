@@ -108,7 +108,7 @@ def get_primary_accession(proteins=set()):
                     if accession not in primary_accession:
                         primary_accession[accession] = set()
                     primary_accession[accession].add(accessions[0])
-                    
+
     return primary_accession
 
 

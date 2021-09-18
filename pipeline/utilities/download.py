@@ -1,23 +1,25 @@
 import gzip
 import os
-import urllib.parse
-import urllib.request
-import zipfile
 import re
 import tempfile
+import urllib.parse
+import urllib.request
+import uuid
+import zipfile
 
 import pandas as pd
 
-from pipeline.configuration import configuration
+CHUNK_SIZE = 2**16
+SUBDIRECTORY = str(uuid.uuid4())
+USER_AGENT = "pipeline"
 
 
 def download_file(url, local_file_name):
-    request = urllib.request.Request(
-        url, headers={"User-Agent": configuration.USER_AGENT})
+    request = urllib.request.Request(url, headers={"User-Agent": USER_AGENT})
 
     with urllib.request.urlopen(request) as response:
         with open(local_file_name, "wb") as local_file:
-            while chunk := response.read(configuration.CHUNK_SIZE):
+            while chunk := response.read(CHUNK_SIZE):
                 local_file.write(chunk)
 
 
@@ -27,7 +29,7 @@ def decompress_gzip_file(compressed_file_name):
     if not os.path.exists(decompressed_file_name):
         with gzip.open(compressed_file_name, "rb") as compressed_file:
             with open(decompressed_file_name, "wb") as decompressed_file:
-                while chunk := compressed_file.read(configuration.CHUNK_SIZE):
+                while chunk := compressed_file.read(CHUNK_SIZE):
                     decompressed_file.write(chunk)
 
     os.remove(compressed_file_name)
@@ -43,29 +45,26 @@ def decompress_zip_file(compressed_file_name, file_from_zip_archive=None):
             file = next(filter(regex.match, archive.namelist()))
 
         if not os.path.exists(
-                os.path.join(tempfile.gettempdir(), configuration.USER_AGENT,
-                             file)):
-            decompressed_file_name = archive.extract(
-                file,
-                path=os.path.join(tempfile.gettempdir(),
-                                  configuration.USER_AGENT))
+                os.path.join(tempfile.gettempdir(), SUBDIRECTORY, file)):
+            decompressed_file_name = archive.extract(file,
+                                                     path=os.path.join(
+                                                         tempfile.gettempdir(),
+                                                         SUBDIRECTORY))
         else:
             decompressed_file_name = os.path.join(tempfile.gettempdir(),
-                                                  configuration.USER_AGENT,
-                                                  file)
+                                                  SUBDIRECTORY, file)
 
     os.remove(compressed_file_name)
     return decompressed_file_name
 
 
 def get_file(url, file_from_zip_archive=None):
-    if not os.path.exists(
-            os.path.join(tempfile.gettempdir(), configuration.USER_AGENT)):
-        os.mkdir(os.path.join(tempfile.gettempdir(), configuration.USER_AGENT))
+    if not os.path.exists(os.path.join(tempfile.gettempdir(), SUBDIRECTORY)):
+        os.mkdir(os.path.join(tempfile.gettempdir(), SUBDIRECTORY))
 
     local_file_name = os.path.join(
         tempfile.gettempdir(),
-        configuration.USER_AGENT,
+        SUBDIRECTORY,
         os.path.split(urllib.parse.urlparse(url).path)[1],
     )
 
@@ -85,12 +84,14 @@ def get_file(url, file_from_zip_archive=None):
 def txt(url, file_from_zip_archive=None):
     local_file_name = get_file(url, file_from_zip_archive)
 
-    with open(local_file_name,
-              buffering=configuration.CHUNK_SIZE) as local_file:
+    with open(local_file_name, buffering=CHUNK_SIZE) as local_file:
         for line in local_file:
             yield line.rstrip("\n")
 
     os.remove(local_file_name)
+
+    if not os.listdir(os.path.join(tempfile.gettempdir(), SUBDIRECTORY)):
+        os.rmdir(os.path.join(tempfile.gettempdir(), SUBDIRECTORY))
 
 
 def tabular_txt(url,
@@ -112,9 +113,12 @@ def tabular_txt(url,
             header=header,
             skiprows=skiprows,
             usecols=usecols,
-            chunksize=configuration.CHUNK_SIZE,
+            chunksize=CHUNK_SIZE,
     ):
         for _, row in chunk.iterrows():
             yield row
 
     os.remove(local_file_name)
+
+    if not os.listdir(os.path.join(tempfile.gettempdir(), SUBDIRECTORY)):
+        os.rmdir(os.path.join(tempfile.gettempdir(), SUBDIRECTORY))

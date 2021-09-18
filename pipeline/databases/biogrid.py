@@ -1,4 +1,3 @@
-from networkx.algorithms.operators.binary import intersection
 from pipeline.utilities import download, uniprot
 
 BIOGRID_ID_MAP_ZIP_ARCHIVE = "https://downloads.thebiogrid.org/Download/BioGRID/Latest-Release/BIOGRID-IDENTIFIERS-LATEST.tab.zip"
