@@ -98,8 +98,6 @@ def get_swissprot_entries():
 
 
 def get_primary_accession(proteins=set()):
-    proteins = set([protein.split("-")[0] for protein in proteins])
-
     primary_accession = {}
     for accessions, _, _, _ in get_swissprot_entries():
         if not accessions or accessions[0] in proteins:
