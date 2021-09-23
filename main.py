@@ -17,7 +17,7 @@ def main():
     parser.add_argument(
         "-c",
         "--configurations",
-        help="JSON configuration files",
+        help=".json configuration files",
         nargs="+",
         required=True,
     )
@@ -25,7 +25,12 @@ def main():
                         help="file processing rate (default: {})".format(
                             download.CHUNK_SIZE),
                         type=int)
-    parser.add_argument("-l", "--log", help="log file", type=str)
+    parser.add_argument(
+        "-l",
+        "--log",
+        action="store_true",
+        default=False,
+        help="store a .log file for each configuration file (default: False)")
     parser.add_argument(
         "-u",
         "--user-agent",
@@ -34,13 +39,6 @@ def main():
         type=str)
     args = parser.parse_args()
 
-    if args.log:
-        logger = logging.getLogger("root")
-        logging.basicConfig(filename=args.log,
-                            filemode="w",
-                            level=logging.DEBUG,
-                            format="%(message)s")
-
     if args.chunk_size:
         download.CHUNK_SIZE = args.chunk_size
 
@@ -48,6 +46,14 @@ def main():
         download.USER_AGENT = args.user_agent
 
     for configuration_file in args.configurations:
+        if args.log:
+            logger = logging.getLogger("root")
+            logging.basicConfig(filename="{}.log".format(
+                os.path.splitext(os.path.basename(configuration_file))[0]),
+                                filemode="w",
+                                level=logging.DEBUG,
+                                format="%(message)s")
+
         with open(configuration_file) as configuration:
             configurations = json.load(configuration)
 
@@ -118,33 +124,16 @@ def main():
                             network,
                             experimental_system=configuration[
                                 "protein-protein interactions"]["BioGRID"].get(
-                                    "experimental system",
-                                    [
-                                        "Affinity Capture-Luminescence",
-                                        "Affinity Capture-MS",
-                                        "Affinity Capture-RNA",
-                                        "Affinity Capture-Western",
-                                        "Biochemical Activity",
-                                        "Co-crystal Structure",
-                                        "Co-purification",
-                                        "FRET",
-                                        "PCA",
-                                        "Two-hybrid",
-                                    ],
-                                ),
+                                    "experimental system", []),
                             experimental_system_type=configuration[
                                 "protein-protein interactions"]["BioGRID"].get(
-                                    "experimental system type",
-                                    [
-                                        "physical",
-                                    ],
-                                ),
-                            taxon_identifier=configuration[
-                                "protein-protein interactions"]["BioGRID"].get(
-                                    "taxon identifier", 9606),
+                                    "experimental system type", []),
                             multi_validated_physical=configuration[
                                 "protein-protein interactions"]["BioGRID"].get(
                                     "multi-validated physical", False),
+                            taxon_identifier=configuration[
+                                "protein-protein interactions"]["BioGRID"].get(
+                                    "taxon identifier", 9606),
                         )
 
                     if "CORUM" in configuration[
@@ -158,6 +147,9 @@ def main():
                                     "protein complex purification method",
                                     [],
                                 ),
+                            taxon_identifier=configuration[
+                                "protein-protein interactions"]["CORUM"].get(
+                                    "taxon identifier", 9606),
                         )
 
                     if "IntAct" in configuration[
@@ -174,7 +166,10 @@ def main():
                                     "interaction types", []),
                             mi_score=configuration[
                                 "protein-protein interactions"]["IntAct"].get(
-                                    "MI score", 0.27),
+                                    "MI score", 0.0),
+                            taxon_identifier=configuration[
+                                "protein-protein interactions"]["IntAct"].get(
+                                    "taxon identifier", 9606),
                         )
 
                     if "Reactome" in configuration[
@@ -223,7 +218,7 @@ def main():
                                     "coexpression transferred", 0.0),
                             experiments=configuration[
                                 "protein-protein interactions"]["STRING"].get(
-                                    "experiments", 0.7),
+                                    "experiments", 0.0),
                             experiments_transferred=configuration[
                                 "protein-protein interactions"]["STRING"].get(
                                     "experiments transferred", 0.0),
@@ -241,13 +236,13 @@ def main():
                                     "textmining transferred", 0.0),
                             combined_score=configuration[
                                 "protein-protein interactions"]["STRING"].get(
-                                    "combined score", 0.7),
-                            taxon_identifier=configuration[
-                                "protein-protein interactions"]["STRING"].get(
-                                    "taxon identifier", 9606),
+                                    "combined score", 0.0),
                             physical=configuration[
                                 "protein-protein interactions"]["STRING"].get(
                                     "physical", False),
+                            taxon_identifier=configuration[
+                                "protein-protein interactions"]["STRING"].get(
+                                    "taxon identifier", 9606),
                         )
 
                     network.annotate_proteins()
@@ -260,33 +255,16 @@ def main():
                         network,
                         experimental_system=configuration[
                             "protein-protein interactions"]["BioGRID"].get(
-                                "experimental system",
-                                [
-                                    "Affinity Capture-Luminescence",
-                                    "Affinity Capture-MS",
-                                    "Affinity Capture-RNA",
-                                    "Affinity Capture-Western",
-                                    "Biochemical Activity",
-                                    "Co-crystal Structure",
-                                    "Co-purification",
-                                    "FRET",
-                                    "PCA",
-                                    "Two-hybrid",
-                                ],
-                            ),
+                                "experimental system", []),
                         experimental_system_type=configuration[
                             "protein-protein interactions"]["BioGRID"].get(
-                                "experimental system type",
-                                [
-                                    "physical",
-                                ],
-                            ),
-                        taxon_identifier=configuration[
-                            "protein-protein interactions"]["BioGRID"].get(
-                                "taxon identifier", 9606),
+                                "experimental system type", []),
                         multi_validated_physical=configuration[
                             "protein-protein interactions"]["BioGRID"].get(
                                 "multi-validated physical", False),
+                        taxon_identifier=configuration[
+                            "protein-protein interactions"]["BioGRID"].get(
+                                "taxon identifier", 9606),
                     )
 
                 if "CORUM" in configuration["protein-protein interactions"]:
@@ -297,6 +275,9 @@ def main():
                                 "protein complex purification method",
                                 [],
                             ),
+                        taxon_identifier=configuration[
+                            "protein-protein interactions"]["CORUM"].get(
+                                "taxon identifier", 9606),
                     )
 
                 if "IntAct" in configuration["protein-protein interactions"]:
@@ -309,7 +290,10 @@ def main():
                             "protein-protein interactions"]["IntAct"].get(
                                 "interaction types", []),
                         mi_score=configuration["protein-protein interactions"]
-                        ["IntAct"].get("MI score", 0.27),
+                        ["IntAct"].get("MI score", 0.0),
+                        taxon_identifier=configuration[
+                            "protein-protein interactions"]["IntAct"].get(
+                                "taxon identifier", 9606),
                     )
 
                 if "Reactome" in configuration["protein-protein interactions"]:
@@ -350,7 +334,7 @@ def main():
                                 "coexpression transferred", 0.0),
                         experiments=configuration[
                             "protein-protein interactions"]["STRING"].get(
-                                "experiments", 0.7),
+                                "experiments", 0.0),
                         experiments_transferred=configuration[
                             "protein-protein interactions"]["STRING"].get(
                                 "experiments transferred", 0.0),
@@ -367,12 +351,12 @@ def main():
                                 "textmining transferred", 0.0),
                         combined_score=configuration[
                             "protein-protein interactions"]["STRING"].get(
-                                "combined score", 0.7),
+                                "combined score", 0.0),
+                        physical=configuration["protein-protein interactions"]
+                        ["STRING"].get("physical", False),
                         taxon_identifier=configuration[
                             "protein-protein interactions"]["STRING"].get(
                                 "taxon identifier", 9606),
-                        physical=configuration["protein-protein interactions"]
-                        ["STRING"].get("physical", False),
                     )
 
             if "Cytoscape" in configuration:

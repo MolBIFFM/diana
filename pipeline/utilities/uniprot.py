@@ -97,10 +97,11 @@ def get_swissprot_entries():
             rec_name, taxon_identifier = False, 0
 
 
-def get_primary_accession(proteins=set()):
+def get_primary_accession(taxon_identifier=9606, proteins=set()):
     primary_accession = {}
-    for accessions, _, _, _ in get_swissprot_entries():
-        if not accessions or accessions[0] in proteins:
+    for accessions, _, _, taxon in get_swissprot_entries():
+        if taxon == taxon_identifier and (not proteins
+                                          or accessions[0] in proteins):
             for i, accession in enumerate(accessions):
                 if i > 0:
                     if accession not in primary_accession:

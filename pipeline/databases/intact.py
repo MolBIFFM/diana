@@ -5,13 +5,12 @@ INTACT_ZIP_ARCHIVE = (
 INTACT = "intact.txt"
 
 
-def add_proteins(
-    network,
-    interaction_detection_methods=[],
-    interaction_types=[],
-    mi_score=0.0,
-):
-    primary_accession = uniprot.get_primary_accession()
+def add_proteins(network,
+                 interaction_detection_methods=[],
+                 interaction_types=[],
+                 mi_score=0.0,
+                 taxon_identifier=9606):
+    primary_accession = uniprot.get_primary_accession(taxon_identifier)
 
     nodes_to_add = set()
     for row in download.tabular_txt(
@@ -50,24 +49,25 @@ def add_proteins(
                 and (score := mitab.get_identifier_from_namespace(
                     row["Confidence value(s)"], "intact-miscore"))
                 and float(score) >= mi_score):
-            for a in primary_accession.get(interactor_a, {interactor_a}):
-                for b in primary_accession.get(interactor_b, {interactor_b}):
-                    if (a in network and b not in network):
-                        nodes_to_add.add(b)
+            for int_a in primary_accession.get(interactor_a, {interactor_a}):
+                for int_b in primary_accession.get(interactor_b,
+                                                   {interactor_b}):
+                    if (int_a in network and int_b not in network):
+                        nodes_to_add.add(int_b)
 
-                    elif (a not in network and b in network):
-                        nodes_to_add.add(a)
+                    elif (int_a not in network and int_b in network):
+                        nodes_to_add.add(int_a)
 
     network.add_nodes_from(nodes_to_add)
 
 
-def add_interactions(
-    network,
-    interaction_detection_methods=[],
-    interaction_types=[],
-    mi_score=0.0,
-):
-    primary_accession = uniprot.get_primary_accession(network)
+def add_interactions(network,
+                     interaction_detection_methods=[],
+                     interaction_types=[],
+                     mi_score=0.0,
+                     taxon_identifier=9606):
+    primary_accession = uniprot.get_primary_accession(taxon_identifier,
+                                                      network)
 
     for row in download.tabular_txt(
             INTACT_ZIP_ARCHIVE,
@@ -104,15 +104,17 @@ def add_interactions(
                     row["Confidence value(s)"], "intact-miscore"))):
             score = float(score)
             if score >= mi_score:
-                for a in primary_accession.get(interactor_a, {interactor_a}):
-                    for b in primary_accession.get(interactor_b,
-                                                   {interactor_b}):
-                        if a in network and b in network and a != b:
-                            if network.has_edge(a, b):
-                                network.edges[a, b]["IntAct"] = max(
+                for int_a in primary_accession.get(interactor_a,
+                                                   {interactor_a}):
+                    for int_b in primary_accession.get(interactor_b,
+                                                       {interactor_b}):
+                        if int_a in network and int_b in network and int_a != int_b:
+                            if network.has_edge(int_a, int_b):
+                                network.edges[int_a, int_b]["IntAct"] = max(
                                     score,
-                                    network.edges[a, b].get("IntAct", 0.0),
+                                    network.edges[int_a,
+                                                  int_b].get("IntAct", 0.0),
                                 )
                             else:
-                                network.add_edge(a, b)
-                                network.edges[a, b]["IntAct"] = score
+                                network.add_edge(int_a, int_b)
+                                network.edges[int_a, int_b]["IntAct"] = score

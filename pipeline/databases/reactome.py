@@ -3,9 +3,7 @@ from pipeline.utilities import download, uniprot
 REACTOME = "https://reactome.org/download/current/interactors/reactome.{organism}.interactions.tab-delimited.txt"
 
 ORGANISM = {
-    9606: {
-        REACTOME: "homo_sapiens",
-    },
+    9606: "homo_sapiens",
 }
 
 
@@ -15,11 +13,12 @@ def add_proteins(
     interaction_context=[],
     taxon_identifier=9606,
 ):
-    primary_accession = uniprot.get_primary_accession()
+    primary_accession = uniprot.get_primary_accession(taxon_identifier)
 
     nodes_to_add = set()
     for row in download.tabular_txt(
-            REACTOME.format(organism=ORGANISM[taxon_identifier][REACTOME]),
+            REACTOME.format(
+                organism=ORGANISM.get(taxon_identifier, "all_species")),
             delimiter="\t",
             header=0,
             usecols=[
@@ -38,14 +37,15 @@ def add_proteins(
                     or row["Interaction type"] in interaction_type) and (
                         not interaction_context
                         or row["Interaction context"] in interaction_context):
-                for a in primary_accession.get(interactor_a, {interactor_a}):
-                    for b in primary_accession.get(interactor_b,
-                                                   {interactor_b}):
-                        if (a in network and b not in network):
-                            nodes_to_add.add(b)
+                for int_a in primary_accession.get(interactor_a,
+                                                   {interactor_a}):
+                    for int_b in primary_accession.get(interactor_b,
+                                                       {interactor_b}):
+                        if (int_a in network and int_b not in network):
+                            nodes_to_add.add(int_b)
 
-                        elif (a not in network and b in network):
-                            nodes_to_add.add(a)
+                        elif (int_a not in network and int_b in network):
+                            nodes_to_add.add(int_a)
 
     network.add_nodes_from(nodes_to_add)
 
@@ -56,10 +56,11 @@ def add_interactions(
     interaction_context=[],
     taxon_identifier=9606,
 ):
-    primary_accession = uniprot.get_primary_accession(network)
+    primary_accession = uniprot.get_primary_accession(taxon_identifier,
+                                                      network)
 
     for row in download.tabular_txt(
-            REACTOME.format(organism=ORGANISM[taxon_identifier][REACTOME]),
+            REACTOME.format(organism=ORGANISM[taxon_identifier]),
             delimiter="\t",
             header=0,
             usecols=[
@@ -79,9 +80,10 @@ def add_interactions(
                 (not interaction_context
                  or row["Interaction context"] in interaction_context)):
 
-                for a in primary_accession.get(interactor_a, {interactor_a}):
-                    for b in primary_accession.get(interactor_b,
-                                                   {interactor_b}):
-                        if a in network and b in network and a != b:
-                            network.add_edge(a, b)
-                            network.edges[a, b]["Reactome"] = 0.5
+                for int_a in primary_accession.get(interactor_a,
+                                                   {interactor_a}):
+                    for int_b in primary_accession.get(interactor_b,
+                                                       {interactor_b}):
+                        if int_a in network and int_b in network and int_a != int_b:
+                            network.add_edge(int_a, int_b)
+                            network.edges[int_a, int_b]["Reactome"] = 0.5
