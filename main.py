@@ -245,10 +245,11 @@ def main():
                                     "taxon identifier", 9606),
                         )
 
+                    k += 1
+
+                if k:
                     network.annotate_proteins()
                     network.remove_unannotated_proteins()
-
-                    k += 1
 
                 if "BioGRID" in configuration["protein-protein interactions"]:
                     biogrid.add_interactions(
