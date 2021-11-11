@@ -61,7 +61,7 @@ def decompress_zip_file(compressed_file_name, file_from_zip_archive=None):
     return decompressed_file_name
 
 
-def get_file(url, file_from_zip_archive=None):
+def download_decompressed_file(url, file_from_zip_archive=None):
     if not os.path.exists(
             os.path.join(tempfile.gettempdir(), "{}-{}".format(
                 SUBDIRECTORY_PREFIX, os.getpid()))):
@@ -89,7 +89,7 @@ def get_file(url, file_from_zip_archive=None):
 
 
 def txt(url, file_from_zip_archive=None):
-    local_file_name = get_file(url, file_from_zip_archive)
+    local_file_name = download_decompressed_file(url, file_from_zip_archive)
 
     with open(local_file_name, buffering=CHUNK_SIZE) as local_file:
         for line in local_file:
@@ -111,7 +111,7 @@ def tabular_txt(url,
                 header=None,
                 skiprows=0,
                 usecols=[]):
-    local_file_name = get_file(url, file_from_zip_archive)
+    local_file_name = download_decompressed_file(url, file_from_zip_archive)
 
     if os.path.splitext(local_file_name)[1] == ".csv":
         delimiter = ","
