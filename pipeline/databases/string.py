@@ -1,4 +1,5 @@
-from pipeline.utilities import download, uniprot
+from uniprot import uniprot
+from download import download
 
 STRING_ID_MAP = "https://stringdb-static.org/download/protein.aliases.v11.5/{taxon_identifier}.protein.aliases.v11.5.txt.gz"
 STRING = "https://stringdb-static.org/download/protein.links.full.v11.5/{taxon_identifier}.protein.links.full.v11.5.txt.gz"
@@ -24,15 +25,14 @@ def add_proteins(
     physical=False,
     taxon_identifier=9606,
 ):
-    uniprot_id_map = uniprot.get_id_map("STRING", taxon_identifier)
-
+    uniprot_id_map = {}
     for row in download.tabular_txt(
             STRING_ID_MAP.format(taxon_identifier=taxon_identifier),
             delimiter="\t",
             skiprows=1,
             usecols=[0, 1, 2],
     ):
-        if "BLAST_UniProt_AC" in row[2].split():
+        if "UniProt_AC" in row[2]:
             if row[0] not in uniprot_id_map:
                 uniprot_id_map[row[0]] = set()
             uniprot_id_map[row[0]].add(row[1])
@@ -67,19 +67,21 @@ def add_proteins(
             header=0,
             usecols=["protein1", "protein2"] + list(thresholds.keys()),
     ):
-        for interactor_a in uniprot_id_map.get(row["protein1"], {}):
-            for interactor_b in uniprot_id_map.get(row["protein2"], {}):
-                for int_a in primary_accession.get(interactor_a,
-                                                   {interactor_a}):
-                    for int_b in primary_accession.get(interactor_b,
-                                                       {interactor_b}):
-                        if all(row[column] / 1000 >= thresholds[column]
-                               for column in thresholds):
-                            if (int_a in network and int_b not in network):
-                                nodes_to_add.add(int_b)
+        if all(row[column] / 1000 >= thresholds[column]
+               for column in thresholds):
+            for interactor_a in uniprot_id_map.get(row["protein1"], set()):
+                for interactor_b in uniprot_id_map.get(row["protein2"], set()):
+                    for primary_interactor_a in primary_accession.get(
+                            interactor_a, {interactor_a}):
+                        for primary_interactor_b in primary_accession.get(
+                                interactor_b, {interactor_b}):
+                            if (primary_interactor_a in network
+                                    and primary_interactor_b not in network):
+                                nodes_to_add.add(primary_interactor_b)
 
-                            elif (int_a not in network and int_b in network):
-                                nodes_to_add.add(int_a)
+                            elif (primary_interactor_a not in network
+                                  and primary_interactor_b in network):
+                                nodes_to_add.add(primary_interactor_a)
 
     network.add_nodes_from(nodes_to_add)
 
@@ -103,15 +105,14 @@ def add_interactions(
     physical=False,
     taxon_identifier=9606,
 ):
-    uniprot_id_map = uniprot.get_id_map("STRING", taxon_identifier, network)
-
+    uniprot_id_map = {}
     for row in download.tabular_txt(
             STRING_ID_MAP.format(taxon_identifier=taxon_identifier),
             delimiter="\t",
             skiprows=1,
             usecols=[0, 1, 2],
     ):
-        if "BLAST_UniProt_AC" in row[2].split() and row[1] in network:
+        if "UniProt_AC" in row[2] and row[1] in network:
             if row[0] not in uniprot_id_map:
                 uniprot_id_map[row[0]] = set()
             uniprot_id_map[row[0]].add(row[1])
@@ -146,22 +147,33 @@ def add_interactions(
             header=0,
             usecols=["protein1", "protein2"] + list(thresholds.keys()),
     ):
-        for interactor_a in uniprot_id_map.get(row["protein1"], {}):
-            for interactor_b in uniprot_id_map.get(row["protein2"], {}):
-                for int_a in primary_accession.get(interactor_a,
-                                                   {interactor_a}):
-                    for int_b in primary_accession.get(interactor_b,
-                                                       {interactor_b}):
-                        if (all(row[column] / 1000 >= thresholds[column]
-                                for column in thresholds) and int_a != int_b):
-
-                            if network.has_edge(int_a, int_b):
-                                network.edges[int_a, int_b]["STRING"] = max(
-                                    row["combined_score"] / 1000,
-                                    network.edges[int_a,
-                                                  int_b].get("STRING", 0.0),
-                                )
-                            else:
-                                network.add_edge(int_a, int_b)
-                                network.edges[int_a, int_b]["STRING"] = (
-                                    row["combined_score"] / 1000)
+        if all(row[column] / 1000 >= thresholds[column]
+               for column in thresholds):
+            for interactor_a in uniprot_id_map.get(row["protein1"], set()):
+                for interactor_b in uniprot_id_map.get(row["protein2"], set()):
+                    for primary_interactor_a in primary_accession.get(
+                            interactor_a, {interactor_a}):
+                        for primary_interactor_b in primary_accession.get(
+                                interactor_b, {interactor_b}):
+                            if (primary_interactor_a in network
+                                    and primary_interactor_b in network
+                                    and primary_interactor_a !=
+                                    primary_interactor_b):
+                                if network.has_edge(primary_interactor_a,
+                                                    primary_interactor_b):
+                                    network.edges[
+                                        primary_interactor_a,
+                                        primary_interactor_b]["STRING"] = max(
+                                            row["combined_score"] / 1000,
+                                            network.edges[
+                                                primary_interactor_a,
+                                                primary_interactor_b].get(
+                                                    "STRING", 0.0),
+                                        )
+                                else:
+                                    network.add_edge(primary_interactor_a,
+                                                     primary_interactor_b)
+                                    network.edges[
+                                        primary_interactor_a,
+                                        primary_interactor_b]["STRING"] = (
+                                            row["combined_score"] / 1000)

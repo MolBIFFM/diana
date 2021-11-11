@@ -1,9 +1,9 @@
 import itertools
 
-from pipeline.utilities import download, uniprot
+from uniprot import uniprot
+from download import download
 
-CORUM_ZIP_ARCHIVE = (
-    "https://mips.helmholtz-muenchen.de/corum/download/allComplexes.txt.zip")
+CORUM_ZIP_ARCHIVE = "https://mips.helmholtz-muenchen.de/corum/download/allComplexes.txt.zip"
 CORUM = "allComplexes.txt"
 
 
@@ -31,15 +31,17 @@ def add_proteins(network,
             for interactor_a, interactor_b in itertools.combinations(
                     row["subunits(UniProt IDs)"].split(";"), 2):
 
-                for int_a in primary_accessions.get(interactor_a,
-                                                    {interactor_a}):
-                    for int_b in primary_accessions.get(
+                for primary_interactor_a in primary_accessions.get(
+                        interactor_a, {interactor_a}):
+                    for primary_interactor_b in primary_accessions.get(
                             interactor_b, {interactor_b}):
-                        if (int_a in network and int_b not in network):
-                            nodes_to_add.add(int_b)
+                        if (primary_interactor_a in network
+                                and primary_interactor_b not in network):
+                            nodes_to_add.add(primary_interactor_b)
 
-                        elif (int_a not in network and int_b in network):
-                            nodes_to_add.add(int_a)
+                        elif (primary_interactor_a not in network
+                              and primary_interactor_b in network):
+                            nodes_to_add.add(primary_interactor_a)
 
     network.add_nodes_from(nodes_to_add)
 
@@ -68,13 +70,17 @@ def add_interactions(network,
             for interactor_a, interactor_b in itertools.combinations(
                     row["subunits(UniProt IDs)"].split(";"), 2):
 
-                for int_a in primary_accessions.get(interactor_a,
-                                                    {interactor_a}):
-                    for int_b in primary_accessions.get(
+                for primary_interactor_a in primary_accessions.get(
+                        interactor_a, {interactor_a}):
+                    for primary_interactor_b in primary_accessions.get(
                             interactor_b, {interactor_b}):
-                        if int_a in network and int_b in network and int_a != int_b:
+                        if (primary_interactor_a in network
+                                and primary_interactor_b in network and
+                                primary_interactor_a != primary_interactor_b):
                             network.add_edge(
-                                int_a,
-                                int_b,
+                                primary_interactor_a,
+                                primary_interactor_b,
                             )
-                            network.edges[int_a, int_b, ]["CORUM"] = 0.5
+                            network.edges[
+                                primary_interactor_a,
+                                primary_interactor_b, ]["CORUM"] = 0.5

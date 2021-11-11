@@ -1,7 +1,8 @@
-from pipeline.utilities import download, mitab, uniprot
+from formats import mitab
+from uniprot import uniprot
+from download import download
 
-INTACT_ZIP_ARCHIVE = (
-    "ftp://ftp.ebi.ac.uk/pub/databases/intact/current/psimitab/intact.zip")
+INTACT_ZIP_ARCHIVE = "ftp://ftp.ebi.ac.uk/pub/databases/intact/current/psimitab/intact.zip"
 INTACT = "intact.txt"
 
 
@@ -25,19 +26,18 @@ def add_proteins(network,
                 "Alt. ID(s) interactor B",
                 "Taxid interactor A",
                 "Taxid interactor B",
-                "Interaction detection method(s)",
                 "Interaction type(s)",
+                "Interaction detection method(s)",
                 "Confidence value(s)",
             ],
     ):
-        if ((interactor_a := mitab.get_identifier_from_namespace(
-                row["#ID(s) interactor A"], "uniprotkb"))
-                and (interactor_b := mitab.get_identifier_from_namespace(
-                    row["ID(s) interactor B"], "uniprotkb"))
-                and mitab.get_identifier_from_namespace(
-                    row["Taxid interactor A"],
-                    "taxid") == mitab.get_identifier_from_namespace(
-                        row["Taxid interactor B"], "taxid")
+        if (int(
+                mitab.get_identifiers_from_namespace(
+                    row["Taxid interactor A"], "taxid")) == taxon_identifier
+                and int(
+                    mitab.get_identifiers_from_namespace(
+                        row["Taxid interactor B"],
+                        "taxid")) == taxon_identifier
                 and (not interaction_detection_methods
                      or mitab.namespace_has_any_term_from(
                          row["Interaction detection method(s)"],
@@ -46,17 +46,28 @@ def add_proteins(network,
                      )) and
             (not interaction_types or mitab.namespace_has_any_term_from(
                 row["Interaction type(s)"], "psi-mi", interaction_types))
-                and (score := mitab.get_identifier_from_namespace(
+                and (score := mitab.get_identifiers_from_namespace(
                     row["Confidence value(s)"], "intact-miscore"))
-                and float(score) >= mi_score):
-            for int_a in primary_accession.get(interactor_a, {interactor_a}):
-                for int_b in primary_accession.get(interactor_b,
-                                                   {interactor_b}):
-                    if (int_a in network and int_b not in network):
-                        nodes_to_add.add(int_b)
+                and float(score[0]) >= mi_score):
+            for interactor_a in mitab.get_identifiers_from_namespace(
+                    row["#ID(s) interactor A"],
+                    "uniprotkb") + mitab.get_identifiers_from_namespace(
+                        row["Alt. ID(s) interactor A"], "uniprotkb"):
+                for interactor_b in mitab.get_identifiers_from_namespace(
+                        row["ID(s) interactor B"],
+                        "uniprotkb") + mitab.get_identifiers_from_namespace(
+                            row["Alt. ID(s) interactor B"], "uniprotkb"):
+                    for primary_interactor_a in primary_accession.get(
+                            interactor_a, {interactor_a}):
+                        for primary_interactor_b in primary_accession.get(
+                                interactor_b, {interactor_b}):
+                            if (primary_interactor_a in network
+                                    and primary_interactor_b not in network):
+                                nodes_to_add.add(primary_interactor_b)
 
-                    elif (int_a not in network and int_b in network):
-                        nodes_to_add.add(int_a)
+                            elif (primary_interactor_a not in network
+                                  and primary_interactor_b in network):
+                                nodes_to_add.add(primary_interactor_a)
 
     network.add_nodes_from(nodes_to_add)
 
@@ -81,40 +92,53 @@ def add_interactions(network,
                 "Alt. ID(s) interactor B",
                 "Taxid interactor A",
                 "Taxid interactor B",
-                "Interaction detection method(s)",
                 "Interaction type(s)",
+                "Interaction detection method(s)",
                 "Confidence value(s)",
             ],
     ):
-
-        if ((interactor_a := mitab.get_identifier_from_namespace(
-                row["#ID(s) interactor A"], "uniprotkb"))
-                and (interactor_b := mitab.get_identifier_from_namespace(
-                    row["ID(s) interactor B"], "uniprotkb"))
-                and interactor_a != interactor_b
-                and (not interaction_detection_methods
-                     or mitab.namespace_has_any_term_from(
-                         row["Interaction detection method(s)"],
-                         "psi-mi",
-                         interaction_detection_methods,
-                     )) and
+        if ((not interaction_detection_methods
+             or mitab.namespace_has_any_term_from(
+                 row["Interaction detection method(s)"],
+                 "psi-mi",
+                 interaction_detection_methods,
+             )) and
             (not interaction_types or mitab.namespace_has_any_term_from(
                 row["Interaction type(s)"], "psi-mi", interaction_types))
-                and (score := mitab.get_identifier_from_namespace(
-                    row["Confidence value(s)"], "intact-miscore"))):
-            score = float(score)
-            if score >= mi_score:
-                for int_a in primary_accession.get(interactor_a,
-                                                   {interactor_a}):
-                    for int_b in primary_accession.get(interactor_b,
-                                                       {interactor_b}):
-                        if int_a in network and int_b in network and int_a != int_b:
-                            if network.has_edge(int_a, int_b):
-                                network.edges[int_a, int_b]["IntAct"] = max(
-                                    score,
-                                    network.edges[int_a,
-                                                  int_b].get("IntAct", 0.0),
-                                )
-                            else:
-                                network.add_edge(int_a, int_b)
-                                network.edges[int_a, int_b]["IntAct"] = score
+                and (score := mitab.get_identifiers_from_namespace(
+                    row["Confidence value(s)"], "intact-miscore"))
+                and float(score[0]) >= mi_score):
+            for interactor_a in mitab.get_identifiers_from_namespace(
+                    row["#ID(s) interactor A"],
+                    "uniprotkb") + mitab.get_identifiers_from_namespace(
+                        row["Alt. ID(s) interactor A"], "uniprotkb"):
+                for interactor_b in mitab.get_identifiers_from_namespace(
+                        row["ID(s) interactor B"],
+                        "uniprotkb") + mitab.get_identifiers_from_namespace(
+                            row["Alt. ID(s) interactor B"], "uniprotkb"):
+                    for primary_interactor_a in primary_accession.get(
+                            interactor_a, {interactor_a}):
+                        for primary_interactor_b in primary_accession.get(
+                                interactor_b, {interactor_b}):
+                            if (primary_interactor_a in network
+                                    and primary_interactor_b in network
+                                    and primary_interactor_a !=
+                                    primary_interactor_b):
+                                if network.has_edge(primary_interactor_a,
+                                                    primary_interactor_b):
+                                    network.edges[
+                                        primary_interactor_a,
+                                        primary_interactor_b]["IntAct"] = max(
+                                            float(score[0]),
+                                            network.edges[
+                                                primary_interactor_a,
+                                                primary_interactor_b].get(
+                                                    "IntAct", 0.0),
+                                        )
+                                else:
+                                    network.add_edge(primary_interactor_a,
+                                                     primary_interactor_b)
+                                    network.edges[primary_interactor_a,
+                                                  primary_interactor_b][
+                                                      "IntAct"] = float(
+                                                          score[0])
