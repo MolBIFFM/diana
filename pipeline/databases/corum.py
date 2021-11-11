@@ -83,4 +83,4 @@ def add_interactions(network,
                             )
                             network.edges[
                                 primary_interactor_a,
-                                primary_interactor_b, ]["CORUM"] = 0.5
+                                primary_interactor_b, ]["CORUM"] = 1.0

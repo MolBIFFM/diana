@@ -124,4 +124,4 @@ def add_interactions(
                                                  primary_interactor_b)
                                 network.edges[
                                     primary_interactor_a,
-                                    primary_interactor_b]["BioGRID"] = 0.5
+                                    primary_interactor_b]["BioGRID"] = 1.0
