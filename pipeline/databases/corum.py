@@ -32,9 +32,9 @@ def add_proteins(network,
                     row["subunits(UniProt IDs)"].split(";"), 2):
 
                 for primary_interactor_a in primary_accessions.get(
-                        interactor_a, {interactor_a}):
+                        interactor_a, set()):
                     for primary_interactor_b in primary_accessions.get(
-                            interactor_b, {interactor_b}):
+                            interactor_b, set()):
                         if (primary_interactor_a in network
                                 and primary_interactor_b not in network):
                             nodes_to_add.add(primary_interactor_b)
@@ -71,9 +71,9 @@ def add_interactions(network,
                     row["subunits(UniProt IDs)"].split(";"), 2):
 
                 for primary_interactor_a in primary_accessions.get(
-                        interactor_a, {interactor_a}):
+                        interactor_a, set()):
                     for primary_interactor_b in primary_accessions.get(
-                            interactor_b, {interactor_b}):
+                            interactor_b, set()):
                         if (primary_interactor_a in network
                                 and primary_interactor_b in network and
                                 primary_interactor_a != primary_interactor_b):

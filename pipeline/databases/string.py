@@ -72,9 +72,9 @@ def add_proteins(
             for interactor_a in uniprot_id_map.get(row["protein1"], set()):
                 for interactor_b in uniprot_id_map.get(row["protein2"], set()):
                     for primary_interactor_a in primary_accession.get(
-                            interactor_a, {interactor_a}):
+                            interactor_a, set()):
                         for primary_interactor_b in primary_accession.get(
-                                interactor_b, {interactor_b}):
+                                interactor_b, set()):
                             if (primary_interactor_a in network
                                     and primary_interactor_b not in network):
                                 nodes_to_add.add(primary_interactor_b)
@@ -152,9 +152,9 @@ def add_interactions(
             for interactor_a in uniprot_id_map.get(row["protein1"], set()):
                 for interactor_b in uniprot_id_map.get(row["protein2"], set()):
                     for primary_interactor_a in primary_accession.get(
-                            interactor_a, {interactor_a}):
+                            interactor_a, set()):
                         for primary_interactor_b in primary_accession.get(
-                                interactor_b, {interactor_b}):
+                                interactor_b, set()):
                             if (primary_interactor_a in network
                                     and primary_interactor_b in network
                                     and primary_interactor_a !=
