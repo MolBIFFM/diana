@@ -9,8 +9,9 @@ import zipfile
 
 import pandas as pd
 
-CHUNK_SIZE = 2**16
+CHUNK_SIZE = 2**10
 SUBDIRECTORY_PREFIX = "pipeline-{}".format(uuid.uuid4())
+
 
 def download_file(url, local_file_name):
     request = urllib.request.Request(url, headers={"User-Agent": "pipeline"})
