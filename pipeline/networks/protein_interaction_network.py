@@ -121,7 +121,7 @@ def add_proteins_from(network, proteins):
                         network.add_node(accessions[0])
                         network.nodes[accessions[0]]["gene"] = gene_name
                         network.nodes[accessions[0]]["protein"] = protein_name
-                    else:
+                    elif i == 0:
                         network.add_node("{}-{}".format(
                             accessions[0], isoform))
                         network.nodes["{}-{}".format(
