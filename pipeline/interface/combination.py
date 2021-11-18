@@ -1,6 +1,6 @@
 import statistics
 
-COMBINE_SITES = {
+SITE_COMBINATION = {
     "down":
     lambda changes: len([change for change in changes
                          if change < 0.0]) / len(changes),
@@ -27,19 +27,19 @@ COMBINE_SITES = {
                          if change > 0.0]) / len(changes),
 }
 
-COMBINE_REPLICATES = {
+REPLICATE_COMBINATION = {
     "mean": statistics.mean,
     "median": statistics.median,
 }
 
-COMBINE_MODULE_SIZES = {
+MODULE_SIZE_COMBINATION = {
     "max": max,
     "mean": statistics.mean,
     "median": statistics.median,
     "min": min,
 }
 
-COMBINE_CONFIDENCE_SCORES = {
+CONFIDENCE_SCORE_COMBINATION = {
     "max":
     lambda confidence_scores: max(confidence_scores.values()),
     "mean":

@@ -6,6 +6,10 @@ from download import download
 CORUM_ZIP_ARCHIVE = "https://mips.helmholtz-muenchen.de/corum/download/allComplexes.txt.zip"
 CORUM = "allComplexes.txt"
 
+ORGANISM = {
+    9606: "Human",
+}
+
 
 def add_proteins(network,
                  protein_complex_purification_method=[],
@@ -19,15 +23,16 @@ def add_proteins(network,
             delimiter="\t",
             header=0,
             usecols=[
+                "Organism",
                 "subunits(UniProt IDs)",
                 "Protein complex purification method",
             ],
     ):
-        if not protein_complex_purification_method or any(
-                method in protein_complex_purification_method for method in [
-                    entry.split("-")[1].lstrip() for entry in
-                    row["Protein complex purification method"].split(";")
-                ]):
+        if (row["Organism"] == ORGANISM[taxon_identifier] and
+            (not protein_complex_purification_method
+             or any(method in protein_complex_purification_method for method in
+                    (entry.split("-")[1].lstrip() for entry in
+                     row["Protein complex purification method"].split(";"))))):
             for interactor_a, interactor_b in itertools.combinations(
                     row["subunits(UniProt IDs)"].split(";"), 2):
 

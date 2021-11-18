@@ -8,9 +8,9 @@ from networks import protein_interaction_network
 def get_styles(
         network,
         bar_chart_range=(-3.0, 3.0),
-        get_bar_chart_range=lambda time, ptm, bar_chart_range, combine_sites:
-    bar_chart_range,
-        combine_sites=lambda sites: max(sites, key=abs),
+        get_bar_chart_range=lambda time, ptm, bar_chart_range,
+    site_combination: bar_chart_range,
+        site_combination=lambda sites: max(sites, key=abs),
 ):
     styles = ET.ElementTree(
         ET.Element("vizmap", attrib={
@@ -97,7 +97,7 @@ def get_styles(
                             protein_interaction_network.get_sites(
                                 network, time, ptm),
                             cy_range=get_bar_chart_range(
-                                time, ptm, bar_chart_range, combine_sites),
+                                time, ptm, bar_chart_range, site_combination),
                         ),
                     )
                 elif visual_property.get(

@@ -15,7 +15,7 @@ from enrichment import correction
 def annotate_proteins(network):
     for accessions, gene_name, protein_name, _ in uniprot.get_swissprot_entries(
     ):
-        for protein in tuple(network):
+        for protein in list(network):
             if protein.split("-")[0] in accessions:
                 if "-" in protein and not protein.split("-")[1].isnumeric():
                     nx.relabel_nodes(network, {protein: protein.split("-")[0]},
@@ -144,7 +144,7 @@ def add_proteins_from_table(
     protein_accession_column,
     protein_accession_format=lambda entry: [entry],
     time=0,
-    ptm="",
+    modification="",
     position_column="",
     position_format=lambda entry: [entry],
     replicates=[],
@@ -152,8 +152,8 @@ def add_proteins_from_table(
     header=0,
     num_sites=100,
     num_replicates=1,
-    combine_replicates=statistics.mean,
-    convert_measurement=math.log2,
+    replicate_combination=statistics.mean,
+    measurement_conversion=math.log2,
 ):
     if os.path.splitext(file_name)[1].lstrip(".") in (
             "xls",
@@ -236,8 +236,8 @@ def add_proteins_from_table(
                         proteins[protein_accession],
                         (
                             position,
-                            convert_measurement(
-                                combine_replicates(measurements)),
+                            measurement_conversion(
+                                replicate_combination(measurements)),
                         ),
                     )
         else:
@@ -247,7 +247,7 @@ def add_proteins_from_table(
 
     primary_accession = add_proteins_from(network, proteins.keys())
 
-    for protein in tuple(proteins):
+    for protein in list(proteins):
         if protein in primary_accession:
             for accession in sorted(primary_accession[protein]):
                 if accession not in proteins:
@@ -266,7 +266,7 @@ def add_proteins_from_table(
 
         for i in range(len(proteins[protein])):
             network.nodes[protein]["{} {} {}".format(
-                time, ptm, i + 1)] = proteins[protein][i][1]
+                time, modification, i + 1)] = proteins[protein][i][1]
 
 
 def get_times(network):
@@ -289,11 +289,12 @@ def get_post_translational_modifications(network, time):
                 and change.split(" ")[0] == str(time))))
 
 
-def get_sites(network, time, ptm):
+def get_sites(network, time, modification):
     return max(
         int(change.split(" ")[2]) for protein in network
-        for change in network.nodes[protein] if len(change.split(" ")) == 3
-        and change.split(" ")[0] == str(time) and change.split(" ")[1] == ptm)
+        for change in network.nodes[protein]
+        if len(change.split(" ")) == 3 and change.split(" ")[0] == str(time)
+        and change.split(" ")[1] == modification)
 
 
 def set_post_translational_modification(network):
@@ -311,18 +312,18 @@ def set_post_translational_modification(network):
 
 def get_changes(network,
                 time,
-                ptm,
-                combine_sites=lambda sites: max(sites, key=abs)):
+                modification,
+                site_combination=lambda sites: max(sites, key=abs)):
     changes = []
     for protein in network:
         sites = [
             network.nodes[protein][change] for change in network.nodes[protein]
             if len(change.split(" ")) == 3 and change.split(" ")[0] == str(
-                time) and change.split(" ")[1] == ptm
+                time) and change.split(" ")[1] == modification
         ]
 
         if sites:
-            changes.append(combine_sites(sites))
+            changes.append(site_combination(sites))
 
     return changes
 
@@ -332,9 +333,9 @@ def get_z_score_range(
         time,
         modification,
         thresholds,
-        combine_sites=lambda sites: max(sites, key=abs),
+        site_combination=lambda sites: max(sites, key=abs),
 ):
-    changes = get_changes(network, time, modification, combine_sites)
+    changes = get_changes(network, time, modification, site_combination)
     mean = statistics.mean(changes)
     stdev = statistics.stdev(changes, xbar=mean)
     return (thresholds[0] * stdev + mean, thresholds[1] * stdev + mean)
@@ -345,9 +346,9 @@ def get_z_score(
         time,
         modification,
         change,
-        combine_sites=lambda sites: max(sites, key=abs),
+        site_combination=lambda sites: max(sites, key=abs),
 ):
-    changes = get_changes(network, time, modification, combine_sites)
+    changes = get_changes(network, time, modification, site_combination)
     mean = statistics.mean(changes)
     stdev = statistics.stdev(changes, xbar=mean)
     return (change - mean) / stdev
@@ -358,9 +359,10 @@ def get_proportion_range(
         time,
         modification,
         thresholds,
-        combine_sites=lambda sites: max(sites, key=abs),
+        site_combination=lambda sites: max(sites, key=abs),
 ):
-    changes = sorted(get_changes(network, time, modification, combine_sites))
+    changes = sorted(get_changes(network, time, modification,
+                                 site_combination))
     proportion_range = [0.0, 0.0]
 
     for i in range(len(changes)):
@@ -387,9 +389,9 @@ def get_proportion(
         time,
         modification,
         change,
-        combine_sites=lambda sites: max(sites, key=abs),
+        site_combination=lambda sites: max(sites, key=abs),
 ):
-    changes = get_changes(network, time, modification, combine_sites)
+    changes = get_changes(network, time, modification, site_combination)
     return (min(
         len([c for c in changes if c <= change]),
         len([c for c in changes if c >= change]),
@@ -398,9 +400,9 @@ def get_proportion(
 
 def set_changes(
     network,
-    combine_sites=lambda sites: max(sites, key=abs),
+    site_combination=lambda sites: max(sites, key=abs),
     changes=(-1.0, 1.0),
-    get_range=lambda time, modification, changes, combine_sites: changes,
+    get_range=lambda time, modification, changes, site_combination: changes,
 ):
     times = get_times(network)
     modifications = {
@@ -414,7 +416,7 @@ def set_changes(
                 time,
                 modification,
                 changes,
-                combine_sites,
+                site_combination,
             )
             for modification in modifications[time]
         }
@@ -423,7 +425,7 @@ def set_changes(
 
     for time in times:
         for protein in network:
-            ptm = {}
+            classification = {}
             for modification in modifications[time]:
                 sites = [
                     network.nodes[protein][change]
@@ -433,60 +435,63 @@ def set_changes(
                 ]
 
                 if sites:
-                    combined_change = combine_sites(sites)
+                    combined_change = site_combination(sites)
 
                     if combined_change >= 1.0 * mid_range[time][modification][
                             1]:
-                        ptm[modification] = "up"
+                        classification[modification] = "up"
                     elif 1.0 * mid_range[time][modification][
                             1] > combined_change >= 0.5 * mid_range[time][
                                 modification][1]:
-                        ptm[modification] = "mid_up"
+                        classification[modification] = "mid_up"
                     elif 0.5 * mid_range[time][modification][
                             1] > combined_change > 0.5 * mid_range[time][
                                 modification][0]:
-                        ptm[modification] = "mid"
+                        classification[modification] = "mid"
                     elif 0.5 * mid_range[time][modification][
                             0] >= combined_change > 1.0 * mid_range[time][
                                 modification][0]:
-                        ptm[modification] = "mid_down"
+                        classification[modification] = "mid_down"
                     else:
-                        ptm[modification] = "down"
+                        classification[modification] = "down"
 
-            if ptm:
-                if set(ptm.values()) == {"up"}:
+            if classification:
+                if set(classification.values()) == {"up"}:
                     network.nodes[protein]["change {}".format(time)] = "up"
-                elif set(ptm.values()) == {"mid_up", "up"}:
+                elif set(classification.values()) == {"mid_up", "up"}:
                     network.nodes[protein]["change {}".format(time)] = "up"
-                elif set(ptm.values()) == {"mid", "mid_up", "up"}:
+                elif set(classification.values()) == {"mid", "mid_up", "up"}:
                     network.nodes[protein]["change {}".format(time)] = "up"
 
-                elif set(ptm.values()) == {"mid_up"}:
+                elif set(classification.values()) == {"mid_up"}:
                     network.nodes[protein]["change {}".format(time)] = "mid_up"
-                elif set(ptm.values()) == {"mid", "mid_up"}:
+                elif set(classification.values()) == {"mid", "mid_up"}:
                     network.nodes[protein]["change {}".format(time)] = "mid_up"
 
-                elif set(ptm.values()) == {"mid"}:
+                elif set(classification.values()) == {"mid"}:
                     network.nodes[protein]["change {}".format(time)] = "mid"
 
-                elif set(ptm.values()) == {"mid", "mid_down"}:
+                elif set(classification.values()) == {"mid", "mid_down"}:
                     network.nodes[protein]["change {}".format(
                         time)] = "mid_down"
-                elif set(ptm.values()) == {"mid_down"}:
+                elif set(classification.values()) == {"mid_down"}:
                     network.nodes[protein]["change {}".format(
                         time)] = "mid_down"
 
-                elif set(ptm.values()) == {"mid", "mid_down", "down"}:
+                elif set(classification.values()) == {
+                        "mid", "mid_down", "down"
+                }:
                     network.nodes[protein]["change {}".format(time)] = "down"
-                elif set(ptm.values()) == {"mid_down", "down"}:
+                elif set(classification.values()) == {"mid_down", "down"}:
                     network.nodes[protein]["change {}".format(time)] = "down"
-                elif set(ptm.values()) == {"down"}:
+                elif set(classification.values()) == {"down"}:
                     network.nodes[protein]["change {}".format(time)] = "down"
                 else:
                     network.nodes[protein]["change {}".format(
                         time)] = " ".join(
-                            "{}_{}".format(modification, ptm[modification])
-                            for modification in sorted(ptm.keys()))
+                            "{}_{}".format(modification,
+                                           classification[modification])
+                            for modification in sorted(classification.keys()))
 
             else:
                 network.nodes[protein]["change {}".format(time)] = "mid"
@@ -516,43 +521,26 @@ def set_edge_weights(
 
 def get_modules(
     network,
-    module_size=0,
-    combine_module_sizes=statistics.mean,
+    module_size,
+    module_size_combination=statistics.mean,
     weight="weight",
     algorithm=louvain.louvain,
 ):
     G = network.copy()
-    G.remove_nodes_from(tuple(nx.isolates(G)))
+    G.remove_nodes_from(list(nx.isolates(G)))
 
-    if G.number_of_nodes() == 0:
-        return []
+    communities = algorithm(G, weight)
 
-    communities = algorithm(G, weight=weight)
-
-    if not module_size:
-        return [community for community in communities if len(community) > 1]
-
-    while (combine_module_sizes([len(community)
-                                 for community in communities]) > module_size):
-        max_community_size = max(len(community) for community in communities)
-
-        indices = [
-            communities.index(community) for community in communities
-            if len(community) == max_community_size
-        ]
+    while (module_size_combination(
+            len(community) for community in communities) > module_size):
 
         subdivision = False
-
-        for i, subdivided_community in (algorithm(G.subgraph(communities[j]),
-                                                  weight) for j in indices):
+        for i, subdivided_community in enumerate(
+                algorithm(G.subgraph(communities[j]), weight)
+                for j in range(len(communities))):
             if len(subdivided_community) > 1:
                 subdivision = True
                 communities[i:i + 1] = subdivided_community
-
-                indices[indices.index(i) + 1:] = [
-                    k + len(subdivided_community) - 1
-                    for k in indices[indices.index(i) + 1:]
-                ]
 
         if not subdivision:
             break
@@ -561,34 +549,33 @@ def get_modules(
 
 
 def get_proteins(
-        network,
-        time,
-        ptm,
-        change_filter=lambda combined_sites: bool(combined_sites),
-        combine_sites=lambda sites: max(sites, key=abs),
-):
+    network,
+    time,
+    modification,
+    site_combination=lambda sites: max(sites, key=abs),
+    combined_change_filter=lambda combined_sites: bool(combined_sites)):
     proteins = []
     for protein in network:
         sites = [
             network.nodes[protein][change] for change in network.nodes[protein]
             if len(change.split(" ")) == 3 and change.split(" ")[0] == str(
-                time) and change.split(" ")[1] == ptm
+                time) and change.split(" ")[1] == modification
         ]
 
-        if sites and change_filter(combine_sites(sites)):
+        if sites and combined_change_filter(site_combination(sites)):
             proteins.append(protein)
 
     return proteins
 
 
-def get_module_change_enrichment(
+def get_change_enriched_modules(
     network,
+    module_size,
     p=0.05,
     changes=(-1.0, 1.0),
-    get_range=lambda time, ptm, changes, combine_sites: changes,
-    combine_sites=lambda sites: max(sites, key=abs),
-    module_size=0,
-    combine_module_sizes=statistics.mean,
+    get_range=lambda time, modification, changes, site_combination: changes,
+    site_combination=lambda sites: max(sites, key=abs),
+    module_size_combination=statistics.mean,
     weight="weight",
     test="two-sided",
     algorithm=louvain.louvain,
@@ -598,7 +585,7 @@ def get_module_change_enrichment(
         for i, module in enumerate(
             get_modules(network,
                         module_size,
-                        combine_module_sizes,
+                        module_size_combination,
                         weight=weight,
                         algorithm=algorithm))
     }
@@ -608,90 +595,104 @@ def get_module_change_enrichment(
     modules_filtered = {}
 
     for time in get_times(network):
-        for ptm in get_post_translational_modifications(network, time):
-            M = len(get_proteins(network, time, ptm))
+        for modification in get_post_translational_modifications(
+                network, time):
+            M = len(get_proteins(network, time, modification))
             N = [
-                len(network.subgraph(modules[i]).get_proteins(time, ptm))
-                for i in modules
+                len(
+                    get_proteins(network.subgraph(modules[i]), time,
+                                 modification)) for i in modules
             ]
 
             mid_range = get_range(
                 time,
-                ptm,
+                modification,
                 changes,
-                combine_sites,
+                site_combination,
             )
 
-            if test == "one-sided positive":
+            if test == "above":
                 n = len(
                     get_proteins(
                         network,
                         time,
-                        ptm,
-                        lambda change: change > mid_range[1],
-                        combine_sites=combine_sites,
+                        modification,
+                        site_combination=site_combination,
+                        combined_change_filter=lambda combined_change:
+                        combined_change >= mid_range[1],
                     ))
 
                 k = [
                     len(
-                        network.subgraph(modules[i]).get_proteins(
+                        get_proteins(
+                            network.subgraph(modules[i]),
                             time,
-                            ptm,
-                            lambda change: change > mid_range[1],
-                            combine_sites=combine_sites,
+                            modification,
+                            site_combination=site_combination,
+                            combined_change_filter=lambda combined_change:
+                            combined_change >= mid_range[1],
                         )) for i in modules
                 ]
 
-            elif test == "one-sided negative":
+            elif test == "below":
                 n = len(
                     get_proteins(
                         network,
                         time,
-                        ptm,
-                        lambda change: change < mid_range[0],
-                        combine_sites=combine_sites,
+                        modification,
+                        site_combination=site_combination,
+                        combined_change_filter=lambda combined_change:
+                        combined_change <= mid_range[0],
                     ))
 
                 k = [
                     len(
-                        network.subgraph(modules[i]).get_proteins(
+                        get_proteins(
+                            network.subgraph(modules[i]),
                             time,
-                            ptm,
-                            lambda change: change < mid_range[0],
-                            combine_sites=combine_sites,
+                            modification,
+                            site_combination=site_combination,
+                            combined_change_filter=lambda combined_change:
+                            combined_change <= mid_range[0],
                         )) for i in modules
                 ]
 
-            elif test == "two-sided":
+            elif test == "outside":
                 n = len(
                     get_proteins(
                         network,
                         time,
-                        ptm,
-                        lambda change: change < mid_range[0],
-                        combine_sites=combine_sites,
+                        modification,
+                        site_combination=site_combination,
+                        combined_change_filter=lambda combined_change:
+                        combined_change <= mid_range[0],
                     )) + len(
                         get_proteins(
                             network,
                             time,
-                            ptm,
-                            lambda change: change > mid_range[1],
-                            combine_sites=combine_sites,
+                            modification,
+                            site_combination=site_combination,
+                            combined_change_filter=lambda combined_change:
+                            combined_change >= mid_range[1],
                         ))
 
                 k = [
                     len(
-                        network.subgraph(modules[i]).get_proteins(
+                        get_proteins(
+                            network.subgraph(modules[i]),
                             time,
-                            ptm,
-                            lambda change: change < mid_range[0],
-                            combine_sites=combine_sites,
+                            modification,
+                            site_combination=site_combination,
+                            combined_change_filter=lambda combined_change:
+                            combined_change <= mid_range[0],
                         )) + len(
-                            network.subgraph(modules[i]).get_proteins(
+                            get_proteins(
+                                network.subgraph(modules[i]),
                                 time,
-                                ptm,
-                                lambda change: change > mid_range[1],
-                                combine_sites=combine_sites,
+                                modification,
+                                site_combination=site_combination,
+                                combined_change_filter=lambda combined_change:
+                                combined_change >= mid_range[1],
                             )) for i in modules
                 ]
 
@@ -709,11 +710,11 @@ def get_module_change_enrichment(
                 if p_value <= p:
                     if time not in p_adjusted:
                         p_adjusted[time] = {}
-                    if ptm not in p_adjusted[time]:
-                        p_adjusted[time][ptm] = {}
+                    if modification not in p_adjusted[time]:
+                        p_adjusted[time][modification] = {}
 
                     modules_filtered[module] = modules[module]
-                    p_adjusted[time][ptm][module] = p_value
+                    p_adjusted[time][modification][module] = p_value
 
     return modules_filtered, p_adjusted
 
@@ -725,7 +726,7 @@ def get_neighborhood(network, protein, k=1, isoforms=True):
             for node in network if node.split("-")[0] == protein.split("-")[0]
         }
     else:
-        nodes = {protein.split("-")[0]}
+        nodes = {protein}
 
     for _ in range(k):
         nodes.update(

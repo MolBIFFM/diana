@@ -57,7 +57,8 @@ def process(configuration_file, log=False):
                     protein_accession_format=extraction.EXTRACT.get(
                         entry.get("accession format"), lambda entry: [entry]),
                     time=entry.get("time", 0),
-                    ptm=entry.get("post-translational modification", ""),
+                    modification=entry.get("post-translational modification",
+                                           ""),
                     position_column=entry.get("position column", ""),
                     position_format=extraction.EXTRACT.get(
                         entry.get("position format"), lambda entry: [entry]),
@@ -66,11 +67,12 @@ def process(configuration_file, log=False):
                     header=entry.get("header", 1) - 1,
                     num_sites=entry.get("sites", 1000),
                     num_replicates=entry.get("replicates", 1),
-                    combine_replicates=combination.COMBINE_REPLICATES.get(
+                    replicate_combination=combination.REPLICATE_COMBINATION.
+                    get(
                         entry.get("combine replicates", "mean"),
-                        combination.COMBINE_REPLICATES["mean"],
+                        combination.REPLICATE_COMBINATION["mean"],
                     ),
-                    convert_measurement=conversion.LOG_BASE[entry.get(
+                    measurement_conversion=conversion.LOG_BASE[entry.get(
                         "log base")],
                 )
 
@@ -341,10 +343,10 @@ def process(configuration_file, log=False):
                     ["bar chart"].get("range", (-2.0, 2.0)),
                     get_bar_chart_range=protein_interaction_network.
                     get_z_score_range,
-                    combine_sites=combination.COMBINE_SITES.get(
+                    site_combination=combination.SITE_COMBINATION.get(
                         configuration["Cytoscape"]["bar chart"].get(
                             "combine sites"),
-                        combination.COMBINE_SITES["absmax"],
+                        combination.SITE_COMBINATION["absmax"],
                     ),
                 )
 
@@ -356,10 +358,10 @@ def process(configuration_file, log=False):
                     ["bar chart"].get("range", (0.025, 0.975)),
                     get_bar_chart_range=protein_interaction_network.
                     get_propotion_range,
-                    combine_sites=combination.COMBINE_SITES.get(
+                    site_combination=combination.SITE_COMBINATION.get(
                         configuration["Cytoscape"]["bar chart"].get(
                             "combine sites"),
-                        combination.COMBINE_SITES["absmax"],
+                        combination.SITE_COMBINATION["absmax"],
                     ),
                 )
 
@@ -368,10 +370,10 @@ def process(configuration_file, log=False):
                     network,
                     bar_chart_range=configuration["Cytoscape"]
                     ["bar chart"].get("range", (-1.0, 1.0)),
-                    combine_sites=combination.COMBINE_SITES.get(
+                    site_combination=combination.SITE_COMBINATION.get(
                         configuration["Cytoscape"]["bar chart"].get(
                             "combine sites"),
-                        combination.COMBINE_SITES["absmax"],
+                        combination.SITE_COMBINATION["absmax"],
                     ),
                 )
 
@@ -388,7 +390,7 @@ def process(configuration_file, log=False):
                                                {}).get("type") == "z-score"):
                 protein_interaction_network.set_changes(
                     network,
-                    combine_sites=combination.COMBINE_SITES[
+                    site_combination=combination.SITE_COMBINATION[
                         configuration["Cytoscape"]["node color"].get(
                             "combine sites", "absmax")],
                     changes=configuration["Cytoscape"]["node color"].get(
@@ -400,7 +402,7 @@ def process(configuration_file, log=False):
                     "node color", {}).get("type") == "proportion"):
                 protein_interaction_network.set_changes(
                     network,
-                    combine_sites=combination.COMBINE_SITES[
+                    site_combination=combination.SITE_COMBINATION[
                         configuration["Cytoscape"]["node color"].get(
                             "combine sites", "absmax")],
                     changes=configuration["Cytoscape"]["node color"].get(
@@ -411,7 +413,7 @@ def process(configuration_file, log=False):
             else:
                 protein_interaction_network.set_changes(
                     network,
-                    combine_sites=combination.COMBINE_SITES[
+                    site_combination=combination.SITE_COMBINATION[
                         configuration["Cytoscape"]["node color"].get(
                             "combine sites", "absmax")],
                     changes=configuration["Cytoscape"]["node color"].get(
@@ -447,7 +449,7 @@ def process(configuration_file, log=False):
             if "module detection" in configuration["post-processing"]:
                 protein_interaction_network.set_edge_weights(
                     network,
-                    weight=combination.COMBINE_CONFIDENCE_SCORES[
+                    weight=combination.CONFIDENCE_SCORE_COMBINATION[
                         configuration["post-processing"]
                         ["module detection"].get("edge weight", "number")])
 
@@ -455,12 +457,13 @@ def process(configuration_file, log=False):
                         protein_interaction_network.get_modules(
                             network,
                             module_size=configuration["post-processing"]
-                            ["module detection"].get("module size", 0),
-                            combine_module_sizes=combination.
-                            COMBINE_MODULE_SIZES.get(
+                            ["module detection"].get(
+                                "module size", network.number_of_nodes()),
+                            module_size_combination=combination.
+                            MODULE_SIZE_COMBINATION.get(
                                 configuration["post-processing"]
                                 ["module detection"].get("combine sizes"),
-                                combination.COMBINE_MODULE_SIZES["mean"],
+                                combination.MODULE_SIZE_COMBINATION["mean"],
                             ),
                             algorithm=algorithm.ALGORITHM.get(
                                 configuration["post-processing"]
@@ -481,35 +484,36 @@ def process(configuration_file, log=False):
             if "enrichment analysis" in configuration["post-processing"]:
                 protein_interaction_network.set_edge_weights(
                     network,
-                    weight=combination.COMBINE_CONFIDENCE_SCORES[
+                    weight=combination.CONFIDENCE_SCORE_COMBINATION[
                         configuration["post-processing"]
                         ["enrichment analysis"].get("edge weight", "number")])
 
                 if (configuration["post-processing"]
                     ["enrichment analysis"].get("type") == "z-score"):
-                    modules, p_values = protein_interaction_network.get_module_change_enrichment(
+                    modules, p_values = protein_interaction_network.get_change_enriched_modules(
                         network,
+                        module_size=configuration["post-processing"]
+                        ["enrichment analysis"].get("module size",
+                                                    network.number_of_nodes()),
                         p=configuration["post-processing"]
                         ["enrichment analysis"].get("p", 0.05),
                         changes=configuration["post-processing"]
                         ["enrichment analysis"].get("range", (-2.0, 2.0)),
                         get_range=protein_interaction_network.
                         get_z_score_range,
-                        combine_sites=combination.COMBINE_SITES.get(
+                        site_combination=combination.SITE_COMBINATION.get(
                             configuration["post-processing"]
                             ["enrichment analysis"].get("combine sites"),
-                            combination.COMBINE_SITES["absmax"],
+                            combination.SITE_COMBINATION["absmax"],
                         ),
-                        module_size=configuration["post-processing"]
-                        ["enrichment analysis"].get("module size", 0),
-                        combine_module_sizes=combination.COMBINE_MODULE_SIZES.
-                        get(
+                        module_size_combination=combination.
+                        MODULE_SIZE_COMBINATION.get(
                             configuration["post-processing"]
                             ["enrichment analysis"].get("combine sites"),
-                            combination.COMBINE_MODULE_SIZES["mean"],
+                            combination.MODULE_SIZE_COMBINATION["mean"],
                         ),
                         test=configuration["post-processing"]
-                        ["enrichment analysis"].get("test", "two-sided"),
+                        ["enrichment analysis"].get("test", "outside"),
                         algorithm=algorithm.ALGORITHM.get(
                             configuration["post-processing"]
                             ["enrichment analysis"].get("algorithm"),
@@ -519,29 +523,30 @@ def process(configuration_file, log=False):
 
                 elif (configuration["post-processing"]
                       ["enrichment analysis"].get("type") == "proportion"):
-                    modules, p_values = protein_interaction_network.get_module_change_enrichment(
+                    modules, p_values = protein_interaction_network.get_change_enriched_modules(
                         network,
+                        module_size=configuration["post-processing"]
+                        ["enrichment analysis"].get("module size",
+                                                    network.number_of_nodes()),
                         p=configuration["post-processing"]
                         ["enrichment analysis"].get("p", 0.05),
                         changes=configuration["post-processing"]
                         ["enrichment analysis"].get("range", (0.025, 0.975)),
                         get_range=protein_interaction_network.
                         get_proportion_range,
-                        combine_sites=combination.COMBINE_SITES.get(
+                        site_combination=combination.SITE_COMBINATION.get(
                             configuration["post-processing"]
                             ["enrichment analysis"].get("combine sites"),
-                            combination.COMBINE_SITES["absmax"],
+                            combination.SITE_COMBINATION["absmax"],
                         ),
-                        module_size=configuration["post-processing"]
-                        ["enrichment analysis"].get("module size", 0),
-                        combine_module_sizes=combination.COMBINE_MODULE_SIZES.
-                        get(
+                        module_size_combination=combination.
+                        MODULE_SIZE_COMBINATION.get(
                             configuration["post-processing"]
                             ["enrichment analysis"].get("combine sites"),
-                            combination.COMBINE_MODULE_SIZES["mean"],
+                            combination.MODULE_SIZE_COMBINATION["mean"],
                         ),
                         test=configuration["post-processing"]
-                        ["enrichment analysis"].get("test", "two-sided"),
+                        ["enrichment analysis"].get("test", "outside"),
                         algorithm=algorithm.ALGORITHM.get(
                             configuration["post-processing"]
                             ["enrichment analysis"].get("algorithm"),
@@ -550,27 +555,28 @@ def process(configuration_file, log=False):
                     )
 
                 else:
-                    modules, p_values = protein_interaction_network.get_module_change_enrichment(
+                    modules, p_values = protein_interaction_network.get_change_enriched_modules(
                         network,
+                        module_size=configuration["post-processing"]
+                        ["enrichment analysis"].get("module size",
+                                                    network.number_of_nodes()),
                         p=configuration["post-processing"]
                         ["enrichment analysis"].get("p", 0.05),
                         changes=configuration["post-processing"]
                         ["enrichment analysis"].get("range", (-1.0, 1.0)),
-                        combine_sites=combination.COMBINE_SITES.get(
+                        site_combination=combination.SITE_COMBINATION.get(
                             configuration["post-processing"]
                             ["enrichment analysis"].get("combine sites"),
-                            combination.COMBINE_SITES["absmax"],
+                            combination.SITE_COMBINATION["absmax"],
                         ),
-                        module_size=configuration["post-processing"]
-                        ["enrichment analysis"].get("module size", 0),
-                        combine_module_sizes=combination.COMBINE_MODULE_SIZES.
-                        get(
+                        module_size_combination=combination.
+                        MODULE_SIZE_COMBINATION.get(
                             configuration["post-processing"]
                             ["enrichment analysis"].get("combine sites"),
-                            combination.COMBINE_MODULE_SIZES["mean"],
+                            combination.MODULE_SIZE_COMBINATION["mean"],
                         ),
                         test=configuration["post-processing"]
-                        ["enrichment analysis"].get("test", "two-sided"),
+                        ["enrichment analysis"].get("test", "outside"),
                         algorithm=algorithm.ALGORITHM.get(
                             configuration["post-processing"]
                             ["enrichment analysis"].get("algorithm"),
@@ -579,13 +585,13 @@ def process(configuration_file, log=False):
                     )
 
                 for time in p_values:
-                    for ptm in sorted(p_values[time]):
-                        for j in sorted(p_values[time][ptm]):
-                            logger.info("{}\t{}\t{}\t{:.2E}".format(
+                    for modification in sorted(p_values[time]):
+                        for j in sorted(p_values[time][modification]):
+                            logger.info("{}\t{}\t{}\t{:.2e}".format(
                                 time,
-                                ptm,
+                                modification,
                                 j + 1,
-                                p_values[time][ptm][j],
+                                p_values[time][modification][j],
                             ))
                             protein_interaction_network.export(
                                 network.subgraph(modules[j]),
@@ -602,7 +608,7 @@ def main():
     parser.add_argument(
         "-c",
         "--configurations",
-        help=".json configuration files",
+        help="configuration files",
         nargs="+",
         required=True,
     )
@@ -611,7 +617,7 @@ def main():
         "--log",
         action="store_true",
         default=False,
-        help="store a .log file for each configuration file (default: False)")
+        help="store a log file for each configuration file (default: False)")
 
     parser.add_argument(
         "-p",

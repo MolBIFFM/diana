@@ -132,6 +132,12 @@
         "node color": {
           "range": [-1.0, 1.0]
         }
+      },
+      "post-processing": {
+        "enrichment analysis": {
+          "p": 0.05,
+          "range": [-1.0, 1.0]
+        }
       }
     }
   ]
