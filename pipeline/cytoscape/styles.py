@@ -8,7 +8,7 @@ from networks import protein_interaction_network
 def get_styles(
         network,
         bar_chart_range=(-3.0, 3.0),
-        get_bar_chart_range=lambda time, ptm, bar_chart_range,
+        get_bar_chart_range=lambda time, modification, bar_chart_range,
     site_combination: bar_chart_range,
         site_combination=lambda sites: max(sites, key=abs),
 ):
@@ -84,7 +84,7 @@ def get_styles(
                             },
                         )
 
-        for i, ptm in enumerate(modifications):
+        for i, modification in enumerate(modifications):
             for visual_property in visual_style.find("node").findall(
                     "visualProperty"):
                 if visual_property.get(
@@ -93,11 +93,12 @@ def get_styles(
                         "default",
                         get_bar_chart(
                             time,
-                            ptm,
+                            modification,
                             protein_interaction_network.get_sites(
-                                network, time, ptm),
+                                network, time, modification),
                             cy_range=get_bar_chart_range(
-                                time, ptm, bar_chart_range, site_combination),
+                                time, modification, bar_chart_range,
+                                site_combination),
                         ),
                     )
                 elif visual_property.get(
@@ -112,7 +113,7 @@ def get_styles(
     return styles
 
 
-def get_bar_chart(time, ptm, sites, cy_range=(-2.0, 2.0)):
+def get_bar_chart(time, modification, sites, cy_range=(-2.0, 2.0)):
     bar_chart = json.dumps({
         "cy_range":
         cy_range,
@@ -127,8 +128,10 @@ def get_bar_chart(time, ptm, sites, cy_range=(-2.0, 2.0)):
         "cy_showRangeZeroBaseline":
         True,
         "cy_colors": ["#FF0000", "#0000FF"],
-        "cy_dataColumns":
-        ["{} {} {}".format(time, ptm, site + 1) for site in range(sites)],
+        "cy_dataColumns": [
+            "{} {} {}".format(time, modification, site + 1)
+            for site in range(sites)
+        ],
     })
     return "org.cytoscape.BarChart: {}".format(bar_chart)
 
