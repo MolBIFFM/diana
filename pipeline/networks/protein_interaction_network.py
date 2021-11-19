@@ -500,7 +500,7 @@ def set_changes(
 def get_databases(network):
     return tuple(
         sorted(
-            set(database for edge in network.edges
+            set(database for edge in network.edges()
                 for database in network.edges[edge]).intersection(
                     {"BioGRID", "CORUM", "IntAct", "Reactome", "STRING"})))
 
@@ -517,6 +517,11 @@ def set_edge_weights(
             database: network.edges[edge][database]
             for database in databases if database in network.edges[edge]
         })
+
+
+def remove_edge_weights(network, attribute="weight"):
+    for _, _, data in network.edges(data=True):
+        del data[attribute]
 
 
 def get_modules(

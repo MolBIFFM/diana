@@ -584,6 +584,8 @@ def process(configuration_file, log=False):
                         ),
                     )
 
+                protein_interaction_network.remove_edge_weights(network)
+
                 for time in p_values:
                     for modification in sorted(p_values[time]):
                         for j in sorted(p_values[time][modification]):
