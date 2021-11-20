@@ -521,7 +521,8 @@ def set_edge_weights(
 
 def remove_edge_weights(network, attribute="weight"):
     for _, _, data in network.edges(data=True):
-        del data[attribute]
+        if attribute in data:
+            del data[attribute]
 
 
 def get_modules(
