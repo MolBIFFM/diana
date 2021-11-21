@@ -551,7 +551,7 @@ def get_modules(
         if not subdivision:
             break
 
-    return [community for community in communities if len(community) > 1]
+    return communities
 
 
 def get_proteins(
