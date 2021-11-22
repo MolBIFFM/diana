@@ -2,7 +2,7 @@ import json
 import xml.etree.ElementTree as ET
 
 from cytoscape import configuration
-from networks import protein_interaction_network
+from networks import protein_protein_interaction_network
 
 
 def get_styles(
@@ -18,8 +18,8 @@ def get_styles(
             "documentVersion": "3.0"
         }))
 
-    for time in protein_interaction_network.get_times(network):
-        modifications = protein_interaction_network.get_post_translational_modifications(
+    for time in protein_protein_interaction_network.get_times(network):
+        modifications = protein_protein_interaction_network.get_post_translational_modifications(
             network, time)
         visual_style = ET.SubElement(styles.getroot(),
                                      "visualStyle",
@@ -94,7 +94,7 @@ def get_styles(
                         get_bar_chart(
                             time,
                             modification,
-                            protein_interaction_network.get_sites(
+                            protein_protein_interaction_network.get_sites(
                                 network, time, modification),
                             cy_range=get_bar_chart_range(
                                 time, modification, bar_chart_range,

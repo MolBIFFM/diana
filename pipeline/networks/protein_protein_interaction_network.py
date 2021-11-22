@@ -9,7 +9,7 @@ import scipy.stats
 
 from modularization import louvain
 from uniprot import uniprot
-from enrichment import correction
+from correction import benjamini_hochberg
 
 
 def annotate_proteins(network):
@@ -711,7 +711,7 @@ def get_change_enriched_modules(
                 for i in range(len(modules))
             }
 
-            for module, p_value in correction.benjamini_hochberg(
+            for module, p_value in benjamini_hochberg.benjamini_hochberg(
                     p_values).items():
                 if p_value <= p:
                     if time not in p_adjusted:
