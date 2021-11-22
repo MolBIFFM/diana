@@ -23,7 +23,7 @@ def process(configuration_file, log=False):
             })
         logging.basicConfig(stream=sys.stdout,
                             level=logging.DEBUG,
-                            format="%(configuration)s:\t%(message)s")
+                            format="%(configuration)s\t%(message)s")
 
     with open(configuration_file) as configuration:
         configurations = json.load(configuration)
