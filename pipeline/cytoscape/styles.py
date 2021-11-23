@@ -18,19 +18,16 @@ def get_styles(
             "documentVersion": "3.0"
         }))
 
-    ET.indent(styles)
     for time in protein_protein_interaction_network.get_times(network):
         modifications = protein_protein_interaction_network.get_post_translational_modifications(
             network, time)
         visual_style_sub_element = ET.SubElement(styles.getroot(),
                                                  "visualStyle",
                                                  attrib={"name": str(time)})
-        ET.indent(visual_style_sub_element, level=1)
 
         for component in configuration.COMPONENTS[len(modifications) - 1]:
             component_sub_element = ET.SubElement(visual_style_sub_element,
                                                   component)
-            ET.indent(component_sub_element, level=2)
 
             for name, dependency in configuration.COMPONENTS[
                     len(modifications) - 1][component]["dependency"].items():
@@ -42,7 +39,6 @@ def get_styles(
                         "value": dependency["value"]
                     },
                 )
-                ET.indent(dependency_sub_element, level=3)
 
             for name, visual_property in configuration.COMPONENTS[
                     len(modifications) -
@@ -55,7 +51,6 @@ def get_styles(
                         "default": visual_property["default"]
                     },
                 )
-                ET.indent(visual_property_sub_element, level=3)
 
                 if visual_property.get("passthroughMapping"):
                     passthrough_mapping_sub_element = ET.SubElement(
@@ -70,7 +65,6 @@ def get_styles(
                             ["attributeType"],
                         },
                     )
-                    ET.indent(passthrough_mapping_sub_element, level=4)
 
                 elif visual_property.get("discreteMapping"):
                     discrete_mapping_sub_element = ET.SubElement(
@@ -85,7 +79,6 @@ def get_styles(
                             ["attributeType"],
                         },
                     )
-                    ET.indent(discrete_mapping_sub_element, level=4)
 
                     for key, value in visual_property["discreteMapping"][
                             "discreteMappingEntry"].items():
@@ -99,7 +92,6 @@ def get_styles(
                                 value,
                             },
                         )
-                        ET.indent(discrete_mapping_entry_sub_element, level=5)
 
         visual_property_sub_elements = visual_style_sub_element.find(
             "node").findall("visualProperty")
@@ -131,6 +123,8 @@ def get_styles(
                                                                  "W")][i]),
                         )
 
+    ET.indent(styles)
+    
     return styles
 
 
