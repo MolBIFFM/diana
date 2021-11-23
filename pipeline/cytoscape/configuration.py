@@ -2,7 +2,7 @@ def hex_encoding(r=0, g=0, b=0):
     return "#{:02X}{:02X}{:02X}".format(r, g, b)
 
 
-SETTINGS = [
+COMPONENTS = [
     {
         "edge": {
             "dependency": {

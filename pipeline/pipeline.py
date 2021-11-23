@@ -22,7 +22,7 @@ def process(configuration_file, log=False):
                 os.path.splitext(os.path.basename(configuration_file))[0]
             })
         logging.basicConfig(stream=sys.stdout,
-                            level=logging.DEBUG,
+                            level=logging.INFO,
                             format="%(configuration)s\t%(message)s")
 
     with open(configuration_file) as configuration:
