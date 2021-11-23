@@ -502,7 +502,7 @@ def get_databases(network):
         sorted(
             set(database for edge in network.edges()
                 for database in network.edges[edge]).intersection(
-                    {"BioGRID", "CORUM", "IntAct", "Reactome", "STRING"})))
+                    {"BioGRID", "CORUM", "IntAct", "MINT", "STRING"})))
 
 
 def set_edge_weights(

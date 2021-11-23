@@ -91,7 +91,7 @@ def process(configuration_file, log=False):
             k = 0
             while any(configuration["protein-protein interactions"].get(
                     database, {}).get("neighbors", 0) > k for database in
-                      {"BioGRID", "CORUM", "IntAct", "Reactome", "STRING"}):
+                      {"BioGRID", "CORUM", "IntAct", "MINT", "STRING"}):
                 if "BioGRID" in configuration[
                         "protein-protein interactions"] and configuration[
                             "protein-protein interactions"]["BioGRID"].get(
