@@ -31,7 +31,7 @@ def get_styles(
 
             for name, dependency in configuration.COMPONENTS[
                     len(modifications) - 1][component]["dependency"].items():
-                dependency_sub_element = ET.SubElement(
+                ET.SubElement(
                     component_sub_element,
                     "dependency",
                     attrib={
@@ -53,7 +53,7 @@ def get_styles(
                 )
 
                 if visual_property.get("passthroughMapping"):
-                    passthrough_mapping_sub_element = ET.SubElement(
+                    ET.SubElement(
                         visual_property_sub_element,
                         "passthroughMapping",
                         attrib={
@@ -82,7 +82,7 @@ def get_styles(
 
                     for key, value in visual_property["discreteMapping"][
                             "discreteMappingEntry"].items():
-                        discrete_mapping_entry_sub_element = ET.SubElement(
+                        ET.SubElement(
                             discrete_mapping_sub_element,
                             "discreteMappingEntry",
                             attrib={
@@ -124,7 +124,7 @@ def get_styles(
                         )
 
     ET.indent(styles)
-    
+
     return styles
 
 
