@@ -5,11 +5,10 @@ import statistics
 
 import networkx as nx
 import pandas as pd
-import scipy.stats
 
 from modularization import louvain
 from uniprot import uniprot
-from correction import benjamini_hochberg
+from enrichment import test, correction
 
 
 def annotate_proteins(network):
@@ -583,8 +582,9 @@ def get_change_enriched_modules(
     site_combination=lambda sites: max(sites, key=abs),
     module_size_combination=statistics.mean,
     weight="weight",
-    test="two-sided",
     algorithm=louvain.louvain,
+    test=test.hypergeometric,
+    correction=correction.benjamini_hochberg,
 ):
     modules = {
         i: module
@@ -597,8 +597,8 @@ def get_change_enriched_modules(
     }
 
     p_values = {}
-    p_adjusted = {}
-    modules_filtered = {}
+    adjusted_p_values = {}
+    significant_modules = {}
 
     for time in get_times(network):
         for modification in get_post_translational_modifications(
@@ -617,8 +617,15 @@ def get_change_enriched_modules(
                 site_combination,
             )
 
-            if test == "above":
-                n = len(
+            n = len(
+                get_proteins(
+                    network,
+                    time,
+                    modification,
+                    site_combination=site_combination,
+                    combined_change_filter=lambda combined_change:
+                    combined_change <= mid_range[0],
+                )) + len(
                     get_proteins(
                         network,
                         time,
@@ -628,45 +635,10 @@ def get_change_enriched_modules(
                         combined_change >= mid_range[1],
                     ))
 
-                k = [
-                    len(
-                        get_proteins(
-                            network.subgraph(modules[i]),
-                            time,
-                            modification,
-                            site_combination=site_combination,
-                            combined_change_filter=lambda combined_change:
-                            combined_change >= mid_range[1],
-                        )) for i in modules
-                ]
-
-            elif test == "below":
-                n = len(
+            k = [
+                len(
                     get_proteins(
-                        network,
-                        time,
-                        modification,
-                        site_combination=site_combination,
-                        combined_change_filter=lambda combined_change:
-                        combined_change <= mid_range[0],
-                    ))
-
-                k = [
-                    len(
-                        get_proteins(
-                            network.subgraph(modules[i]),
-                            time,
-                            modification,
-                            site_combination=site_combination,
-                            combined_change_filter=lambda combined_change:
-                            combined_change <= mid_range[0],
-                        )) for i in modules
-                ]
-
-            elif test == "outside":
-                n = len(
-                    get_proteins(
-                        network,
+                        network.subgraph(modules[i]),
                         time,
                         modification,
                         site_combination=site_combination,
@@ -674,55 +646,28 @@ def get_change_enriched_modules(
                         combined_change <= mid_range[0],
                     )) + len(
                         get_proteins(
-                            network,
-                            time,
-                            modification,
-                            site_combination=site_combination,
-                            combined_change_filter=lambda combined_change:
-                            combined_change >= mid_range[1],
-                        ))
-
-                k = [
-                    len(
-                        get_proteins(
                             network.subgraph(modules[i]),
                             time,
                             modification,
                             site_combination=site_combination,
                             combined_change_filter=lambda combined_change:
-                            combined_change <= mid_range[0],
-                        )) + len(
-                            get_proteins(
-                                network.subgraph(modules[i]),
-                                time,
-                                modification,
-                                site_combination=site_combination,
-                                combined_change_filter=lambda combined_change:
-                                combined_change >= mid_range[1],
-                            )) for i in modules
-                ]
+                            combined_change >= mid_range[1],
+                        )) for i in modules
+            ]
 
-            else:
-                n = 0
-                k = [0 for _ in modules]
+            p_values = {i: test(k[i], M, n, N[i]) for i in range(len(modules))}
 
-            p_values = {
-                i: scipy.stats.hypergeom.sf(k[i] - 1, M, n, N[i])
-                for i in range(len(modules))
-            }
-
-            for module, p_value in benjamini_hochberg.benjamini_hochberg(
-                    p_values).items():
+            for module, p_value in correction(p_values).items():
                 if p_value <= p:
-                    if time not in p_adjusted:
-                        p_adjusted[time] = {}
-                    if modification not in p_adjusted[time]:
-                        p_adjusted[time][modification] = {}
+                    if time not in adjusted_p_values:
+                        adjusted_p_values[time] = {}
+                    if modification not in adjusted_p_values[time]:
+                        adjusted_p_values[time][modification] = {}
 
-                    modules_filtered[module] = modules[module]
-                    p_adjusted[time][modification][module] = p_value
+                    significant_modules[module] = modules[module]
+                    adjusted_p_values[time][modification][module] = p_value
 
-    return modules_filtered, p_adjusted
+    return significant_modules, adjusted_p_values
 
 
 def get_neighborhood(network, protein, k=1, isoforms=True):

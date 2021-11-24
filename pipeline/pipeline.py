@@ -10,20 +10,18 @@ import networkx as nx
 
 from cytoscape import styles
 from databases import biogrid, corum, intact, mint, string
-from interface import algorithm, combination, conversion, extraction
+from interface import algorithm, combination, conversion, correction, extraction, test
 from networks import protein_protein_interaction_network
 
 
-def process(configuration_file, log=False):
-    if log:
-        logger = logging.LoggerAdapter(
-            logging.getLogger("root"), {
-                "configuration":
-                os.path.splitext(os.path.basename(configuration_file))[0]
-            })
-        logging.basicConfig(stream=sys.stdout,
-                            level=logging.INFO,
-                            format="%(configuration)s\t%(message)s")
+def process(configuration_file):
+    logger = logging.LoggerAdapter(logging.getLogger("root"), {
+        "configuration":
+        os.path.splitext(os.path.basename(configuration_file))[0]
+    })
+    logging.basicConfig(stream=sys.stdout,
+                        level=logging.INFO,
+                        format="%(configuration)s\t%(message)s")
 
     with open(configuration_file) as configuration:
         configurations = json.load(configuration)
@@ -517,14 +515,21 @@ def process(configuration_file, log=False):
                             ["enrichment analysis"].get("combine sites"),
                             combination.MODULE_SIZE_COMBINATION["mean"],
                         ),
-                        test=configuration["post-processing"]
-                        ["enrichment analysis"].get("test", "outside"),
                         algorithm=algorithm.ALGORITHM.get(
                             configuration["post-processing"]
                             ["enrichment analysis"].get("algorithm"),
                             algorithm.ALGORITHM["Louvain"],
                         ),
-                    )
+                        test=test.TEST.get(
+                            configuration["post-processing"]
+                            ["enrichment analysis"].get("test"),
+                            test.TEST["hypergeometric"],
+                        ),
+                        correction=correction.get(
+                            configuration["post-processing"]
+                            ["enrichment analysis"].get("correction"),
+                            test.TEST["Benjamini-Hochberg"],
+                        ))
 
                 elif (configuration["post-processing"]
                       ["enrichment analysis"].get("type") == "proportion"):
@@ -550,14 +555,21 @@ def process(configuration_file, log=False):
                             ["enrichment analysis"].get("combine sites"),
                             combination.MODULE_SIZE_COMBINATION["mean"],
                         ),
-                        test=configuration["post-processing"]
-                        ["enrichment analysis"].get("test", "outside"),
                         algorithm=algorithm.ALGORITHM.get(
                             configuration["post-processing"]
                             ["enrichment analysis"].get("algorithm"),
                             algorithm.ALGORITHM["Louvain"],
                         ),
-                    )
+                        test=test.TEST.get(
+                            configuration["post-processing"]
+                            ["enrichment analysis"].get("test"),
+                            test.TEST["hypergeometric"],
+                        ),
+                        correction=correction.get(
+                            configuration["post-processing"]
+                            ["enrichment analysis"].get("correction"),
+                            test.TEST["Benjamini-Hochberg"],
+                        ))
 
                 else:
                     modules, p_values = protein_protein_interaction_network.get_change_enriched_modules(
@@ -580,14 +592,21 @@ def process(configuration_file, log=False):
                             ["enrichment analysis"].get("combine sites"),
                             combination.MODULE_SIZE_COMBINATION["mean"],
                         ),
-                        test=configuration["post-processing"]
-                        ["enrichment analysis"].get("test", "outside"),
                         algorithm=algorithm.ALGORITHM.get(
                             configuration["post-processing"]
                             ["enrichment analysis"].get("algorithm"),
                             algorithm.ALGORITHM["Louvain"],
                         ),
-                    )
+                        test=test.TEST.get(
+                            configuration["post-processing"]
+                            ["enrichment analysis"].get("test"),
+                            test.TEST["hypergeometric"],
+                        ),
+                        correction=correction.get(
+                            configuration["post-processing"]
+                            ["enrichment analysis"].get("correction"),
+                            test.TEST["Benjamini-Hochberg"],
+                        ))
 
                 protein_protein_interaction_network.remove_edge_weights(
                     network)
@@ -620,12 +639,6 @@ def main():
         nargs="+",
         required=True,
     )
-    parser.add_argument("-l",
-                        "--log",
-                        action="store_true",
-                        default=False,
-                        help="log to standard out (default: False)")
-
     parser.add_argument(
         "-p",
         "--processes",
@@ -637,7 +650,7 @@ def main():
 
     with concurrent.futures.ProcessPoolExecutor(
             max_workers=args.processes) as executor:
-        executor.map(process, args.configurations, itertools.repeat(args.log))
+        executor.map(process, args.configurations)
 
 
 if __name__ == "__main__":
