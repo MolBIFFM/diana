@@ -123,6 +123,7 @@ def get_styles(
                                                                  "W")][i]),
                         )
 
+    styles.getroot().tail += "\n"
     ET.indent(styles)
 
     return styles
