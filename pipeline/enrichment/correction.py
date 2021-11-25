@@ -16,4 +16,4 @@ def bonferroni(p_values):
     # Bonferroni p-value adjustment
     m = len(p_values)
 
-    return {key: m * p_value for key, p_value in p_values}
+    return {key: min(m * p_value, 1.0) for key, p_value in p_values.items()}

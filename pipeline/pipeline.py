@@ -525,10 +525,10 @@ def process(configuration_file):
                             ["enrichment analysis"].get("test"),
                             test.TEST["hypergeometric"],
                         ),
-                        correction=correction.get(
+                        correction=correction.CORRECTION.get(
                             configuration["post-processing"]
                             ["enrichment analysis"].get("correction"),
-                            test.TEST["Benjamini-Hochberg"],
+                            correction.CORRECTION["Benjamini-Hochberg"],
                         ))
 
                 elif (configuration["post-processing"]
@@ -565,10 +565,10 @@ def process(configuration_file):
                             ["enrichment analysis"].get("test"),
                             test.TEST["hypergeometric"],
                         ),
-                        correction=correction.get(
+                        correction=correction.CORRECTION.get(
                             configuration["post-processing"]
                             ["enrichment analysis"].get("correction"),
-                            test.TEST["Benjamini-Hochberg"],
+                            correction.CORRECTION["Benjamini-Hochberg"],
                         ))
 
                 else:
@@ -602,10 +602,10 @@ def process(configuration_file):
                             ["enrichment analysis"].get("test"),
                             test.TEST["hypergeometric"],
                         ),
-                        correction=correction.get(
+                        correction=correction.CORRECTION.get(
                             configuration["post-processing"]
                             ["enrichment analysis"].get("correction"),
-                            test.TEST["Benjamini-Hochberg"],
+                            correction.CORRECTION["Benjamini-Hochberg"],
                         ))
 
                 protein_protein_interaction_network.remove_edge_weights(
@@ -642,7 +642,7 @@ def main():
     parser.add_argument(
         "-p",
         "--processes",
-        help="maximum number of processes (default: {})".format(
+        help="maximum number of processes used (default: {})".format(
             os.cpu_count()),
         type=int,
         default=os.cpu_count())
