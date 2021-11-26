@@ -352,7 +352,7 @@ def process(configuration_file):
                 )
 
             elif (configuration["Cytoscape"].get(
-                    "bar chart", {}).get("type") == "proportion"):
+                    "bar chart", {}).get("type") == "quantile"):
                 cytoscape_styles = styles.get_styles(
                     network,
                     bar_chart_range=configuration["Cytoscape"]
@@ -401,7 +401,7 @@ def process(configuration_file):
                 )
 
             elif (configuration["Cytoscape"].get(
-                    "node color", {}).get("type") == "proportion"):
+                    "node color", {}).get("type") == "quantile"):
                 protein_protein_interaction_network.set_changes(
                     network,
                     site_combination=combination.SITE_COMBINATION[
@@ -410,7 +410,7 @@ def process(configuration_file):
                     changes=configuration["Cytoscape"]["node color"].get(
                         "range", (0.025, 0.975)),
                     get_range=protein_protein_interaction_network.
-                    get_proportion_range,
+                    get_quantile_range,
                 )
 
             else:
@@ -532,7 +532,7 @@ def process(configuration_file):
                         ))
 
                 elif (configuration["post-processing"]
-                      ["enrichment analysis"].get("type") == "proportion"):
+                      ["enrichment analysis"].get("type") == "quantile"):
                     modules, p_values = protein_protein_interaction_network.get_change_enriched_modules(
                         network,
                         module_size=configuration["post-processing"]
@@ -543,7 +543,7 @@ def process(configuration_file):
                         changes=configuration["post-processing"]
                         ["enrichment analysis"].get("range", (0.025, 0.975)),
                         get_range=protein_protein_interaction_network.
-                        get_proportion_range,
+                        get_quantile_range,
                         site_combination=combination.SITE_COMBINATION.get(
                             configuration["post-processing"]
                             ["enrichment analysis"].get("combine sites"),

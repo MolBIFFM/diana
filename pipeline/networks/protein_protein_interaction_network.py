@@ -353,7 +353,7 @@ def get_z_score(
     return (change - mean) / stdev
 
 
-def get_proportion_range(
+def get_quantile_range(
         network,
         time,
         modification,
@@ -362,14 +362,14 @@ def get_proportion_range(
 ):
     changes = sorted(get_changes(network, time, modification,
                                  site_combination))
-    proportion_range = [0.0, 0.0]
+    quantile_range = [0.0, 0.0]
 
     for i in range(len(changes)):
         if changes[i] == changes[i + 1]:
             continue
 
         if i / len(changes) > thresholds[0]:
-            proportion_range[0] = changes[i - 1]
+            quantile_range[0] = changes[i - 1]
             break
 
     for i in range(len(changes) - 1, -1, -1):
@@ -377,13 +377,13 @@ def get_proportion_range(
             continue
 
         if (len(changes) - i) / len(changes) > 1.0 - thresholds[1]:
-            proportion_range[1] = changes[i + 1]
+            quantile_range[1] = changes[i + 1]
             break
 
-    return tuple(proportion_range)
+    return tuple(quantile_range)
 
 
-def get_proportion(
+def get_quantile(
         network,
         time,
         modification,
@@ -391,10 +391,7 @@ def get_proportion(
         site_combination=lambda sites: max(sites, key=abs),
 ):
     changes = get_changes(network, time, modification, site_combination)
-    return (min(
-        len([c for c in changes if c <= change]),
-        len([c for c in changes if c >= change]),
-    ) / len(changes))
+    return len([c for c in changes if c <= change]) / len(changes)
 
 
 def set_changes(
