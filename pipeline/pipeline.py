@@ -14,7 +14,7 @@ from interface import algorithm, combination, conversion, correction, extraction
 from networks import protein_protein_interaction_network
 
 
-def process(configuration_file):
+def process_configuration_file(configuration_file):
     logger = logging.LoggerAdapter(logging.getLogger("root"), {
         "configuration":
         os.path.splitext(os.path.basename(configuration_file))[0]
@@ -650,7 +650,7 @@ def main():
 
     with concurrent.futures.ProcessPoolExecutor(
             max_workers=args.processes) as executor:
-        executor.map(process, args.configurations)
+        executor.map(process_configuration_file, args.configurations)
 
 
 if __name__ == "__main__":
