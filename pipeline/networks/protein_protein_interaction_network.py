@@ -327,7 +327,7 @@ def get_changes(network,
     return changes
 
 
-def get_z_score_range(
+def get_standard_score_range(
         network,
         time,
         modification,
@@ -340,7 +340,7 @@ def get_z_score_range(
     return (thresholds[0] * stdev + mean, thresholds[1] * stdev + mean)
 
 
-def get_z_score(
+def get_standard_score(
         network,
         time,
         modification,

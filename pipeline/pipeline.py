@@ -343,7 +343,7 @@ def process(configuration_file):
                     bar_chart_range=configuration["Cytoscape"]
                     ["bar chart"].get("range", (-2.0, 2.0)),
                     get_bar_chart_range=protein_protein_interaction_network.
-                    get_z_score_range,
+                    get_standard_score_range,
                     site_combination=combination.SITE_COMBINATION.get(
                         configuration["Cytoscape"]["bar chart"].get(
                             "combine sites"),
@@ -397,7 +397,7 @@ def process(configuration_file):
                     changes=configuration["Cytoscape"]["node color"].get(
                         "range", (-2.0, 2.0)),
                     get_range=protein_protein_interaction_network.
-                    get_z_score_range,
+                    get_standard_score_range,
                 )
 
             elif (configuration["Cytoscape"].get(
@@ -503,7 +503,7 @@ def process(configuration_file):
                         changes=configuration["post-processing"]
                         ["enrichment analysis"].get("range", (-2.0, 2.0)),
                         get_range=protein_protein_interaction_network.
-                        get_z_score_range,
+                        get_standard_score_range,
                         site_combination=combination.SITE_COMBINATION.get(
                             configuration["post-processing"]
                             ["enrichment analysis"].get("combine sites"),
