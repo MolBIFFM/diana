@@ -1,6 +1,5 @@
 import argparse
 import concurrent.futures
-import itertools
 import json
 import logging
 import os
@@ -473,7 +472,8 @@ def process_configuration_file(configuration_file):
                                 ["module detection"].get("algorithm"),
                                 algorithm.ALGORITHM["Louvain"],
                             ),
-                        ),
+                            resolution=configuration["post-processing"]
+                            ["module detection"].get("resolution", 1.0)),
                         start=1,
                 ):
                     protein_protein_interaction_network.export(
@@ -520,6 +520,8 @@ def process_configuration_file(configuration_file):
                             ["enrichment analysis"].get("algorithm"),
                             algorithm.ALGORITHM["Louvain"],
                         ),
+                        resolution=configuration["post-processing"]
+                        ["enrichment analysis"].get("resolution", 1.0),
                         test=test.TEST.get(
                             configuration["post-processing"]
                             ["enrichment analysis"].get("test"),
@@ -560,6 +562,8 @@ def process_configuration_file(configuration_file):
                             ["enrichment analysis"].get("algorithm"),
                             algorithm.ALGORITHM["Louvain"],
                         ),
+                        resolution=configuration["post-processing"]
+                        ["enrichment analysis"].get("resolution", 1.0),
                         test=test.TEST.get(
                             configuration["post-processing"]
                             ["enrichment analysis"].get("test"),
@@ -597,6 +601,8 @@ def process_configuration_file(configuration_file):
                             ["enrichment analysis"].get("algorithm"),
                             algorithm.ALGORITHM["Louvain"],
                         ),
+                        resolution=configuration["post-processing"]
+                        ["enrichment analysis"].get("resolution", 1.0),
                         test=test.TEST.get(
                             configuration["post-processing"]
                             ["enrichment analysis"].get("test"),

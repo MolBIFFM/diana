@@ -1,8 +1,8 @@
 import networkx as nx
 
 
-def clauset_newman_moore(G, weight="weight"):
-    # Clauset, Newman, Moore (2004), Newman (2004)
+def clauset_newman_moore(G, resolution=1.0, weight="weight"):
+    # Newman (2004); Clauset, Newman, Moore (2004); Newman (2016)
     A = nx.linalg.graphmatrix.adjacency_matrix(G, weight=weight)
     n = G.number_of_nodes()
     k = [A[i].sum() for i in range(n)]
@@ -16,7 +16,8 @@ def clauset_newman_moore(G, weight="weight"):
     for i in range(n):
         for j in range(i):
             if A[i, j]:
-                deltaQ[i][j] = 1 / (2 * m) - k[i] * k[j] / ((2 * m)**2)
+                deltaQ[i][j] = 1 / (2.0 * m) - resolution * k[i] * k[j] / (
+                    (2.0 * m)**2.0)
 
     max_entry = -1.0
     for i in range(n):
@@ -39,11 +40,11 @@ def clauset_newman_moore(G, weight="weight"):
                         deltaQprime[max_j][
                             k] = deltaQ[max_i][k] + deltaQ[max_j][k]
                     elif connected[max_j][k]:
-                        deltaQprime[max_j][
-                            k] = deltaQ[max_j][k] - 2 * a[max_i] * a[k]
+                        deltaQprime[max_j][k] = deltaQ[max_j][
+                            k] - 2.0 * resolution * a[max_i] * a[k]
                     elif connected[max_i][k]:
-                        deltaQprime[max_j][
-                            k] = deltaQ[max_i][k] - 2 * a[max_j] * a[k]
+                        deltaQprime[max_j][k] = deltaQ[max_i][
+                            k] - 2.0 * resolution * a[max_j] * a[k]
                     connected[max_j][
                         k] = connected[max_i][k] or connected[max_j][k]
 
@@ -52,11 +53,11 @@ def clauset_newman_moore(G, weight="weight"):
                         deltaQprime[k][
                             max_j] = deltaQ[max_i][k] + deltaQ[k][max_j]
                     elif connected[k][max_j]:
-                        deltaQprime[k][
-                            max_j] = deltaQ[k][max_j] - 2 * a[max_i] * a[k]
+                        deltaQprime[k][max_j] = deltaQ[k][
+                            max_j] - 2.0 * resolution * a[max_i] * a[k]
                     elif connected[max_i][k]:
-                        deltaQprime[k][
-                            max_j] = deltaQ[max_i][k] - 2 * a[max_j] * a[k]
+                        deltaQprime[k][max_j] = deltaQ[max_i][
+                            k] - 2.0 * resolution * a[max_j] * a[k]
                     connected[k][
                         max_j] = connected[max_i][k] or connected[k][max_j]
 
@@ -65,11 +66,11 @@ def clauset_newman_moore(G, weight="weight"):
                         deltaQprime[k][
                             max_j] = deltaQ[k][max_i] + deltaQ[k][max_i]
                     elif connected[k][max_j]:
-                        deltaQprime[k][
-                            max_j] = deltaQ[k][max_j] - 2 * a[max_i] * a[k]
+                        deltaQprime[k][max_j] = deltaQ[k][
+                            max_j] - 2.0 * resolution * a[max_i] * a[k]
                     elif connected[k][max_i]:
-                        deltaQprime[k][
-                            max_j] = deltaQ[k][max_i] - 2 * a[max_j] * a[k]
+                        deltaQprime[k][max_j] = deltaQ[k][
+                            max_i] - 2.0 * resolution * a[max_j] * a[k]
                     connected[k][
                         max_j] = connected[k][max_i] or connected[k][max_j]
 

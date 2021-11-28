@@ -521,24 +521,23 @@ def remove_edge_weights(network, attribute="weight"):
             del data[attribute]
 
 
-def get_modules(
-    network,
-    module_size,
-    module_size_combination=statistics.mean,
-    weight="weight",
-    algorithm=louvain.louvain,
-):
+def get_modules(network,
+                module_size,
+                module_size_combination=statistics.mean,
+                weight="weight",
+                algorithm=louvain.louvain,
+                resolution=1.0):
     G = network.copy()
     G.remove_nodes_from(list(nx.isolates(G)))
 
-    communities = algorithm(G, weight)
+    communities = algorithm(G, weight, resolution)
 
     while (module_size_combination(
             len(community) for community in communities) > module_size):
 
         subdivision = False
         for i, subdivided_community in enumerate(
-                algorithm(G.subgraph(communities[j]), weight)
+                algorithm(G.subgraph(communities[j]), weight, resolution)
                 for j in range(len(communities))):
             if len(subdivided_community) > 1:
                 subdivision = True
@@ -580,6 +579,7 @@ def get_change_enriched_modules(
     module_size_combination=statistics.mean,
     weight="weight",
     algorithm=louvain.louvain,
+    resolution=1.0,
     test=test.hypergeometric,
     correction=correction.benjamini_hochberg,
 ):
@@ -590,7 +590,8 @@ def get_change_enriched_modules(
                         module_size,
                         module_size_combination,
                         weight=weight,
-                        algorithm=algorithm))
+                        algorithm=algorithm,
+                        resolution=resolution))
     }
 
     p_values = {}

@@ -1,8 +1,8 @@
 import networkx as nx
 
 
-def louvain(G, weight="weight"):
-    # Blondel, Guillaume, Lambiotte, Lefebvre (2008)
+def louvain(G, resolution=1.0, weight="weight"):
+    # Clauset, Newman, Moore (2004); Blondel, Guillaume, Lambiotte, Lefebvre (2008); Newman (2016)
     name = list(G.nodes())
     communities = [[set([i]) for i in range(G.number_of_nodes())]]
 
@@ -42,18 +42,18 @@ def louvain(G, weight="weight"):
                     if A[i, j] and community[i] != community[j]:
                         deltaQ[j] = (
                             ((sigma_in[community[j]] + k_in[i, community[j]]) /
-                             (2 * m) - ((sigma_tot[community[j]] + k[i]) /
-                                        (2 * m))**2) -
-                            (sigma_in[community[j]] / (2 * m) -
+                             (2 * m) - resolution *
+                             ((sigma_tot[community[j]] + k[i]) / (2 * m))**2) -
+                            (sigma_in[community[j]] / (2 * m) - resolution *
                              (sigma_tot[community[j]] /
-                              (2 * m))**2 - (k[i] / (2 * m))**2)
+                              (2 * m))**2 - resolution * (k[i] / (2 * m))**2)
                         ) - (
                             ((sigma_in[community[i]] + k_in[i, community[i]]) /
-                             (2 * m) - ((sigma_tot[community[i]] + k[i]) /
-                                        (2 * m))**2) -
-                            (sigma_in[community[i]] / (2 * m) -
+                             (2 * m) - resolution *
+                             ((sigma_tot[community[i]] + k[i]) / (2 * m))**2) -
+                            (sigma_in[community[i]] / (2 * m) - resolution *
                              (sigma_tot[community[i]] /
-                              (2 * m))**2 - (k[i] / (2 * m))**2))
+                              (2 * m))**2 - resolution * (k[i] / (2 * m))**2))
 
                 sigma_tot[community[i]] += A[i].sum()
                 sigma_in[community[i]] += sum([
