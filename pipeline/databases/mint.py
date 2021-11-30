@@ -53,9 +53,9 @@ def add_proteins(network,
                         "uniprotkb") + mitab.get_identifiers_from_namespace(
                             row[3], "uniprotkb"):
                     for primary_interactor_a in primary_accession.get(
-                            interactor_a, set()):
+                            interactor_a, {interactor_a}):
                         for primary_interactor_b in primary_accession.get(
-                                interactor_b, set()):
+                                interactor_b, {interactor_b}):
                             if (primary_interactor_a in network
                                     and primary_interactor_b not in network):
                                 nodes_to_add.add(primary_interactor_b)
@@ -111,9 +111,9 @@ def add_interactions(network,
                         "uniprotkb") + mitab.get_identifiers_from_namespace(
                             row[3], "uniprotkb"):
                     for primary_interactor_a in primary_accession.get(
-                            interactor_a, set()):
+                            interactor_a, {interactor_a}):
                         for primary_interactor_b in primary_accession.get(
-                                interactor_b, set()):
+                                interactor_b, {interactor_b}):
                             if (primary_interactor_a in network
                                     and primary_interactor_b in network
                                     and primary_interactor_a !=
