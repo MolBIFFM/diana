@@ -17,7 +17,7 @@
             "Ratio.H.L.normalized.E4"
           ],
           "replicates": 2,
-          "log base": 2
+          "logarithm": 2
         },
         {
           "time": 120,
@@ -35,7 +35,7 @@
             "Ratio.M.L.normalized.E4"
           ],
           "replicates": 2,
-          "log base": 2
+          "logarithm": 2
         },
         {
           "time": 30,
@@ -54,7 +54,7 @@
             "Ratio H/L normalized HCT116_05_R4"
           ],
           "replicates": 2,
-          "log base": 2
+          "logarithm": 2
         },
         {
           "time": 120,
@@ -73,7 +73,7 @@
             "Ratio H/L normalized HCT116_2_R4"
           ],
           "replicates": 2,
-          "log base": 2
+          "logarithm": 2
         }
       ],
       "protein-protein interactions": {

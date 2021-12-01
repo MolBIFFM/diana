@@ -6,7 +6,7 @@ import statistics
 import networkx as nx
 import pandas as pd
 
-from modularization import louvain
+from modularization import modularization
 from uniprot import uniprot
 from enrichment import test, correction
 
@@ -524,20 +524,20 @@ def remove_edge_weights(network, attribute="weight"):
 def get_modules(network,
                 module_size,
                 module_size_combination=statistics.mean,
-                weight="weight",
-                algorithm=louvain.louvain,
-                resolution=1.0):
+                algorithm=modularization.louvain,
+                resolution=1.0,
+                weight="weight"):
     G = network.copy()
     G.remove_nodes_from(list(nx.isolates(G)))
 
-    communities = algorithm(G, weight, resolution)
+    communities = algorithm(G, resolution, weight)
 
     while (module_size_combination(
             len(community) for community in communities) > module_size):
 
         subdivision = False
         for i, subdivided_community in enumerate(
-                algorithm(G.subgraph(communities[j]), weight, resolution)
+                algorithm(G.subgraph(communities[j]), resolution, weight)
                 for j in range(len(communities))):
             if len(subdivided_community) > 1:
                 subdivision = True
@@ -577,9 +577,9 @@ def get_change_enriched_modules(
     get_range=lambda time, modification, changes, site_combination: changes,
     site_combination=lambda sites: max(sites, key=abs),
     module_size_combination=statistics.mean,
-    weight="weight",
-    algorithm=louvain.louvain,
+    algorithm=modularization.louvain,
     resolution=1.0,
+    weight="weight",
     test=test.hypergeometric,
     correction=correction.benjamini_hochberg,
 ):
@@ -589,9 +589,9 @@ def get_change_enriched_modules(
             get_modules(network,
                         module_size,
                         module_size_combination,
-                        weight=weight,
                         algorithm=algorithm,
-                        resolution=resolution))
+                        resolution=resolution,
+                        weight=weight))
     }
 
     p_values = {}

@@ -15,7 +15,7 @@
           "replicate columns": [
             "wt15minvscontrolratio"
           ],
-          "log base": 10
+          "logarithm": 10
         },
         {
           "time": 60,
@@ -30,7 +30,7 @@
           "replicate columns": [
             "wt60minvscontrolratio"
           ],
-          "log base": 10
+          "logarithm": 10
         },
         {
           "time": 120,
@@ -45,7 +45,7 @@
           "replicate columns": [
             "wt120minvscontrolratio"
           ],
-          "log base": 10
+          "logarithm": 10
         },
         {
           "time": 15,

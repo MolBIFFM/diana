@@ -13,7 +13,7 @@ from interface import algorithm, combination, conversion, correction, extraction
 from networks import protein_protein_interaction_network
 
 
-def process_configuration_file(configuration_file):
+def process_configuration(configuration_file):
     logger = logging.LoggerAdapter(logging.getLogger("root"), {
         "configuration":
         os.path.splitext(os.path.basename(configuration_file))[0]
@@ -72,8 +72,8 @@ def process_configuration_file(configuration_file):
                         entry.get("combine replicates", "mean"),
                         combination.REPLICATE_COMBINATION["mean"],
                     ),
-                    measurement_conversion=conversion.LOG_BASE[entry.get(
-                        "log base")],
+                    measurement_conversion=conversion.LOGARITHM[entry.get(
+                        "logarithm")],
                 )
 
             elif "accessions" in entry:
@@ -653,10 +653,13 @@ def main():
         type=int,
         default=os.cpu_count())
     args = parser.parse_args()
-
+    """
     with concurrent.futures.ProcessPoolExecutor(
             max_workers=args.processes) as executor:
-        executor.map(process_configuration_file, args.configurations)
+        executor.map(process_configuration, args.configurations)
+    """
+    for configuration in args.configurations:
+        process_configuration(configuration)
 
 
 if __name__ == "__main__":
