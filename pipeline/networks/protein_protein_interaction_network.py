@@ -6,9 +6,9 @@ import statistics
 import networkx as nx
 import pandas as pd
 
+from enrichment import correction, test
 from modularization import modularization
 from uniprot import uniprot
-from enrichment import test, correction
 
 
 def annotate_proteins(network):
