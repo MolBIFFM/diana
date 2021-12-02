@@ -36,6 +36,14 @@ def add_proteins(network,
             for interactor_a, interactor_b in itertools.combinations(
                     row["subunits(UniProt IDs)"].split(";"), 2):
 
+                if "-" in interactor_a and not interactor_a.split(
+                        "-")[1].isnumeric():
+                    interactor_a = interactor_a.split("-")[0]
+
+                if "-" in interactor_b and not interactor_b.split(
+                        "-")[1].isnumeric():
+                    interactor_b = interactor_b.split("-")[0]
+
                 for primary_interactor_a in primary_accessions.get(
                         interactor_a, {interactor_a}):
                     for primary_interactor_b in primary_accessions.get(
@@ -74,6 +82,14 @@ def add_interactions(network,
                 ]):
             for interactor_a, interactor_b in itertools.combinations(
                     row["subunits(UniProt IDs)"].split(";"), 2):
+
+                if "-" in interactor_a and not interactor_a.split(
+                        "-")[1].isnumeric():
+                    interactor_a = interactor_a.split("-")[0]
+
+                if "-" in interactor_b and not interactor_b.split(
+                        "-")[1].isnumeric():
+                    interactor_b = interactor_b.split("-")[0]
 
                 for primary_interactor_a in primary_accessions.get(
                         interactor_a, {interactor_a}):

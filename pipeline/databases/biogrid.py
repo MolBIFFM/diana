@@ -55,8 +55,18 @@ def add_proteins(
                             for it in row["Throughput"].split("|")))):
             for interactor_a in row[
                     "SWISS-PROT Accessions Interactor A"].split("|"):
+
+                if "-" in interactor_a and not interactor_a.split(
+                        "-")[1].isnumeric():
+                    interactor_a = interactor_a.split("-")[0]
+
                 for interactor_b in row[
                         "SWISS-PROT Accessions Interactor B"].split("|"):
+
+                    if "-" in interactor_b and not interactor_b.split(
+                            "-")[1].isnumeric():
+                        interactor_b = interactor_b.split("-")[0]
+
                     for primary_interactor_a in primary_accession.get(
                             interactor_a, {interactor_a}):
                         for primary_interactor_b in primary_accession.get(
@@ -110,8 +120,18 @@ def add_interactions(
                             for it in row["Throughput"].split("|")))):
             for interactor_a in row[
                     "SWISS-PROT Accessions Interactor A"].split("|"):
+
+                if "-" in interactor_a and not interactor_a.split(
+                        "-")[1].isnumeric():
+                    interactor_a = interactor_a.split("-")[0]
+
                 for interactor_b in row[
                         "SWISS-PROT Accessions Interactor B"].split("|"):
+
+                    if "-" in interactor_b and not interactor_b.split(
+                            "-")[1].isnumeric():
+                        interactor_b = interactor_b.split("-")[0]
+
                     for primary_interactor_a in primary_accession.get(
                             interactor_a, {interactor_a}):
                         for primary_interactor_b in primary_accession.get(

@@ -3,60 +3,66 @@ def parse(entry):
         return {}
     else:
         values = {}
-        for namespace, identifier in (namespace_identifier.split(
+        for namespace, identifier_term in (namespace_identifier.split(
                 ":", 1) for namespace_identifier in entry.split("|")):
 
-            if "(" in identifier and ")" in identifier:
-                identifiers = (identifier[:identifier.find("(")].strip("\""),
-                               identifier[identifier.find("(") +
-                                          1:identifier.find(")")].strip("\""))
+            if "(" in identifier_term and ")" in identifier_term:
+                identifier = identifier_term[:identifier_term.find("(")].strip(
+                    "\"")
+
+                term = identifier_term[identifier_term.find("(") +
+                                       1:identifier_term.find(")")].strip("\"")
             else:
-                identifiers = (identifier.strip("\""), None)
+                identifier = identifier_term.strip("\"")
+                term = None
 
             if namespace in values:
-                values[namespace].append(identifiers)
+                values[namespace].append((identifier, term))
             else:
-                values[namespace] = [identifiers]
+                values[namespace] = [(identifier, term)]
 
         return values
 
 
 def get_identifiers_from_namespace(entry, namespace):
     return [
-        key for key, value in parse(entry).get(namespace, [("", None)]) if key
+        identifier
+        for identifier, _ in parse(entry).get(namespace, [("", None)])
+        if identifier
     ]
 
 
 def get_terms_from_namespace(entry, namespace):
     return [
-        value for key, value in parse(entry).get(namespace, [("", None)])
-        if value
+        term for _, term in parse(entry).get(namespace, [("", None)]) if term
     ]
 
 
-def namespace_has_identifier(entry, namespace, identifier):
+def namespace_has_identifier(entry, namespace, search_identifier):
     if values := parse(entry):
-        return any(key == identifier for key, value in values[namespace])
+        return any(search_identifier == identifier
+                   for identifier, _ in values[namespace])
     else:
         return False
 
 
-def namespace_has_term(entry, namespace, term):
+def namespace_has_term(entry, namespace, search_term):
     if values := parse(entry):
-        return any(value == term for key, value in values[namespace])
+        return any(search_term == term for _, term in values[namespace])
     else:
         return False
 
 
 def namespace_has_any_identifier_from(entry, namespace, identifiers):
     if values := parse(entry):
-        return any(key in identifiers for key, value in values[namespace])
+        return any(identifier in identifiers
+                   for identifier, _ in values[namespace])
     else:
         return False
 
 
 def namespace_has_any_term_from(entry, namespace, terms):
     if values := parse(entry):
-        return any(value in terms for key, value in values[namespace])
+        return any(term in terms for _, term in values[namespace])
     else:
         return False

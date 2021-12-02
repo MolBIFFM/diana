@@ -48,10 +48,20 @@ def add_proteins(network,
                     row[0],
                     "uniprotkb") + mitab.get_identifiers_from_namespace(
                         row[2], "uniprotkb"):
+
+                if "-" in interactor_a and not interactor_a.split(
+                        "-")[1].isnumeric():
+                    interactor_a = interactor_a.split("-")[0]
+
                 for interactor_b in mitab.get_identifiers_from_namespace(
                         row[1],
                         "uniprotkb") + mitab.get_identifiers_from_namespace(
                             row[3], "uniprotkb"):
+
+                    if "-" in interactor_b and not interactor_b.split(
+                            "-")[1].isnumeric():
+                        interactor_b = interactor_b.split("-")[0]
+
                     for primary_interactor_a in primary_accession.get(
                             interactor_a, {interactor_a}):
                         for primary_interactor_b in primary_accession.get(
@@ -106,10 +116,20 @@ def add_interactions(network,
                     row[0],
                     "uniprotkb") + mitab.get_identifiers_from_namespace(
                         row[2], "uniprotkb"):
+
+                if "-" in interactor_a and not interactor_a.split(
+                        "-")[1].isnumeric():
+                    interactor_a = interactor_a.split("-")[0]
+
                 for interactor_b in mitab.get_identifiers_from_namespace(
                         row[1],
                         "uniprotkb") + mitab.get_identifiers_from_namespace(
                             row[3], "uniprotkb"):
+
+                    if "-" in interactor_b and not interactor_b.split(
+                            "-")[1].isnumeric():
+                        interactor_b = interactor_b.split("-")[0]
+
                     for primary_interactor_a in primary_accession.get(
                             interactor_a, {interactor_a}):
                         for primary_interactor_b in primary_accession.get(

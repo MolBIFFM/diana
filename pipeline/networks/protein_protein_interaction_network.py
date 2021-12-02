@@ -14,23 +14,10 @@ from uniprot import uniprot
 def annotate_proteins(network):
     for accessions, gene_name, protein_name, _ in uniprot.get_swissprot_entries(
     ):
-        for protein in list(network):
-            if protein.split("-")[0] in accessions:
-                if "-" in protein and not protein.split("-")[1].isnumeric():
-                    nx.relabel_nodes(network, {protein: protein.split("-")[0]},
-                                     copy=False)
-                    protein = protein.split("-")[0]
-
-                if accessions.index(protein.split("-")[0]) == 0:
-                    network.nodes[protein]["gene"] = gene_name
-                    network.nodes[protein]["protein"] = protein_name
-                else:
-                    primary_protein = accessions[0]
-
-                    nx.relabel_nodes(network, {protein: primary_protein},
-                                     copy=False)
-                    network.nodes[primary_protein]["gene"] = gene_name
-                    network.nodes[primary_protein]["protein"] = protein_name
+        for protein in network:
+            if protein.split("-")[0] == accessions[0]:
+                network.nodes[protein]["gene"] = gene_name
+                network.nodes[protein]["protein"] = protein_name
 
 
 def remove_unannotated_proteins(network):
@@ -116,17 +103,17 @@ def add_proteins_from(network, proteins):
         for i, accession in enumerate(accessions):
             if accession in proteins_isoform:
                 for isoform in proteins_isoform[accession]:
-                    if isoform == "0":
+                    if i == 0:
+                        network.add_node("{}-{}".format(accession, isoform))
+                        network.nodes["{}-{}".format(
+                            accession, isoform)]["gene"] = gene_name
+                        network.nodes["{}-{}".format(
+                            accession, isoform)]["protein"] = protein_name
+
+                    elif isoform == "0":
                         network.add_node(accessions[0])
                         network.nodes[accessions[0]]["gene"] = gene_name
                         network.nodes[accessions[0]]["protein"] = protein_name
-                    elif i == 0:
-                        network.add_node("{}-{}".format(
-                            accessions[0], isoform))
-                        network.nodes["{}-{}".format(
-                            accessions[0], isoform)]["gene"] = gene_name
-                        network.nodes["{}-{}".format(
-                            accessions[0], isoform)]["protein"] = protein_name
 
                 if i > 0:
                     if accession not in primary_accession:
@@ -497,8 +484,10 @@ def get_databases(network):
     return tuple(
         sorted(
             set(database for edge in network.edges()
-                for database in network.edges[edge]).intersection(
-                    {"BioGRID", "CORUM", "IntAct", "MINT", "STRING"})))
+                for database in network.edges[edge]).intersection({
+                    "BioGRID", "ComplexPortal", "CORUM", "DIP", "ELM",
+                    "IntAct", "MINT", "STRING"
+                })))
 
 
 def set_edge_weights(
@@ -666,22 +655,6 @@ def get_change_enriched_modules(
                     adjusted_p_values[time][modification][module] = p_value
 
     return significant_modules, adjusted_p_values
-
-
-def get_neighborhood(network, protein, k=1, isoforms=True):
-    if isoforms:
-        nodes = {
-            node
-            for node in network if node.split("-")[0] == protein.split("-")[0]
-        }
-    else:
-        nodes = {protein}
-
-    for _ in range(k):
-        nodes.update(
-            set.union(*(set(network.neighbors(node)) for node in nodes)))
-
-    return network.subgraph(nodes)
 
 
 def export(network, basename, suffix=""):

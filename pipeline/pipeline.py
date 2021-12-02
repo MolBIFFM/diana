@@ -8,7 +8,7 @@ import sys
 import networkx as nx
 
 from cytoscape import styles
-from databases import biogrid, corum, intact, mint, string
+from databases import biogrid, complexportal, corum, dip, elm, intact, mint, string
 from interface import algorithm, combination, conversion, correction, extraction, test
 from networks import protein_protein_interaction_network
 
@@ -86,9 +86,12 @@ def process_configuration(configuration_file):
 
         if "protein-protein interactions" in configuration:
             k = 0
-            while any(configuration["protein-protein interactions"].get(
-                    database, {}).get("neighbors", 0) > k for database in
-                      {"BioGRID", "CORUM", "IntAct", "MINT", "STRING"}):
+            while any(
+                    configuration["protein-protein interactions"].get(
+                        database, {}).get("neighbors", 0) > k for database in {
+                            "BioGRID", "ComplexPortal", "CORUM", "DIP", "ELM",
+                            "IntAct", "MINT", "STRING"
+                        }):
                 if "BioGRID" in configuration[
                         "protein-protein interactions"] and configuration[
                             "protein-protein interactions"]["BioGRID"].get(
@@ -111,6 +114,22 @@ def process_configuration(configuration_file):
                             "protein-protein interactions"]["BioGRID"].get(
                                 "taxon identifier", 9606),
                     )
+                if "ComplexPortal" in configuration[
+                        "protein-protein interactions"] and configuration[
+                            "protein-protein interactions"][
+                                "ComplexPortal"].get("neighbors", 0) > k:
+                    complexportal.add_proteins(
+                        network,
+                        evidence_code=configuration[
+                            "protein-protein interactions"]
+                        ["ComplexPortal"].get(
+                            "evidence code",
+                            [],
+                        ),
+                        taxon_identifier=configuration[
+                            "protein-protein interactions"]
+                        ["ComplexPortal"].get("taxon identifier", 9606),
+                    )
 
                 if "CORUM" in configuration[
                         "protein-protein interactions"] and configuration[
@@ -125,6 +144,34 @@ def process_configuration(configuration_file):
                             ),
                         taxon_identifier=configuration[
                             "protein-protein interactions"]["CORUM"].get(
+                                "taxon identifier", 9606),
+                    )
+
+                if "DIP" in configuration[
+                        "protein-protein interactions"] and configuration[
+                            "protein-protein interactions"]["DIP"].get(
+                                "neighbors", 0) > k:
+                    dip.add_proteins(
+                        network,
+                        interaction_detection_methods=configuration[
+                            "protein-protein interactions"]["DIP"].get(
+                                "interaction detection methods", []),
+                        interaction_types=configuration[
+                            "protein-protein interactions"]["DIP"].get(
+                                "interaction types", []),
+                        taxon_identifier=configuration[
+                            "protein-protein interactions"]["DIP"].get(
+                                "taxon identifier", 9606),
+                    )
+
+                if "ELM" in configuration[
+                        "protein-protein interactions"] and configuration[
+                            "protein-protein interactions"]["ELM"].get(
+                                "neighbors", 0) > k:
+                    elm.add_proteins(
+                        network,
+                        taxon_identifier=configuration[
+                            "protein-protein interactions"]["ELM"].get(
                                 "taxon identifier", 9606),
                     )
 
@@ -245,6 +292,20 @@ def process_configuration(configuration_file):
                             "taxon identifier", 9606),
                 )
 
+            if "ComplexPortal" in configuration[
+                    "protein-protein interactions"]:
+                complexportal.add_interactions(
+                    network,
+                    evidence_code=configuration["protein-protein interactions"]
+                    ["ComplexPortal"].get(
+                        "evidence code",
+                        [],
+                    ),
+                    taxon_identifier=configuration[
+                        "protein-protein interactions"]["ComplexPortal"].get(
+                            "taxon identifier", 9606),
+                )
+
             if "CORUM" in configuration["protein-protein interactions"]:
                 corum.add_interactions(
                     network,
@@ -255,6 +316,28 @@ def process_configuration(configuration_file):
                         ),
                     taxon_identifier=configuration[
                         "protein-protein interactions"]["CORUM"].get(
+                            "taxon identifier", 9606),
+                )
+
+            if "DIP" in configuration["protein-protein interactions"]:
+                dip.add_interactions(
+                    network,
+                    interaction_detection_methods=configuration[
+                        "protein-protein interactions"]["DIP"].get(
+                            "interaction detection methods", []),
+                    interaction_types=configuration[
+                        "protein-protein interactions"]["DIP"].get(
+                            "interaction types", []),
+                    taxon_identifier=configuration[
+                        "protein-protein interactions"]["DIP"].get(
+                            "taxon identifier", 9606),
+                )
+
+            if "ELM" in configuration["protein-protein interactions"]:
+                elm.add_interactions(
+                    network,
+                    taxon_identifier=configuration[
+                        "protein-protein interactions"]["ELM"].get(
                             "taxon identifier", 9606),
                 )
 
@@ -429,25 +512,6 @@ def process_configuration(configuration_file):
         )
 
         if "post-processing" in configuration:
-            if "neighborhood extraction" in configuration:
-                for protein in configuration["neighborhood"].get(
-                        "proteins", []):
-                    protein_protein_interaction_network.export(
-                        protein_protein_interaction_network.get_neighborhood(
-                            network,
-                            protein,
-                            configuration["neighborhood"].get("distance", 1),
-                            configuration["neighborhood"].get(
-                                "isoforms", True),
-                        ),
-                        os.path.splitext(
-                            os.path.basename(configuration_file))[0],
-                        ".{}.{}.{}".format(i, protein,
-                                           network.nodes[protein]["gene name"])
-                        if len(configurations) > 1 else ".{}.{}".format(
-                            protein, network.nodes[protein]["gene name"]),
-                    )
-
             if "module detection" in configuration["post-processing"]:
                 protein_protein_interaction_network.set_edge_weights(
                     network,
