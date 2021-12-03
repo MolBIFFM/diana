@@ -103,17 +103,17 @@ def add_proteins_from(network, proteins):
         for i, accession in enumerate(accessions):
             if accession in proteins_isoform:
                 for isoform in proteins_isoform[accession]:
-                    if i == 0:
+                    if isoform == "0":
+                        network.add_node(accessions[0])
+                        network.nodes[accessions[0]]["gene"] = gene_name
+                        network.nodes[accessions[0]]["protein"] = protein_name
+
+                    elif i == 0:
                         network.add_node("{}-{}".format(accession, isoform))
                         network.nodes["{}-{}".format(
                             accession, isoform)]["gene"] = gene_name
                         network.nodes["{}-{}".format(
                             accession, isoform)]["protein"] = protein_name
-
-                    elif isoform == "0":
-                        network.add_node(accessions[0])
-                        network.nodes[accessions[0]]["gene"] = gene_name
-                        network.nodes[accessions[0]]["protein"] = protein_name
 
                 if i > 0:
                     if accession not in primary_accession:
