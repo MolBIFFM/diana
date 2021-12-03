@@ -8,7 +8,7 @@ import sys
 import networkx as nx
 
 from cytoscape import styles
-from databases import biogrid, complexportal, corum, dip, elm, intact, mint, string
+from databases import biogrid, complexportal, corum, elm, intact, mint, string
 from interface import algorithm, combination, conversion, correction, extraction, test
 from networks import protein_protein_interaction_network
 
@@ -89,7 +89,7 @@ def process_configuration(configuration_file):
             while any(
                     configuration["protein-protein interactions"].get(
                         database, {}).get("neighbors", 0) > k for database in {
-                            "BioGRID", "ComplexPortal", "CORUM", "DIP", "ELM",
+                            "BioGRID", "ComplexPortal", "CORUM", "ELM",
                             "IntAct", "MINT", "STRING"
                         }):
                 if "BioGRID" in configuration[
@@ -144,23 +144,6 @@ def process_configuration(configuration_file):
                             ),
                         taxon_identifier=configuration[
                             "protein-protein interactions"]["CORUM"].get(
-                                "taxon identifier", 9606),
-                    )
-
-                if "DIP" in configuration[
-                        "protein-protein interactions"] and configuration[
-                            "protein-protein interactions"]["DIP"].get(
-                                "neighbors", 0) > k:
-                    dip.add_proteins(
-                        network,
-                        interaction_detection_methods=configuration[
-                            "protein-protein interactions"]["DIP"].get(
-                                "interaction detection methods", []),
-                        interaction_types=configuration[
-                            "protein-protein interactions"]["DIP"].get(
-                                "interaction types", []),
-                        taxon_identifier=configuration[
-                            "protein-protein interactions"]["DIP"].get(
                                 "taxon identifier", 9606),
                     )
 
@@ -316,20 +299,6 @@ def process_configuration(configuration_file):
                         ),
                     taxon_identifier=configuration[
                         "protein-protein interactions"]["CORUM"].get(
-                            "taxon identifier", 9606),
-                )
-
-            if "DIP" in configuration["protein-protein interactions"]:
-                dip.add_interactions(
-                    network,
-                    interaction_detection_methods=configuration[
-                        "protein-protein interactions"]["DIP"].get(
-                            "interaction detection methods", []),
-                    interaction_types=configuration[
-                        "protein-protein interactions"]["DIP"].get(
-                            "interaction types", []),
-                    taxon_identifier=configuration[
-                        "protein-protein interactions"]["DIP"].get(
                             "taxon identifier", 9606),
                 )
 

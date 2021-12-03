@@ -485,8 +485,8 @@ def get_databases(network):
         sorted(
             set(database for edge in network.edges()
                 for database in network.edges[edge]).intersection({
-                    "BioGRID", "ComplexPortal", "CORUM", "DIP", "ELM",
-                    "IntAct", "MINT", "STRING"
+                    "BioGRID", "ComplexPortal", "CORUM", "ELM", "IntAct",
+                    "MINT", "STRING"
                 })))
 
 
