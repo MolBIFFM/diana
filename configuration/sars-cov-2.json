@@ -1,0 +1,60 @@
+[
+    {
+      "proteins": [
+        {
+          "time": 60,
+          "post-translational modification": "P",
+          "sites": 5,
+          "file": "data/sars-cov-2/phosphorylation/1-s2.0-S1097276520305499-mmc2.xlsx",
+          "sheet": "Supplemental_01",
+          "accession column": "T: Master Protein Accessions",
+          "position column": "T: Modifications in Master Proteins",
+          "position format": "[();()]",
+          "replicate columns": [
+            "Ratio Virus/Mock (log2)"
+          ],
+          "logarithm": 2
+        }
+      ],
+      "protein-protein interactions": {
+        "BioGRID": {
+          "experimental system": [
+            "Affinity Capture-Luminescence",
+            "Affinity Capture-MS",
+            "Affinity Capture-RNA",
+            "Affinity Capture-Western",
+            "Biochemical Activity",
+            "Co-crystal Structure",
+            "Co-purification",
+            "FRET",
+            "PCA",
+            "Two-hybrid"
+          ]
+        },
+        "IntAct": {
+          "MI score": 0.27
+        },
+        "MINT": {
+          "MI score": 0.27
+        },
+        "STRING": {
+          "experiments": 0.7,
+          "combined score": 0.7
+        }
+      },
+      "Cytoscape": {
+        "bar chart": {
+          "range": [-2.0, 2.0]
+        },
+        "node color": {
+          "range": [-1.0, 1.0]
+        }
+      },
+      "post-processing": {
+        "enrichment analysis": {
+          "p": 0.05,
+          "range": [-1.0, 1.0]
+        }
+      }
+    }
+  ]
