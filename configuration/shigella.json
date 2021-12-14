@@ -9,9 +9,9 @@
           "sheet": "wt15min",
           "header": 1,
           "accession column": "protein",
-          "accession format": "|",
+          "accession format": "sp\\|(.+?)\\|",
           "position column": "phosphosite",
-          "position format": "_,",
+          "position format": "(?:^|,)(\\d+)_[STY]",
           "replicate columns": [
             "wt15minvscontrolratio"
           ],
@@ -24,9 +24,9 @@
           "file": "data/shigella/phosphorylation/mcp.M113.029918-2.xls",
           "sheet": "wt60min",
           "accession column": "protein",
-          "accession format": "|",
+          "accession format": "sp\\|(.+?)\\|",
           "position column": "phosphosite",
-          "position format": "_,",
+          "position format": "(?:^|,)(\\d+)_[STY]",
           "replicate columns": [
             "wt60minvscontrolratio"
           ],
@@ -39,9 +39,9 @@
           "file": "data/shigella/phosphorylation/mcp.M113.029918-2.xls",
           "sheet": "wt120min",
           "accession column": "protein",
-          "accession format": "|",
+          "accession format": "sp\\|(.+?)\\|",
           "position column": "phosphosite",
-          "position format": "_,",
+          "position format": "(?:^|,)(\\d+)_[STY]",
           "replicate columns": [
             "wt120minvscontrolratio"
           ],
@@ -54,9 +54,9 @@
           "file": "data/shigella/ubiquitination/WT_vs_noninvasive_15min.xlsx",
           "sheet": "GlyGly (K) stringentSites",
           "accession column": "Protein",
-          "accession format": ";",
+          "accession format": "(?=(?:^|;)(.+?)(?:;|$))",
           "position column": "Positions within proteins",
-          "position format": ";",
+          "position format": "(?=(?:^|;)(.+?)(?:;|$))",
           "replicate columns": [
             "Ratio H/L normalized Exp1",
             "Ratio H/L normalized Exp2",
@@ -71,9 +71,9 @@
           "file": "data/shigella/ubiquitination/WT_vs_noninvasive_1h.xlsx",
           "sheet": "GlyGly (K) stringentSites",
           "accession column": "Proteins",
-          "accession format": ";",
+          "accession format": "(?=(?:^|;)(.+?)(?:;|$))",
           "position column": "Positions within proteins",
-          "position format": ";",
+          "position format": "(?=(?:^|;)(.+?)(?:;|$))",
           "replicate columns": [
             "Ratio H/L normalized Exp1",
             "Ratio H/L normalized Exp2",
@@ -88,9 +88,9 @@
           "file": "data/shigella/ubiquitination/WT_vs_noninvasive_2h.xlsx",
           "sheet": "GlyGly (K) stringentSites",
           "accession column": "Proteins",
-          "accession format": ";",
+          "accession format": "(?=(?:^|;)(.+?)(?:;|$))",
           "position column": "Positions within proteins",
-          "position format": ";",
+          "position format": "(?=(?:^|;)(.+?)(?:;|$))",
           "replicate columns": [
             "Ratio H/L normalized Exp1",
             "Ratio H/L normalized Exp2",

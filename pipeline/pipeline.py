@@ -3,13 +3,14 @@ import concurrent.futures
 import json
 import logging
 import os
+import re
 import sys
 
 import networkx as nx
 
 from cytoscape import styles
 from databases import biogrid, complexportal, corum, elm, intact, mint, string
-from interface import algorithm, combination, conversion, correction, extraction, test
+from interface import algorithm, combination, conversion, correction, test
 from networks import protein_protein_interaction_network
 
 
@@ -34,8 +35,8 @@ def process_configuration(configuration_file):
                     network,
                     file_name=entry["file"],
                     gene_accession_column=entry["accession column"],
-                    gene_accession_format=extraction.EXTRACT.get(
-                        entry.get("accession format"), lambda entry: [entry]),
+                    gene_accession_format=re.compile(
+                        entry.get("accession format", "^(.+?)$")),
                     sheet_name=entry.get("sheet", 0),
                     header=entry.get("header", 1) - 1,
                     taxon_identifier=entry.get("taxon identifier", 9606),
@@ -54,14 +55,14 @@ def process_configuration(configuration_file):
                     network,
                     file_name=entry["file"],
                     protein_accession_column=entry["accession column"],
-                    protein_accession_format=extraction.EXTRACT.get(
-                        entry.get("accession format"), lambda entry: [entry]),
+                    protein_accession_format=re.compile(
+                        entry.get("accession format", "^(.+?)$")),
                     time=entry.get("time", 0),
                     modification=entry.get("post-translational modification",
                                            ""),
                     position_column=entry.get("position column", ""),
-                    position_format=extraction.EXTRACT.get(
-                        entry.get("position format"), lambda entry: [entry]),
+                    position_format=re.compile(
+                        entry.get("position format", "^(.+?)$")),
                     replicates=entry.get("replicate columns", []),
                     sheet_name=entry.get("sheet", 0),
                     header=entry.get("header", 1) - 1,

@@ -1,6 +1,7 @@
 import bisect
 import math
 import os
+import re
 import statistics
 
 import networkx as nx
@@ -40,7 +41,7 @@ def add_genes_from_table(
     network,
     file_name,
     gene_accession_column,
-    gene_accession_format,
+    gene_accession_format=re.compile("^(.+?)$"),
     sheet_name=0,
     header=0,
     taxon_identifier=9606,
@@ -75,8 +76,8 @@ def add_genes_from_table(
             continue
 
         genes.update([
-            str(gene_accession) for gene_accession in gene_accession_format(
-                row[gene_accession_column])
+            str(gene_accession) for gene_accession in
+            gene_accession_format.findall(row[gene_accession_column])
         ])
 
     add_genes_from(network, genes, taxon_identifier)
@@ -128,11 +129,11 @@ def add_proteins_from_table(
     network,
     file_name,
     protein_accession_column,
-    protein_accession_format=lambda entry: [entry],
+    protein_accession_format=re.compile("^(.+?)$"),
     time=0,
     modification="",
     position_column="",
-    position_format=lambda entry: [entry],
+    position_format=re.compile("^(.+?)$"),
     replicates=[],
     sheet_name=0,
     header=0,
@@ -186,14 +187,14 @@ def add_proteins_from_table(
 
         protein_accessions = [
             str(protein_accession) for protein_accession in
-            protein_accession_format(row[protein_accession_column])
+            protein_accession_format.findall(row[protein_accession_column])
         ]
 
         if replicates:
             if position_column and not pd.isna(row[position_column]):
                 positions = [
-                    int(position)
-                    for position in position_format(row[position_column])
+                    int(position) for position in position_format.findall(
+                        row[position_column])
                 ]
             else:
                 positions = []
