@@ -8,7 +8,7 @@
           "file": "data/salmonella/phosphorylation/Supplementary_Table_01.xlsx",
           "sheet": "Supplementary1",
           "accession column": "Fasta.headers",
-          "accession format": "sp\\|(.+?)\\|",
+          "accession format": "sp\\|(.+?)\\|[A-Z0-9]+_HUMAN",
           "position column": "Positions.within.proteins",
           "replicate columns": [
             "Ratio.H.L.normalized.E1",
@@ -26,7 +26,7 @@
           "file": "data/salmonella/phosphorylation/Supplementary_Table_01.xlsx",
           "sheet": "Supplementary1",
           "accession column": "Fasta.headers",
-          "accession format": "sp\\|(.+?)\\|",
+          "accession format": "sp\\|(.+?)\\|[A-Z0-9]+_HUMAN",
           "position column": "Positions.within.proteins",
           "replicate columns": [
             "Ratio.M.L.normalized.E1",

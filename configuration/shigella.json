@@ -9,7 +9,7 @@
           "sheet": "wt15min",
           "header": 1,
           "accession column": "protein",
-          "accession format": "sp\\|(.+?)\\|",
+          "accession format": "sp\\|(.+?)\\|[A-Z0-9]+_HUMAN",
           "position column": "phosphosite",
           "position format": "(?:^|,)(\\d+)_[STY]",
           "replicate columns": [
@@ -24,7 +24,7 @@
           "file": "data/shigella/phosphorylation/mcp.M113.029918-2.xls",
           "sheet": "wt60min",
           "accession column": "protein",
-          "accession format": "sp\\|(.+?)\\|",
+          "accession format": "sp\\|(.+?)\\|[A-Z0-9]+_HUMAN",
           "position column": "phosphosite",
           "position format": "(?:^|,)(\\d+)_[STY]",
           "replicate columns": [
@@ -39,7 +39,7 @@
           "file": "data/shigella/phosphorylation/mcp.M113.029918-2.xls",
           "sheet": "wt120min",
           "accession column": "protein",
-          "accession format": "sp\\|(.+?)\\|",
+          "accession format": "sp\\|(.+?)\\|[A-Z0-9]+_HUMAN",
           "position column": "phosphosite",
           "position format": "(?:^|,)(\\d+)_[STY]",
           "replicate columns": [
