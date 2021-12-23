@@ -9,7 +9,7 @@ import sys
 import networkx as nx
 
 from cytoscape import styles
-from databases import biogrid, complexportal, corum, elm, intact, mint, string
+from databases import biogrid, intact, mint, string
 from interface import algorithm, combination, conversion, correction, test
 from networks import protein_protein_interaction_network
 
@@ -87,12 +87,9 @@ def process_configuration(configuration_file):
 
         if "protein-protein interactions" in configuration:
             k = 0
-            while any(
-                    configuration["protein-protein interactions"].get(
-                        database, {}).get("neighbors", 0) > k for database in {
-                            "BioGRID", "ComplexPortal", "CORUM", "ELM",
-                            "IntAct", "MINT", "STRING"
-                        }):
+            while any(configuration["protein-protein interactions"].get(
+                    database, {}).get("neighbors", 0) > k
+                      for database in {"BioGRID", "IntAct", "MINT", "STRING"}):
                 if "BioGRID" in configuration[
                         "protein-protein interactions"] and configuration[
                             "protein-protein interactions"]["BioGRID"].get(
@@ -113,49 +110,6 @@ def process_configuration(configuration_file):
                                 "multi-validated physical", False),
                         taxon_identifier=configuration[
                             "protein-protein interactions"]["BioGRID"].get(
-                                "taxon identifier", 9606),
-                    )
-                if "ComplexPortal" in configuration[
-                        "protein-protein interactions"] and configuration[
-                            "protein-protein interactions"][
-                                "ComplexPortal"].get("neighbors", 0) > k:
-                    complexportal.add_proteins(
-                        network,
-                        evidence_code=configuration[
-                            "protein-protein interactions"]
-                        ["ComplexPortal"].get(
-                            "evidence code",
-                            [],
-                        ),
-                        taxon_identifier=configuration[
-                            "protein-protein interactions"]
-                        ["ComplexPortal"].get("taxon identifier", 9606),
-                    )
-
-                if "CORUM" in configuration[
-                        "protein-protein interactions"] and configuration[
-                            "protein-protein interactions"]["CORUM"].get(
-                                "neighbors", 0) > k:
-                    corum.add_proteins(
-                        network,
-                        protein_complex_purification_method=configuration[
-                            "protein-protein interactions"]["CORUM"].get(
-                                "protein complex purification method",
-                                [],
-                            ),
-                        taxon_identifier=configuration[
-                            "protein-protein interactions"]["CORUM"].get(
-                                "taxon identifier", 9606),
-                    )
-
-                if "ELM" in configuration[
-                        "protein-protein interactions"] and configuration[
-                            "protein-protein interactions"]["ELM"].get(
-                                "neighbors", 0) > k:
-                    elm.add_proteins(
-                        network,
-                        taxon_identifier=configuration[
-                            "protein-protein interactions"]["ELM"].get(
                                 "taxon identifier", 9606),
                     )
 
@@ -273,57 +227,6 @@ def process_configuration(configuration_file):
                             "multi-validated physical", False),
                     taxon_identifier=configuration[
                         "protein-protein interactions"]["BioGRID"].get(
-                            "taxon identifier", 9606),
-                )
-
-            if "ComplexPortal" in configuration[
-                    "protein-protein interactions"]:
-                complexportal.add_interactions(
-                    network,
-                    evidence_code=configuration["protein-protein interactions"]
-                    ["ComplexPortal"].get(
-                        "evidence code",
-                        [],
-                    ),
-                    taxon_identifier=configuration[
-                        "protein-protein interactions"]["ComplexPortal"].get(
-                            "taxon identifier", 9606),
-                )
-
-            if "CORUM" in configuration["protein-protein interactions"]:
-                corum.add_interactions(
-                    network,
-                    protein_complex_purification_method=configuration[
-                        "protein-protein interactions"]["CORUM"].get(
-                            "protein complex purification method",
-                            [],
-                        ),
-                    taxon_identifier=configuration[
-                        "protein-protein interactions"]["CORUM"].get(
-                            "taxon identifier", 9606),
-                )
-
-            if "ELM" in configuration["protein-protein interactions"]:
-                elm.add_interactions(
-                    network,
-                    taxon_identifier=configuration[
-                        "protein-protein interactions"]["ELM"].get(
-                            "taxon identifier", 9606),
-                )
-
-            if "IntAct" in configuration["protein-protein interactions"]:
-                intact.add_interactions(
-                    network,
-                    interaction_detection_methods=configuration[
-                        "protein-protein interactions"]["IntAct"].get(
-                            "interaction detection methods", []),
-                    interaction_types=configuration[
-                        "protein-protein interactions"]["IntAct"].get(
-                            "interaction types", []),
-                    mi_score=configuration["protein-protein interactions"]
-                    ["IntAct"].get("MI score", 0.0),
-                    taxon_identifier=configuration[
-                        "protein-protein interactions"]["IntAct"].get(
                             "taxon identifier", 9606),
                 )
 

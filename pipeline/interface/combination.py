@@ -55,8 +55,6 @@ CONFIDENCE_SCORE_COMBINATION = {
     **{
         database: lambda confidence_scores: confidence_scores.get(
             database, 0.0)
-        for database in {
-            "BioGRID", "ComplexPortal", "CORUM", "ELM", "IntAct", "MINT", "STRING"
-        }
+        for database in {"BioGRID", "IntAct", "MINT", "STRING"}
     },
 }
