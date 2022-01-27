@@ -201,6 +201,8 @@ def process_configuration(configuration_file):
                         taxon_identifier=configuration[
                             "protein-protein interactions"]["STRING"].get(
                                 "taxon identifier", 9606),
+                        version=configuration["protein-protein interactions"]
+                        ["STRING"].get("version", 11.5),
                     )
 
                 k += 1
@@ -288,6 +290,8 @@ def process_configuration(configuration_file):
                     taxon_identifier=configuration[
                         "protein-protein interactions"]["STRING"].get(
                             "taxon identifier", 9606),
+                    version=configuration["protein-protein interactions"]
+                    ["STRING"].get("version", 11.5),
                 )
 
         if "Cytoscape" in configuration:

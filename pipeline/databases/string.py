@@ -1,33 +1,33 @@
 from uniprot import uniprot
 from download import download
 
-STRING_ID_MAP = "https://stringdb-static.org/download/protein.aliases.v11.5/{taxon_identifier}.protein.aliases.v11.5.txt.gz"
-STRING = "https://stringdb-static.org/download/protein.links.full.v11.5/{taxon_identifier}.protein.links.full.v11.5.txt.gz"
-STRING_PHYSICAL = "https://stringdb-static.org/download/protein.physical.links.full.v11.5/{taxon_identifier}.protein.links.full.v11.5.txt.gz"
+STRING_ID_MAP = "https://stringdb-static.org/download/protein.aliases.v{version}/{taxon_identifier}.protein.aliases.v{version}.txt.gz"
+STRING = "https://stringdb-static.org/download/protein.links.full.v{version}/{taxon_identifier}.protein.links.full.v{version}.txt.gz"
+STRING_PHYSICAL = "https://stringdb-static.org/download/protein.physical.links.full.v{version}/{taxon_identifier}.protein.links.full.v{version}.txt.gz"
 
 
-def add_proteins(
-    network,
-    neighborhood=0.0,
-    neighborhood_transferred=0.0,
-    fusion=0.0,
-    cooccurence=0.0,
-    homology=0.0,
-    coexpression=0.0,
-    coexpression_transferred=0.0,
-    experiments=0.0,
-    experiments_transferred=0.0,
-    database=0.0,
-    database_transferred=0.0,
-    textmining=0.0,
-    textmining_transferred=0.0,
-    combined_score=0.0,
-    physical=False,
-    taxon_identifier=9606,
-):
+def add_proteins(network,
+                 neighborhood=0.0,
+                 neighborhood_transferred=0.0,
+                 fusion=0.0,
+                 cooccurence=0.0,
+                 homology=0.0,
+                 coexpression=0.0,
+                 coexpression_transferred=0.0,
+                 experiments=0.0,
+                 experiments_transferred=0.0,
+                 database=0.0,
+                 database_transferred=0.0,
+                 textmining=0.0,
+                 textmining_transferred=0.0,
+                 combined_score=0.0,
+                 physical=False,
+                 taxon_identifier=9606,
+                 version=11.5):
     uniprot_id_map = {}
     for row in download.tabular_txt(
-            STRING_ID_MAP.format(taxon_identifier=taxon_identifier),
+            STRING_ID_MAP.format(taxon_identifier=taxon_identifier,
+                                 version=version),
             delimiter="\t",
             skiprows=1,
             usecols=[0, 1, 2],
@@ -86,28 +86,28 @@ def add_proteins(
     network.add_nodes_from(nodes_to_add)
 
 
-def add_interactions(
-    network,
-    neighborhood=0.0,
-    neighborhood_transferred=0.0,
-    fusion=0.0,
-    cooccurence=0.0,
-    homology=0.0,
-    coexpression=0.0,
-    coexpression_transferred=0.0,
-    experiments=0.0,
-    experiments_transferred=0.0,
-    database=0.0,
-    database_transferred=0.0,
-    textmining=0.0,
-    textmining_transferred=0.0,
-    combined_score=0.0,
-    physical=False,
-    taxon_identifier=9606,
-):
+def add_interactions(network,
+                     neighborhood=0.0,
+                     neighborhood_transferred=0.0,
+                     fusion=0.0,
+                     cooccurence=0.0,
+                     homology=0.0,
+                     coexpression=0.0,
+                     coexpression_transferred=0.0,
+                     experiments=0.0,
+                     experiments_transferred=0.0,
+                     database=0.0,
+                     database_transferred=0.0,
+                     textmining=0.0,
+                     textmining_transferred=0.0,
+                     combined_score=0.0,
+                     physical=False,
+                     taxon_identifier=9606,
+                     version=11.5):
     uniprot_id_map = {}
     for row in download.tabular_txt(
-            STRING_ID_MAP.format(taxon_identifier=taxon_identifier),
+            STRING_ID_MAP.format(taxon_identifier=taxon_identifier,
+                                 version=version),
             delimiter="\t",
             skiprows=1,
             usecols=[0, 1, 2],
