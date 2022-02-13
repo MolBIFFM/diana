@@ -75,7 +75,15 @@ COMPONENTS = [
                     "default": ""
                 },
                 "EDGE_TRANSPARENCY": {
-                    "default": "255"
+                    "default": "255",
+                    "continuousMapping": {
+                        "attributeName": "confidence",
+                        "attributeType": "float",
+                        "continuousMappingPoint": {
+                            "0.0": ("0", "0", "1"),
+                            "1.0": ("255", "1", "255")
+                        }
+                    }
                 },
                 "EDGE_UNSELECTED_PAINT": {
                     "default": "#404040"
@@ -444,7 +452,15 @@ COMPONENTS = [
                     "default": ""
                 },
                 "EDGE_TRANSPARENCY": {
-                    "default": "255"
+                    "default": "255",
+                    "continuousMapping": {
+                        "attributeName": "confidence",
+                        "attributeType": "float",
+                        "continuousMappingPoint": {
+                            "0.0": ("0", "0", "1"),
+                            "1.0": ("255", "1", "255")
+                        }
+                    }
                 },
                 "EDGE_UNSELECTED_PAINT": {
                     "default": "#404040"

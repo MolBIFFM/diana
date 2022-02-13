@@ -131,10 +131,12 @@
         },
         "node color": {
           "range": [-1.0, 1.0]
-        }
+        },
+        "edge transparency": "number"
       },
       "post-processing": {
         "enrichment analysis": {
+          "edge weight": "number",
           "p": 0.05,
           "range": [-1.0, 1.0]
         }

@@ -337,6 +337,12 @@ def process_configuration(configuration_file):
                     ),
                 )
 
+            protein_protein_interaction_network.set_edge_weights(
+                network,
+                weight=combination.CONFIDENCE_SCORE_COMBINATION[
+                    configuration["Cytoscape"].get("edge transparency")],
+                attribute="confidence")
+
             styles.export(
                 cytoscape_styles,
                 os.path.splitext(os.path.basename(configuration_file))[0],
@@ -394,7 +400,7 @@ def process_configuration(configuration_file):
                     network,
                     weight=combination.CONFIDENCE_SCORE_COMBINATION[
                         configuration["post-processing"]
-                        ["module detection"].get("edge weight", "number")])
+                        ["module detection"].get("edge weight")])
 
                 for j, module in enumerate(
                         protein_protein_interaction_network.get_modules(

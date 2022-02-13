@@ -52,19 +52,32 @@ def get_styles(
                     },
                 )
 
-                if visual_property.get("passthroughMapping"):
-                    ET.SubElement(
+                if visual_property.get("continuousMapping"):
+                    continuous_mapping_sub_element = ET.SubElement(
                         visual_property_sub_element,
-                        "passthroughMapping",
+                        "continuousMapping",
                         attrib={
                             "attributeName":
-                            visual_property["passthroughMapping"]
+                            visual_property["continuousMapping"]
                             ["attributeName"],
                             "attributeType":
-                            visual_property["passthroughMapping"]
-                            ["attributeType"],
-                        },
-                    )
+                            visual_property["continuousMapping"]
+                            ["attributeType"]
+                        })
+
+                    for key, (equal_value, greater_value, lesser_value
+                              ) in visual_property["continuousMapping"][
+                                  "continuousMappingPoint"].items():
+                        ET.SubElement(
+                            continuous_mapping_sub_element,
+                            "continuousMappingPoint",
+                            attrib={
+                                "attrValue": key,
+                                "equalValue": equal_value,
+                                "greaterValue": greater_value,
+                                "lesserValue": lesser_value
+                            },
+                        )
 
                 elif visual_property.get("discreteMapping"):
                     discrete_mapping_sub_element = ET.SubElement(
@@ -92,6 +105,20 @@ def get_styles(
                                 value,
                             },
                         )
+
+                elif visual_property.get("passthroughMapping"):
+                    ET.SubElement(
+                        visual_property_sub_element,
+                        "passthroughMapping",
+                        attrib={
+                            "attributeName":
+                            visual_property["passthroughMapping"]
+                            ["attributeName"],
+                            "attributeType":
+                            visual_property["passthroughMapping"]
+                            ["attributeType"],
+                        },
+                    )
 
         visual_property_sub_elements = visual_style_sub_element.find(
             "node").findall("visualProperty")
