@@ -360,7 +360,11 @@ COMPONENTS = [
                     "default": "35.0"
                 },
                 "NODE_TOOLTIP": {
-                    "default": ""
+                    "default": "",
+                    "passthroughMapping": {
+                        "attributeName": "protein",
+                        "attributeType": "string",
+                    },
                 },
                 "NODE_TRANSPARENCY": {
                     "default": "255"
@@ -776,7 +780,11 @@ COMPONENTS = [
                     "default": "35.0"
                 },
                 "NODE_TOOLTIP": {
-                    "default": ""
+                    "default": "",
+                    "passthroughMapping": {
+                        "attributeName": "protein",
+                        "attributeType": "string",
+                    },
                 },
                 "NODE_TRANSPARENCY": {
                     "default": "255"
