@@ -1,16 +1,14 @@
-from uniprot import uniprot
+from databases import uniprot
 from download import download
 
 BIOGRID_ID_MAP_ZIP_ARCHIVE = "https://downloads.thebiogrid.org/Download/BioGRID/Latest-Release/BIOGRID-IDENTIFIERS-LATEST.tab.zip"
 BIOGRID_ID_MAP = r"BIOGRID-IDENTIFIERS-[0-9]\.[0-9]\.[0-9]{3}\.tab\.txt"
 BIOGRID_ZIP_ARCHIVE = "https://downloads.thebiogrid.org/Download/BioGRID/Latest-Release/BIOGRID-ORGANISM-LATEST.tab3.zip"
-BIOGRID = r"BIOGRID-ORGANISM-{organism}-[0-9]\.[0-9]\.[0-9][0-9][0-9]\.tab3\.txt"
+BIOGRID_INTERACTIONS = r"BIOGRID-ORGANISM-{organism}-[0-9]\.[0-9]\.[0-9][0-9][0-9]\.tab3\.txt"
 BIOGRID_MV_PHYSICAL_ZIP_ARCHIVE = "https://downloads.thebiogrid.org/Download/BioGRID/Latest-Release/BIOGRID-MV-Physical-LATEST.tab3.zip"
 BIOGRID_MV_PHYSICAL = r"BIOGRID-MV-Physical-[0-9]\.[0-9]\.[0-9]{3}\.tab3\.txt"
 
-ORGANISM = {
-    9606: "Homo_sapiens",
-}
+ORGANISM = {"file": {9606: "Homo_sapiens"}}
 
 
 def add_proteins(
@@ -28,8 +26,8 @@ def add_proteins(
             BIOGRID_MV_PHYSICAL_ZIP_ARCHIVE
             if multi_validated_physical else BIOGRID_ZIP_ARCHIVE,
             file_from_zip_archive=BIOGRID_MV_PHYSICAL
-            if multi_validated_physical else BIOGRID.format(
-                organism=ORGANISM[taxon_identifier]),
+            if multi_validated_physical else BIOGRID_INTERACTIONS.format(
+                organism=ORGANISM["file"][taxon_identifier]),
             delimiter="\t",
             header=0,
             usecols=[
@@ -82,7 +80,7 @@ def add_proteins(
     network.add_nodes_from(nodes_to_add)
 
 
-def add_interactions(
+def add_protein_protein_interactions(
     network,
     experimental_system=[],
     experimental_system_type=[],
@@ -97,8 +95,8 @@ def add_interactions(
             BIOGRID_MV_PHYSICAL_ZIP_ARCHIVE
             if multi_validated_physical else BIOGRID_ZIP_ARCHIVE,
             file_from_zip_archive=BIOGRID_MV_PHYSICAL
-            if multi_validated_physical else BIOGRID.format(
-                organism=ORGANISM[taxon_identifier]),
+            if multi_validated_physical else BIOGRID_INTERACTIONS.format(
+                organism=ORGANISM["file"][taxon_identifier]),
             delimiter="\t",
             header=0,
             usecols=[

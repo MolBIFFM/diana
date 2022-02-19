@@ -1,8 +1,8 @@
-from uniprot import uniprot
+from databases import uniprot
 from download import download
 
 STRING_ID_MAP = "https://stringdb-static.org/download/protein.aliases.v{version}/{taxon_identifier}.protein.aliases.v{version}.txt.gz"
-STRING = "https://stringdb-static.org/download/protein.links.full.v{version}/{taxon_identifier}.protein.links.full.v{version}.txt.gz"
+STRING_INTERACTIONS = "https://stringdb-static.org/download/protein.links.full.v{version}/{taxon_identifier}.protein.links.full.v{version}.txt.gz"
 STRING_PHYSICAL = "https://stringdb-static.org/download/protein.physical.links.full.v{version}/{taxon_identifier}.protein.links.full.v{version}.txt.gz"
 
 
@@ -62,7 +62,8 @@ def add_proteins(network,
     nodes_to_add = set()
     for row in download.tabular_txt(
             STRING_PHYSICAL.format(taxon_identifier=taxon_identifier)
-            if physical else STRING.format(taxon_identifier=taxon_identifier),
+            if physical else STRING_INTERACTIONS.format(
+                taxon_identifier=taxon_identifier),
             delimiter=" ",
             header=0,
             usecols=["protein1", "protein2"] + list(thresholds.keys()),
@@ -86,24 +87,24 @@ def add_proteins(network,
     network.add_nodes_from(nodes_to_add)
 
 
-def add_interactions(network,
-                     neighborhood=0.0,
-                     neighborhood_transferred=0.0,
-                     fusion=0.0,
-                     cooccurence=0.0,
-                     homology=0.0,
-                     coexpression=0.0,
-                     coexpression_transferred=0.0,
-                     experiments=0.0,
-                     experiments_transferred=0.0,
-                     database=0.0,
-                     database_transferred=0.0,
-                     textmining=0.0,
-                     textmining_transferred=0.0,
-                     combined_score=0.0,
-                     physical=False,
-                     taxon_identifier=9606,
-                     version=11.5):
+def add_protein_protein_interactions(network,
+                                     neighborhood=0.0,
+                                     neighborhood_transferred=0.0,
+                                     fusion=0.0,
+                                     cooccurence=0.0,
+                                     homology=0.0,
+                                     coexpression=0.0,
+                                     coexpression_transferred=0.0,
+                                     experiments=0.0,
+                                     experiments_transferred=0.0,
+                                     database=0.0,
+                                     database_transferred=0.0,
+                                     textmining=0.0,
+                                     textmining_transferred=0.0,
+                                     combined_score=0.0,
+                                     physical=False,
+                                     taxon_identifier=9606,
+                                     version=11.5):
     uniprot_id_map = {}
     for row in download.tabular_txt(
             STRING_ID_MAP.format(taxon_identifier=taxon_identifier,
@@ -142,7 +143,8 @@ def add_interactions(network,
 
     for row in download.tabular_txt(
             STRING_PHYSICAL.format(taxon_identifier=taxon_identifier)
-            if physical else STRING.format(taxon_identifier=taxon_identifier),
+            if physical else STRING_INTERACTIONS.format(
+                taxon_identifier=taxon_identifier),
             delimiter=" ",
             header=0,
             usecols=["protein1", "protein2"] + list(thresholds.keys()),

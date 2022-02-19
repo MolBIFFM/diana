@@ -1,9 +1,9 @@
 from formats import mitab
-from uniprot import uniprot
+from databases import uniprot
 from download import download
 
 INTACT_ZIP_ARCHIVE = "ftp://ftp.ebi.ac.uk/pub/databases/intact/current/psimitab/intact.zip"
-INTACT = "intact.txt"
+INTACT_INTERACTIONS = "intact.txt"
 
 
 def add_proteins(network,
@@ -16,7 +16,7 @@ def add_proteins(network,
     nodes_to_add = set()
     for row in download.tabular_txt(
             INTACT_ZIP_ARCHIVE,
-            file_from_zip_archive=INTACT,
+            file_from_zip_archive=INTACT_INTERACTIONS,
             delimiter="\t",
             header=0,
             usecols=[
@@ -82,17 +82,17 @@ def add_proteins(network,
     network.add_nodes_from(nodes_to_add)
 
 
-def add_interactions(network,
-                     interaction_detection_methods=[],
-                     interaction_types=[],
-                     mi_score=0.0,
-                     taxon_identifier=9606):
+def add_protein_protein_interactions(network,
+                                     interaction_detection_methods=[],
+                                     interaction_types=[],
+                                     mi_score=0.0,
+                                     taxon_identifier=9606):
     primary_accession = uniprot.get_primary_accession(taxon_identifier,
                                                       network)
 
     for row in download.tabular_txt(
             INTACT_ZIP_ARCHIVE,
-            file_from_zip_archive=INTACT,
+            file_from_zip_archive=INTACT_INTERACTIONS,
             delimiter="\t",
             header=0,
             usecols=[

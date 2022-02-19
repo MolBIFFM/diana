@@ -9,23 +9,15 @@ import sys
 import networkx as nx
 
 from cytoscape import styles
-from databases import biogrid, intact, mint, string
-from interface import algorithm, combination, conversion, correction, test
-from networks import protein_protein_interaction_network
+from databases import biogrid, intact, mint, reactome, string
+from interface import combination, conversion, correction, test
+from networks import pathway_network, protein_protein_interaction_network
+from interface import modularization
 
 
-def process_configuration(configuration_file):
-    logger = logging.LoggerAdapter(logging.getLogger("root"), {
-        "configuration":
-        os.path.splitext(os.path.basename(configuration_file))[0]
-    })
-    logging.basicConfig(stream=sys.stdout,
-                        level=logging.INFO,
-                        format="%(configuration)s\t%(message)s")
-
-    with open(configuration_file) as configuration:
-        configurations = json.load(configuration)
-
+def process_configuration(configurations, basename):
+    logger = logging.LoggerAdapter(logging.getLogger("root"),
+                                   {"configuration": basename})
     for i, configuration in enumerate(configurations, start=1):
         network = nx.Graph()
 
@@ -151,6 +143,23 @@ def process_configuration(configuration_file):
                                 "taxon identifier", 9606),
                     )
 
+                if "Reactome" in configuration[
+                        "protein-protein interactions"] and configuration[
+                            "protein-protein interactions"]["Reactome"].get(
+                                "neighbors", 0) > k:
+                    reactome.add_proteins(
+                        network,
+                        interaction_context=configuration[
+                            "protein-protein interactions"]["Reactome"].get(
+                                "interaction context", []),
+                        interaction_type=configuration[
+                            "protein-protein interactions"]["Reactome"].get(
+                                "interaction type", []),
+                        taxon_identifier=configuration[
+                            "protein-protein interactions"]["Reactome"].get(
+                                "taxon identifier", 9606),
+                    )
+
                 if "STRING" in configuration[
                         "protein-protein interactions"] and configuration[
                             "protein-protein interactions"]["STRING"].get(
@@ -213,7 +222,7 @@ def process_configuration(configuration_file):
                     network)
 
             if "BioGRID" in configuration["protein-protein interactions"]:
-                biogrid.add_interactions(
+                biogrid.add_protein_protein_interactions(
                     network,
                     interaction_throughput=configuration[
                         "protein-protein interactions"]["BioGRID"].get(
@@ -233,7 +242,7 @@ def process_configuration(configuration_file):
                 )
 
             if "MINT" in configuration["protein-protein interactions"]:
-                mint.add_interactions(
+                mint.add_protein_protein_interactions(
                     network,
                     interaction_detection_methods=configuration[
                         "protein-protein interactions"]["MINT"].get(
@@ -248,8 +257,22 @@ def process_configuration(configuration_file):
                             "taxon identifier", 9606),
                 )
 
+            if "Reactome" in configuration["protein-protein interactions"]:
+                reactome.add_protein_protein_interactions(
+                    network,
+                    interaction_context=configuration[
+                        "protein-protein interactions"]["Reactome"].get(
+                            "interaction context", []),
+                    interaction_type=configuration[
+                        "protein-protein interactions"]["Reactome"].get(
+                            "interaction type", []),
+                    taxon_identifier=configuration[
+                        "protein-protein interactions"]["Reactome"].get(
+                            "taxon identifier", 9606),
+                )
+
             if "STRING" in configuration["protein-protein interactions"]:
-                string.add_interactions(
+                string.add_protein_protein_interactions(
                     network,
                     neighborhood=configuration["protein-protein interactions"]
                     ["STRING"].get("neighborhood", 0.0),
@@ -297,7 +320,7 @@ def process_configuration(configuration_file):
         if "Cytoscape" in configuration:
             if (configuration["Cytoscape"].get("bar chart",
                                                {}).get("type") == "z-score"):
-                cytoscape_styles = styles.get_styles(
+                cytoscape_styles = styles.get_protein_protein_interaction_network_styles(
                     network,
                     bar_chart_range=configuration["Cytoscape"]
                     ["bar chart"].get("range", (-2.0, 2.0)),
@@ -308,11 +331,13 @@ def process_configuration(configuration_file):
                             "combine sites"),
                         combination.SITE_COMBINATION["absmax"],
                     ),
-                )
+                    confidence_score_combination=combination.
+                    CONFIDENCE_SCORE_COMBINATION.get(
+                        configuration["Cytoscape"].get("edge transparency")))
 
             elif (configuration["Cytoscape"].get(
                     "bar chart", {}).get("type") == "quantile"):
-                cytoscape_styles = styles.get_styles(
+                cytoscape_styles = styles.get_protein_protein_interaction_network_styles(
                     network,
                     bar_chart_range=configuration["Cytoscape"]
                     ["bar chart"].get("range", (0.025, 0.975)),
@@ -323,10 +348,12 @@ def process_configuration(configuration_file):
                             "combine sites"),
                         combination.SITE_COMBINATION["absmax"],
                     ),
-                )
+                    confidence_score_combination=combination.
+                    CONFIDENCE_SCORE_COMBINATION.get(
+                        configuration["Cytoscape"].get("edge transparency")))
 
             else:
-                cytoscape_styles = styles.get_styles(
+                cytoscape_styles = styles.get_protein_protein_interaction_network_styles(
                     network,
                     bar_chart_range=configuration["Cytoscape"]
                     ["bar chart"].get("range", (-1.0, 1.0)),
@@ -335,7 +362,9 @@ def process_configuration(configuration_file):
                             "combine sites"),
                         combination.SITE_COMBINATION["absmax"],
                     ),
-                )
+                    confidence_score_combination=combination.
+                    CONFIDENCE_SCORE_COMBINATION.get(
+                        configuration["Cytoscape"].get("edge transparency")))
 
             protein_protein_interaction_network.set_edge_weights(
                 network,
@@ -345,7 +374,7 @@ def process_configuration(configuration_file):
 
             styles.export(
                 cytoscape_styles,
-                os.path.splitext(os.path.basename(configuration_file))[0],
+                basename,
                 ".{}".format(i) if len(configurations) > 1 else "",
             )
 
@@ -390,7 +419,7 @@ def process_configuration(configuration_file):
 
         protein_protein_interaction_network.export(
             network,
-            os.path.splitext(os.path.basename(configuration_file))[0],
+            basename,
             ".{}".format(i) if len(configurations) > 1 else "",
         )
 
@@ -414,10 +443,10 @@ def process_configuration(configuration_file):
                                 ["module detection"].get("combine sizes"),
                                 combination.MODULE_SIZE_COMBINATION["mean"],
                             ),
-                            algorithm=algorithm.ALGORITHM.get(
+                            algorithm=modularization.ALGORITHM.get(
                                 configuration["post-processing"]
                                 ["module detection"].get("algorithm"),
-                                algorithm.ALGORITHM["Louvain"],
+                                modularization.ALGORITHM["Louvain"],
                             ),
                             resolution=configuration["post-processing"]
                             ["module detection"].get("resolution", 1.0)),
@@ -425,8 +454,7 @@ def process_configuration(configuration_file):
                 ):
                     protein_protein_interaction_network.export(
                         network.subgraph(module),
-                        os.path.splitext(
-                            os.path.basename(configuration_file))[0],
+                        basename,
                         ".{}.{}".format(i, j)
                         if len(configurations) > 1 else ".{}".format(j),
                     )
@@ -462,10 +490,10 @@ def process_configuration(configuration_file):
                             ["enrichment analysis"].get("combine sites"),
                             combination.MODULE_SIZE_COMBINATION["mean"],
                         ),
-                        algorithm=algorithm.ALGORITHM.get(
+                        algorithm=modularization.ALGORITHM.get(
                             configuration["post-processing"]
                             ["enrichment analysis"].get("algorithm"),
-                            algorithm.ALGORITHM["Louvain"],
+                            modularization.ALGORITHM["Louvain"],
                         ),
                         resolution=configuration["post-processing"]
                         ["enrichment analysis"].get("resolution", 1.0),
@@ -504,10 +532,10 @@ def process_configuration(configuration_file):
                             ["enrichment analysis"].get("combine sites"),
                             combination.MODULE_SIZE_COMBINATION["mean"],
                         ),
-                        algorithm=algorithm.ALGORITHM.get(
+                        algorithm=modularization.ALGORITHM.get(
                             configuration["post-processing"]
                             ["enrichment analysis"].get("algorithm"),
-                            algorithm.ALGORITHM["Louvain"],
+                            modularization.ALGORITHM["Louvain"],
                         ),
                         resolution=configuration["post-processing"]
                         ["enrichment analysis"].get("resolution", 1.0),
@@ -543,10 +571,10 @@ def process_configuration(configuration_file):
                             ["enrichment analysis"].get("combine sites"),
                             combination.MODULE_SIZE_COMBINATION["mean"],
                         ),
-                        algorithm=algorithm.ALGORITHM.get(
+                        algorithm=modularization.ALGORITHM.get(
                             configuration["post-processing"]
                             ["enrichment analysis"].get("algorithm"),
-                            algorithm.ALGORITHM["Louvain"],
+                            modularization.ALGORITHM["Louvain"],
                         ),
                         resolution=configuration["post-processing"]
                         ["enrichment analysis"].get("resolution", 1.0),
@@ -575,15 +603,25 @@ def process_configuration(configuration_file):
                             ))
                             protein_protein_interaction_network.export(
                                 network.subgraph(modules[j]),
-                                os.path.splitext(
-                                    os.path.basename(configuration_file))[0],
+                                basename,
                                 ".{}.{}".format(i, j + 1) if
                                 len(configurations) > 1 else ".{}".format(j +
                                                                           1),
                             )
 
 
+def process_configuration_file(configuration_file):
+    with open(configuration_file) as configuration:
+        process_configuration(
+            json.load(configuration),
+            os.path.splitext(os.path.basename(configuration_file))[0])
+
+
 def main():
+    logging.basicConfig(stream=sys.stdout,
+                        level=logging.INFO,
+                        format="%(configuration)s\t%(message)s")
+
     parser = argparse.ArgumentParser()
     parser.add_argument(
         "-c",
@@ -599,11 +637,12 @@ def main():
             os.cpu_count()),
         type=int,
         default=os.cpu_count())
+
     args = parser.parse_args()
 
     with concurrent.futures.ProcessPoolExecutor(
             max_workers=args.processes) as executor:
-        executor.map(process_configuration, args.configurations)
+        executor.map(process_configuration_file, args.configurations)
 
 
 if __name__ == "__main__":

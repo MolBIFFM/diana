@@ -1,17 +1,18 @@
 import json
 import xml.etree.ElementTree as ET
 
-from cytoscape import configuration
+from cytoscape.configuration import protein_protein_interaction_network as protein_protein_interaction_network_configuration
 from networks import protein_protein_interaction_network
 
 
-def get_styles(
-        network,
-        bar_chart_range=(-3.0, 3.0),
-        get_bar_chart_range=lambda time, modification, bar_chart_range,
+def get_protein_protein_interaction_network_styles(
+    network,
+    bar_chart_range=(-3.0, 3.0),
+    get_bar_chart_range=lambda time, modification, bar_chart_range,
     site_combination: bar_chart_range,
-        site_combination=lambda sites: max(sites, key=abs),
-):
+    site_combination=lambda sites: max(sites, key=abs),
+    confidence_score_combination=lambda confidence_scores: float(
+        bool(confidence_scores))):
     styles = ET.ElementTree(
         ET.Element("vizmap", attrib={
             "id": "VizMap",
@@ -25,11 +26,12 @@ def get_styles(
                                                  "visualStyle",
                                                  attrib={"name": str(time)})
 
-        for component in configuration.COMPONENTS[len(modifications) - 1]:
+        for component in protein_protein_interaction_network_configuration.COMPONENTS[
+                len(modifications) - 1]:
             component_sub_element = ET.SubElement(visual_style_sub_element,
                                                   component)
 
-            for name, dependency in configuration.COMPONENTS[
+            for name, dependency in protein_protein_interaction_network_configuration.COMPONENTS[
                     len(modifications) - 1][component]["dependency"].items():
                 ET.SubElement(
                     component_sub_element,
@@ -40,7 +42,7 @@ def get_styles(
                     },
                 )
 
-            for name, visual_property in configuration.COMPONENTS[
+            for name, visual_property in protein_protein_interaction_network_configuration.COMPONENTS[
                     len(modifications) -
                     1][component]["visualProperty"].items():
                 visual_property_sub_element = ET.SubElement(
@@ -72,10 +74,20 @@ def get_styles(
                             continuous_mapping_sub_element,
                             "continuousMappingPoint",
                             attrib={
-                                "attrValue": key,
-                                "equalValue": equal_value,
-                                "greaterValue": greater_value,
-                                "lesserValue": lesser_value
+                                "attrValue":
+                                key.format(max=str(
+                                    confidence_score_combination({
+                                        database: 1.0
+                                        for database in
+                                        protein_protein_interaction_network.
+                                        get_databases(network)
+                                    }))),
+                                "equalValue":
+                                equal_value,
+                                "greaterValue":
+                                greater_value,
+                                "lesserValue":
+                                lesser_value
                             },
                         )
 

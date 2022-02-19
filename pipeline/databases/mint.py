@@ -1,10 +1,10 @@
 from formats import mitab
-from uniprot import uniprot
+from databases import uniprot
 from download import download
 
-MINT = "http://www.ebi.ac.uk/Tools/webservices/psicquic/mint/webservices/current/search/query/{organism}"
+MINT_INTERACTIONS = "http://www.ebi.ac.uk/Tools/webservices/psicquic/mint/webservices/current/search/query/{organism}"
 
-ORGANISM = {9606: "species:human"}
+ORGANISM = {"file": {9606: "species:human"}}
 
 
 def add_proteins(network,
@@ -16,7 +16,8 @@ def add_proteins(network,
 
     nodes_to_add = set()
     for row in download.tabular_txt(
-            MINT.format(organism=ORGANISM.get(taxon_identifier, "*")),
+            MINT_INTERACTIONS.format(
+                organism=ORGANISM["file"].get(taxon_identifier, "*")),
             delimiter="\t",
             usecols=[
                 0,
@@ -77,16 +78,17 @@ def add_proteins(network,
     network.add_nodes_from(nodes_to_add)
 
 
-def add_interactions(network,
-                     interaction_detection_methods=[],
-                     interaction_types=[],
-                     mi_score=0.0,
-                     taxon_identifier=9606):
+def add_protein_protein_interactions(network,
+                                     interaction_detection_methods=[],
+                                     interaction_types=[],
+                                     mi_score=0.0,
+                                     taxon_identifier=9606):
     primary_accession = uniprot.get_primary_accession(taxon_identifier,
                                                       network)
 
     for row in download.tabular_txt(
-            MINT.format(organism=ORGANISM.get(taxon_identifier, "*")),
+            MINT_INTERACTIONS.format(
+                organism=ORGANISM["file"].get(taxon_identifier, "*")),
             delimiter="\t",
             header=0,
             usecols=[

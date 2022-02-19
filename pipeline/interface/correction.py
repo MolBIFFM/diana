@@ -1,4 +1,4 @@
-from enrichment import correction
+from analysis import correction
 
 CORRECTION = {
     "Benjamini-Hochberg": correction.benjamini_hochberg,
