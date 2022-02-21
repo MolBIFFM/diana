@@ -647,13 +647,10 @@ def main():
         default=os.cpu_count())
 
     args = parser.parse_args()
-    """
+
     with concurrent.futures.ProcessPoolExecutor(
             max_workers=args.processes) as executor:
         executor.map(process_configuration_file, args.configurations)
-    """
-    for configuration in args.configurations:
-        process_configuration_file(configuration)
 
 
 if __name__ == "__main__":
