@@ -3,14 +3,12 @@ from download import download
 UNIPROT_SWISSPROT = "https://ftp.uniprot.org/pub/databases/uniprot/current_release/knowledgebase/complete/uniprot_sprot.dat.gz"
 UNIPROT_ID_MAP = "https://ftp.uniprot.org/pub/databases/uniprot/current_release/knowledgebase/idmapping/by_organism/{organism}_idmapping.dat.gz"
 
-ORGANISM = {
-    9606: "HUMAN_9606",
-}
+ORGANISM = {"file": {9606: "HUMAN_9606"}}
 
 
-def get_swissprot_entries():
+def get_swissprot_entries(taxon_identifier=9606):
     accessions, entry_gene_name, entry_protein_name = [], {}, {}
-    rec_name, taxon_identifier = False, 0
+    rec_name, tax_id = False, 0
     for line in download.txt(UNIPROT_SWISSPROT):
         if not line.strip():
             continue
@@ -68,29 +66,28 @@ def get_swissprot_entries():
                     maxsplit=1)[1].split(";")[0].split("=")[0] == "NCBI_TaxID":
                 if (line.split(maxsplit=1)[1].split(";")[0].split("=")
                     [1].split("{")[0].isnumeric()):
-                    taxon_identifier = int(
+                    tax_id = int(
                         line.split(maxsplit=1)[1].split(";")[0].split("=")
                         [1].split("{")[0])
 
         elif line == "//":
-            yield (
-                accessions,
-                entry_gene_name.get("Name", "NA"),
-                entry_protein_name.get("Full", "NA"),
-                taxon_identifier,
-            )
+            if tax_id == taxon_identifier:
+                yield (
+                    accessions,
+                    entry_gene_name.get("Name", "NA"),
+                    entry_protein_name.get("Full", "NA"),
+                )
 
             accessions.clear()
             entry_gene_name.clear()
             entry_protein_name.clear()
-            rec_name, taxon_identifier = False, 0
+            rec_name, tax_id = False, 0
 
 
 def get_primary_accession(taxon_identifier=9606, proteins=set()):
     primary_accession = {}
-    for accessions, _, _, taxon in get_swissprot_entries():
-        if taxon == taxon_identifier and (not proteins
-                                          or accessions[0] in proteins):
+    for accessions, _, _ in get_swissprot_entries(taxon_identifier):
+        if not proteins or accessions[0] in proteins:
             for i, accession in enumerate(accessions):
                 if i > 0:
                     if accession not in primary_accession:
@@ -100,16 +97,16 @@ def get_primary_accession(taxon_identifier=9606, proteins=set()):
     return primary_accession
 
 
-def get_UNIPROT_ID_MAP(database,
+def get_uniprot_id_map(database,
                        taxon_identifier=9606,
                        proteins=set(),
                        identifier_type=str):
-    if taxon_identifier not in ORGANISM:
+    if taxon_identifier not in ORGANISM["file"]:
         return {}
 
     uniprot = {}
     for row in download.tabular_txt(
-            UNIPROT_ID_MAP.format(organism=ORGANISM[taxon_identifier]),
+            UNIPROT_ID_MAP.format(organism=ORGANISM["file"][taxon_identifier]),
             delimiter="\t",
             usecols=[0, 1, 2]):
         if row[1] == database and (not proteins or row[0] in proteins):

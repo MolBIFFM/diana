@@ -67,11 +67,13 @@ def process_configuration(configurations, basename):
                     ),
                     measurement_conversion=conversion.LOGARITHM[entry.get(
                         "logarithm")],
-                )
+                    taxon_identifier=entry.get("taxon identifier", 9606))
 
             elif "accessions" in entry:
                 protein_protein_interaction_network.add_proteins_from(
-                    network, proteins=entry["accessions"])
+                    network,
+                    proteins=entry["accessions"],
+                    taxon_identifier=entry.get("taxon identifier", 9606))
 
         for entry in configuration.get("networks", []):
             network = nx.algorithms.operators.binary.compose(
@@ -217,7 +219,13 @@ def process_configuration(configurations, basename):
                 k += 1
 
             if k:
-                protein_protein_interaction_network.annotate_proteins(network)
+                for taxon_identifier in (
+                        configuration["protein-protein interactions"]
+                    [database].get("taxon_identifier", 9606) for database in
+                    {"BioGRID", "IntAct", "MINT", "Reactome", "STRING"}):
+                    protein_protein_interaction_network.annotate_proteins(
+                        network)
+
                 protein_protein_interaction_network.remove_unannotated_proteins(
                     network)
 
@@ -639,10 +647,13 @@ def main():
         default=os.cpu_count())
 
     args = parser.parse_args()
-
+    """
     with concurrent.futures.ProcessPoolExecutor(
             max_workers=args.processes) as executor:
         executor.map(process_configuration_file, args.configurations)
+    """
+    for configuration in args.configurations:
+        process_configuration_file(configuration)
 
 
 if __name__ == "__main__":

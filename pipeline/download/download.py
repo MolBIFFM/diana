@@ -111,10 +111,11 @@ def tabular_txt(url,
                 usecols=[]):
     local_file_name = download_decompressed_file(url, file_from_zip_archive)
 
-    if os.path.splitext(local_file_name)[1] == ".csv":
-        delimiter = ","
-    elif os.path.splitext(local_file_name)[1] == ".tsv":
-        delimiter = "\t"
+    if not delimiter:
+        if os.path.splitext(local_file_name)[1] == ".csv":
+            delimiter = ","
+        elif os.path.splitext(local_file_name)[1] == ".tsv":
+            delimiter = "\t"
 
     for chunk in pd.read_csv(
             local_file_name,

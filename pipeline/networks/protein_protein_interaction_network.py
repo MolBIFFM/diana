@@ -11,9 +11,9 @@ from analysis import correction, modularization, test
 from databases import uniprot
 
 
-def annotate_proteins(network):
-    for accessions, gene_name, protein_name, _ in uniprot.get_swissprot_entries(
-    ):
+def annotate_proteins(network, taxon_identifier=9606):
+    for accessions, gene_name, protein_name in uniprot.get_swissprot_entries(
+            taxon_identifier):
         for protein in network:
             if protein.split("-")[0] == accessions[0]:
                 network.nodes[protein]["gene"] = gene_name
@@ -28,9 +28,9 @@ def remove_unannotated_proteins(network):
 
 
 def add_genes_from(network, genes, taxon_identifier=9606):
-    for accessions, gene_name, protein_name, taxon in uniprot.get_swissprot_entries(
-    ):
-        if taxon == taxon_identifier and gene_name in genes:
+    for accessions, gene_name, protein_name in uniprot.get_swissprot_entries(
+            taxon_identifier):
+        if gene_name in genes:
             network.add_node(accessions[0])
             network.nodes[accessions[0]]["gene"] = gene_name
             network.nodes[accessions[0]]["protein"] = protein_name
@@ -82,7 +82,7 @@ def add_genes_from_table(
     add_genes_from(network, genes, taxon_identifier)
 
 
-def add_proteins_from(network, proteins):
+def add_proteins_from(network, proteins, taxon_identifier):
     proteins_isoform = {}
 
     for protein_accession in proteins:
@@ -98,8 +98,8 @@ def add_proteins_from(network, proteins):
         proteins_isoform[protein].add(isoform)
 
     primary_accession = {}
-    for accessions, gene_name, protein_name, _ in uniprot.get_swissprot_entries(
-    ):
+    for accessions, gene_name, protein_name in uniprot.get_swissprot_entries(
+            taxon_identifier):
         for i, accession in enumerate(accessions):
             if accession in proteins_isoform:
                 for isoform in proteins_isoform[accession]:
@@ -124,23 +124,22 @@ def add_proteins_from(network, proteins):
     return primary_accession
 
 
-def add_proteins_from_table(
-    network,
-    file_name,
-    protein_accession_column,
-    protein_accession_format=re.compile("^(.+?)$"),
-    time=0,
-    modification="",
-    position_column="",
-    position_format=re.compile("^(.+?)$"),
-    replicates=[],
-    sheet_name=0,
-    header=0,
-    num_sites=100,
-    num_replicates=1,
-    replicate_combination=statistics.mean,
-    measurement_conversion=math.log2,
-):
+def add_proteins_from_table(network,
+                            file_name,
+                            protein_accession_column,
+                            protein_accession_format=re.compile("^(.+?)$"),
+                            time=0,
+                            modification="",
+                            position_column="",
+                            position_format=re.compile("^(.+?)$"),
+                            replicates=[],
+                            sheet_name=0,
+                            header=0,
+                            num_sites=100,
+                            num_replicates=1,
+                            replicate_combination=statistics.mean,
+                            measurement_conversion=math.log2,
+                            taxon_identifier=9606):
     if os.path.splitext(file_name)[1].lstrip(".") in (
             "xls",
             "xlsx",
@@ -231,7 +230,8 @@ def add_proteins_from_table(
                 if protein_accession not in proteins:
                     proteins[protein_accession] = []
 
-    primary_accession = add_proteins_from(network, proteins.keys())
+    primary_accession = add_proteins_from(network, proteins.keys(),
+                                          taxon_identifier)
 
     for protein in list(proteins):
         if protein in primary_accession:

@@ -6,11 +6,11 @@ REACTOME_PATHWAYS = "https://reactome.org/download/current/ReactomePathways.txt"
 REACTOME_PATHWAY_RELATIONS = "https://reactome.org/download/current/ReactomePathwaysRelation.txt"
 
 ORGANISM = {
-    "files": {
-        9606: "homo_sapiens",
-    },
     "data": {
         9606: "Homo sapiens"
+    },
+    "file": {
+        9606: "homo_sapiens",
     }
 }
 
