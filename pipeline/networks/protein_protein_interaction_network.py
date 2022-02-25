@@ -8,7 +8,11 @@ import networkx as nx
 import pandas as pd
 
 from analysis import correction, modularization, test
-from databases import uniprot
+from databases import biogrid, intact, mint, reactome, string, uniprot
+
+
+def get_protein_protein_interaction_network():
+    return nx.Graph()
 
 
 def annotate_proteins(network, taxon_identifier=9606):
@@ -82,7 +86,7 @@ def add_genes_from_table(
     add_genes_from(network, genes, taxon_identifier)
 
 
-def add_proteins_from(network, proteins, taxon_identifier):
+def add_proteins_from(network, proteins):
     proteins_isoform = {}
 
     for protein_accession in proteins:
@@ -98,8 +102,7 @@ def add_proteins_from(network, proteins, taxon_identifier):
         proteins_isoform[protein].add(isoform)
 
     primary_accession = {}
-    for accessions, gene_name, protein_name in uniprot.get_swissprot_entries(
-            taxon_identifier):
+    for accessions, gene_name, protein_name in uniprot.get_swissprot_entries():
         for i, accession in enumerate(accessions):
             if accession in proteins_isoform:
                 for isoform in proteins_isoform[accession]:
@@ -138,8 +141,7 @@ def add_proteins_from_table(network,
                             num_sites=100,
                             num_replicates=1,
                             replicate_combination=statistics.mean,
-                            measurement_conversion=math.log2,
-                            taxon_identifier=9606):
+                            measurement_conversion=math.log2):
     if os.path.splitext(file_name)[1].lstrip(".") in (
             "xls",
             "xlsx",
@@ -230,8 +232,7 @@ def add_proteins_from_table(network,
                 if protein_accession not in proteins:
                     proteins[protein_accession] = []
 
-    primary_accession = add_proteins_from(network, proteins.keys(),
-                                          taxon_identifier)
+    primary_accession = add_proteins_from(network, proteins.keys())
 
     for protein in list(proteins):
         if protein in primary_accession:
@@ -281,19 +282,6 @@ def get_sites(network, time, modification):
         for change in network.nodes[protein]
         if len(change.split(" ")) == 3 and change.split(" ")[0] == str(time)
         and change.split(" ")[1] == modification)
-
-
-def set_post_translational_modification(network):
-    for time in get_times(network):
-        for protein in network:
-            network.nodes[protein]["post-translational modification {}".format(
-                time)] = " ".join(
-                    sorted(
-                        set(
-                            change.split(" ")[1]
-                            for change in network.nodes[protein]
-                            if len(change.split(" ")) == 3
-                            and change.split(" ")[0] == str(time))))
 
 
 def get_changes(network,
@@ -379,6 +367,19 @@ def get_quantile(
 ):
     changes = get_changes(network, time, modification, site_combination)
     return len([c for c in changes if c <= change]) / len(changes)
+
+
+def set_post_translational_modification(network):
+    for time in get_times(network):
+        for protein in network:
+            network.nodes[protein]["post-translational modification {}".format(
+                time)] = " ".join(
+                    sorted(
+                        set(
+                            change.split(" ")[1]
+                            for change in network.nodes[protein]
+                            if len(change.split(" ")) == 3
+                            and change.split(" ")[0] == str(time))))
 
 
 def set_changes(
@@ -480,6 +481,226 @@ def set_changes(
                 network.nodes[protein]["change {}".format(time)] = "mid"
 
 
+def add_proteins_from_biogrid(network,
+                              experimental_system=[],
+                              experimental_system_type=[],
+                              interaction_throughput=[],
+                              multi_validated_physical=False,
+                              taxon_identifier=9606):
+    nodes_to_add = set()
+    for interactor_a, interactor_b in biogrid.get_proteins(
+            experimental_system, experimental_system_type,
+            interaction_throughput, multi_validated_physical,
+            taxon_identifier):
+        if (interactor_a in network and interactor_b not in network):
+            nodes_to_add.add(interactor_b)
+
+        elif (interactor_a not in network and interactor_b in network):
+            nodes_to_add.add(interactor_a)
+
+    network.add_nodes_from(nodes_to_add)
+
+
+def add_protein_protein_interactions_from_biogrid(
+    network,
+    experimental_system=[],
+    experimental_system_type=[],
+    interaction_throughput=[],
+    multi_validated_physical=False,
+    taxon_identifier=9606,
+):
+    for interactor_a, interactor_b in biogrid.get_protein_protein_interactions(
+            experimental_system, experimental_system_type,
+            interaction_throughput, multi_validated_physical,
+            taxon_identifier):
+        if (interactor_a in network and interactor_b in network
+                and interactor_a != interactor_b):
+            network.add_edge(interactor_a, interactor_b)
+            network.edges[interactor_a, interactor_b]["BioGRID"] = 1.0
+
+
+def add_proteins_from_intact(network,
+                             interaction_detection_methods=[],
+                             interaction_types=[],
+                             mi_score=0.0,
+                             taxon_identifier=9606):
+    nodes_to_add = set()
+    for interactor_a, interactor_b in intact.get_proteins(
+            interaction_detection_methods, interaction_types, mi_score,
+            taxon_identifier):
+        if (interactor_a in network and interactor_b not in network):
+            nodes_to_add.add(interactor_b)
+
+        elif (interactor_a not in network and interactor_b in network):
+            nodes_to_add.add(interactor_a)
+
+    network.add_nodes_from(nodes_to_add)
+
+
+def add_protein_protein_interactions_from_intact(
+        network,
+        interaction_detection_methods=[],
+        interaction_types=[],
+        mi_score=0.0,
+        taxon_identifier=9606):
+
+    for interactor_a, interactor_b, score in intact.get_protein_protein_interactions(
+            interaction_detection_methods, interaction_types, mi_score,
+            taxon_identifier):
+        if (interactor_a in network and interactor_b in network
+                and interactor_a != interactor_b):
+            if network.has_edge(interactor_a, interactor_b):
+                network.edges[interactor_a, interactor_b]["IntAct"] = max(
+                    score, network.edges[interactor_a,
+                                         interactor_b].get("IntAct", 0.0))
+            else:
+                network.add_edge(interactor_a, interactor_b)
+                network.edges[interactor_a, interactor_b]["IntAct"] = score
+
+
+def add_proteins_from_mint(network,
+                           interaction_detection_methods=[],
+                           interaction_types=[],
+                           mi_score=0.0,
+                           taxon_identifier=9606):
+
+    nodes_to_add = set()
+    for interactor_a, interactor_b in mint.get_proteins(
+            interaction_detection_methods, interaction_types, mi_score,
+            taxon_identifier):
+        if (interactor_a in network and interactor_b not in network):
+            nodes_to_add.add(interactor_b)
+
+        elif (interactor_a not in network and interactor_b in network):
+            nodes_to_add.add(interactor_a)
+
+    network.add_nodes_from(nodes_to_add)
+
+
+def add_protein_protein_interactions_from_mint(
+        network,
+        interaction_detection_methods=[],
+        interaction_types=[],
+        mi_score=0.0,
+        taxon_identifier=9606):
+
+    for interactor_a, interactor_b, score in mint.get_protein_protein_interactions(
+            interaction_detection_methods, interaction_types, mi_score,
+            taxon_identifier):
+        if (interactor_a in network and interactor_b in network
+                and interactor_a != interactor_b):
+            if network.has_edge(interactor_a, interactor_b):
+                network.edges[interactor_a, interactor_b]["MINT"] = max(
+                    score, network.edges[interactor_a,
+                                         interactor_b].get("MINT", 0.0))
+            else:
+                network.add_edge(interactor_a, interactor_b)
+                network.edges[interactor_a, interactor_b]["MINT"] = score
+
+
+def add_proteins_from_reactome(network,
+                               interaction_type=[],
+                               interaction_context=[],
+                               taxon_identifier=9606):
+    nodes_to_add = set()
+
+    for interactor_a, interactor_b in reactome.get_proteins(
+            interaction_type, interaction_context, taxon_identifier):
+        if (interactor_a in network and interactor_b not in network):
+            nodes_to_add.add(interactor_b)
+
+        elif (interactor_a not in network and interactor_b in network):
+            nodes_to_add.add(interactor_a)
+
+    network.add_nodes_from(nodes_to_add)
+
+
+def add_protein_protein_interactions_from_reactome(
+    network,
+    interaction_type=[],
+    interaction_context=[],
+    taxon_identifier=9606,
+):
+    for interactor_a, interactor_b in reactome.get_protein_protein_interactions(
+            interaction_type, interaction_context, taxon_identifier):
+        if (interactor_a in network and interactor_b in network
+                and interactor_a != interactor_b):
+            network.add_edge(interactor_a, interactor_b)
+            network.edges[interactor_a, interactor_b]["Reactome"] = 0.5
+
+
+def add_proteins_from_string(network,
+                             neighborhood=0.0,
+                             neighborhood_transferred=0.0,
+                             fusion=0.0,
+                             cooccurence=0.0,
+                             homology=0.0,
+                             coexpression=0.0,
+                             coexpression_transferred=0.0,
+                             experiments=0.0,
+                             experiments_transferred=0.0,
+                             database=0.0,
+                             database_transferred=0.0,
+                             textmining=0.0,
+                             textmining_transferred=0.0,
+                             combined_score=0.0,
+                             physical=False,
+                             taxon_identifier=9606,
+                             version=11.5):
+    nodes_to_add = set()
+
+    for interactor_a, interactor_b in string.get_proteins(
+            neighborhood, neighborhood_transferred, fusion, cooccurence,
+            homology, coexpression, coexpression_transferred, experiments,
+            experiments_transferred, database, database_transferred,
+            textmining, textmining_transferred, combined_score, physical,
+            taxon_identifier, version):
+        if (interactor_a in network and interactor_b not in network):
+            nodes_to_add.add(interactor_b)
+
+        elif (interactor_a not in network and interactor_b in network):
+            nodes_to_add.add(interactor_a)
+
+    network.add_nodes_from(nodes_to_add)
+
+
+def add_protein_protein_interactions_from_string(network,
+                                                 neighborhood=0.0,
+                                                 neighborhood_transferred=0.0,
+                                                 fusion=0.0,
+                                                 cooccurence=0.0,
+                                                 homology=0.0,
+                                                 coexpression=0.0,
+                                                 coexpression_transferred=0.0,
+                                                 experiments=0.0,
+                                                 experiments_transferred=0.0,
+                                                 database=0.0,
+                                                 database_transferred=0.0,
+                                                 textmining=0.0,
+                                                 textmining_transferred=0.0,
+                                                 combined_score=0.0,
+                                                 physical=False,
+                                                 taxon_identifier=9606,
+                                                 version=11.5):
+    for interactor_a, interactor_b, score in string.get_protein_protein_interactions(
+            neighborhood, neighborhood_transferred, fusion, cooccurence,
+            homology, coexpression, coexpression_transferred, experiments,
+            experiments_transferred, database, database_transferred,
+            textmining, textmining_transferred, combined_score, physical,
+            taxon_identifier, version):
+        if (interactor_a in network and interactor_b in network
+                and interactor_a != interactor_b):
+            if network.has_edge(interactor_a, interactor_b):
+                network.edges[interactor_a, interactor_b]["STRING"] = max(
+                    score,
+                    network.edges[interactor_a,
+                                  interactor_b].get("STRING", 0.0),
+                )
+            else:
+                network.add_edge(interactor_a, interactor_b)
+                network.edges[interactor_a, interactor_b]["STRING"] = (score)
+
+
 def get_databases(network):
     return tuple(
         sorted(
@@ -533,7 +754,7 @@ def get_modules(network,
         if not subdivision:
             break
 
-    return communities
+    return [network.subgraph(community) for community in communities]
 
 
 def get_proteins(
@@ -556,10 +777,9 @@ def get_proteins(
     return proteins
 
 
-def get_change_enriched_modules(
+def get_change_enrichment(
     network,
     module_size,
-    p=0.05,
     changes=(-1.0, 1.0),
     get_range=lambda time, modification, changes, site_combination: changes,
     site_combination=lambda sites: max(sites, key=abs),
@@ -570,29 +790,22 @@ def get_change_enriched_modules(
     test=test.hypergeometric,
     correction=correction.benjamini_hochberg,
 ):
-    modules = {
-        i: module
-        for i, module in enumerate(
-            get_modules(network,
-                        module_size,
-                        module_size_combination,
-                        algorithm=algorithm,
-                        resolution=resolution,
-                        weight=weight))
-    }
+    modules = get_modules(network,
+                          module_size,
+                          module_size_combination,
+                          algorithm=algorithm,
+                          resolution=resolution,
+                          weight=weight)
 
     p_values = {}
-    adjusted_p_values = {}
-    significant_modules = {}
-
     for time in get_times(network):
         for modification in get_post_translational_modifications(
                 network, time):
-            M = len(get_proteins(network, time, modification))
-            N = [
-                len(
-                    get_proteins(network.subgraph(modules[i]), time,
-                                 modification)) for i in modules
+            modified_proteins = len(get_proteins(network, time, modification))
+
+            modified_module_proteins = [
+                len(get_proteins(module, time, modification))
+                for module in modules
             ]
 
             mid_range = get_range(
@@ -602,57 +815,48 @@ def get_change_enriched_modules(
                 site_combination,
             )
 
-            n = len(
+            target_proteins = len(
                 get_proteins(
                     network,
                     time,
                     modification,
                     site_combination=site_combination,
                     combined_change_filter=lambda combined_change:
-                    combined_change <= mid_range[0],
-                )) + len(
-                    get_proteins(
-                        network,
-                        time,
-                        modification,
-                        site_combination=site_combination,
-                        combined_change_filter=lambda combined_change:
-                        combined_change >= mid_range[1],
-                    ))
+                    combined_change <= mid_range[
+                        0] or combined_change >= mid_range[1],
+                ))
 
-            k = [
+            target_module_proteins = [
                 len(
                     get_proteins(
-                        network.subgraph(modules[i]),
+                        module,
                         time,
                         modification,
                         site_combination=site_combination,
                         combined_change_filter=lambda combined_change:
-                        combined_change <= mid_range[0],
-                    )) + len(
-                        get_proteins(
-                            network.subgraph(modules[i]),
-                            time,
-                            modification,
-                            site_combination=site_combination,
-                            combined_change_filter=lambda combined_change:
-                            combined_change >= mid_range[1],
-                        )) for i in modules
+                        combined_change <= mid_range[
+                            0] or combined_change >= mid_range[1],
+                    )) for module in modules
             ]
 
-            p_values = {i: test(k[i], M, n, N[i]) for i in range(len(modules))}
+            p_values.update({(module, time, modification):
+                             test(target_module_proteins[i], modified_proteins,
+                                  target_proteins, modified_module_proteins[i])
+                             for i, module in enumerate(modules)})
 
-            for module, p_value in correction(p_values).items():
-                if p_value <= p:
-                    if time not in adjusted_p_values:
-                        adjusted_p_values[time] = {}
-                    if modification not in adjusted_p_values[time]:
-                        adjusted_p_values[time][modification] = {}
+    p_values = correction(p_values)
 
-                    significant_modules[module] = modules[module]
-                    adjusted_p_values[time][modification][module] = p_value
-
-    return significant_modules, adjusted_p_values
+    return {
+        module: {
+            time: {
+                modification: p_values[(module, time, modification)]
+                for modification in get_post_translational_modifications(
+                    network)
+            }
+            for time in get_times(network)
+        }
+        for module in modules
+    }
 
 
 def export(network, basename, suffix=""):

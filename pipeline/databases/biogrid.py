@@ -11,8 +11,7 @@ BIOGRID_MV_PHYSICAL = r"BIOGRID-MV-Physical-[0-9]\.[0-9]\.[0-9]{3}\.tab3\.txt"
 ORGANISM = {"file": {9606: "Homo_sapiens"}}
 
 
-def add_proteins(
-    network,
+def get_proteins(
     experimental_system=[],
     experimental_system_type=[],
     interaction_throughput=[],
@@ -21,7 +20,6 @@ def add_proteins(
 ):
     primary_accession = uniprot.get_primary_accession(taxon_identifier)
 
-    nodes_to_add = set()
     for row in download.tabular_txt(
             BIOGRID_MV_PHYSICAL_ZIP_ARCHIVE
             if multi_validated_physical else BIOGRID_ZIP_ARCHIVE,
@@ -69,27 +67,17 @@ def add_proteins(
                             interactor_a, {interactor_a}):
                         for primary_interactor_b in primary_accession.get(
                                 interactor_b, {interactor_b}):
-                            if (primary_interactor_a in network
-                                    and primary_interactor_b not in network):
-                                nodes_to_add.add(primary_interactor_b)
-
-                            elif (primary_interactor_a not in network
-                                  and primary_interactor_b in network):
-                                nodes_to_add.add(primary_interactor_a)
-
-    network.add_nodes_from(nodes_to_add)
+                            yield (primary_interactor_a, primary_interactor_b)
 
 
-def add_protein_protein_interactions(
-    network,
+def get_protein_protein_interactions(
     experimental_system=[],
     experimental_system_type=[],
     interaction_throughput=[],
     multi_validated_physical=False,
     taxon_identifier=9606,
 ):
-    primary_accession = uniprot.get_primary_accession(taxon_identifier,
-                                                      network)
+    primary_accession = uniprot.get_primary_accession(taxon_identifier)
 
     for row in download.tabular_txt(
             BIOGRID_MV_PHYSICAL_ZIP_ARCHIVE
@@ -134,12 +122,4 @@ def add_protein_protein_interactions(
                             interactor_a, {interactor_a}):
                         for primary_interactor_b in primary_accession.get(
                                 interactor_b, {interactor_b}):
-                            if (primary_interactor_a in network
-                                    and primary_interactor_b in network
-                                    and primary_interactor_a !=
-                                    primary_interactor_b):
-                                network.add_edge(primary_interactor_a,
-                                                 primary_interactor_b)
-                                network.edges[
-                                    primary_interactor_a,
-                                    primary_interactor_b]["BioGRID"] = 1.0
+                            yield (primary_interactor_a, primary_interactor_b)

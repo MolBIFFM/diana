@@ -6,14 +6,12 @@ INTACT_ZIP_ARCHIVE = "ftp://ftp.ebi.ac.uk/pub/databases/intact/current/psimitab/
 INTACT_INTERACTIONS = "intact.txt"
 
 
-def add_proteins(network,
-                 interaction_detection_methods=[],
+def get_proteins(interaction_detection_methods=[],
                  interaction_types=[],
                  mi_score=0.0,
                  taxon_identifier=9606):
     primary_accession = uniprot.get_primary_accession(taxon_identifier)
 
-    nodes_to_add = set()
     for row in download.tabular_txt(
             INTACT_ZIP_ARCHIVE,
             file_from_zip_archive=INTACT_INTERACTIONS,
@@ -71,24 +69,14 @@ def add_proteins(network,
                             interactor_a, {interactor_a}):
                         for primary_interactor_b in primary_accession.get(
                                 interactor_b, {interactor_b}):
-                            if (primary_interactor_a in network
-                                    and primary_interactor_b not in network):
-                                nodes_to_add.add(primary_interactor_b)
-
-                            elif (primary_interactor_a not in network
-                                  and primary_interactor_b in network):
-                                nodes_to_add.add(primary_interactor_a)
-
-    network.add_nodes_from(nodes_to_add)
+                            yield (primary_interactor_a, primary_interactor_b)
 
 
-def add_protein_protein_interactions(network,
-                                     interaction_detection_methods=[],
+def get_protein_protein_interactions(interaction_detection_methods=[],
                                      interaction_types=[],
                                      mi_score=0.0,
                                      taxon_identifier=9606):
-    primary_accession = uniprot.get_primary_accession(taxon_identifier,
-                                                      network)
+    primary_accession = uniprot.get_primary_accession(taxon_identifier)
 
     for row in download.tabular_txt(
             INTACT_ZIP_ARCHIVE,
@@ -140,25 +128,5 @@ def add_protein_protein_interactions(network,
                             interactor_a, {interactor_a}):
                         for primary_interactor_b in primary_accession.get(
                                 interactor_b, {interactor_b}):
-                            if (primary_interactor_a in network
-                                    and primary_interactor_b in network
-                                    and primary_interactor_a !=
-                                    primary_interactor_b):
-                                if network.has_edge(primary_interactor_a,
-                                                    primary_interactor_b):
-                                    network.edges[
-                                        primary_interactor_a,
-                                        primary_interactor_b]["IntAct"] = max(
-                                            float(score[0]),
-                                            network.edges[
-                                                primary_interactor_a,
-                                                primary_interactor_b].get(
-                                                    "IntAct", 0.0),
-                                        )
-                                else:
-                                    network.add_edge(primary_interactor_a,
-                                                     primary_interactor_b)
-                                    network.edges[primary_interactor_a,
-                                                  primary_interactor_b][
-                                                      "IntAct"] = float(
-                                                          score[0])
+                            yield (primary_interactor_a, primary_interactor_b,
+                                   float(score[0]))

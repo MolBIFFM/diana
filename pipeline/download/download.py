@@ -59,7 +59,7 @@ def decompress_zip_file(compressed_file_name, file_from_zip_archive=None):
     return decompressed_file_name
 
 
-def download_decompressed_file(url, file_from_zip_archive=None):
+def txt(url, file_from_zip_archive=None):
     if not os.path.exists(
             os.path.join(tempfile.gettempdir(), "{}-{}".format(
                 SUBDIRECTORY_PREFIX, os.getpid()))):
@@ -83,12 +83,6 @@ def download_decompressed_file(url, file_from_zip_archive=None):
         local_file_name = decompress_zip_file(local_file_name,
                                               file_from_zip_archive)
 
-    return local_file_name
-
-
-def txt(url, file_from_zip_archive=None):
-    local_file_name = download_decompressed_file(url, file_from_zip_archive)
-
     with open(local_file_name, buffering=1024) as local_file:
         for line in local_file:
             yield line.rstrip("\n")
@@ -109,7 +103,28 @@ def tabular_txt(url,
                 header=None,
                 skiprows=0,
                 usecols=[]):
-    local_file_name = download_decompressed_file(url, file_from_zip_archive)
+    if not os.path.exists(
+            os.path.join(tempfile.gettempdir(), "{}-{}".format(
+                SUBDIRECTORY_PREFIX, os.getpid()))):
+        os.mkdir(
+            os.path.join(tempfile.gettempdir(),
+                         "{}-{}".format(SUBDIRECTORY_PREFIX, os.getpid())))
+
+    local_file_name = os.path.join(
+        tempfile.gettempdir(),
+        "{}-{}".format(SUBDIRECTORY_PREFIX, os.getpid()),
+        os.path.split(urllib.parse.urlparse(url).path)[1],
+    )
+
+    if not (os.path.exists(local_file_name)):
+        download_file(url, local_file_name)
+
+    file_name_extension = os.path.splitext(local_file_name)[1]
+    if file_name_extension == ".gz":
+        local_file_name = decompress_gzip_file(local_file_name)
+    elif file_name_extension == ".zip":
+        local_file_name = decompress_zip_file(local_file_name,
+                                              file_from_zip_archive)
 
     if not delimiter:
         if os.path.splitext(local_file_name)[1] == ".csv":
