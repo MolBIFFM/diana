@@ -302,24 +302,11 @@ def get_changes(network,
     return changes
 
 
-def get_standard_score_range(
+def get_standard_score_of_change(
         network,
-        time,
-        modification,
-        thresholds,
-        site_combination=lambda sites: max(sites, key=abs),
-):
-    changes = get_changes(network, time, modification, site_combination)
-    mean = statistics.mean(changes)
-    stdev = statistics.stdev(changes, xbar=mean)
-    return (thresholds[0] * stdev + mean, thresholds[1] * stdev + mean)
-
-
-def get_standard_score(
-        network,
-        time,
-        modification,
         change,
+        time,
+        modification,
         site_combination=lambda sites: max(sites, key=abs),
 ):
     changes = get_changes(network, time, modification, site_combination)
@@ -328,45 +315,36 @@ def get_standard_score(
     return (change - mean) / stdev
 
 
-def get_quantile_range(
+def get_change_of_standard_score(
+    network,
+    standard_score,
+    time,
+    modification,
+    site_combination=lambda sites: max(sites, key=abs)):
+    changes = get_changes(network, time, modification, site_combination)
+    mean = statistics.mean(changes)
+    stdev = statistics.stdev(changes, xbar=mean)
+    return standard_score * stdev + mean
+
+
+def get_quantile_of_change(
         network,
-        time,
-        modification,
-        thresholds,
-        site_combination=lambda sites: max(sites, key=abs),
-):
-    changes = sorted(get_changes(network, time, modification,
-                                 site_combination))
-    quantile_range = [0.0, 0.0]
-
-    for i in range(len(changes)):
-        if changes[i] == changes[i + 1]:
-            continue
-
-        if i / len(changes) > thresholds[0]:
-            quantile_range[0] = changes[i - 1]
-            break
-
-    for i in range(len(changes) - 1, -1, -1):
-        if changes[i] == changes[i - 1]:
-            continue
-
-        if (len(changes) - i) / len(changes) > 1.0 - thresholds[1]:
-            quantile_range[1] = changes[i + 1]
-            break
-
-    return tuple(quantile_range)
-
-
-def get_quantile(
-        network,
-        time,
-        modification,
         change,
+        time,
+        modification,
         site_combination=lambda sites: max(sites, key=abs),
 ):
     changes = get_changes(network, time, modification, site_combination)
     return len([c for c in changes if c <= change]) / len(changes)
+
+
+def get_change_of_quantile(network,
+                           quantile,
+                           time,
+                           modification,
+                           site_combination=lambda sites: max(sites, key=abs)):
+    changes = get_changes(network, time, modification, site_combination)
+    return sorted(changes)[math.floor(quantile * (len(changes) - 1))]
 
 
 def set_post_translational_modification(network):
@@ -386,7 +364,8 @@ def set_changes(
     network,
     site_combination=lambda sites: max(sites, key=abs),
     changes=(-1.0, 1.0),
-    get_range=lambda time, modification, changes, site_combination: changes,
+    get_change=lambda network, change, time, modification, site_combination:
+    change,
 ):
     times = get_times(network)
     modifications = {
@@ -394,14 +373,22 @@ def set_changes(
         for time in times
     }
 
-    mid_range = {
+    change_range = {
         time: {
-            modification: get_range(
+            modification: (get_change(
+                network,
+                changes[0],
                 time,
                 modification,
-                changes,
                 site_combination,
-            )
+            ),
+                           get_change(
+                               network,
+                               changes[1],
+                               time,
+                               modification,
+                               site_combination,
+                           ))
             for modification in modifications[time]
         }
         for time in times
@@ -421,19 +408,19 @@ def set_changes(
                 if sites:
                     combined_change = site_combination(sites)
 
-                    if combined_change >= 1.0 * mid_range[time][modification][
-                            1]:
+                    if combined_change >= 1.0 * change_range[time][
+                            modification][1]:
                         classification[modification] = "up"
-                    elif 1.0 * mid_range[time][modification][
-                            1] > combined_change >= 0.5 * mid_range[time][
+                    elif 1.0 * change_range[time][modification][
+                            1] > combined_change >= 0.5 * change_range[time][
                                 modification][1]:
                         classification[modification] = "mid_up"
-                    elif 0.5 * mid_range[time][modification][
-                            1] > combined_change > 0.5 * mid_range[time][
+                    elif 0.5 * change_range[time][modification][
+                            1] > combined_change > 0.5 * change_range[time][
                                 modification][0]:
                         classification[modification] = "mid"
-                    elif 0.5 * mid_range[time][modification][
-                            0] >= combined_change > 1.0 * mid_range[time][
+                    elif 0.5 * change_range[time][modification][
+                            0] >= combined_change > 1.0 * change_range[time][
                                 modification][0]:
                         classification[modification] = "mid_down"
                     else:
@@ -781,7 +768,8 @@ def get_change_enrichment(
     network,
     module_size,
     changes=(-1.0, 1.0),
-    get_range=lambda time, modification, changes, site_combination: changes,
+    get_change=lambda network, change, time, modification, site_combination:
+    change,
     site_combination=lambda sites: max(sites, key=abs),
     module_size_combination=statistics.mean,
     algorithm=modularization.louvain,
@@ -808,12 +796,10 @@ def get_change_enrichment(
                 for module in modules
             ]
 
-            mid_range = get_range(
-                time,
-                modification,
-                changes,
-                site_combination,
-            )
+            change_range = (get_change(network, changes[0], time, modification,
+                                       site_combination),
+                            get_change(network, changes[1], time, modification,
+                                       site_combination))
 
             target_proteins = len(
                 get_proteins(
@@ -822,8 +808,8 @@ def get_change_enrichment(
                     modification,
                     site_combination=site_combination,
                     combined_change_filter=lambda combined_change:
-                    combined_change <= mid_range[
-                        0] or combined_change >= mid_range[1],
+                    combined_change <= change_range[
+                        0] or combined_change >= change_range[1],
                 ))
 
             target_module_proteins = [
@@ -834,8 +820,8 @@ def get_change_enrichment(
                         modification,
                         site_combination=site_combination,
                         combined_change_filter=lambda combined_change:
-                        combined_change <= mid_range[
-                            0] or combined_change >= mid_range[1],
+                        combined_change <= change_range[
+                            0] or combined_change >= change_range[1],
                     )) for module in modules
             ]
 

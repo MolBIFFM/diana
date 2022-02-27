@@ -33,8 +33,8 @@ def get_bar_chart(time, modification, sites, cy_range=(-2.0, 2.0)):
 def get_protein_protein_interaction_network_styles(
     network,
     bar_chart_range=(-3.0, 3.0),
-    get_bar_chart_range=lambda time, modification, bar_chart_range,
-    site_combination: bar_chart_range,
+    get_change=lambda network, change, time, modification, site_combination:
+    change,
     site_combination=lambda sites: max(sites, key=abs),
     confidence_score_combination=lambda confidence_scores: float(
         bool(confidence_scores))):
@@ -161,10 +161,15 @@ def get_protein_protein_interaction_network_styles(
                                 modification,
                                 protein_protein_interaction_network.get_sites(
                                     network, time, modification),
-                                cy_range=get_bar_chart_range(
-                                    time, modification, bar_chart_range,
-                                    site_combination),
-                            ))
+                                cy_range=(
+                                    get_change(
+                                        protein_protein_interaction_network,
+                                        bar_chart_range[0], time, modification,
+                                        site_combination),
+                                    get_change(
+                                        protein_protein_interaction_network,
+                                        bar_chart_range[1], time, modification,
+                                        site_combination))))
 
                     elif visual_property_sub_element.get(
                             "name"
