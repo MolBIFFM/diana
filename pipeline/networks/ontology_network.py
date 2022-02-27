@@ -1,6 +1,6 @@
 import networkx as nx
 from databases import gene_ontology
-from analysis import correction, test
+from enrichment import correction, test
 
 
 def get_ontology_network(protein_protein_interaction_network,

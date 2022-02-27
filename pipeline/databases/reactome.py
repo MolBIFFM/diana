@@ -1,5 +1,5 @@
 from databases import uniprot
-from download import download
+from fetch import fetch
 
 REACTOME_INTERACTIONS = "https://reactome.org/download/current/interactors/reactome.{organism}.interactions.tab-delimited.txt"
 REACTOME_PATHWAYS = "https://reactome.org/download/current/ReactomePathways.txt"
@@ -23,7 +23,7 @@ def get_proteins(
 ):
     primary_accession = uniprot.get_primary_accession(taxon_identifier)
 
-    for row in download.tabular_txt(
+    for row in fetch.tabular_txt(
             REACTOME_INTERACTIONS.format(organism=ORGANISM["file"].get(
                 taxon_identifier, "all_species")),
             delimiter="\t",
@@ -58,7 +58,7 @@ def get_protein_protein_interactions(
 ):
     primary_accession = uniprot.get_primary_accession(taxon_identifier)
 
-    for row in download.tabular_txt(
+    for row in fetch.tabular_txt(
             REACTOME_INTERACTIONS.format(organism=ORGANISM["file"].get(
                 taxon_identifier, "all_species")),
             delimiter="\t",
@@ -88,25 +88,25 @@ def get_protein_protein_interactions(
 
 
 def get_pathways(taxon_identifier=0):
-    for row in download.tabular_txt(REACTOME_PATHWAYS,
-                                    delimiter="\t",
-                                    usecols=[0, 1, 2]):
+    for row in fetch.tabular_txt(REACTOME_PATHWAYS,
+                                 delimiter="\t",
+                                 usecols=[0, 1, 2]):
         if not taxon_identifier or row[2] == ORGANISM["data"].get(
                 taxon_identifier):
             yield (row[0], row[1])
 
 
 def get_pathway_relations(network):
-    for row in download.tabular_txt(REACTOME_PATHWAY_RELATIONS,
-                                    delimiter="\t",
-                                    usecols=[0, 1]):
+    for row in fetch.tabular_txt(REACTOME_PATHWAY_RELATIONS,
+                                 delimiter="\t",
+                                 usecols=[0, 1]):
         yield (row[0], row[1])
 
 
 def get_pathway_map(taxon_identifier=0):
-    for row in download.tabular_txt(REACTOME_PATHWAY_MAP,
-                                    delimiter="\t",
-                                    usecols=[0, 1, 5]):
+    for row in fetch.tabular_txt(REACTOME_PATHWAY_MAP,
+                                 delimiter="\t",
+                                 usecols=[0, 1, 5]):
         if not taxon_identifier or row[5] == ORGANISM["data"].get(
                 taxon_identifier):
             yield row[0], row[1]

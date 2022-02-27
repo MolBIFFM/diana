@@ -1,4 +1,4 @@
-from download import download
+from fetch import fetch
 
 UNIPROT_SWISSPROT = "https://ftp.uniprot.org/pub/databases/uniprot/current_release/knowledgebase/complete/uniprot_sprot.dat.gz"
 UNIPROT_ID_MAP = "https://ftp.uniprot.org/pub/databases/uniprot/current_release/knowledgebase/idmapping/by_organism/{organism}_idmapping.dat.gz"
@@ -9,7 +9,7 @@ ORGANISM = {"file": {9606: "HUMAN_9606"}}
 def get_swissprot_entries(taxon_identifier=0):
     accessions, entry_gene_name, entry_protein_name = [], {}, {}
     rec_name, tax_id = False, 0
-    for line in download.txt(UNIPROT_SWISSPROT):
+    for line in fetch.txt(UNIPROT_SWISSPROT):
         if not line.strip():
             continue
 
@@ -102,7 +102,7 @@ def get_uniprot_id_map(database,
         return {}
 
     uniprot = {}
-    for row in download.tabular_txt(
+    for row in fetch.tabular_txt(
             UNIPROT_ID_MAP.format(organism=ORGANISM["file"][taxon_identifier]),
             delimiter="\t",
             usecols=[0, 1, 2]):

@@ -181,7 +181,6 @@ def get_protein_protein_interaction_network_styles(
                                                                  "W")][i]),
                         )
 
-    styles.getroot().tail = "\n"
     ET.indent(styles)
 
     return styles
@@ -289,7 +288,6 @@ def get_pathway_network_style(network):
                     },
                 )
 
-    style.getroot().tail = "\n"
     ET.indent(style)
 
     return style
@@ -397,7 +395,6 @@ def get_ontology_network_style(network):
                     },
                 )
 
-    style.getroot().tail = "\n"
     ET.indent(style)
 
     return style

@@ -7,8 +7,9 @@ import statistics
 import networkx as nx
 import pandas as pd
 
-from analysis import correction, modularization, test
+from enrichment import correction, test
 from databases import biogrid, intact, mint, reactome, string, uniprot
+from modularization import modularization
 
 
 def get_protein_protein_interaction_network():

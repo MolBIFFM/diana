@@ -1,4 +1,4 @@
-from analysis import modularization
+from modularization import modularization
 
 ALGORITHM = {
     "Clauset-Newman-Moore": modularization.clauset_newman_moore,
