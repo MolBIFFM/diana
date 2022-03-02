@@ -483,7 +483,11 @@ def process_configuration(configurations, logger):
                         "molecular_function"
                     ]))
 
-            for j, module in enumerate(modules, start=1):
+            for j, module in enumerate(sorted(
+                    modules,
+                    key=lambda module: module.number_of_nodes(),
+                    reverse=True),
+                                       start=1):
                 protein_protein_interaction_network.export(
                     module,
                     logger.name,
@@ -615,7 +619,11 @@ def process_configuration(configurations, logger):
                         "molecular_function"
                     ]))
 
-            for j, module in enumerate(modules, start=1):
+            for j, module in enumerate(sorted(
+                    modules,
+                    key=lambda module: module.number_of_nodes(),
+                    reverse=True),
+                                       start=1):
                 for time in modules[module]:
                     for modification in modules[module][time]:
                         if modules[module][time][modification] <= configuration[
@@ -740,7 +748,7 @@ def process_configuration(configurations, logger):
                         "taxon identifier", 9606))
 
             elif "subset intersection" in configuration["Reactome network"]:
-                proteins = set(network.nodes())
+                proteins = set(network)
                 for subset in configuration["Reactome network"][
                         "subset intersection"]:
                     if subset.get(
@@ -941,7 +949,7 @@ def process_configuration(configurations, logger):
 
             elif "subset intersection" in configuration[
                     "Gene Ontology network"]:
-                proteins = set(network.nodes())
+                proteins = set(network)
                 for subset in configuration["Gene Ontology network"][
                         "subset intersection"]:
                     if subset.get(

@@ -12,7 +12,7 @@ def get_pathway_network(protein_protein_interaction_network,
         network.add_node(pathway)
         network.nodes[pathway]["pathway"] = name
 
-    for child, parent in reactome.get_pathway_relations(network):
+    for child, parent in reactome.get_pathway_relations():
         if child in network and parent in network:
             network.add_edge(child, parent)
 

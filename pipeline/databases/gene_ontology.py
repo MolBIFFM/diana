@@ -1,3 +1,4 @@
+from databases import uniprot
 from fetch import fetch
 from enrichment import test, correction
 
@@ -35,6 +36,8 @@ def get_ontology(namespaces=("biological_process", "cellular_compartment",
 
 
 def get_annotation(taxon_identifier=9606):
+    primary_accession = uniprot.get_primary_accession(taxon_identifier)
+
     for row in fetch.tabular_txt(
             ANNOTATION.format(organism=ORGANISM["file"][taxon_identifier]),
             skiprows=41,
@@ -42,7 +45,8 @@ def get_annotation(taxon_identifier=9606):
             usecols=[0, 1, 4, 12]):
         if row[0] == "UniProtKB" and row[12] == "taxon:{}".format(
                 taxon_identifier):
-            yield (row[1], row[4])
+            for protein in primary_accession.get(row[1], {row[1]}):
+                yield (protein, row[4])
 
     for row in fetch.tabular_txt(ANNOTATION_ISOFORM.format(
             organism=ORGANISM["file"][taxon_identifier]),

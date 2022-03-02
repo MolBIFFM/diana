@@ -96,7 +96,7 @@ def get_pathways(taxon_identifier=0):
             yield (row[0], row[1])
 
 
-def get_pathway_relations(network):
+def get_pathway_relations():
     for row in fetch.tabular_txt(REACTOME_PATHWAY_RELATIONS,
                                  delimiter="\t",
                                  usecols=[0, 1]):
@@ -104,9 +104,12 @@ def get_pathway_relations(network):
 
 
 def get_pathway_map(taxon_identifier=0):
+    primary_accession = uniprot.get_primary_accession(taxon_identifier)
+
     for row in fetch.tabular_txt(REACTOME_PATHWAY_MAP,
                                  delimiter="\t",
                                  usecols=[0, 1, 5]):
         if not taxon_identifier or row[5] == ORGANISM["data"].get(
                 taxon_identifier):
-            yield row[0], row[1]
+            for protein in primary_accession.get(row[0], {row[0]}):
+                yield protein, row[1]
