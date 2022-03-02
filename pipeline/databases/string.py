@@ -59,9 +59,10 @@ def get_proteins(neighborhood=0.0,
     primary_accession = uniprot.get_primary_accession(taxon_identifier)
 
     for row in fetch.tabular_txt(
-            STRING_PHYSICAL.format(taxon_identifier=taxon_identifier)
-            if physical else STRING_INTERACTIONS.format(
-                taxon_identifier=taxon_identifier),
+            STRING_PHYSICAL.format(taxon_identifier=taxon_identifier,
+                                   version=version) if physical else
+            STRING_INTERACTIONS.format(taxon_identifier=taxon_identifier,
+                                       version=version),
             delimiter=" ",
             header=0,
             usecols=["protein1", "protein2"] + list(thresholds.keys()),
@@ -130,9 +131,10 @@ def get_protein_protein_interactions(neighborhood=0.0,
     primary_accession = uniprot.get_primary_accession(taxon_identifier)
 
     for row in fetch.tabular_txt(
-            STRING_PHYSICAL.format(taxon_identifier=taxon_identifier)
-            if physical else STRING_INTERACTIONS.format(
-                taxon_identifier=taxon_identifier),
+            STRING_PHYSICAL.format(taxon_identifier=taxon_identifier,
+                                   version=version) if physical else
+            STRING_INTERACTIONS.format(taxon_identifier=taxon_identifier,
+                                       version=version),
             delimiter=" ",
             header=0,
             usecols=["protein1", "protein2"] + list(thresholds.keys()),

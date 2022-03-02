@@ -838,7 +838,7 @@ def get_change_enrichment(
             time: {
                 modification: p_values[(module, time, modification)]
                 for modification in get_post_translational_modifications(
-                    network)
+                    network, time)
             }
             for time in get_times(network)
         }
