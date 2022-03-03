@@ -70,15 +70,15 @@ def get_enrichment(networks,
             annotation[term] = set()
         annotation[term].add(protein)
 
-    annotation = {
-        term: proteins
-        for term, proteins in annotation.items() if term in name and proteins
-    }
-
     name = {}
     for term in get_ontology(namespaces):
         if term in annotation:
             name[term["id"]] = term["name"]
+
+    annotation = {
+        term: proteins
+        for term, proteins in annotation.items() if proteins and term in name
+    }
 
     annotated_proteins = set.intersection(annotation.values())
 
