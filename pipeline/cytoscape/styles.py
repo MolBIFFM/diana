@@ -98,10 +98,19 @@ def get_protein_protein_interaction_network_styles(
                             continuous_mapping_sub_element,
                             "continuousMappingPoint",
                             attrib={
-                                "attrValue": key,
-                                "equalValue": values["equalValue"],
-                                "greaterValue": values["greaterValue"],
-                                "lesserValue": values["lesserValue"]
+                                "attrValue":
+                                key.format(max=confidence_score_combination({
+                                    database: 1.0
+                                    for database in
+                                    protein_protein_interaction_network.
+                                    get_databases(network)
+                                })),
+                                "equalValue":
+                                values["equalValue"],
+                                "greaterValue":
+                                values["greaterValue"],
+                                "lesserValue":
+                                values["lesserValue"]
                             },
                         )
 
