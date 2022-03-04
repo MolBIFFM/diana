@@ -241,6 +241,22 @@ def process_configuration(configurations, logger):
                             "taxon identifier", 9606),
                 )
 
+            if "IntAct" in configuration["protein-protein interactions"]:
+                protein_protein_interaction_network.add_protein_protein_interactions_from_intact(
+                    network,
+                    interaction_detection_methods=configuration[
+                        "protein-protein interactions"]["IntAct"].get(
+                            "interaction detection methods", []),
+                    interaction_types=configuration[
+                        "protein-protein interactions"]["IntAct"].get(
+                            "interaction types", []),
+                    mi_score=configuration["protein-protein interactions"]
+                    ["IntAct"].get("MI score", 0.0),
+                    taxon_identifier=configuration[
+                        "protein-protein interactions"]["IntAct"].get(
+                            "taxon identifier", 9606),
+                )
+
             if "MINT" in configuration["protein-protein interactions"]:
                 protein_protein_interaction_network.add_protein_protein_interactions_from_mint(
                     network,

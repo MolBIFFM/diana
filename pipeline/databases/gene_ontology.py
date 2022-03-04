@@ -72,7 +72,7 @@ def get_enrichment(networks,
 
     name = {}
     for term in get_ontology(namespaces):
-        if term in annotation:
+        if term["id"] in annotation:
             name[term["id"]] = term["name"]
 
     annotation = {
