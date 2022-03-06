@@ -767,24 +767,14 @@ def get_proteins(
 
 def get_change_enrichment(
     network,
-    module_size,
+    modules,
     changes=(-1.0, 1.0),
     get_change=lambda network, change, time, modification, site_combination:
     change,
     site_combination=lambda sites: max(sites, key=abs),
-    module_size_combination=statistics.mean,
-    algorithm=modularization.louvain,
-    resolution=1.0,
-    weight="weight",
     test=test.hypergeometric,
     correction=correction.benjamini_hochberg,
 ):
-    modules = get_modules(network,
-                          module_size,
-                          module_size_combination,
-                          algorithm=algorithm,
-                          resolution=resolution,
-                          weight=weight)
 
     p_values = {}
     for time in get_times(network):

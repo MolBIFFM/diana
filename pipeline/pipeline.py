@@ -531,11 +531,23 @@ def process_configuration(configurations, logger):
                     configuration["enrichment analysis"].get(
                         "edge weight", "number")])
 
+            modules = protein_protein_interaction_network.get_modules(
+                network,
+                module_size=configuration["enrichment analysis"].get(
+                    "module size", network.number_of_nodes()),
+                module_size_combination=combination.MODULE_SIZE_COMBINATION[
+                    configuration["enrichment analysis"].get(
+                        "module size combination", "mean")],
+                algorithm=modularization.ALGORITHM[
+                    configuration["enrichment analysis"].get(
+                        "algorithm", "Louvain")],
+                resolution=configuration["enrichment analysis"].get(
+                    "resolution", 1.0))
+
             if (configuration["enrichment analysis"].get("type") == "z-score"):
-                modules = protein_protein_interaction_network.get_change_enrichment(
+                change_enrichment = protein_protein_interaction_network.get_change_enrichment(
                     network,
-                    module_size=configuration["enrichment analysis"].get(
-                        "module size", network.number_of_nodes()),
+                    modules,
                     p=configuration["enrichment analysis"].get("p", 0.05),
                     changes=configuration["enrichment analysis"].get(
                         "combined change", (-2.0, 2.0)),
@@ -544,15 +556,6 @@ def process_configuration(configurations, logger):
                     site_combination=combination.SITE_COMBINATION[
                         configuration["enrichment analysis"].get(
                             "site combination", "absmax")],
-                    module_size_combination=combination.
-                    MODULE_SIZE_COMBINATION[
-                        configuration["enrichment analysis"].get(
-                            "module size combination", "mean")],
-                    algorithm=modularization.ALGORITHM[
-                        configuration["enrichment analysis"].get(
-                            "algorithm", "Louvain")],
-                    resolution=configuration["enrichment analysis"].get(
-                        "resolution", 1.0),
                     test=test.TEST[configuration["enrichment analysis"].get(
                         "test", "hypergeometric")],
                     correction=correction.CORRECTION[
@@ -561,27 +564,14 @@ def process_configuration(configurations, logger):
 
             elif (configuration["enrichment analysis"].get("type") ==
                   "quantile"):
-                modules = protein_protein_interaction_network.get_change_enrichment(
+                change_enrichment = protein_protein_interaction_network.get_change_enrichment(
                     network,
-                    module_size=configuration["enrichment analysis"].get(
-                        "module size", network.number_of_nodes()),
+                    modules,
                     p=configuration["enrichment analysis"].get("p", 0.05),
                     changes=configuration["enrichment analysis"].get(
                         "combined change", (0.025, 0.975)),
                     get_change=protein_protein_interaction_network.
                     get_change_from_quantile,
-                    site_combination=combination.SITE_COMBINATION[
-                        configuration["enrichment analysis"].get(
-                            "site combination", "absmax")],
-                    module_size_combination=combination.
-                    MODULE_SIZE_COMBINATION[
-                        configuration["enrichment analysis"].get(
-                            "module size combination", "mean")],
-                    algorithm=modularization.ALGORITHM[
-                        configuration["enrichment analysis"].get(
-                            "algorithm", "Louvain")],
-                    resolution=configuration["enrichment analysis"].get(
-                        "resolution", 1.0),
                     test=test.TEST[configuration["enrichment analysis"].get(
                         "test", "hypergeometric")],
                     correction=correction.CORRECTION[
@@ -590,24 +580,14 @@ def process_configuration(configurations, logger):
                 )
 
             else:
-                modules = protein_protein_interaction_network.get_change_enrichment(
+                change_enrichment = protein_protein_interaction_network.get_change_enrichment(
                     network,
-                    module_size=configuration["enrichment analysis"].get(
-                        "module size", network.number_of_nodes()),
+                    modules,
                     changes=configuration["enrichment analysis"].get(
                         "combined change", (-1.0, 1.0)),
                     site_combination=combination.SITE_COMBINATION[
                         configuration["enrichment analysis"].get(
                             "site combination", "absmax")],
-                    module_size_combination=combination.
-                    MODULE_SIZE_COMBINATION[
-                        configuration["enrichment analysis"].get(
-                            "module size combination", "mean")],
-                    algorithm=modularization.ALGORITHM[
-                        configuration["enrichment analysis"].get(
-                            "algorithm", "Louvain")],
-                    resolution=configuration["enrichment analysis"].get(
-                        "resolution", 1.0),
                     test=test.TEST[configuration["enrichment analysis"].get(
                         "test", "hypergeometric")],
                     correction=correction.CORRECTION[
@@ -620,7 +600,7 @@ def process_configuration(configurations, logger):
             if "Gene Ontology enrichment" in configuration[
                     "enrichment analysis"]:
                 enrichment = gene_ontology.get_enrichment(
-                    modules,
+                    change_enrichment,
                     test=test.TEST[configuration["enrichment analysis"]
                                    ["Gene Ontology enrichment"].get(
                                        "test", "hypergeometric")],
@@ -636,7 +616,7 @@ def process_configuration(configurations, logger):
                     ]))
 
             for j, module in enumerate(sorted(
-                    modules,
+                    change_enrichment,
                     key=lambda module: module.number_of_nodes(),
                     reverse=True),
                                        start=1):
