@@ -80,7 +80,7 @@ def get_enrichment(networks,
         for term, proteins in annotation.items() if proteins and term in name
     }
 
-    annotated_proteins = set.intersection(annotation.values())
+    annotated_proteins = set.union(*annotation.values())
 
     intersection = {
         network: {

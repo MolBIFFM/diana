@@ -673,10 +673,9 @@ def process_configuration(configurations, logger):
                             )
 
         if "Reactome network" in configuration:
-            if "subset union" in configuration["Reactome network"]:
+            if "union" in configuration["Reactome network"]:
                 proteins = set()
-                for subset in configuration["Reactome network"][
-                        "subset union"]:
+                for subset in configuration["Reactome network"]["union"]:
                     if subset.get(
                             "time"
                     ) in protein_protein_interaction_network.get_times(
@@ -763,10 +762,10 @@ def process_configuration(configurations, logger):
                     taxon_identifier=configuration["Reactome network"].get(
                         "taxon identifier", 9606))
 
-            elif "subset intersection" in configuration["Reactome network"]:
+            elif "intersection" in configuration["Reactome network"]:
                 proteins = set(network)
                 for subset in configuration["Reactome network"][
-                        "subset intersection"]:
+                        "intersection"]:
                     if subset.get(
                             "time"
                     ) in protein_protein_interaction_network.get_times(
@@ -869,10 +868,9 @@ def process_configuration(configurations, logger):
                           "{}.reactome".format(logger.name))
 
         if "Gene Ontology network" in configuration:
-            if "subset union" in configuration["Gene Ontology network"]:
+            if "union" in configuration["Gene Ontology network"]:
                 proteins = set()
-                for subset in configuration["Gene Ontology network"][
-                        "subset union"]:
+                for subset in configuration["Gene Ontology network"]["union"]:
                     if subset.get(
                             "time"
                     ) in protein_protein_interaction_network.get_times(
@@ -963,11 +961,10 @@ def process_configuration(configurations, logger):
                     taxon_identifier=configuration["Gene Ontology network"].
                     get("taxon identifier", 9606))
 
-            elif "subset intersection" in configuration[
-                    "Gene Ontology network"]:
+            elif "intersection" in configuration["Gene Ontology network"]:
                 proteins = set(network)
                 for subset in configuration["Gene Ontology network"][
-                        "subset intersection"]:
+                        "intersection"]:
                     if subset.get(
                             "time"
                     ) in protein_protein_interaction_network.get_times(
