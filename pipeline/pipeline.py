@@ -72,14 +72,14 @@ def process_configuration(configurations, logger):
                 network, nx.readwrite.graphml.read_graphml(entry))
 
         if "protein-protein interactions" in configuration:
-            k = 0
+            neighbors = 0
             while any(configuration["protein-protein interactions"].get(
-                    database, {}).get("neighbors", 0) > k for database in
+                    database, {}).get("neighbors", 0) > neighbors for database in
                       {"BioGRID", "IntAct", "MINT", "Reactome", "STRING"}):
                 if "BioGRID" in configuration[
                         "protein-protein interactions"] and configuration[
                             "protein-protein interactions"]["BioGRID"].get(
-                                "neighbors", 0) > k:
+                                "neighbors", 0) > neighbors:
                     protein_protein_interaction_network.add_proteins_from_biogrid(
                         network,
                         interaction_throughput=configuration[
@@ -102,7 +102,7 @@ def process_configuration(configurations, logger):
                 if "IntAct" in configuration[
                         "protein-protein interactions"] and configuration[
                             "protein-protein interactions"]["IntAct"].get(
-                                "neighbors", 0) > k:
+                                "neighbors", 0) > neighbors:
                     protein_protein_interaction_network.add_proteins_from_intact(
                         network,
                         interaction_detection_methods=configuration[
@@ -121,7 +121,7 @@ def process_configuration(configurations, logger):
                 if "MINT" in configuration[
                         "protein-protein interactions"] and configuration[
                             "protein-protein interactions"]["MINT"].get(
-                                "neighbors", 0) > k:
+                                "neighbors", 0) > neighbors:
                     protein_protein_interaction_network.add_proteins_from_mint(
                         network,
                         interaction_detection_methods=configuration[
@@ -140,7 +140,7 @@ def process_configuration(configurations, logger):
                 if "Reactome" in configuration[
                         "protein-protein interactions"] and configuration[
                             "protein-protein interactions"]["Reactome"].get(
-                                "neighbors", 0) > k:
+                                "neighbors", 0) > neighbors:
                     protein_protein_interaction_network.add_proteins_from_reactome(
                         network,
                         interaction_context=configuration[
@@ -157,7 +157,7 @@ def process_configuration(configurations, logger):
                 if "STRING" in configuration[
                         "protein-protein interactions"] and configuration[
                             "protein-protein interactions"]["STRING"].get(
-                                "neighbors", 0) > k:
+                                "neighbors", 0) > neighbors:
                     protein_protein_interaction_network.add_proteins_from_string(
                         network,
                         neighborhood=configuration[
@@ -208,15 +208,15 @@ def process_configuration(configurations, logger):
                         ["STRING"].get("version", 11.5),
                     )
 
-                k += 1
+                neighbors += 1
 
-            if k:
+            if neighbors:
                 for taxon_identifier in (
                         configuration["protein-protein interactions"]
                     [database].get("taxon_identifier", 9606) for database in
                     {"BioGRID", "IntAct", "MINT", "Reactome", "STRING"}):
                     protein_protein_interaction_network.annotate_proteins(
-                        network)
+                        network, taxon_identifier)
 
                 protein_protein_interaction_network.remove_unannotated_proteins(
                     network)
