@@ -74,8 +74,8 @@ def process_configuration(configurations, logger):
         if "protein-protein interactions" in configuration:
             neighbors = 0
             while any(configuration["protein-protein interactions"].get(
-                    database, {}).get("neighbors", 0) > neighbors for database in
-                      {"BioGRID", "IntAct", "MINT", "Reactome", "STRING"}):
+                    database, {}).get("neighbors", 0) > neighbors for database
+                      in {"BioGRID", "IntAct", "MINT", "Reactome", "STRING"}):
                 if "BioGRID" in configuration[
                         "protein-protein interactions"] and configuration[
                             "protein-protein interactions"]["BioGRID"].get(
