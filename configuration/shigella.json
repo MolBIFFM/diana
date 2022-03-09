@@ -61,57 +61,6 @@
             "wt120minvscontrolratio"
           ],
           "logarithm": 10
-        },
-        {
-          "time": 15,
-          "post-translational modification": "U",
-          "sites": 5,
-          "file": "data/shigella/ubiquitination/WT_vs_noninvasive_15min.xlsx",
-          "sheet": "GlyGly (K) stringentSites",
-          "accession column": "Protein",
-          "accession format": "(?=(?:^|;)(.+?)(?:;|$))",
-          "position column": "Positions within proteins",
-          "position format": "(?=(?:^|;)(.+?)(?:;|$))",
-          "replicate columns": [
-            "Ratio H/L normalized Exp1",
-            "Ratio H/L normalized Exp2",
-            "Ratio H/L normalized Exp3"
-          ],
-          "replicates": 2
-        },
-        {
-          "time": 60,
-          "post-translational modification": "U",
-          "sites": 5,
-          "file": "data/shigella/ubiquitination/WT_vs_noninvasive_1h.xlsx",
-          "sheet": "GlyGly (K) stringentSites",
-          "accession column": "Proteins",
-          "accession format": "(?=(?:^|;)(.+?)(?:;|$))",
-          "position column": "Positions within proteins",
-          "position format": "(?=(?:^|;)(.+?)(?:;|$))",
-          "replicate columns": [
-            "Ratio H/L normalized Exp1",
-            "Ratio H/L normalized Exp2",
-            "Ratio H/L normalized Exp3"
-          ],
-          "replicates": 2
-        },
-        {
-          "time": 120,
-          "post-translational modification": "U",
-          "sites": 5,
-          "file": "data/shigella/ubiquitination/WT_vs_noninvasive_2h.xlsx",
-          "sheet": "GlyGly (K) stringentSites",
-          "accession column": "Proteins",
-          "accession format": "(?=(?:^|;)(.+?)(?:;|$))",
-          "position column": "Positions within proteins",
-          "position format": "(?=(?:^|;)(.+?)(?:;|$))",
-          "replicate columns": [
-            "Ratio H/L normalized Exp1",
-            "Ratio H/L normalized Exp2",
-            "Ratio H/L normalized Exp3"
-          ],
-          "replicates": 2
         }
       ],
       "protein-protein interactions": {
@@ -180,21 +129,6 @@
             "time": 120,
             "post-translational modification": "P",
             "combined change": [-1.0, 1.0]
-          },
-          {
-            "time": 15,
-            "post-translational modification": "U",
-            "combined change": [-1.0, 1.0]
-          },
-          {
-            "time": 60,
-            "post-translational modification": "U",
-            "combined change": [-1.0, 1.0]
-          },
-          {
-            "time": 120,
-            "post-translational modification": "U",
-            "combined change": [-1.0, 1.0]
           }
         ]     
       },
@@ -218,21 +152,6 @@
           {
             "time": 120,
             "post-translational modification": "P",
-            "combined change": [-1.0, 1.0]
-          },
-          {
-            "time": 15,
-            "post-translational modification": "U",
-            "combined change": [-1.0, 1.0]
-          },
-          {
-            "time": 60,
-            "post-translational modification": "U",
-            "combined change": [-1.0, 1.0]
-          },
-          {
-            "time": 120,
-            "post-translational modification": "U",
             "combined change": [-1.0, 1.0]
           }
         ]      
