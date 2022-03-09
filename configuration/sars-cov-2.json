@@ -70,7 +70,7 @@
           }
         ]
       },
-      "Gene Ontology network": { 
+      "Gene Ontology network": {
         "union": [
           {
             "time": 60,
