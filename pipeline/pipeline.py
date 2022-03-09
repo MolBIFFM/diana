@@ -334,8 +334,8 @@ def process_configuration(configurations, logger):
                 )
 
         if "Cytoscape" in configuration:
-            if (configuration["Cytoscape"].get("bar chart",
-                                               {}).get("type") == "z-score"):
+            if (configuration["Cytoscape"].get(
+                    "bar chart", {}).get("scoring") == "standard score"):
                 cytoscape_styles = styles.get_protein_protein_interaction_network_styles(
                     network,
                     bar_chart_range=configuration["Cytoscape"]
@@ -351,7 +351,7 @@ def process_configuration(configurations, logger):
                                                        "number")])
 
             elif (configuration["Cytoscape"].get(
-                    "bar chart", {}).get("type") == "quantile"):
+                    "bar chart", {}).get("scoring") == "quantile"):
                 cytoscape_styles = styles.get_protein_protein_interaction_network_styles(
                     network,
                     bar_chart_range=configuration["Cytoscape"]
@@ -395,8 +395,8 @@ def process_configuration(configurations, logger):
             protein_protein_interaction_network.set_post_translational_modification(
                 network)
 
-            if (configuration["Cytoscape"].get("node color",
-                                               {}).get("type") == "z-score"):
+            if (configuration["Cytoscape"].get(
+                    "node color", {}).get("scoring") == "standard score"):
                 protein_protein_interaction_network.set_changes(
                     network,
                     site_combination=combination.SITE_COMBINATION[
@@ -409,7 +409,7 @@ def process_configuration(configurations, logger):
                 )
 
             elif (configuration["Cytoscape"].get(
-                    "node color", {}).get("type") == "quantile"):
+                    "node color", {}).get("scoring") == "quantile"):
                 protein_protein_interaction_network.set_changes(
                     network,
                     site_combination=combination.SITE_COMBINATION[
@@ -544,7 +544,8 @@ def process_configuration(configurations, logger):
                 resolution=configuration["enrichment analysis"].get(
                     "resolution", 1.0))
 
-            if (configuration["enrichment analysis"].get("type") == "z-score"):
+            if (configuration["enrichment analysis"].get("scoring") ==
+                    "standard score"):
                 change_enrichment = protein_protein_interaction_network.get_change_enrichment(
                     network,
                     modules,
@@ -562,7 +563,7 @@ def process_configuration(configurations, logger):
                         configuration["enrichment analysis"].get(
                             "correction", "Benjamini-Hochberg")])
 
-            elif (configuration["enrichment analysis"].get("type") ==
+            elif (configuration["enrichment analysis"].get("scoring") ==
                   "quantile"):
                 change_enrichment = protein_protein_interaction_network.get_change_enrichment(
                     network,
@@ -661,60 +662,68 @@ def process_configuration(configurations, logger):
                     ) in protein_protein_interaction_network.get_times(
                             network
                     ) and subset.get(
-                            "modification"
+                            "post-translational modification"
                     ) in protein_protein_interaction_network.get_post_translational_modifications(
                             network, subset["time"]):
-                        if subset.get("type") == "standard score":
+                        if subset.get("scoring") == "standard score":
                             proteins.update(
                                 protein_protein_interaction_network.
                                 get_proteins(
                                     network, subset["time"],
-                                    subset["modification"],
+                                    subset["post-translational modification"],
                                     combination.SITE_COMBINATION[subset.get(
                                         "site combination", "absmax")],
                                     lambda combined_sites: combined_sites <=
                                     protein_protein_interaction_network.
                                     get_change_from_standard_score(
                                         network,
-                                        subset.get("combined change", (
-                                            -2.0, 2.0))[0], subset["time"],
-                                        subset["modification"], combination.
+                                        subset.get("combined change",
+                                                   (-2.0, 2.0))[0],
+                                        subset["time"], subset[
+                                            "post-translational modification"
+                                        ], combination.
                                         SITE_COMBINATION[subset.get(
                                             "site combination", "absmax"
                                         )]) or combined_sites >=
                                     protein_protein_interaction_network.
                                     get_change_from_standard_score(
                                         network,
-                                        subset.get("combined change", (
-                                            -2.0, 2.0))[1], subset["time"],
-                                        subset["modification"], combination.
+                                        subset.get("combined change",
+                                                   (-2.0, 2.0))[1],
+                                        subset["time"], subset[
+                                            "post-translational modification"
+                                        ], combination.
                                         SITE_COMBINATION[subset.get(
                                             "site combination", "absmax")])))
 
-                        elif subset.get("type") == "quantile":
+                        elif subset.get("scoring") == "quantile":
                             proteins.update(
                                 protein_protein_interaction_network.
                                 get_proteins(
                                     network, subset["time"],
-                                    subset["modification"],
+                                    subset["post-translational modification"],
                                     combination.SITE_COMBINATION[subset.get(
                                         "site combination", "absmax")],
                                     lambda combined_sites: combined_sites <=
                                     protein_protein_interaction_network.
                                     get_change_from_quantile(
                                         network,
-                                        subset.get("combined change", (
-                                            0.025, 0.975))[0], subset["time"],
-                                        subset["modification"], combination.
+                                        subset.get("combined change",
+                                                   (0.025, 0.975))[0],
+                                        subset["time"], subset[
+                                            "post-translational modification"
+                                        ], combination.
                                         SITE_COMBINATION[subset.get(
                                             "site combination", "absmax"
                                         )]) or combined_sites >=
                                     protein_protein_interaction_network.
                                     get_change_from_quantile(
                                         network,
-                                        subset.get("combined change", (
-                                            0.025, 0.975))[1], subset["time"],
-                                        subset["modification"], combination.
+                                        subset.get("combined change",
+                                                   (0.025, 0.975))[1],
+                                        subset["time"], subset[
+                                            "post-translational modification"
+                                        ], combination.
                                         SITE_COMBINATION[subset.get(
                                             "site combination", "absmax")])))
                         else:
@@ -722,7 +731,7 @@ def process_configuration(configurations, logger):
                                 protein_protein_interaction_network.
                                 get_proteins(
                                     network, subset["time"],
-                                    subset["modification"],
+                                    subset["post-translational modification"],
                                     combination.SITE_COMBINATION[subset.get(
                                         "site combination", "absmax")],
                                     lambda combined_sites: combined_sites <=
@@ -751,60 +760,68 @@ def process_configuration(configurations, logger):
                     ) in protein_protein_interaction_network.get_times(
                             network
                     ) and subset.get(
-                            "modification"
+                            "post-translational modification"
                     ) in protein_protein_interaction_network.get_post_translational_modifications(
                             network, subset["time"]):
-                        if subset.get("type") == "standard score":
+                        if subset.get("scoring") == "standard score":
                             proteins.intersection_update(
                                 protein_protein_interaction_network.
                                 get_proteins(
                                     network, subset["time"],
-                                    subset["modification"],
+                                    subset["post-translational modification"],
                                     combination.SITE_COMBINATION[subset.get(
                                         "site combination", "absmax")],
                                     lambda combined_sites: combined_sites <=
                                     protein_protein_interaction_network.
                                     get_change_from_standard_score(
                                         network,
-                                        subset.get("combined change", (
-                                            -2.0, 2.0))[0], subset["time"],
-                                        subset["modification"], combination.
+                                        subset.get("combined change",
+                                                   (-2.0, 2.0))[0],
+                                        subset["time"], subset[
+                                            "post-translational modification"
+                                        ], combination.
                                         SITE_COMBINATION[subset.get(
                                             "site combination", "absmax"
                                         )]) or combined_sites >=
                                     protein_protein_interaction_network.
                                     get_change_from_standard_score(
                                         network,
-                                        subset.get("combined change", (
-                                            -2.0, 2.0))[1], subset["time"],
-                                        subset["modification"], combination.
+                                        subset.get("combined change",
+                                                   (-2.0, 2.0))[1],
+                                        subset["time"], subset[
+                                            "post-translational modification"
+                                        ], combination.
                                         SITE_COMBINATION[subset.get(
                                             "site combination", "absmax")])))
 
-                        elif subset.get("type") == "quantile":
+                        elif subset.get("scoring") == "quantile":
                             proteins.intersection_update(
                                 protein_protein_interaction_network.
                                 get_proteins(
                                     network, subset["time"],
-                                    subset["modification"],
+                                    subset["post-translational modification"],
                                     combination.SITE_COMBINATION[subset.get(
                                         "site combination", "absmax")],
                                     lambda combined_sites: combined_sites <=
                                     protein_protein_interaction_network.
                                     get_change_from_quantile(
                                         network,
-                                        subset.get("combined change", (
-                                            0.025, 0.975))[0], subset["time"],
-                                        subset["modification"], combination.
+                                        subset.get("combined change",
+                                                   (0.025, 0.975))[0],
+                                        subset["time"], subset[
+                                            "post-translational modification"
+                                        ], combination.
                                         SITE_COMBINATION[subset.get(
                                             "site combination", "absmax"
                                         )]) or combined_sites >=
                                     protein_protein_interaction_network.
                                     get_change_from_quantile(
                                         network,
-                                        subset.get("combined change", (
-                                            0.025, 0.975))[1], subset["time"],
-                                        subset["modification"], combination.
+                                        subset.get("combined change",
+                                                   (0.025, 0.975))[1],
+                                        subset["time"], subset[
+                                            "post-translational modification"
+                                        ], combination.
                                         SITE_COMBINATION[subset.get(
                                             "site combination", "absmax")])))
                         else:
@@ -812,7 +829,7 @@ def process_configuration(configurations, logger):
                                 protein_protein_interaction_network.
                                 get_proteins(
                                     network, subset["time"],
-                                    subset["modification"],
+                                    subset["post-translational modification"],
                                     combination.SITE_COMBINATION[subset.get(
                                         "site combination", "absmax")],
                                     lambda combined_sites: combined_sites <=
@@ -856,60 +873,68 @@ def process_configuration(configurations, logger):
                     ) in protein_protein_interaction_network.get_times(
                             network
                     ) and subset.get(
-                            "modification"
+                            "post-translational modification"
                     ) in protein_protein_interaction_network.get_post_translational_modifications(
                             network, subset["time"]):
-                        if subset.get("type") == "standard score":
+                        if subset.get("scoring") == "standard score":
                             proteins.update(
                                 protein_protein_interaction_network.
                                 get_proteins(
                                     network, subset["time"],
-                                    subset["modification"],
+                                    subset["post-translational modification"],
                                     combination.SITE_COMBINATION[subset.get(
                                         "site combination", "absmax")],
                                     lambda combined_sites: combined_sites <=
                                     protein_protein_interaction_network.
                                     get_change_from_standard_score(
                                         network,
-                                        subset.get("combined change", (
-                                            -2.0, 2.0))[0], subset["time"],
-                                        subset["modification"], combination.
+                                        subset.get("combined change",
+                                                   (-2.0, 2.0))[0],
+                                        subset["time"], subset[
+                                            "post-translational modification"
+                                        ], combination.
                                         SITE_COMBINATION[subset.get(
                                             "site combination", "absmax"
                                         )]) or combined_sites >=
                                     protein_protein_interaction_network.
                                     get_change_from_standard_score(
                                         network,
-                                        subset.get("combined change", (
-                                            -2.0, 2.0))[1], subset["time"],
-                                        subset["modification"], combination.
+                                        subset.get("combined change",
+                                                   (-2.0, 2.0))[1],
+                                        subset["time"], subset[
+                                            "post-translational modification"
+                                        ], combination.
                                         SITE_COMBINATION[subset.get(
                                             "site combination", "absmax")])))
 
-                        elif subset.get("type") == "quantile":
+                        elif subset.get("scoring") == "quantile":
                             proteins.update(
                                 protein_protein_interaction_network.
                                 get_proteins(
                                     network, subset["time"],
-                                    subset["modification"],
+                                    subset["post-translational modification"],
                                     combination.SITE_COMBINATION[subset.get(
                                         "site combination", "absmax")],
                                     lambda combined_sites: combined_sites <=
                                     protein_protein_interaction_network.
                                     get_change_from_quantile(
                                         network,
-                                        subset.get("combined change", (
-                                            0.025, 0.975))[0], subset["time"],
-                                        subset["modification"], combination.
+                                        subset.get("combined change",
+                                                   (0.025, 0.975))[0],
+                                        subset["time"], subset[
+                                            "post-translational modification"
+                                        ], combination.
                                         SITE_COMBINATION[subset.get(
                                             "site combination", "absmax"
                                         )]) or combined_sites >=
                                     protein_protein_interaction_network.
                                     get_change_from_quantile(
                                         network,
-                                        subset.get("combined change", (
-                                            0.025, 0.975))[1], subset["time"],
-                                        subset["modification"], combination.
+                                        subset.get("combined change",
+                                                   (0.025, 0.975))[1],
+                                        subset["time"], subset[
+                                            "post-translational modification"
+                                        ], combination.
                                         SITE_COMBINATION[subset.get(
                                             "site combination", "absmax")])))
                         else:
@@ -917,7 +942,7 @@ def process_configuration(configurations, logger):
                                 protein_protein_interaction_network.
                                 get_proteins(
                                     network, subset["time"],
-                                    subset["modification"],
+                                    subset["post-translational modification"],
                                     combination.SITE_COMBINATION[subset.get(
                                         "site combination", "absmax")],
                                     lambda combined_sites: combined_sites <=
@@ -950,60 +975,68 @@ def process_configuration(configurations, logger):
                     ) in protein_protein_interaction_network.get_times(
                             network
                     ) and subset.get(
-                            "modification"
+                            "post-translational modification"
                     ) in protein_protein_interaction_network.get_post_translational_modifications(
                             network, subset["time"]):
-                        if subset.get("type") == "standard score":
+                        if subset.get("scoring") == "standard score":
                             proteins.intersection_update(
                                 protein_protein_interaction_network.
                                 get_proteins(
                                     network, subset["time"],
-                                    subset["modification"],
+                                    subset["post-translational modification"],
                                     combination.SITE_COMBINATION[subset.get(
                                         "site combination", "absmax")],
                                     lambda combined_sites: combined_sites <=
                                     protein_protein_interaction_network.
                                     get_change_from_standard_score(
                                         network,
-                                        subset.get("combined change", (
-                                            -2.0, 2.0))[0], subset["time"],
-                                        subset["modification"], combination.
+                                        subset.get("combined change",
+                                                   (-2.0, 2.0))[0],
+                                        subset["time"], subset[
+                                            "post-translational modification"
+                                        ], combination.
                                         SITE_COMBINATION[subset.get(
                                             "site combination", "absmax"
                                         )]) or combined_sites >=
                                     protein_protein_interaction_network.
                                     get_change_from_standard_score(
                                         network,
-                                        subset.get("combined change", (
-                                            -2.0, 2.0))[1], subset["time"],
-                                        subset["modification"], combination.
+                                        subset.get("combined change",
+                                                   (-2.0, 2.0))[1],
+                                        subset["time"], subset[
+                                            "post-translational modification"
+                                        ], combination.
                                         SITE_COMBINATION[subset.get(
                                             "site combination", "absmax")])))
 
-                        elif subset.get("type") == "quantile":
+                        elif subset.get("scoring") == "quantile":
                             proteins.intersection_update(
                                 protein_protein_interaction_network.
                                 get_proteins(
                                     network, subset["time"],
-                                    subset["modification"],
+                                    subset["post-translational modification"],
                                     combination.SITE_COMBINATION[subset.get(
                                         "site combination", "absmax")],
                                     lambda combined_sites: combined_sites <=
                                     protein_protein_interaction_network.
                                     get_change_from_quantile(
                                         network,
-                                        subset.get("combined change", (
-                                            0.025, 0.975))[0], subset["time"],
-                                        subset["modification"], combination.
+                                        subset.get("combined change",
+                                                   (0.025, 0.975))[0],
+                                        subset["time"], subset[
+                                            "post-translational modification"
+                                        ], combination.
                                         SITE_COMBINATION[subset.get(
                                             "site combination", "absmax"
                                         )]) or combined_sites >=
                                     protein_protein_interaction_network.
                                     get_change_from_quantile(
                                         network,
-                                        subset.get("combined change", (
-                                            0.025, 0.975))[1], subset["time"],
-                                        subset["modification"], combination.
+                                        subset.get("combined change",
+                                                   (0.025, 0.975))[1],
+                                        subset["time"], subset[
+                                            "post-translational modification"
+                                        ], combination.
                                         SITE_COMBINATION[subset.get(
                                             "site combination", "absmax")])))
                         else:
@@ -1011,7 +1044,7 @@ def process_configuration(configurations, logger):
                                 protein_protein_interaction_network.
                                 get_proteins(
                                     network, subset["time"],
-                                    subset["modification"],
+                                    subset["post-translational modification"],
                                     combination.SITE_COMBINATION[subset.get(
                                         "site combination", "absmax")],
                                     lambda combined_sites: combined_sites <=
@@ -1052,10 +1085,10 @@ def process_configuration(configurations, logger):
                     get("taxon identifier", 9606))
 
             ontology_network.export(gene_ontology_network,
-                                    "{}.go".format(logger.name))
+                                    "{}.gene_ontology".format(logger.name))
             styles.export(
                 styles.get_ontology_network_style(gene_ontology_network),
-                "{}.go".format(logger.name))
+                "{}.gene_ontology".format(logger.name))
 
 
 def process_configuration_file(configuration_file):
@@ -1096,7 +1129,7 @@ def main():
     logging.basicConfig(
         stream=sys.stdout,
         level=args.level,
-        format="%(asctime)s\t%(name)s\t%(levelname)s: %(message)s")
+        format="[%(asctime)s - %(levelname)s] %(name)s: %(message)s")
 
     with concurrent.futures.ProcessPoolExecutor(
             max_workers=args.processes) as executor:

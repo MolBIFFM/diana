@@ -614,7 +614,7 @@ def add_protein_protein_interactions_from_reactome(
         if (interactor_a in network and interactor_b in network
                 and interactor_a != interactor_b):
             network.add_edge(interactor_a, interactor_b)
-            network.edges[interactor_a, interactor_b]["Reactome"] = 0.5
+            network.edges[interactor_a, interactor_b]["Reactome"] = 1.0
 
 
 def add_proteins_from_string(network,

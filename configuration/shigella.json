@@ -18,6 +18,21 @@
           "logarithm": 10
         },
         {
+          "time": 30,
+          "post-translational modification": "P",
+          "sites": 5,
+          "file": "data/shigella/phosphorylation/mcp.M113.029918-2.xls",
+          "sheet": "wt30min",
+          "accession column": "protein",
+          "accession format": "sp\\|(.+?)\\|[A-Z0-9]+_HUMAN",
+          "position column": "phosphosite",
+          "position format": "(?:^|,)(\\d+)_[STY]",
+          "replicate columns": [
+            "wt30minvscontrolratio"
+          ],
+          "logarithm": 10
+        },
+        {
           "time": 60,
           "post-translational modification": "P",
           "sites": 5,
@@ -144,9 +159,83 @@
           "p": 0.05
         }
       },
-      "Reactome network": {       
+      "Reactome network": {  
+        "union": [
+          {
+            "time": 15,
+            "post-translational modification": "P",
+            "combined change": [-1.0, 1.0]
+          },
+          {
+            "time": 30,
+            "post-translational modification": "P",
+            "combined change": [-1.0, 1.0]
+          },
+          {
+            "time": 60,
+            "post-translational modification": "P",
+            "combined change": [-1.0, 1.0]
+          },
+          {
+            "time": 120,
+            "post-translational modification": "P",
+            "combined change": [-1.0, 1.0]
+          },
+          {
+            "time": 15,
+            "post-translational modification": "U",
+            "combined change": [-1.0, 1.0]
+          },
+          {
+            "time": 60,
+            "post-translational modification": "U",
+            "combined change": [-1.0, 1.0]
+          },
+          {
+            "time": 120,
+            "post-translational modification": "U",
+            "combined change": [-1.0, 1.0]
+          }
+        ]     
       },
-      "Gene Ontology network": {       
+      "Gene Ontology network": {   
+        "union": [
+          {
+            "time": 15,
+            "post-translational modification": "P",
+            "combined change": [-1.0, 1.0]
+          },
+          {
+            "time": 30,
+            "post-translational modification": "P",
+            "combined change": [-1.0, 1.0]
+          },
+          {
+            "time": 60,
+            "post-translational modification": "P",
+            "combined change": [-1.0, 1.0]
+          },
+          {
+            "time": 120,
+            "post-translational modification": "P",
+            "combined change": [-1.0, 1.0]
+          },
+          {
+            "time": 15,
+            "post-translational modification": "U",
+            "combined change": [-1.0, 1.0]
+          },
+          {
+            "time": 60,
+            "post-translational modification": "U",
+            "combined change": [-1.0, 1.0]
+          },
+          {
+            "time": 120,
+            "post-translational modification": "U",
+            "combined change": [-1.0, 1.0]
+          }
+        ]      
       }
     }
   ]

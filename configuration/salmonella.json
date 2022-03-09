@@ -122,8 +122,52 @@
         }
       },
       "Reactome network": {
+        "union": [
+          {
+            "time": 30,
+            "post-translational modification": "P",
+            "combined change": [-1.0, 1.0]
+          },
+          {
+            "time": 120,
+            "post-translational modification": "P",
+            "combined change": [-1.0, 1.0]
+          },
+          {
+            "time": 30,
+            "post-translational modification": "U",
+            "combined change": [-1.0, 1.0]
+          },
+          {
+            "time": 120,
+            "post-translational modification": "U",
+            "combined change": [-1.0, 1.0]
+          }
+        ]
       },
       "Gene Ontology network": {
+        "union": [
+          {
+            "time": 30,
+            "post-translational modification": "P",
+            "combined change": [-1.0, 1.0]
+          },
+          {
+            "time": 120,
+            "post-translational modification": "P",
+            "combined change": [-1.0, 1.0]
+          },
+          {
+            "time": 30,
+            "post-translational modification": "U",
+            "combined change": [-1.0, 1.0]
+          },
+          {
+            "time": 120,
+            "post-translational modification": "U",
+            "combined change": [-1.0, 1.0]
+          }
+        ]
       }
     }
   ]

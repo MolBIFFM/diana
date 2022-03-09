@@ -350,7 +350,7 @@ COMPONENTS = {
                 "default": "35.0",
                 "continuousMapping": {
                     "attributeName": "annotated proteins",
-                    "attributeType": "long",
+                    "attributeType": "float",
                     "continuousMappingPoint": {
                         "1.0": {
                             "equalValue": "35.0",
