@@ -481,6 +481,8 @@ def process_configuration(configurations, logger):
                 resolution=configuration["module detection"].get(
                     "resolution", 1.0))
 
+            protein_protein_interaction_network.remove_edge_weights(network)
+
             if "Gene Ontology enrichment" in configuration["module detection"]:
                 enrichment = gene_ontology.get_enrichment(
                     modules,
@@ -517,7 +519,8 @@ def process_configuration(configurations, logger):
                                   name)] <= configuration["module detection"][
                                       "Gene Ontology enrichment"].get(
                                           "p", 1.0):
-                            logger.info("{}\t{}\t{:.2e}".format(
+                            logger.info("{}\t{}\t{}\t{:.2e}".format(
+                                j,
                                 term,
                                 name,
                                 terms[(term, name)],
@@ -639,11 +642,13 @@ def process_configuration(configurations, logger):
                                     )] <= configuration["enrichment analysis"][
                                             "Gene Ontology enrichment"].get(
                                                 "p", 1.0):
-                                        logger.info("\t{}\t{}\t{:.2e}".format(
-                                            term,
-                                            name,
-                                            terms[(term, name)],
-                                        ))
+                                        logger.info(
+                                            "{}\t{}\t{}\t{:.2e}".format(
+                                                j,
+                                                term,
+                                                name,
+                                                terms[(term, name)],
+                                            ))
 
                             protein_protein_interaction_network.export(
                                 module,
@@ -1129,13 +1134,10 @@ def main():
                         level=args.level,
                         datefmt="%H:%M:%S",
                         format="[%(levelname)s]% %(name)s: %(message)s")
-    """
+
     with concurrent.futures.ProcessPoolExecutor(
             max_workers=args.processes) as executor:
         executor.map(process_configuration_file, args.configurations)
-    """
-    for configuration_file in args.configurations:
-        process_configuration_file(configuration_file)
 
 
 if __name__ == "__main__":
