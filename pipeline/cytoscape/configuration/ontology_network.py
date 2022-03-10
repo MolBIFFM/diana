@@ -344,7 +344,16 @@ COMPONENTS = {
                 "default": "#{:02X}{:02X}{:02X}".format(255, 255, 0)
             },
             "NODE_SHAPE": {
-                "default": "ELLIPSE",
+                "default": "ROUND_RECTANGLE",
+                "discreteMapping": {
+                    "attributeName": "namespace",
+                    "attributeType": "string",
+                    "discreteMappingEntry": {
+                        "cellular_component": "RECTANGLE",
+                        "biological_process": "TRIANGLE",
+                        "molecular_function": "ELLIPSE",
+                    },
+                },
             },
             "NODE_SIZE": {
                 "default": "35.0",

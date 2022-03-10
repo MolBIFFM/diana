@@ -39,23 +39,19 @@ def get_ontology_network(protein_protein_interaction_network,
         for term in annotation
     }
 
-    p_values = {
-        term: p
-        for term, p in correction({
-            term: test(
-                intersection[term], len(annotated_proteins),
-                len(annotation[term]),
-                len(
-                    annotated_proteins.intersection(
-                        protein_protein_interaction_network.nodes())))
-            for term in network
-        }).items()
-    }
+    p_value = correction({
+        term: test(
+            intersection[term], len(annotated_proteins), len(annotation[term]),
+            len(
+                annotated_proteins.intersection(
+                    protein_protein_interaction_network.nodes())))
+        for term in network
+    })
 
     for term in network:
         network.nodes[term]["annotated proteins"] = len(annotation[term])
         network.nodes[term]["network proteins"] = intersection[term]
-        network.nodes[term]["p-value"] = p_values[term]
+        network.nodes[term]["p-value"] = p_value[term]
 
     return network
 

@@ -253,7 +253,7 @@ def add_proteins_from_table(network,
             )[-num_sites:])
 
         for i in range(len(proteins[protein])):
-            network.nodes[protein]["{} {} {}".format(
+            network.nodes[protein]["{}-{}-{}".format(
                 time, modification, i + 1)] = proteins[protein][i][1]
 
 
@@ -261,28 +261,28 @@ def get_times(network):
     return tuple(
         sorted(
             set(
-                int(change.split(" ")[0]) for protein in network
+                int(change.split("-")[0]) for protein in network
                 for change in network.nodes[protein]
-                if len(change.split(" ")) == 3
-                and change.split(" ")[0].isnumeric())))
+                if len(change.split("-")) == 3
+                and change.split("-")[0].isnumeric())))
 
 
 def get_post_translational_modifications(network, time):
     return tuple(
         sorted(
             set(
-                change.split(" ")[1] for protein in network
+                change.split("-")[1] for protein in network
                 for change in network.nodes[protein]
-                if len(change.split(" ")) == 3
-                and change.split(" ")[0] == str(time))))
+                if len(change.split("-")) == 3
+                and change.split("-")[0] == str(time))))
 
 
 def get_sites(network, time, modification):
     return max(
-        int(change.split(" ")[2]) for protein in network
+        int(change.split("-")[2]) for protein in network
         for change in network.nodes[protein]
-        if len(change.split(" ")) == 3 and change.split(" ")[0] == str(time)
-        and change.split(" ")[1] == modification)
+        if len(change.split("-")) == 3 and change.split("-")[0] == str(time)
+        and change.split("-")[1] == modification)
 
 
 def get_changes(network,
@@ -293,8 +293,8 @@ def get_changes(network,
     for protein in network:
         sites = [
             network.nodes[protein][change] for change in network.nodes[protein]
-            if len(change.split(" ")) == 3 and change.split(" ")[0] == str(
-                time) and change.split(" ")[1] == modification
+            if len(change.split("-")) == 3 and change.split("-")[0] == str(
+                time) and change.split("-")[1] == modification
         ]
 
         if sites:
@@ -352,13 +352,13 @@ def set_post_translational_modification(network):
     for time in get_times(network):
         for protein in network:
             network.nodes[protein]["post-translational modification {}".format(
-                time)] = " ".join(
+                time)] = "".join(
                     sorted(
                         set(
-                            change.split(" ")[1]
+                            change.split("-")[1]
                             for change in network.nodes[protein]
-                            if len(change.split(" ")) == 3
-                            and change.split(" ")[0] == str(time))))
+                            if len(change.split("-")) == 3
+                            and change.split("-")[0] == str(time))))
 
 
 def set_changes(
@@ -402,8 +402,8 @@ def set_changes(
                 sites = [
                     network.nodes[protein][change]
                     for change in network.nodes[protein]
-                    if len(change.split(" ")) == 3 and change.split(" ")[0] ==
-                    str(time) and change.split(" ")[1] == modification
+                    if len(change.split("-")) == 3 and change.split("-")[0] ==
+                    str(time) and change.split("-")[1] == modification
                 ]
 
                 if sites:
@@ -755,8 +755,8 @@ def get_proteins(
     for protein in network:
         sites = [
             network.nodes[protein][change] for change in network.nodes[protein]
-            if len(change.split(" ")) == 3 and change.split(" ")[0] == str(
-                time) and change.split(" ")[1] == modification
+            if len(change.split("-")) == 3 and change.split("-")[0] == str(
+                time) and change.split("-")[1] == modification
         ]
 
         if sites and combined_change_filter(site_combination(sites)):

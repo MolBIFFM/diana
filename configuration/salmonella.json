@@ -111,7 +111,7 @@
         "node color": {
           "range": [-1.0, 1.0]
         },
-        "edge confidence": "number"
+        "edge score": "number"
       },
       "enrichment analysis": {
         "edge weight": "number",

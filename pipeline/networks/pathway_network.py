@@ -35,23 +35,20 @@ def get_pathway_network(protein_protein_interaction_network,
         for pathway in pathways
     }
 
-    p_values = {
-        pathway: p
-        for pathway, p in correction({
-            pathway: test(
-                intersection[pathway], len(mapped_proteins),
-                len(pathways[pathway]),
-                len(
-                    mapped_proteins.intersection(
-                        protein_protein_interaction_network.nodes())))
-            for pathway in network if intersection[pathway]
-        }).items()
-    }
+    p_value = correction({
+        pathway: test(
+            intersection[pathway], len(mapped_proteins),
+            len(pathways[pathway]),
+            len(
+                mapped_proteins.intersection(
+                    protein_protein_interaction_network.nodes())))
+        for pathway in network
+    })
 
     for pathway in network:
         network.nodes[pathway]["pathway proteins"] = len(pathways[pathway])
         network.nodes[pathway]["network proteins"] = intersection[pathway]
-        network.nodes[pathway]["p-value"] = p_values[pathway]
+        network.nodes[pathway]["p-value"] = p_value[pathway]
 
     return network
 

@@ -105,7 +105,7 @@ def clauset_newman_moore(G, resolution=1.0, weight="weight"):
 def louvain(G, resolution=1.0, weight="weight"):
     # Clauset, Newman, Moore (2004); Blondel, Guillaume, Lambiotte, Lefebvre (2008); Newman (2016)
     name = list(G.nodes())
-    communities = [[set([i]) for i in range(G.number_of_nodes())]]
+    communities = [[{i} for i in range(G.number_of_nodes())]]
 
     community_aggregation = True
 
@@ -123,7 +123,7 @@ def louvain(G, resolution=1.0, weight="weight"):
         k_in = A.toarray()
 
         community = [i for i in range(n)]
-        communities.append([set([i]) for i in range(n)])
+        communities.append([{i} for i in range(n)])
 
         modularity_optimization = True
 
@@ -201,8 +201,8 @@ def louvain(G, resolution=1.0, weight="weight"):
 
             communities = communities[1:2]
 
-            weights = [[0.0 for cj in range(len(communities[0]))]
-                       for ci in range(len(communities[0]))]
+            weights = [[0.0 for _ in range(len(communities[0]))]
+                       for _ in range(len(communities[0]))]
 
             for i in range(n):
                 weights[community[i]][community[i]] += A[i, i]

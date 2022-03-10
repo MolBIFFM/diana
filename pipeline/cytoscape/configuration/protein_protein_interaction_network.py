@@ -73,7 +73,7 @@ COMPONENTS = [
                 "EDGE_TRANSPARENCY": {
                     "default": "255",
                     "continuousMapping": {
-                        "attributeName": "confidence",
+                        "attributeName": "score",
                         "attributeType": "float",
                         "continuousMappingPoint": {
                             "0.0": {
@@ -786,7 +786,7 @@ COMPONENTS = [
                         "discreteMappingEntry": {
                             "{modifications[0]}": "RECTANGLE",
                             "{modifications[1]}": "TRIANGLE",
-                            "{modifications[0]} {modifications[1]}": "ELLIPSE",
+                            "{modifications[0]}{modifications[1]}": "ELLIPSE",
                         },
                     },
                 },

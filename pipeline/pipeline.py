@@ -347,7 +347,7 @@ def process_configuration(configurations, logger):
                             "site combination", "absmax")],
                     confidence_score_combination=combination.
                     CONFIDENCE_SCORE_COMBINATION[
-                        configuration["Cytoscape"].get("edge confidence",
+                        configuration["Cytoscape"].get("edge score",
                                                        "number")])
 
             elif (configuration["Cytoscape"].get(
@@ -363,7 +363,7 @@ def process_configuration(configurations, logger):
                             "site combination", "absmax")],
                     confidence_score_combination=combination.
                     CONFIDENCE_SCORE_COMBINATION[
-                        configuration["Cytoscape"].get("edge confidence",
+                        configuration["Cytoscape"].get("edge score",
                                                        "number")])
 
             else:
@@ -376,15 +376,14 @@ def process_configuration(configurations, logger):
                             "site combination", "absmax")],
                     confidence_score_combination=combination.
                     CONFIDENCE_SCORE_COMBINATION[
-                        configuration["Cytoscape"].get("edge confidence",
+                        configuration["Cytoscape"].get("edge score",
                                                        "number")])
 
             protein_protein_interaction_network.set_edge_weights(
                 network,
                 weight=combination.CONFIDENCE_SCORE_COMBINATION[
-                    configuration["Cytoscape"].get("edge confidence",
-                                                   "number")],
-                attribute="confidence")
+                    configuration["Cytoscape"].get("edge score", "number")],
+                attribute="score")
 
             styles.export(
                 cytoscape_styles,
@@ -1126,14 +1125,17 @@ def main():
 
     args = parser.parse_args()
 
-    logging.basicConfig(
-        stream=sys.stdout,
-        level=args.level,
-        format="[%(asctime)s - %(levelname)s] %(name)s: %(message)s")
-
+    logging.basicConfig(stream=sys.stdout,
+                        level=args.level,
+                        datefmt="%H:%M:%S",
+                        format="[%(levelname)s]% %(name)s: %(message)s")
+    """
     with concurrent.futures.ProcessPoolExecutor(
             max_workers=args.processes) as executor:
         executor.map(process_configuration_file, args.configurations)
+    """
+    for configuration_file in args.configurations:
+        process_configuration_file(configuration_file)
 
 
 if __name__ == "__main__":
