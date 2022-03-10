@@ -455,7 +455,7 @@ def process_configuration(configurations, logger):
                 for (term, name) in terms:
                     if terms[(term, name)] <= configuration[
                             "Gene Ontology enrichment"].get("p", 1.0):
-                        logger.info("{}\t{}\t{}\t{:.2e}".format(
+                        logger.info("{}\t{}\t{:.2e}".format(
                             term,
                             name,
                             terms[(term, name)],
