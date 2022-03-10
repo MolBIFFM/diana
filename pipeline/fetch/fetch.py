@@ -4,16 +4,19 @@ import re
 import tempfile
 import urllib.parse
 import urllib.request
-import uuid
+import sys
 import zipfile
 
 import pandas as pd
 
-SUBDIRECTORY_PREFIX = "pipeline-{}".format(uuid.uuid4())
-
 
 def download_file(url, local_file_name):
-    request = urllib.request.Request(url, headers={"User-Agent": "pipeline"})
+    request = urllib.request.Request(url,
+                                     headers={
+                                         "User-Agent":
+                                         os.path.splitext(
+                                             os.path.basename(sys.argv[0]))[0]
+                                     })
 
     with urllib.request.urlopen(request) as response:
         with open(local_file_name, "wb") as local_file:
@@ -43,17 +46,21 @@ def decompress_zip_file(compressed_file_name, file_from_zip_archive=None):
             file = next(filter(regex.match, archive.namelist()))
 
         if not os.path.exists(
-                os.path.join(tempfile.gettempdir(), "{}-{}".format(
-                    SUBDIRECTORY_PREFIX, os.getpid()), file)):
+                os.path.join(
+                    tempfile.gettempdir(), "{}-{}".format(
+                        os.path.splitext(os.path.basename(sys.argv[0]))[0],
+                        os.getpid()), file)):
             decompressed_file_name = archive.extract(
                 file,
                 path=os.path.join(
-                    tempfile.gettempdir(),
-                    "{}-{}".format(SUBDIRECTORY_PREFIX, os.getpid())))
+                    tempfile.gettempdir(), "{}-{}".format(
+                        os.path.splitext(os.path.basename(sys.argv[0]))[0],
+                        os.getpid())))
         else:
             decompressed_file_name = os.path.join(
-                tempfile.gettempdir(), "{}-{}".format(SUBDIRECTORY_PREFIX,
-                                                      os.getpid()), file)
+                tempfile.gettempdir(), "{}-{}".format(
+                    os.path.splitext(os.path.basename(sys.argv[0]))[0],
+                    os.getpid()), file)
 
     os.remove(compressed_file_name)
     return decompressed_file_name
@@ -61,15 +68,20 @@ def decompress_zip_file(compressed_file_name, file_from_zip_archive=None):
 
 def txt(url, file_from_zip_archive=None):
     if not os.path.exists(
-            os.path.join(tempfile.gettempdir(), "{}-{}".format(
-                SUBDIRECTORY_PREFIX, os.getpid()))):
+            os.path.join(
+                tempfile.gettempdir(), "{}-{}".format(
+                    os.path.splitext(os.path.basename(sys.argv[0]))[0],
+                    os.getpid()))):
         os.mkdir(
-            os.path.join(tempfile.gettempdir(),
-                         "{}-{}".format(SUBDIRECTORY_PREFIX, os.getpid())))
+            os.path.join(
+                tempfile.gettempdir(), "{}-{}".format(
+                    os.path.splitext(os.path.basename(sys.argv[0]))[0],
+                    os.getpid())))
 
     local_file_name = os.path.join(
         tempfile.gettempdir(),
-        "{}-{}".format(SUBDIRECTORY_PREFIX, os.getpid()),
+        "{}-{}".format(
+            os.path.splitext(os.path.basename(sys.argv[0]))[0], os.getpid()),
         os.path.split(urllib.parse.urlparse(url).path)[1],
     )
 
@@ -90,11 +102,15 @@ def txt(url, file_from_zip_archive=None):
     os.remove(local_file_name)
 
     if not os.listdir(
-            os.path.join(tempfile.gettempdir(), "{}-{}".format(
-                SUBDIRECTORY_PREFIX, os.getpid()))):
+            os.path.join(
+                tempfile.gettempdir(), "{}-{}".format(
+                    os.path.splitext(os.path.basename(sys.argv[0]))[0],
+                    os.getpid()))):
         os.rmdir(
-            os.path.join(tempfile.gettempdir(),
-                         "{}-{}".format(SUBDIRECTORY_PREFIX, os.getpid())))
+            os.path.join(
+                tempfile.gettempdir(), "{}-{}".format(
+                    os.path.splitext(os.path.basename(sys.argv[0]))[0],
+                    os.getpid())))
 
 
 def tabular_txt(url,
@@ -104,15 +120,20 @@ def tabular_txt(url,
                 skiprows=0,
                 usecols=[]):
     if not os.path.exists(
-            os.path.join(tempfile.gettempdir(), "{}-{}".format(
-                SUBDIRECTORY_PREFIX, os.getpid()))):
+            os.path.join(
+                tempfile.gettempdir(), "{}-{}".format(
+                    os.path.splitext(os.path.basename(sys.argv[0]))[0],
+                    os.getpid()))):
         os.mkdir(
-            os.path.join(tempfile.gettempdir(),
-                         "{}-{}".format(SUBDIRECTORY_PREFIX, os.getpid())))
+            os.path.join(
+                tempfile.gettempdir(), "{}-{}".format(
+                    os.path.splitext(os.path.basename(sys.argv[0]))[0],
+                    os.getpid())))
 
     local_file_name = os.path.join(
         tempfile.gettempdir(),
-        "{}-{}".format(SUBDIRECTORY_PREFIX, os.getpid()),
+        "{}-{}".format(
+            os.path.splitext(os.path.basename(sys.argv[0]))[0], os.getpid()),
         os.path.split(urllib.parse.urlparse(url).path)[1],
     )
 
@@ -146,8 +167,12 @@ def tabular_txt(url,
     os.remove(local_file_name)
 
     if not os.listdir(
-            os.path.join(tempfile.gettempdir(), "{}-{}".format(
-                SUBDIRECTORY_PREFIX, os.getpid()))):
+            os.path.join(
+                tempfile.gettempdir(), "{}-{}".format(
+                    os.path.splitext(os.path.basename(sys.argv[0]))[0],
+                    os.getpid()))):
         os.rmdir(
-            os.path.join(tempfile.gettempdir(),
-                         "{}-{}".format(SUBDIRECTORY_PREFIX, os.getpid())))
+            os.path.join(
+                tempfile.gettempdir(), "{}-{}".format(
+                    os.path.splitext(os.path.basename(sys.argv[0]))[0],
+                    os.getpid())))
