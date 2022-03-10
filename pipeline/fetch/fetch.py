@@ -9,7 +9,6 @@ import zipfile
 
 import pandas as pd
 
-CHUNK_SIZE = 1048576
 SUBDIRECTORY_PREFIX = "pipeline-{}".format(uuid.uuid4())
 
 
@@ -18,7 +17,7 @@ def download_file(url, local_file_name):
 
     with urllib.request.urlopen(request) as response:
         with open(local_file_name, "wb") as local_file:
-            while chunk := response.read(CHUNK_SIZE):
+            while chunk := response.read(1048576):
                 local_file.write(chunk)
 
 
@@ -28,7 +27,7 @@ def decompress_gzip_file(compressed_file_name):
     if not os.path.exists(decompressed_file_name):
         with gzip.open(compressed_file_name, "rb") as compressed_file:
             with open(decompressed_file_name, "wb") as decompressed_file:
-                while chunk := compressed_file.read(CHUNK_SIZE):
+                while chunk := compressed_file.read(1048576):
                     decompressed_file.write(chunk)
 
     os.remove(compressed_file_name)
@@ -84,7 +83,7 @@ def txt(url, file_from_zip_archive=None):
         local_file_name = decompress_zip_file(local_file_name,
                                               file_from_zip_archive)
 
-    with open(local_file_name, buffering=CHUNK_SIZE) as local_file:
+    with open(local_file_name, buffering=1048576) as local_file:
         for line in local_file:
             yield line.rstrip("\n")
 
@@ -139,7 +138,7 @@ def tabular_txt(url,
             header=header,
             skiprows=skiprows,
             usecols=usecols,
-            chunksize=CHUNK_SIZE,
+            chunksize=1048576,
     ):
         for _, row in chunk.iterrows():
             yield row
