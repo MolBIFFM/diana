@@ -2,8 +2,6 @@ from formats import mitab
 from databases import uniprot
 from download import download
 
-MINT_INTERACTIONS = "http://www.ebi.ac.uk/Tools/webservices/psicquic/mint/webservices/current/search/query/{organism}"
-
 ORGANISM = {"file": {9606: "species:human"}}
 
 
@@ -14,8 +12,8 @@ def get_proteins(interaction_detection_methods=[],
     primary_accession = uniprot.get_primary_accession(taxon_identifier)
 
     for row in download.tabular_txt(
-            MINT_INTERACTIONS.format(
-                organism=ORGANISM["file"].get(taxon_identifier, "*")),
+            "http://www.ebi.ac.uk/Tools/webservices/psicquic/mint/webservices/current/search/query/{organism}"
+            .format(organism=ORGANISM["file"].get(taxon_identifier, "*")),
             delimiter="\t",
             usecols=[
                 0,
@@ -75,8 +73,8 @@ def get_protein_protein_interactions(interaction_detection_methods=[],
     primary_accession = uniprot.get_primary_accession(taxon_identifier)
 
     for row in download.tabular_txt(
-            MINT_INTERACTIONS.format(
-                organism=ORGANISM["file"].get(taxon_identifier, "*")),
+            "http://www.ebi.ac.uk/Tools/webservices/psicquic/mint/webservices/current/search/query/{organism}"
+            .format(organism=ORGANISM["file"].get(taxon_identifier, "*")),
             delimiter="\t",
             header=0,
             usecols=[

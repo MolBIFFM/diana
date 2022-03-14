@@ -1,11 +1,6 @@
 from databases import uniprot
 from download import download
 
-REACTOME_INTERACTIONS = "https://reactome.org/download/current/interactors/reactome.{organism}.interactions.tab-delimited.txt"
-REACTOME_PATHWAYS = "https://reactome.org/download/current/ReactomePathways.txt"
-REACTOME_PATHWAY_RELATIONS = "https://reactome.org/download/current/ReactomePathwaysRelation.txt"
-REACTOME_PATHWAY_MAP = "https://reactome.org/download/current/UniProt2Reactome_All_Levels.txt"
-
 ORGANISM = {
     "data": {
         9606: "Homo sapiens"
@@ -24,8 +19,9 @@ def get_proteins(
     primary_accession = uniprot.get_primary_accession(taxon_identifier)
 
     for row in download.tabular_txt(
-            REACTOME_INTERACTIONS.format(organism=ORGANISM["file"].get(
-                taxon_identifier, "all_species")),
+            "https://reactome.org/download/current/interactors/reactome.{organism}.interactions.tab-delimited.txt"
+            .format(organism=ORGANISM["file"].get(taxon_identifier,
+                                                  "all_species")),
             delimiter="\t",
             header=0,
             usecols=[
@@ -59,8 +55,9 @@ def get_protein_protein_interactions(
     primary_accession = uniprot.get_primary_accession(taxon_identifier)
 
     for row in download.tabular_txt(
-            REACTOME_INTERACTIONS.format(organism=ORGANISM["file"].get(
-                taxon_identifier, "all_species")),
+            "https://reactome.org/download/current/interactors/reactome.{organism}.interactions.tab-delimited.txt"
+            .format(organism=ORGANISM["file"].get(taxon_identifier,
+                                                  "all_species")),
             delimiter="\t",
             header=0,
             usecols=[
@@ -88,27 +85,30 @@ def get_protein_protein_interactions(
 
 
 def get_pathways(taxon_identifier=0):
-    for row in download.tabular_txt(REACTOME_PATHWAYS,
-                                    delimiter="\t",
-                                    usecols=[0, 1, 2]):
+    for row in download.tabular_txt(
+            "https://reactome.org/download/current/ReactomePathways.txt",
+            delimiter="\t",
+            usecols=[0, 1, 2]):
         if not taxon_identifier or row[2] == ORGANISM["data"].get(
                 taxon_identifier):
             yield (row[0], row[1])
 
 
 def get_pathway_relations():
-    for row in download.tabular_txt(REACTOME_PATHWAY_RELATIONS,
-                                    delimiter="\t",
-                                    usecols=[0, 1]):
+    for row in download.tabular_txt(
+            "https://reactome.org/download/current/ReactomePathwaysRelation.txt",
+            delimiter="\t",
+            usecols=[0, 1]):
         yield (row[0], row[1])
 
 
 def get_pathway_map(taxon_identifier=0):
     primary_accession = uniprot.get_primary_accession(taxon_identifier)
 
-    for row in download.tabular_txt(REACTOME_PATHWAY_MAP,
-                                    delimiter="\t",
-                                    usecols=[0, 1, 5]):
+    for row in download.tabular_txt(
+            "https://reactome.org/download/current/UniProt2Reactome_All_Levels.txt",
+            delimiter="\t",
+            usecols=[0, 1, 5]):
         if not taxon_identifier or row[5] == ORGANISM["data"].get(
                 taxon_identifier):
             for protein in primary_accession.get(row[0], {row[0]}):

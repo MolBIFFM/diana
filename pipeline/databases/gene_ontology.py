@@ -2,17 +2,13 @@ from databases import uniprot
 from download import download
 from enrichment import test, correction
 
-ONTOLOGY = "http://purl.obolibrary.org/obo/go.obo"
-ANNOTATION = "http://geneontology.org/gene-associations/goa_{organism}.gaf.gz"
-ANNOTATION_ISOFORM = "http://geneontology.org/gene-associations/goa_{organism}_isoform.gaf.gz"
-
 ORGANISM = {"file": {9606: "human"}}
 
 
 def get_ontology(namespaces=("cellular_compartment", "molecular_function",
                              "biological_process")):
     term = {}
-    for line in download.txt(ONTOLOGY):
+    for line in download.txt("http://purl.obolibrary.org/obo/go.obo"):
         if any(
                 line.startswith("{}:".format(tag))
                 for tag in ("format-version", "data-version", "subsetdef",
@@ -39,7 +35,8 @@ def get_annotation(taxon_identifier=9606):
     primary_accession = uniprot.get_primary_accession(taxon_identifier)
 
     for row in download.tabular_txt(
-            ANNOTATION.format(organism=ORGANISM["file"][taxon_identifier]),
+            "http://geneontology.org/gene-associations/goa_{organism}.gaf.gz".
+            format(organism=ORGANISM["file"][taxon_identifier]),
             skiprows=41,
             delimiter="\t",
             usecols=[0, 1, 4, 12]):
@@ -48,11 +45,12 @@ def get_annotation(taxon_identifier=9606):
             for protein in primary_accession.get(row[1], {row[1]}):
                 yield (protein, row[4])
 
-    for row in download.tabular_txt(ANNOTATION_ISOFORM.format(
-            organism=ORGANISM["file"][taxon_identifier]),
-                                    skiprows=41,
-                                    delimiter="\t",
-                                    usecols=[0, 4, 12, 16]):
+    for row in download.tabular_txt(
+            "http://geneontology.org/gene-associations/goa_{organism}_isoform.gaf.gz"
+            .format(organism=ORGANISM["file"][taxon_identifier]),
+            skiprows=41,
+            delimiter="\t",
+            usecols=[0, 4, 12, 16]):
         if row[0] == "UniProtKB" and row[12] == "taxon:{}".format(
                 taxon_identifier) and row[16].startswith("UniProtKB:"):
             yield (row[16].split(":")[1], row[4])

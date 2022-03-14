@@ -378,7 +378,7 @@ A list of input protein-protein interaction networks in GraphML format.
     }
 ]
 ```
-An integer k specifying the extension of the network by proteins separated by up to k protein-protein interactions from the input proteins in the corresponding database. The default setting is 0, corresponding to no extension.
+An integer k specifying the extension of the network by proteins separated by up to k protein-protein interactions satisfying the requirements from the input proteins in the corresponding database. The default setting is 0, corresponding to no extension.
 
 
 ```json
