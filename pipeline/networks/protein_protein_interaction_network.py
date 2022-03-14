@@ -835,7 +835,7 @@ def get_binary_change_enrichment(
     }
 
 
-def get_continuos_change_enrichment(
+def get_continuous_change_enrichment(
     network,
     modules,
     site_combination=lambda sites: max(sites, key=abs),
