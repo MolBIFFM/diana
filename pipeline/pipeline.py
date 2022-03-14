@@ -29,14 +29,14 @@ def process_configuration(configurations, logger):
                         entry.get("accession format", "^(.+?)$")),
                     sheet_name=entry.get("sheet", 0),
                     header=entry.get("header", 1) - 1,
-                    taxon_identifier=entry.get("taxon identifier", 9606),
+                    taxon_identifier=entry.get("taxonomy identifier", 9606),
                 )
 
-            elif "accessions" in entry:
+            if "accessions" in entry:
                 protein_protein_interaction_network.add_genes_from(
                     network,
                     genes=entry["accessions"],
-                    taxon_identifier=entry.get("taxon identifier", 9606),
+                    taxon_identifier=entry.get("taxonomy identifier", 9606),
                 )
 
         for entry in configuration.get("proteins", {}):
@@ -56,20 +56,20 @@ def process_configuration(configurations, logger):
                     replicates=entry.get("replicate columns", []),
                     sheet_name=entry.get("sheet", 0),
                     header=entry.get("header", 1) - 1,
-                    num_sites=entry.get("sites", 1000),
+                    num_sites=entry.get("sites", 5),
                     num_replicates=entry.get("replicates", 1),
                     replicate_combination=combination.REPLICATE_COMBINATION[
                         entry.get("combine replicates", "mean")],
                     measurement_conversion=conversion.LOGARITHM[entry.get(
                         "logarithm")])
 
-            elif "accessions" in entry:
+            if "accessions" in entry:
                 protein_protein_interaction_network.add_proteins_from(
                     network, proteins=entry["accessions"])
 
         for entry in configuration.get("networks", []):
-            network = nx.algorithms.operators.binary.compose(
-                network, nx.readwrite.graphml.read_graphml(entry))
+            network = nx.compose(network,
+                                 nx.readwrite.graphml.read_graphml(entry))
 
         if "protein-protein interactions" in configuration:
             neighbors = 0
@@ -96,7 +96,7 @@ def process_configuration(configurations, logger):
                                 "multi-validated physical", False),
                         taxon_identifier=configuration[
                             "protein-protein interactions"]["BioGRID"].get(
-                                "taxon identifier", 9606),
+                                "taxonomy identifier", 9606),
                     )
 
                 if "IntAct" in configuration[
@@ -115,7 +115,7 @@ def process_configuration(configurations, logger):
                         ["IntAct"].get("MI score", 0.0),
                         taxon_identifier=configuration[
                             "protein-protein interactions"]["IntAct"].get(
-                                "taxon identifier", 9606),
+                                "taxonomy identifier", 9606),
                     )
 
                 if "MINT" in configuration[
@@ -134,7 +134,7 @@ def process_configuration(configurations, logger):
                         ["MINT"].get("MI score", 0.0),
                         taxon_identifier=configuration[
                             "protein-protein interactions"]["MINT"].get(
-                                "taxon identifier", 9606),
+                                "taxonomy identifier", 9606),
                     )
 
                 if "Reactome" in configuration[
@@ -151,7 +151,7 @@ def process_configuration(configurations, logger):
                                 "interaction type", []),
                         taxon_identifier=configuration[
                             "protein-protein interactions"]["Reactome"].get(
-                                "taxon identifier", 9606),
+                                "taxonomy identifier", 9606),
                     )
 
                 if "STRING" in configuration[
@@ -203,7 +203,7 @@ def process_configuration(configurations, logger):
                         ["STRING"].get("physical", False),
                         taxon_identifier=configuration[
                             "protein-protein interactions"]["STRING"].get(
-                                "taxon identifier", 9606),
+                                "taxonomy identifier", 9606),
                         version=configuration["protein-protein interactions"]
                         ["STRING"].get("version", 11.5),
                     )
@@ -238,7 +238,7 @@ def process_configuration(configurations, logger):
                             "multi-validated physical", False),
                     taxon_identifier=configuration[
                         "protein-protein interactions"]["BioGRID"].get(
-                            "taxon identifier", 9606),
+                            "taxonomy identifier", 9606),
                 )
 
             if "IntAct" in configuration["protein-protein interactions"]:
@@ -254,7 +254,7 @@ def process_configuration(configurations, logger):
                     ["IntAct"].get("MI score", 0.0),
                     taxon_identifier=configuration[
                         "protein-protein interactions"]["IntAct"].get(
-                            "taxon identifier", 9606),
+                            "taxonomy identifier", 9606),
                 )
 
             if "MINT" in configuration["protein-protein interactions"]:
@@ -270,7 +270,7 @@ def process_configuration(configurations, logger):
                     ["MINT"].get("MI score", 0.0),
                     taxon_identifier=configuration[
                         "protein-protein interactions"]["MINT"].get(
-                            "taxon identifier", 9606),
+                            "taxonomy identifier", 9606),
                 )
 
             if "Reactome" in configuration["protein-protein interactions"]:
@@ -284,7 +284,7 @@ def process_configuration(configurations, logger):
                             "interaction type", []),
                     taxon_identifier=configuration[
                         "protein-protein interactions"]["Reactome"].get(
-                            "taxon identifier", 9606),
+                            "taxonomy identifier", 9606),
                 )
 
             if "STRING" in configuration["protein-protein interactions"]:
@@ -328,7 +328,7 @@ def process_configuration(configurations, logger):
                     ["STRING"].get("physical", False),
                     taxon_identifier=configuration[
                         "protein-protein interactions"]["STRING"].get(
-                            "taxon identifier", 9606),
+                            "taxonomy identifier", 9606),
                     version=configuration["protein-protein interactions"]
                     ["STRING"].get("version", 11.5),
                 )
@@ -341,14 +341,13 @@ def process_configuration(configurations, logger):
                     bar_chart_range=configuration["Cytoscape"]
                     ["bar chart"].get("range", (-2.0, 2.0)),
                     get_change=protein_protein_interaction_network.
-                    get_change_from_standard_score,
+                    get_change_of_standard_score,
                     site_combination=combination.SITE_COMBINATION[
                         configuration["Cytoscape"]["bar chart"].get(
                             "site combination", "absmax")],
                     confidence_score_combination=combination.
                     CONFIDENCE_SCORE_COMBINATION[
-                        configuration["Cytoscape"].get("edge score",
-                                                       "number")])
+                        configuration["Cytoscape"].get("edge transparency")])
 
             elif (configuration["Cytoscape"].get(
                     "bar chart", {}).get("scoring") == "quantile"):
@@ -357,14 +356,13 @@ def process_configuration(configurations, logger):
                     bar_chart_range=configuration["Cytoscape"]
                     ["bar chart"].get("range", (0.025, 0.975)),
                     get_change=protein_protein_interaction_network.
-                    get_change_from_proportion,
+                    get_change_of_quantile,
                     site_combination=combination.SITE_COMBINATION[
                         configuration["Cytoscape"]["bar chart"].get(
                             "site combination", "absmax")],
                     confidence_score_combination=combination.
                     CONFIDENCE_SCORE_COMBINATION[
-                        configuration["Cytoscape"].get("edge score",
-                                                       "number")])
+                        configuration["Cytoscape"].get("edge transparency")])
 
             else:
                 cytoscape_styles = styles.get_protein_protein_interaction_network_styles(
@@ -376,13 +374,12 @@ def process_configuration(configurations, logger):
                             "site combination", "absmax")],
                     confidence_score_combination=combination.
                     CONFIDENCE_SCORE_COMBINATION[
-                        configuration["Cytoscape"].get("edge score",
-                                                       "number")])
+                        configuration["Cytoscape"].get("edge transparency")])
 
             protein_protein_interaction_network.set_edge_weights(
                 network,
                 weight=combination.CONFIDENCE_SCORE_COMBINATION[
-                    configuration["Cytoscape"].get("edge score", "number")],
+                    configuration["Cytoscape"].get("edge transparency")],
                 attribute="score")
 
             styles.export(
@@ -402,9 +399,9 @@ def process_configuration(configurations, logger):
                         configuration["Cytoscape"]["node color"].get(
                             "site combination", "absmax")],
                     changes=configuration["Cytoscape"]["node color"].get(
-                        "range", (-2.0, 2.0)),
+                        "combined change", (-2.0, 2.0)),
                     get_change=protein_protein_interaction_network.
-                    get_change_from_standard_score,
+                    get_change_of_standard_score,
                 )
 
             elif (configuration["Cytoscape"].get(
@@ -415,9 +412,9 @@ def process_configuration(configurations, logger):
                         configuration["Cytoscape"]["node color"].get(
                             "site combination", "absmax")],
                     changes=configuration["Cytoscape"]["node color"].get(
-                        "range", (0.025, 0.975)),
+                        "combined change", (0.025, 0.975)),
                     get_change=protein_protein_interaction_network.
-                    get_change_from_quantile,
+                    get_change_of_quantile,
                 )
 
             else:
@@ -427,7 +424,7 @@ def process_configuration(configurations, logger):
                         configuration["Cytoscape"]["node color"].get(
                             "site combination", "absmax")],
                     changes=configuration["Cytoscape"]["node color"].get(
-                        "range", (-1.0, 1.0)),
+                        "combined change", (-1.0, 1.0)),
                 )
 
         protein_protein_interaction_network.export(
@@ -437,41 +434,42 @@ def process_configuration(configurations, logger):
         )
 
         if "Gene Ontology enrichment" in configuration:
-            for terms in gene_ontology.get_enrichment(
+            enrichment = gene_ontology.get_enrichment(
                 [network],
-                    test=test.TEST[configuration["module detection"]
-                                   ["Gene Ontology enrichment"].get(
-                                       "test", "hypergeometric")],
-                    correction=correction.CORRECTION[
-                        configuration["module detection"].get(
-                            "correction", "Benjamini-Hochberg")],
-                    taxon_identifier=configuration["module detection"]
-                ["Gene Ontology enrichment"].get("taxon identifier", 9606),
-                    namespaces=configuration["module detection"]
+                test=test.TEST[configuration["module detection"]
+                               ["Gene Ontology enrichment"].get(
+                                   "test", "hypergeometric")],
+                correction=correction.CORRECTION[
+                    configuration["module detection"].get(
+                        "correction", "Benjamini-Hochberg")],
+                taxon_identifier=configuration["module detection"]
+                ["Gene Ontology enrichment"].get("taxonomy identifier", 9606),
+                namespaces=configuration["module detection"]
                 ["Gene Ontology enrichment"].get("namespaces", [
-                    "biological_process", "cellular_component",
-                    "molecular_function"
-                ]))[network]:
-                for (term, name) in terms:
-                    if terms[(term, name)] <= configuration[
-                            "Gene Ontology enrichment"].get("p", 1.0):
-                        logger.info("{}\t{}\t{:.2e}".format(
-                            term,
-                            name,
-                            terms[(term, name)],
-                        ))
+                    "cellular_component", "molecular_function",
+                    "biological_process"
+                ]))
+
+            for (term, name), p in sorted(enrichment[network].items(),
+                                          key=lambda item: item[1]):
+                if p <= configuration["Gene Ontology enrichment"].get(
+                        "p", 1.0):
+                    logger.info("{}\t{}\t{:.2e}".format(
+                        term,
+                        name,
+                        p,
+                    ))
 
         if "module detection" in configuration:
             protein_protein_interaction_network.set_edge_weights(
                 network,
                 weight=combination.CONFIDENCE_SCORE_COMBINATION[
-                    configuration["module detection"].get(
-                        "edge weight", "number")])
+                    configuration["module detection"].get("edge weight")])
 
             modules = protein_protein_interaction_network.get_modules(
                 network,
                 module_size=configuration["module detection"].get(
-                    "maximum module size", network.number_of_nodes()),
+                    "module size", network.number_of_nodes()),
                 module_size_combination=combination.MODULE_SIZE_COMBINATION[
                     configuration["module detection"].get(
                         "module size combination", "mean")],
@@ -493,12 +491,86 @@ def process_configuration(configurations, logger):
                         configuration["module detection"].get(
                             "correction", "Benjamini-Hochberg")],
                     taxon_identifier=configuration["module detection"]
-                    ["Gene Ontology enrichment"].get("taxon identifier", 9606),
+                    ["Gene Ontology enrichment"].get("taxonomy identifier",
+                                                     9606),
                     namespaces=configuration["module detection"]
                     ["Gene Ontology enrichment"].get("namespaces", [
-                        "biological_process", "cellular_component",
-                        "molecular_function"
+                        "cellular_component", "molecular_function",
+                        "biological_process"
                     ]))
+
+            if "change enrichment" in configuration["module detection"]:
+                if configuration["module detection"]["change enrichment"].get(
+                        "test", "Wilcoxon") in {"Wilcoxon"}:
+                    change_enrichment = protein_protein_interaction_network.get_continuous_change_enrichment(
+                        network,
+                        modules,
+                        combination.SITE_COMBINATION[
+                            configuration["module detection"]
+                            ["change enrichment"].get("site combination",
+                                                      "absmax")],
+                        test=test.TEST[configuration["module detection"]
+                                       ["change enrichment"]["test"]],
+                        correction=correction.CORRECTION[
+                            configuration["module detection"]
+                            ["change enrichment"].get("correction",
+                                                      "Benjamini-Hochberg")])
+
+                else:
+                    if (configuration["module detection"]["change enrichment"].
+                            get("scoring") == "standard score"):
+                        change_enrichment = protein_protein_interaction_network.get_binary_change_enrichment(
+                            network,
+                            modules,
+                            changes=configuration["module detection"]
+                            ["change enrichment"].get("combined change",
+                                                      (-2.0, 2.0)),
+                            get_change=protein_protein_interaction_network.
+                            get_change_of_standard_score,
+                            site_combination=combination.SITE_COMBINATION[
+                                configuration["module detection"]
+                                ["change enrichment"].get(
+                                    "site combination", "absmax")],
+                            test=test.TEST[configuration["module detection"]
+                                           ["change enrichment"]["test"]],
+                            correction=correction.CORRECTION[configuration[
+                                "module detection"]["change enrichment"].get(
+                                    "correction", "Benjamini-Hochberg")])
+
+                    elif (configuration["module detection"]
+                          ["change enrichment"].get("scoring") == "quantile"):
+                        change_enrichment = protein_protein_interaction_network.get_binary_change_enrichment(
+                            network,
+                            modules,
+                            changes=configuration["module detection"]
+                            ["change enrichment"].get("combined change",
+                                                      (0.025, 0.975)),
+                            get_change=protein_protein_interaction_network.
+                            get_change_of_quantile,
+                            test=test.TEST[configuration["module detection"]
+                                           ["change enrichment"]["test"]],
+                            correction=correction.CORRECTION[configuration[
+                                "module detection"]["change enrichment"].get(
+                                    "correction", "Benjamini-Hochberg")],
+                        )
+
+                    else:
+                        change_enrichment = protein_protein_interaction_network.get_binary_change_enrichment(
+                            network,
+                            modules,
+                            changes=configuration["module detection"]
+                            ["change enrichment"].get("combined change",
+                                                      (-1.0, 1.0)),
+                            site_combination=combination.SITE_COMBINATION[
+                                configuration["module detection"]
+                                ["change enrichment"].get(
+                                    "site combination", "absmax")],
+                            test=test.TEST[configuration["module detection"]
+                                           ["change enrichment"]["test"]],
+                            correction=correction.CORRECTION[configuration[
+                                "module detection"]["change enrichment"].get(
+                                    "correction", "Benjamini-Hochberg")],
+                        )
 
             for j, module in enumerate(sorted(
                     modules,
@@ -514,148 +586,30 @@ def process_configuration(configurations, logger):
 
                 if "Gene Ontology enrichment" in configuration[
                         "module detection"]:
-                    for (term, name) in enrichment[module]:
-                        if terms[(term,
-                                  name)] <= configuration["module detection"][
-                                      "Gene Ontology enrichment"].get(
-                                          "p", 1.0):
+                    for (term, name), p in sorted(enrichment[module].items(),
+                                                  key=lambda item: item[1]):
+                        if p <= configuration["module detection"][
+                                "Gene Ontology enrichment"].get("p", 1.0):
                             logger.info("{}\t{}\t{}\t{:.2e}".format(
                                 j,
                                 term,
                                 name,
-                                terms[(term, name)],
+                                p,
                             ))
 
-        if "enrichment analysis" in configuration:
-            protein_protein_interaction_network.set_edge_weights(
-                network,
-                weight=combination.CONFIDENCE_SCORE_COMBINATION[
-                    configuration["enrichment analysis"].get(
-                        "edge weight", "number")])
-
-            modules = protein_protein_interaction_network.get_modules(
-                network,
-                module_size=configuration["enrichment analysis"].get(
-                    "module size", network.number_of_nodes()),
-                module_size_combination=combination.MODULE_SIZE_COMBINATION[
-                    configuration["enrichment analysis"].get(
-                        "module size combination", "mean")],
-                algorithm=modularization.ALGORITHM[
-                    configuration["enrichment analysis"].get(
-                        "algorithm", "Louvain")],
-                resolution=configuration["enrichment analysis"].get(
-                    "resolution", 1.0))
-
-            if (configuration["enrichment analysis"].get("scoring") ==
-                    "standard score"):
-                change_enrichment = protein_protein_interaction_network.get_change_enrichment(
-                    network,
-                    modules,
-                    p=configuration["enrichment analysis"].get("p", 0.05),
-                    changes=configuration["enrichment analysis"].get(
-                        "combined change", (-2.0, 2.0)),
-                    get_change=protein_protein_interaction_network.
-                    get_change_from_standard_score,
-                    site_combination=combination.SITE_COMBINATION[
-                        configuration["enrichment analysis"].get(
-                            "site combination", "absmax")],
-                    test=test.TEST[configuration["enrichment analysis"].get(
-                        "test", "hypergeometric")],
-                    correction=correction.CORRECTION[
-                        configuration["enrichment analysis"].get(
-                            "correction", "Benjamini-Hochberg")])
-
-            elif (configuration["enrichment analysis"].get("scoring") ==
-                  "quantile"):
-                change_enrichment = protein_protein_interaction_network.get_change_enrichment(
-                    network,
-                    modules,
-                    p=configuration["enrichment analysis"].get("p", 0.05),
-                    changes=configuration["enrichment analysis"].get(
-                        "combined change", (0.025, 0.975)),
-                    get_change=protein_protein_interaction_network.
-                    get_change_from_quantile,
-                    test=test.TEST[configuration["enrichment analysis"].get(
-                        "test", "hypergeometric")],
-                    correction=correction.CORRECTION[
-                        configuration["enrichment analysis"].get(
-                            "correction", "Benjamini-Hochberg")],
-                )
-
-            else:
-                change_enrichment = protein_protein_interaction_network.get_change_enrichment(
-                    network,
-                    modules,
-                    changes=configuration["enrichment analysis"].get(
-                        "combined change", (-1.0, 1.0)),
-                    site_combination=combination.SITE_COMBINATION[
-                        configuration["enrichment analysis"].get(
-                            "site combination", "absmax")],
-                    test=test.TEST[configuration["enrichment analysis"].get(
-                        "test", "hypergeometric")],
-                    correction=correction.CORRECTION[
-                        configuration["enrichment analysis"].get(
-                            "correction", "Benjamini-Hochberg")],
-                )
-
-            protein_protein_interaction_network.remove_edge_weights(network)
-
-            if "Gene Ontology enrichment" in configuration[
-                    "enrichment analysis"]:
-                enrichment = gene_ontology.get_enrichment(
-                    change_enrichment,
-                    test=test.TEST[configuration["enrichment analysis"]
-                                   ["Gene Ontology enrichment"].get(
-                                       "test", "hypergeometric")],
-                    correction=correction.CORRECTION[configuration[
-                        "enrichment analysis"]["Gene Ontology enrichment"].get(
-                            "correction", "Benjamini-Hochberg")],
-                    taxon_identifier=configuration["enrichment analysis"]
-                    ["Gene Ontology enrichment"].get("taxon identifier", 9606),
-                    namespaces=configuration["enrichment analysis"]
-                    ["Gene Ontology enrichment"].get("namespaces", [
-                        "biological_process", "cellular_component",
-                        "molecular_function"
-                    ]))
-
-            for j, module in enumerate(sorted(
-                    change_enrichment,
-                    key=lambda module: module.number_of_nodes(),
-                    reverse=True),
-                                       start=1):
-                for time in modules[module]:
-                    for modification in modules[module][time]:
-                        if modules[module][time][modification] <= configuration[
-                                "enrichment analysis"].get("p", 1.0):
-                            logger.info("{}\t{}\t{}\t{:.2e}".format(
-                                j,
-                                time,
-                                modification,
-                                modules[module][time][modification],
-                            ))
-
-                            if "Gene Ontology enrichment" in configuration[
-                                    "enrichment analysis"]:
-                                for (term, name) in enrichment[module]:
-                                    if enrichment[module][(
-                                            term, name
-                                    )] <= configuration["enrichment analysis"][
-                                            "Gene Ontology enrichment"].get(
-                                                "p", 1.0):
-                                        logger.info(
-                                            "{}\t{}\t{}\t{:.2e}".format(
-                                                j,
-                                                term,
-                                                name,
-                                                terms[(term, name)],
-                                            ))
-
-                            protein_protein_interaction_network.export(
-                                module,
-                                logger.name,
-                                ".{}.{}".format(i, j) if
-                                len(configurations) > 1 else ".{}".format(j),
-                            )
+                if "change enrichment" in configuration["module detection"]:
+                    for time in change_enrichment[module]:
+                        for modification, p in sorted(
+                                change_enrichment[module][time].items(),
+                                key=lambda item: item[1]):
+                            if p <= configuration["module detection"][
+                                    "change enrichment"].get("p", 1.0):
+                                logger.info("{}\t{}\t{}\t{:.2e}".format(
+                                    j,
+                                    time,
+                                    modification,
+                                    p,
+                                ))
 
         if "Reactome network" in configuration:
             if "union" in configuration["Reactome network"]:
@@ -679,7 +633,7 @@ def process_configuration(configurations, logger):
                                         "site combination", "absmax")],
                                     lambda combined_sites: combined_sites <=
                                     protein_protein_interaction_network.
-                                    get_change_from_standard_score(
+                                    get_change_of_standard_score(
                                         network,
                                         subset.get("combined change",
                                                    (-2.0, 2.0))[0],
@@ -690,7 +644,7 @@ def process_configuration(configurations, logger):
                                             "site combination", "absmax"
                                         )]) or combined_sites >=
                                     protein_protein_interaction_network.
-                                    get_change_from_standard_score(
+                                    get_change_of_standard_score(
                                         network,
                                         subset.get("combined change",
                                                    (-2.0, 2.0))[1],
@@ -710,7 +664,7 @@ def process_configuration(configurations, logger):
                                         "site combination", "absmax")],
                                     lambda combined_sites: combined_sites <=
                                     protein_protein_interaction_network.
-                                    get_change_from_quantile(
+                                    get_change_of_quantile(
                                         network,
                                         subset.get("combined change",
                                                    (0.025, 0.975))[0],
@@ -721,7 +675,7 @@ def process_configuration(configurations, logger):
                                             "site combination", "absmax"
                                         )]) or combined_sites >=
                                     protein_protein_interaction_network.
-                                    get_change_from_quantile(
+                                    get_change_of_quantile(
                                         network,
                                         subset.get("combined change",
                                                    (0.025, 0.975))[1],
@@ -750,10 +704,9 @@ def process_configuration(configurations, logger):
                         "test", "hypergeometric")],
                     correction=correction.CORRECTION[
                         configuration["Reactome network"].get(
-                            "correction"
-                            "Benjamini-Hochberg")],
+                            "correction", "Benjamini-Hochberg")],
                     taxon_identifier=configuration["Reactome network"].get(
-                        "taxon identifier", 9606))
+                        "taxonomy identifier", 9606))
 
             elif "intersection" in configuration["Reactome network"]:
                 proteins = set(network)
@@ -777,7 +730,7 @@ def process_configuration(configurations, logger):
                                         "site combination", "absmax")],
                                     lambda combined_sites: combined_sites <=
                                     protein_protein_interaction_network.
-                                    get_change_from_standard_score(
+                                    get_change_of_standard_score(
                                         network,
                                         subset.get("combined change",
                                                    (-2.0, 2.0))[0],
@@ -788,7 +741,7 @@ def process_configuration(configurations, logger):
                                             "site combination", "absmax"
                                         )]) or combined_sites >=
                                     protein_protein_interaction_network.
-                                    get_change_from_standard_score(
+                                    get_change_of_standard_score(
                                         network,
                                         subset.get("combined change",
                                                    (-2.0, 2.0))[1],
@@ -808,7 +761,7 @@ def process_configuration(configurations, logger):
                                         "site combination", "absmax")],
                                     lambda combined_sites: combined_sites <=
                                     protein_protein_interaction_network.
-                                    get_change_from_quantile(
+                                    get_change_of_quantile(
                                         network,
                                         subset.get("combined change",
                                                    (0.025, 0.975))[0],
@@ -819,7 +772,7 @@ def process_configuration(configurations, logger):
                                             "site combination", "absmax"
                                         )]) or combined_sites >=
                                     protein_protein_interaction_network.
-                                    get_change_from_quantile(
+                                    get_change_of_quantile(
                                         network,
                                         subset.get("combined change",
                                                    (0.025, 0.975))[1],
@@ -850,7 +803,7 @@ def process_configuration(configurations, logger):
                         configuration["Reactome network"].get(
                             "correction", "Benjamini-Hochberg")],
                     taxon_identifier=configuration["Reactome network"].get(
-                        "taxon identifier", 9606))
+                        "taxonomy identifier", 9606))
 
             else:
                 reactome_network = pathway_network.get_pathway_network(
@@ -861,7 +814,7 @@ def process_configuration(configurations, logger):
                         configuration["Reactome network"].get(
                             "correction", "Benjamini-Hochberg")],
                     taxon_identifier=configuration["Reactome network"].get(
-                        "taxon identifier", 9606))
+                        "taxonomy identifier", 9606))
 
             pathway_network.export(reactome_network,
                                    "{}.reactome".format(logger.name))
@@ -890,7 +843,7 @@ def process_configuration(configurations, logger):
                                         "site combination", "absmax")],
                                     lambda combined_sites: combined_sites <=
                                     protein_protein_interaction_network.
-                                    get_change_from_standard_score(
+                                    get_change_of_standard_score(
                                         network,
                                         subset.get("combined change",
                                                    (-2.0, 2.0))[0],
@@ -901,7 +854,7 @@ def process_configuration(configurations, logger):
                                             "site combination", "absmax"
                                         )]) or combined_sites >=
                                     protein_protein_interaction_network.
-                                    get_change_from_standard_score(
+                                    get_change_of_standard_score(
                                         network,
                                         subset.get("combined change",
                                                    (-2.0, 2.0))[1],
@@ -921,7 +874,7 @@ def process_configuration(configurations, logger):
                                         "site combination", "absmax")],
                                     lambda combined_sites: combined_sites <=
                                     protein_protein_interaction_network.
-                                    get_change_from_quantile(
+                                    get_change_of_quantile(
                                         network,
                                         subset.get("combined change",
                                                    (0.025, 0.975))[0],
@@ -932,7 +885,7 @@ def process_configuration(configurations, logger):
                                             "site combination", "absmax"
                                         )]) or combined_sites >=
                                     protein_protein_interaction_network.
-                                    get_change_from_quantile(
+                                    get_change_of_quantile(
                                         network,
                                         subset.get("combined change",
                                                    (0.025, 0.975))[1],
@@ -968,7 +921,7 @@ def process_configuration(configurations, logger):
                         configuration["Gene Ontology network"].get(
                             "correction", "Benjamini-Hochberg")],
                     taxon_identifier=configuration["Gene Ontology network"].
-                    get("taxon identifier", 9606))
+                    get("taxonomy identifier", 9606))
 
             elif "intersection" in configuration["Gene Ontology network"]:
                 proteins = set(network)
@@ -992,7 +945,7 @@ def process_configuration(configurations, logger):
                                         "site combination", "absmax")],
                                     lambda combined_sites: combined_sites <=
                                     protein_protein_interaction_network.
-                                    get_change_from_standard_score(
+                                    get_change_of_standard_score(
                                         network,
                                         subset.get("combined change",
                                                    (-2.0, 2.0))[0],
@@ -1003,7 +956,7 @@ def process_configuration(configurations, logger):
                                             "site combination", "absmax"
                                         )]) or combined_sites >=
                                     protein_protein_interaction_network.
-                                    get_change_from_standard_score(
+                                    get_change_of_standard_score(
                                         network,
                                         subset.get("combined change",
                                                    (-2.0, 2.0))[1],
@@ -1023,7 +976,7 @@ def process_configuration(configurations, logger):
                                         "site combination", "absmax")],
                                     lambda combined_sites: combined_sites <=
                                     protein_protein_interaction_network.
-                                    get_change_from_quantile(
+                                    get_change_of_quantile(
                                         network,
                                         subset.get("combined change",
                                                    (0.025, 0.975))[0],
@@ -1034,7 +987,7 @@ def process_configuration(configurations, logger):
                                             "site combination", "absmax"
                                         )]) or combined_sites >=
                                     protein_protein_interaction_network.
-                                    get_change_from_quantile(
+                                    get_change_of_quantile(
                                         network,
                                         subset.get("combined change",
                                                    (0.025, 0.975))[1],
@@ -1070,7 +1023,7 @@ def process_configuration(configurations, logger):
                         configuration["Gene Ontology network"].get(
                             "correction", "Benjamini-Hochberg")],
                     taxon_identifier=configuration["Gene Ontology network"].
-                    get("taxon identifier", 9606))
+                    get("taxonomy identifier", 9606))
 
             else:
                 gene_ontology_network = ontology_network.get_ontology_network(
@@ -1086,7 +1039,7 @@ def process_configuration(configurations, logger):
                         configuration["Gene Ontology network"].get(
                             "correction", "Benjamini-Hochberg")],
                     taxon_identifier=configuration["Gene Ontology network"].
-                    get("taxon identifier", 9606))
+                    get("taxonomy identifier", 9606))
 
             ontology_network.export(gene_ontology_network,
                                     "{}.gene_ontology".format(logger.name))
@@ -1132,12 +1085,14 @@ def main():
 
     logging.basicConfig(stream=sys.stdout,
                         level=args.level,
-                        datefmt="%H:%M:%S",
-                        format="[%(levelname)s]% %(name)s: %(message)s")
-
+                        format="%(name)s\t%(message)s")
+    """
     with concurrent.futures.ProcessPoolExecutor(
             max_workers=args.processes) as executor:
         executor.map(process_configuration_file, args.configurations)
+    """
+    for configuration_file in args.configurations:
+        process_configuration_file(configuration_file)
 
 
 if __name__ == "__main__":

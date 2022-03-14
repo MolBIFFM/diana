@@ -7,3 +7,7 @@ def binomial(k, M, n, N):
 
 def hypergeometric(k, M, n, N):
     return scipy.stats.hypergeom.sf(k - 1, M, n, N)
+
+
+def wilcoxon(x, y):
+    return scipy.stats.ranksums(x, y).pvalue

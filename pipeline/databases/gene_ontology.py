@@ -1,5 +1,5 @@
 from databases import uniprot
-from fetch import fetch
+from download import download
 from enrichment import test, correction
 
 ONTOLOGY = "http://purl.obolibrary.org/obo/go.obo"
@@ -9,10 +9,10 @@ ANNOTATION_ISOFORM = "http://geneontology.org/gene-associations/goa_{organism}_i
 ORGANISM = {"file": {9606: "human"}}
 
 
-def get_ontology(namespaces=("biological_process", "cellular_compartment",
-                             "molecular_function")):
+def get_ontology(namespaces=("cellular_compartment", "molecular_function",
+                             "biological_process")):
     term = {}
-    for line in fetch.txt(ONTOLOGY):
+    for line in download.txt(ONTOLOGY):
         if any(
                 line.startswith("{}:".format(tag))
                 for tag in ("format-version", "data-version", "subsetdef",
@@ -38,7 +38,7 @@ def get_ontology(namespaces=("biological_process", "cellular_compartment",
 def get_annotation(taxon_identifier=9606):
     primary_accession = uniprot.get_primary_accession(taxon_identifier)
 
-    for row in fetch.tabular_txt(
+    for row in download.tabular_txt(
             ANNOTATION.format(organism=ORGANISM["file"][taxon_identifier]),
             skiprows=41,
             delimiter="\t",
@@ -48,11 +48,11 @@ def get_annotation(taxon_identifier=9606):
             for protein in primary_accession.get(row[1], {row[1]}):
                 yield (protein, row[4])
 
-    for row in fetch.tabular_txt(ANNOTATION_ISOFORM.format(
+    for row in download.tabular_txt(ANNOTATION_ISOFORM.format(
             organism=ORGANISM["file"][taxon_identifier]),
-                                 skiprows=41,
-                                 delimiter="\t",
-                                 usecols=[0, 4, 12, 16]):
+                                    skiprows=41,
+                                    delimiter="\t",
+                                    usecols=[0, 4, 12, 16]):
         if row[0] == "UniProtKB" and row[12] == "taxon:{}".format(
                 taxon_identifier) and row[16].startswith("UniProtKB:"):
             yield (row[16].split(":")[1], row[4])
@@ -62,8 +62,8 @@ def get_enrichment(networks,
                    test=test.hypergeometric,
                    correction=correction.benjamini_hochberg,
                    taxon_identifier=9606,
-                   namespaces=("biological_process", "cellular_compartment",
-                               "molecular_function")):
+                   namespaces=("cellular_compartment", "molecular_function",
+                               "biological_process")):
     annotation = {}
     for protein, term in get_annotation(taxon_identifier):
         if term not in annotation:

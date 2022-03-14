@@ -1,5 +1,5 @@
 from databases import uniprot
-from fetch import fetch
+from download import download
 
 BIOGRID_ID_MAP_ZIP_ARCHIVE = "https://downloads.thebiogrid.org/Download/BioGRID/Latest-Release/BIOGRID-IDENTIFIERS-LATEST.tab.zip"
 BIOGRID_ID_MAP = r"BIOGRID-IDENTIFIERS-[0-9]\.[0-9]\.[0-9]{3}\.tab\.txt"
@@ -20,7 +20,7 @@ def get_proteins(
 ):
     primary_accession = uniprot.get_primary_accession(taxon_identifier)
 
-    for row in fetch.tabular_txt(
+    for row in download.tabular_txt(
             BIOGRID_MV_PHYSICAL_ZIP_ARCHIVE
             if multi_validated_physical else BIOGRID_ZIP_ARCHIVE,
             file_from_zip_archive=BIOGRID_MV_PHYSICAL
@@ -79,7 +79,7 @@ def get_protein_protein_interactions(
 ):
     primary_accession = uniprot.get_primary_accession(taxon_identifier)
 
-    for row in fetch.tabular_txt(
+    for row in download.tabular_txt(
             BIOGRID_MV_PHYSICAL_ZIP_ARCHIVE
             if multi_validated_physical else BIOGRID_ZIP_ARCHIVE,
             file_from_zip_archive=BIOGRID_MV_PHYSICAL

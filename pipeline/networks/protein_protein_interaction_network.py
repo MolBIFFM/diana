@@ -765,7 +765,7 @@ def get_proteins(
     return proteins
 
 
-def get_change_enrichment(
+def get_binary_change_enrichment(
     network,
     modules,
     changes=(-1.0, 1.0),
@@ -775,7 +775,6 @@ def get_change_enrichment(
     test=test.hypergeometric,
     correction=correction.benjamini_hochberg,
 ):
-
     p_values = {}
     for time in get_times(network):
         for modification in get_post_translational_modifications(
@@ -836,5 +835,50 @@ def get_change_enrichment(
     }
 
 
+def get_continuos_change_enrichment(
+    network,
+    modules,
+    site_combination=lambda sites: max(sites, key=abs),
+    test=test.wilcoxon,
+    correction=correction.benjamini_hochberg,
+):
+    p_values = {}
+    for time in get_times(network):
+        for modification in get_post_translational_modifications(
+                network, time):
+
+            network_changes = [
+                get_changes(nx.union_all([m for m in modules if m != module]),
+                            time, modification, site_combination)
+                for module in modules
+            ]
+
+            module_changes = [
+                get_changes(module, time, modification, site_combination)
+                for module in modules
+            ]
+
+            p_values.update({(module, time, modification):
+                             test(module_changes[i], network_changes[i])
+                             for i, module in enumerate(modules)})
+
+    p_values = correction(p_values)
+
+    return {
+        module: {
+            time: {
+                modification: p_values[(module, time, modification)]
+                for modification in get_post_translational_modifications(
+                    network, time)
+            }
+            for time in get_times(network)
+        }
+        for module in modules
+    }
+
+
 def export(network, basename, suffix=""):
-    nx.write_graphml_xml(network, "{0}{1}.graphml".format(basename, suffix))
+    nx.write_graphml_xml(network,
+                         "{0}{1}.graphml".format(basename, suffix),
+                         named_key_ids=True,
+                         infer_numeric_types=True)

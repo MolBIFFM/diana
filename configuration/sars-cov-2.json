@@ -49,16 +49,22 @@
           "range": [-2.0, 2.0]
         },
         "node color": {
-          "range": [-1.0, 1.0]
+          "combined change": [-1.0, 1.0]
         },
-        "edge score": "number"
+        "edge transparency": "number"
       },
-      "enrichment analysis": {
+      "Gene Ontology enrichment": {
+        "p": 0.05
+      },
+      "module detection": {
         "edge weight": "number",
-        "p": 0.05,
-        "combined change": [-1.0, 1.0],
         "Gene Ontology enrichment": {
           "p": 0.05
+        },
+        "change enrichment": {
+          "test": "hypergeometric",
+          "p": 0.05,
+          "combined change": [-1.0, 1.0]
         }
       },
       "Reactome network": {

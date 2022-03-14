@@ -1,5 +1,5 @@
 from databases import uniprot
-from fetch import fetch
+from download import download
 
 STRING_ID_MAP = "https://stringdb-static.org/download/protein.aliases.v{version}/{taxon_identifier}.protein.aliases.v{version}.txt.gz"
 STRING_INTERACTIONS = "https://stringdb-static.org/download/protein.links.full.v{version}/{taxon_identifier}.protein.links.full.v{version}.txt.gz"
@@ -24,7 +24,7 @@ def get_proteins(neighborhood=0.0,
                  taxon_identifier=9606,
                  version=11.5):
     uniprot_id_map = {}
-    for row in fetch.tabular_txt(
+    for row in download.tabular_txt(
             STRING_ID_MAP.format(taxon_identifier=taxon_identifier,
                                  version=version),
             delimiter="\t",
@@ -58,7 +58,7 @@ def get_proteins(neighborhood=0.0,
 
     primary_accession = uniprot.get_primary_accession(taxon_identifier)
 
-    for row in fetch.tabular_txt(
+    for row in download.tabular_txt(
             STRING_PHYSICAL.format(taxon_identifier=taxon_identifier,
                                    version=version) if physical else
             STRING_INTERACTIONS.format(taxon_identifier=taxon_identifier,
@@ -96,7 +96,7 @@ def get_protein_protein_interactions(neighborhood=0.0,
                                      taxon_identifier=9606,
                                      version=11.5):
     uniprot_id_map = {}
-    for row in fetch.tabular_txt(
+    for row in download.tabular_txt(
             STRING_ID_MAP.format(taxon_identifier=taxon_identifier,
                                  version=version),
             delimiter="\t",
@@ -130,7 +130,7 @@ def get_protein_protein_interactions(neighborhood=0.0,
 
     primary_accession = uniprot.get_primary_accession(taxon_identifier)
 
-    for row in fetch.tabular_txt(
+    for row in download.tabular_txt(
             STRING_PHYSICAL.format(taxon_identifier=taxon_identifier,
                                    version=version) if physical else
             STRING_INTERACTIONS.format(taxon_identifier=taxon_identifier,

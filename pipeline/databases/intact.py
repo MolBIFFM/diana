@@ -1,6 +1,6 @@
 from formats import mitab
 from databases import uniprot
-from fetch import fetch
+from download import download
 
 INTACT_ZIP_ARCHIVE = "ftp://ftp.ebi.ac.uk/pub/databases/intact/current/psimitab/intact.zip"
 INTACT_INTERACTIONS = "intact.txt"
@@ -12,7 +12,7 @@ def get_proteins(interaction_detection_methods=[],
                  taxon_identifier=9606):
     primary_accession = uniprot.get_primary_accession(taxon_identifier)
 
-    for row in fetch.tabular_txt(
+    for row in download.tabular_txt(
             INTACT_ZIP_ARCHIVE,
             file_from_zip_archive=INTACT_INTERACTIONS,
             delimiter="\t",
@@ -78,7 +78,7 @@ def get_protein_protein_interactions(interaction_detection_methods=[],
                                      taxon_identifier=9606):
     primary_accession = uniprot.get_primary_accession(taxon_identifier)
 
-    for row in fetch.tabular_txt(
+    for row in download.tabular_txt(
             INTACT_ZIP_ARCHIVE,
             file_from_zip_archive=INTACT_INTERACTIONS,
             delimiter="\t",

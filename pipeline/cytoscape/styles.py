@@ -32,7 +32,7 @@ def get_bar_chart(time, modification, sites, cy_range=(-2.0, 2.0)):
 
 def get_protein_protein_interaction_network_styles(
     network,
-    bar_chart_range=(-3.0, 3.0),
+    bar_chart_range=(-1.0, 1.0),
     get_change=lambda network, change, time, modification, site_combination:
     change,
     site_combination=lambda sites: max(sites, key=abs),

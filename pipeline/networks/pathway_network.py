@@ -61,4 +61,7 @@ def get_pathway_sizes(network):
 
 
 def export(network, basename, suffix=""):
-    nx.write_graphml_xml(network, "{0}{1}.graphml".format(basename, suffix))
+    nx.write_graphml_xml(network,
+                         "{0}{1}.graphml".format(basename, suffix),
+                         named_key_ids=True,
+                         infer_numeric_types=True)

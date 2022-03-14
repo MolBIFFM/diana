@@ -4,9 +4,9 @@ from enrichment import correction, test
 
 
 def get_ontology_network(protein_protein_interaction_network,
-                         namespaces=("biological_process",
-                                     "cellular_compartment",
-                                     "molecular_function"),
+                         namespaces=("cellular_compartment",
+                                     "molecular_function",
+                                     "biological_process"),
                          test=test.hypergeometric,
                          correction=correction.benjamini_hochberg,
                          taxon_identifier=9606):
@@ -64,4 +64,7 @@ def get_term_sizes(network):
 
 
 def export(network, basename, suffix=""):
-    nx.write_graphml_xml(network, "{0}{1}.graphml".format(basename, suffix))
+    nx.write_graphml_xml(network,
+                         "{0}{1}.graphml".format(basename, suffix),
+                         named_key_ids=True,
+                         infer_numeric_types=True)
