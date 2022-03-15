@@ -92,7 +92,7 @@ def export(network: nx.Graph, basename: str, suffix: str = "") -> None:
     Exports the Gene Ontology network.
 
     Args:
-        styles: The Gene Ontology network.
+        network: The Gene Ontology network.
         basename: The base file name.
         suffix: An addition to the base file name.
     """

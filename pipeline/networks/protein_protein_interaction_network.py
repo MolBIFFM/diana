@@ -1282,7 +1282,7 @@ def export(network: nx.Graph, basename: str, suffix: str = "") -> None:
     Exports the protein-protein interaction network.
 
     Args:
-        styles: The protein-protein interaction network.
+        netowork: The protein-protein interaction network.
         basename: The base file name.
         suffix: An addition to the base file name.
     """

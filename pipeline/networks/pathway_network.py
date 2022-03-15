@@ -89,7 +89,7 @@ def export(network, basename, suffix=""):
     Exports the Reactome network.
 
     Args:
-        styles: The Reactome network.
+        network: The Reactome network.
         basename: The base file name.
         suffix: An addition to the base file name.
     """
