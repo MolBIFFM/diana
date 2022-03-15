@@ -1011,6 +1011,13 @@ The threshold for corrected p-values. The default setting is `1.0`.
             "biological_process"
           ]
         }
+      },
+      "Gene Ontology network": {
+        "namespaces": [
+            "cellular_component",
+            "molecular_function",
+            "biological_process"
+        ]
       }
     }
 ]
