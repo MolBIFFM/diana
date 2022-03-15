@@ -1,3 +1,4 @@
+"""The interface for the IntAct database."""
 from formats import mitab
 from typing import Generator
 

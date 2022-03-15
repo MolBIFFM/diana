@@ -1,3 +1,4 @@
+"""Cytoscape style configurations for a protein-protein interaction network."""
 COMPONENTS = [
     {
         "edge": {

@@ -1,4 +1,5 @@
-from typing import Callable, Generator, Union
+"""The interface for the Gene Ontology."""
+from typing import Generator, Union
 
 import networkx as nx
 

@@ -1,3 +1,7 @@
+"""Gene Ontology network
+
+Nodes are Gene Ontology terms annotated with any proteins from the queried 
+species. Edges are directed term relationships within the Gene Ontology."""
 from typing import Callable
 
 import networkx as nx
@@ -17,9 +21,7 @@ def get_ontology_network(protein_protein_interaction_network: nx.Graph,
                          taxonomy_identifier: int = 9606) -> nx.Graph:
     """
     Assemble a Gene Ontology network corresponding to the protein-protein 
-    interaction network. Nodes are Gene Ontology terms annotated with any 
-    proteins from the queried species. Edges are directed term relationships 
-    within the Gene Ontology.
+    interaction network. 
 
     Args:
         protein_protein_interaction_network: The protein-protein interaction 

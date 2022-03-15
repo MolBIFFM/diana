@@ -1,3 +1,5 @@
+"""The Cytoscape style configuration for a Reactome network."""
+
 COMPONENTS = {
     "edge": {
         "dependency": {

@@ -1,3 +1,4 @@
+"""Interfaces to statistical tests."""
 import scipy.stats
 
 

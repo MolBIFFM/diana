@@ -1,3 +1,4 @@
+"""Utilities to download, decompress and iterate files."""
 import gzip
 import os
 import re

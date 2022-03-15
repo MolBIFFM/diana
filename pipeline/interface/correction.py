@@ -1,3 +1,4 @@
+"""Mappings of configuration file entries to multiple testing corrections."""
 from enrichment import correction
 
 CORRECTION = {

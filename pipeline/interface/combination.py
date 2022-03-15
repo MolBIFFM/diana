@@ -1,3 +1,4 @@
+"""Mappings of configuration file entries to combining functions."""
 import statistics
 
 SITE_COMBINATION = {

@@ -1,3 +1,5 @@
+"""The Cytoscape style configuration for a Gene Ontology network."""
+
 COMPONENTS = {
     "edge": {
         "dependency": {

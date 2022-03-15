@@ -1,3 +1,4 @@
+"""Multiple testing correction procedures."""
 from typing import Hashable
 
 

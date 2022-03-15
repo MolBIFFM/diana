@@ -1,4 +1,4 @@
-from unicodedata import name
+"""Utilities to parse the PSI-MITAB file format."""
 
 
 def parse(entry: str) -> dict[str, str]:

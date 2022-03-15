@@ -1,3 +1,4 @@
+"""The interface for UniProt."""
 from typing import Generator
 
 from download import download

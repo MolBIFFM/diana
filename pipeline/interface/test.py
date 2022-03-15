@@ -1,3 +1,4 @@
+"""Mappings of configuration file entries to statistical tests."""
 from enrichment import test
 
 TEST = {

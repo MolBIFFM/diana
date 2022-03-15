@@ -1,3 +1,4 @@
+"""The interface for the MINT database."""
 from typing import Generator
 
 from formats import mitab

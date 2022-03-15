@@ -1,3 +1,4 @@
+"""Cytoscape styles"""
 import json
 from typing import Callable
 import xml.etree.ElementTree as ET

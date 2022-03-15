@@ -1,3 +1,4 @@
+"""The interface for the STRING database."""
 from typing import Generator
 from databases import uniprot
 from download import download

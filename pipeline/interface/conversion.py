@@ -1,3 +1,5 @@
+"""Mappings of bases to combination support logarithmic representation."""
+
 import math
 
 LOGARITHM = {

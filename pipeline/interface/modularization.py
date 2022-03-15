@@ -1,3 +1,4 @@
+"""Mappings of configuration file entries to community detection algorithms."""
 from modularization import modularization
 
 ALGORITHM = {

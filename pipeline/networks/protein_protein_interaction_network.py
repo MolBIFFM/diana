@@ -1,3 +1,4 @@
+"""Protein-protein interaction network"""
 import bisect
 import math
 import os

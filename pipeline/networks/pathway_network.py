@@ -1,3 +1,9 @@
+"""Reactome network
+
+Nodes are Reactome pathways annotated with any proteins from the queried 
+species. Edges are directed pathway relationships within Reactome.
+"""
+
 from typing import Callable
 import networkx as nx
 from databases import reactome
@@ -12,8 +18,7 @@ def get_pathway_network(protein_protein_interaction_network: nx.Graph,
                         taxonomy_identifier: int = 9606) -> nx.Graph:
     """
     Assemble a Reactome network corresponding to the protein-protein interaction 
-    network. Nodes are Reactome pathways annotated with any proteins from the 
-    queried species. Edges are directed pathway relationships within Reactome.
+    network.
 
     Args:
         protein_protein_interaction_network: The protein-protein interaction 
