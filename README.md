@@ -71,7 +71,7 @@ The column reporting UniProt gene or protein accessions.
     }
 ]
 ```
-A regular expression used to obtain gene accessions from a cell value in the table. The default setting is `"^(.+?)$"`, corresponding to the entire entry.
+A regular expression used to obtain gene or protein accessions from a cell value in the table. The default setting is `"^(.+?)$"`, corresponding to the entire entry.
 
 ```json
 [
@@ -107,7 +107,7 @@ The sheet of a spreadsheet. The default setting is `0` corresponding to the firs
     }
 ]
 ```
-The 0-indexed line number of the header to skip initial lines of the sheet. The default setting is `0`, corresponding to the first line.
+The line number of the header to skip initial lines of the sheet. The default setting is `0`, corresponding to the first line.
 
 ```json
 [
@@ -125,7 +125,7 @@ The 0-indexed line number of the header to skip initial lines of the sheet. The 
     }
 ]
 ```
-A list of input gene accessions.
+A list of input gene or protein accessions.
 
 ```json
 [
@@ -168,7 +168,7 @@ A list of input gene accessions.
     }
 ]
 ```
-The NCBI taxonomy ID of the host organism. The default and currently only fully supported setting is `9606`, corresponding to Homo sapiens.
+The NCBI taxonomy ID of the organism. The default and currently only fully supported setting is `9606`, corresponding to Homo sapiens.
 
 ```json
 [
@@ -181,39 +181,7 @@ The NCBI taxonomy ID of the host organism. The default and currently only fully 
     }
 ]
 ```
-The time of measurement to associated with the changes from the corresponding file. The default setting is `0`.
-
-```json
-[
-    {
-      "Reactome network": {
-        "union": [
-          {
-            "time": 0
-          }
-        ],
-        "intersection": [
-          {
-            "time": 0
-          }
-        ]
-      },
-      "Gene Ontology network": {
-        "union": [
-          {
-            "time": 0
-          }
-        ],
-        "intersection": [
-          {
-            "time": 0
-          }
-        ]
-      }
-    }
-]
-```
-The time of measurement associated with the change considered to determine a subset of proteins.
+The time of measurement to be associated with the changes from the corresponding file. The default setting is `0`.
 
 ```json
 [
@@ -227,38 +195,6 @@ The time of measurement associated with the change considered to determine a sub
 ]
 ```
 An identifier for the type of post-translational modification associate with changes from the corresponding file. The default setting is `""`.
-
-```json
-[
-    {
-      "Reactome network": {
-        "union": [
-          {
-            "modification": ""
-          }
-        ],
-        "intersection": [
-          {
-            "modification": ""
-          }
-        ]
-      },
-      "Gene Ontology network": {
-        "union": [
-          {
-            "modification": ""
-          }
-        ],
-        "intersection": [
-          {
-            "modification": ""
-          }
-        ]
-      }
-    }
-]
-```
-The modification associated with the change considered to determine a subset of proteins.
 
 ```json
 [
@@ -1052,6 +988,72 @@ The threshold for corrected p-values. The default setting is `1.0`.
 ]
 ```
 The Gene Ontology namespaces to consider. The default setting is `["cellular_component", "molecular_function" "biological_process"]`, corresponding to the entire Gene Ontology.
+
+```json
+[
+    {
+      "Reactome network": {
+        "union": [
+          {
+            "time": 0
+          }
+        ],
+        "intersection": [
+          {
+            "time": 0
+          }
+        ]
+      },
+      "Gene Ontology network": {
+        "union": [
+          {
+            "time": 0
+          }
+        ],
+        "intersection": [
+          {
+            "time": 0
+          }
+        ]
+      }
+    }
+]
+```
+The time of measurement considered to determine a subset of proteins.
+
+```json
+[
+    {
+      "Reactome network": {
+        "union": [
+          {
+            "post-translational modification": ""
+          }
+        ],
+        "intersection": [
+          {
+            "post-translational modification": ""
+          }
+        ]
+      },
+      "Gene Ontology network": {
+        "union": [
+          {
+            "post-translational modification": ""
+          }
+        ],
+        "intersection": [
+          {
+            "post-translational modification": ""
+          }
+        ]
+      }
+    }
+]
+```
+The modification considered to determine a subset of proteins.
+
+---
 
 The configuration files provided in this repository exemplify projected workflows referring to data sets supplemented with the following publications.
 
