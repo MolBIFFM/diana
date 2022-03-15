@@ -89,12 +89,12 @@ def get_term_sizes(network: nx.Graph) -> dict[str, int]:
 
 def export(network: nx.Graph, basename: str, suffix: str = "") -> None:
     """
-    Exports the Gene Ontology network to [basename][suffix].graphml.
+    Exports the Gene Ontology network.
 
     Args:
         styles: The Gene Ontology network.
         basename: The base file name.
-        suffix: An optional addition to the base file name.
+        suffix: An addition to the base file name.
     """
     nx.write_graphml_xml(network,
                          "{0}{1}.graphml".format(basename, suffix),

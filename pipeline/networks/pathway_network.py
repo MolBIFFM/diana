@@ -86,12 +86,12 @@ def get_pathway_sizes(network: nx.Graph) -> dict[str, int]:
 
 def export(network, basename, suffix=""):
     """
-    Exports the Reactome network to [basename][suffix].graphml.
+    Exports the Reactome network.
 
     Args:
         styles: The Reactome network.
         basename: The base file name.
-        suffix: An optional addition to the base file name.
+        suffix: An addition to the base file name.
     """
     nx.write_graphml_xml(network,
                          "{0}{1}.graphml".format(basename, suffix),
