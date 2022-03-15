@@ -925,6 +925,9 @@ The resolution parameter of modularity optimized by module detection. The defaul
         "Gene Ontology enrichment": {
           "test": "hypergeometric"
         },
+        "change enrichment": {
+          "test": "hypergeometric"
+        }
       }
     }
 ]
@@ -936,14 +939,14 @@ Available settings are `"binomial"` and `"hypergeometric"`.
 [
     {
       "module detection": {
-        "change enrichment": {
+        "change tendency": {
           "test": "Wilcoxon"
         }
       }
     }
 ]
 ```
-The statistical test to assess the relation of changes in each module to the entire network. The default setting is `"Wilcoxon"`. Further available settings are `"binomial"` and `"hypergeometric"`.
+The statistical test to assess the changes of each module in relation to the entire network. The default and currently only available setting is `"Wilcoxon"`.
 
 ```json
 [
@@ -957,6 +960,9 @@ The statistical test to assess the relation of changes in each module to the ent
         },
         "change enrichment": {
           "correction": "Benjamini-Hochberg"
+        },
+        "change tendency": {
+          "correction": "Benjamini-Hochberg"
         }
       }
     }
@@ -964,6 +970,28 @@ The statistical test to assess the relation of changes in each module to the ent
 ```
 The procedure to adjust p-values for multiple testing. The default setting is `"Benjamini-Hochberg"`.
 Available settings are `"Benjamini-Hochberg"` and `"Bonferroni"`.
+
+```json
+[
+    {
+      "Gene Ontology enrichment": {
+        "p": 1.0
+      },
+      "module detection": {
+        "Gene Ontology enrichment": {
+          "p": 1.0
+        },
+        "change enrichment": {
+          "p": 1.0
+        },
+        "change tendency": {
+          "p": 1.0
+        }
+      }
+    }
+]
+```
+The threshold for corrected p-values. The default setting is `1.0`.
 
 ```json
 [

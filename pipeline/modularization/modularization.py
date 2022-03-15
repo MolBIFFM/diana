@@ -1,13 +1,26 @@
+from typing import Hashable
 import networkx as nx
 
 
-def clauset_newman_moore(G, resolution=1.0, weight="weight"):
-    # Newman (2004); Clauset, Newman, Moore (2004); Newman (2016)
+def clauset_newman_moore(G: nx.Graph,
+                         resolution: float = 1.0,
+                         weight: str = "weight") -> list[set[Hashable]]:
+    """
+    Clauset-Newman-Moore community detection algorithm for undirected, weighted graphs with parameterized modularity.
+
+    Args:
+        G: An undirected, weighted graph.
+        resolution: resolution parameter for modularity.
+        weight: edge attribute to consider as edge weight
+    
+    Returns:
+        Communities of G
+    """
     A = nx.linalg.graphmatrix.adjacency_matrix(G, weight=weight)
     n = G.number_of_nodes()
     k = [A[i].sum() for i in range(n)]
     m = sum(k) / 2.0
-    a = [k[i] / (2.0 * m) for i in range(len(k))]
+    a = [k[i] / (2.0 * m) for i in range(n)]
 
     communities = [{node} for node in G.nodes()]
     connected = [[bool(A[i, j]) for j in range(i)] for i in range(n)]
@@ -102,8 +115,20 @@ def clauset_newman_moore(G, resolution=1.0, weight="weight"):
     return [community for community in communities if community]
 
 
-def louvain(G, resolution=1.0, weight="weight"):
-    # Clauset, Newman, Moore (2004); Blondel, Guillaume, Lambiotte, Lefebvre (2008); Newman (2016)
+def louvain(G: nx.Graph,
+            resolution: float = 1.0,
+            weight: str = "weight") -> list[set[Hashable]]:
+    """
+    Louvain community detection algorithm for undirected, weighted graphs with parameterized modularity.
+
+    Args:
+        G: An undirected, weighted graph.
+        resolution: resolution parameter for modularity.
+        weight: edge attribute to consider as edge weight
+    
+    Returns:
+        Communities of G
+    """
     name = list(G.nodes())
     communities = [[{i} for i in range(G.number_of_nodes())]]
 
@@ -132,9 +157,8 @@ def louvain(G, resolution=1.0, weight="weight"):
 
             for i in range(n):
                 sigma_tot[community[i]] -= A[i].sum()
-                sigma_in[community[i]] -= sum([
-                    A[i, l] for l in range(n) if community[l] == community[i]
-                ])
+                sigma_in[community[i]] -= sum(
+                    [A[i, l] for l in range(n) if community[l] == community[i]])
 
                 k_in[i, community[i]] -= A[i, i]
 
@@ -148,18 +172,16 @@ def louvain(G, resolution=1.0, weight="weight"):
                             (sigma_in[community[j]] / (2 * m) - resolution *
                              (sigma_tot[community[j]] /
                               (2 * m))**2 - resolution * (k[i] / (2 * m))**2)
-                        ) - (
-                            ((sigma_in[community[i]] + k_in[i, community[i]]) /
-                             (2 * m) - resolution *
-                             ((sigma_tot[community[i]] + k[i]) / (2 * m))**2) -
-                            (sigma_in[community[i]] / (2 * m) - resolution *
-                             (sigma_tot[community[i]] /
-                              (2 * m))**2 - resolution * (k[i] / (2 * m))**2))
+                        ) - (((sigma_in[community[i]] + k_in[i, community[i]]) /
+                              (2 * m) - resolution *
+                              ((sigma_tot[community[i]] + k[i]) / (2 * m))**2) -
+                             (sigma_in[community[i]] / (2 * m) - resolution *
+                              (sigma_tot[community[i]] /
+                               (2 * m))**2 - resolution * (k[i] / (2 * m))**2))
 
                 sigma_tot[community[i]] += A[i].sum()
-                sigma_in[community[i]] += sum([
-                    A[i, l] for l in range(n) if community[l] == community[i]
-                ])
+                sigma_in[community[i]] += sum(
+                    [A[i, l] for l in range(n) if community[l] == community[i]])
 
                 k_in[i, community[i]] += A[i, i]
 
@@ -174,11 +196,13 @@ def louvain(G, resolution=1.0, weight="weight"):
                         sigma_tot[community[max_j]] += A[i].sum()
 
                         sigma_in[community[i]] -= sum([
-                            A[i, l] for l in range(n)
+                            A[i, l]
+                            for l in range(n)
                             if community[l] == community[i]
                         ])
                         sigma_in[community[max_j]] += sum([
-                            A[i, l] for l in range(n)
+                            A[i, l]
+                            for l in range(n)
                             if community[l] == community[max_j]
                         ])
 
@@ -195,13 +219,15 @@ def louvain(G, resolution=1.0, weight="weight"):
             for ci in range(len(communities[1])):
                 if communities[1][ci]:
                     communities[1][ci] = set.union(*[
-                        set(i for i in communities[0][node])
+                        set(i
+                            for i in communities[0][node])
                         for node in communities[1][ci]
                     ])
 
             communities = communities[1:2]
 
-            weights = [[0.0 for _ in range(len(communities[0]))]
+            weights = [[0.0
+                        for _ in range(len(communities[0]))]
                        for _ in range(len(communities[0]))]
 
             for i in range(n):
@@ -212,9 +238,12 @@ def louvain(G, resolution=1.0, weight="weight"):
                     weights[community[j]][community[i]] += A[j, i]
 
             weights = [[
-                weights[ci][cj] for cj in range(len(communities[0]))
+                weights[ci][cj]
+                for cj in range(len(communities[0]))
                 if communities[0][cj]
-            ] for ci in range(len(communities[0])) if communities[0][ci]]
+            ]
+                       for ci in range(len(communities[0]))
+                       if communities[0][ci]]
 
             communities[0] = [
                 community for community in communities[0] if community

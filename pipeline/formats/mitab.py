@@ -1,4 +1,16 @@
-def parse(entry):
+from unicodedata import name
+
+
+def parse(entry: str) -> dict[str, str]:
+    """
+    Parse an entry in PSI-MITAB format.
+
+    Args:
+        entry: A PSI-MITAB formatted entry, corresponding to 'namespace:"identifier"(term)'.
+
+    Returns:
+        A keyed representation of the entry, separating namespace, identifiers and terms
+    """
     if entry == "-":
         return {}
     else:
@@ -24,45 +36,98 @@ def parse(entry):
         return values
 
 
-def get_identifiers_from_namespace(entry, namespace):
-    return [
-        identifier
-        for identifier, _ in parse(entry).get(namespace, [("", None)])
-        if identifier
-    ]
+def get_identifiers_from_namespace(entry: str,
+                                   namespace: str) -> tuple[str, ...]:
+    """
+    Returns identifiers from a namespace.
+
+    Args:
+        entry: The PSI-MITAB entry to parse.
+        namespace: The namespace to consider.
+
+    Returns:
+        Identifiers from a namespace.
+    """
+    return tuple(identifier
+                 for identifier, _ in parse(entry).get(namespace, [("", None)])
+                 if identifier)
 
 
-def get_terms_from_namespace(entry, namespace):
-    return [
-        term for _, term in parse(entry).get(namespace, [("", None)]) if term
-    ]
+def get_terms_from_namespace(entry: str, namespace: str) -> tuple[str, ...]:
+    """
+    Returns terms from a namespace.
+
+    Args:
+        entry: The PSI-MITAB entry to parse.
+        namespace: The namespace to consider.
+
+    Returns:
+        Terms from a namespace.
+    """
+    return tuple(
+        term for _, term in parse(entry).get(namespace, [("", None)]) if term)
 
 
-def namespace_has_identifier(entry, namespace, search_identifier):
-    if values := parse(entry):
-        return any(search_identifier == identifier
-                   for identifier, _ in values[namespace])
-    else:
-        return False
+def namespace_has_identifier(entry: str, namespace: str,
+                             identifier: str) -> bool:
+    """
+    Returns whether an identifier exists in namespace.
+
+    Args:
+        entry: The PSI-MITAB entry to parse.
+        namespace: The namespace to consider.
+        identifier: The identifier to search.
+
+    Returns:
+        True, if identifier is in namespace, else False.
+    """
+    return identifier in get_identifiers_from_namespace(entry, namespace)
 
 
-def namespace_has_term(entry, namespace, search_term):
-    if values := parse(entry):
-        return any(search_term == term for _, term in values[namespace])
-    else:
-        return False
+def namespace_has_term(entry: str, namespace: str, term: str) -> bool:
+    """
+    Returns whether a term exists in namespace.
+
+    Args:
+        entry: The PSI-MITAB entry to parse.
+        namespace: The namespace to consider.
+        term: The term to search.
+
+    Returns:
+        True, if term is in namespace, else False.
+    """
+    return term in get_terms_from_namespace(entry, namespace)
 
 
-def namespace_has_any_identifier_from(entry, namespace, identifiers):
-    if values := parse(entry):
-        return any(identifier in identifiers
-                   for identifier, _ in values[namespace])
-    else:
-        return False
+def namespace_has_any_identifier_from(entry: str, namespace: str,
+                                      identifiers: list[str]) -> bool:
+    """
+    Returns whether any identifier exists in namespace.
+
+    Args:
+        entry: The PSI-MITAB entry to parse.
+        namespace: The namespace to consider.
+        identifiers: The identifiers to search.
+
+    Returns:
+        True, if any identifier is in namespace, else False.
+    """
+    return any(
+        namespace_has_identifier(entry, namespace, identifier)
+        for identifier in identifiers)
 
 
-def namespace_has_any_term_from(entry, namespace, terms):
-    if values := parse(entry):
-        return any(term in terms for _, term in values[namespace])
-    else:
-        return False
+def namespace_has_any_term_from(entry: str, namespace: str,
+                                terms: list[str]) -> bool:
+    """
+    Returns whether any term exists in namespace.
+
+    Args:
+        entry: The PSI-MITAB entry to parse.
+        namespace: The namespace to consider.
+        identifiers: The terms to search.
+
+    Returns:
+        True, if any term is in namespace, else False.
+    """
+    return any(namespace_has_term(entry, namespace, term) for term in terms)

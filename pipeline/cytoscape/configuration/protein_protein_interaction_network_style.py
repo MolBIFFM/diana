@@ -168,39 +168,39 @@ COMPONENTS = [
                 },
                 "NODE_CUSTOMGRAPHICS_1": {
                     "default":
-                    "org.cytoscape.ding.customgraphics.NullCustomGraphics,0,[ Remove Graphics ],"
+                        "org.cytoscape.ding.customgraphics.NullCustomGraphics,0,[ Remove Graphics ],"
                 },
                 "NODE_CUSTOMGRAPHICS_2": {
                     "default":
-                    "org.cytoscape.ding.customgraphics.NullCustomGraphics,0,[ Remove Graphics ],"
+                        "org.cytoscape.ding.customgraphics.NullCustomGraphics,0,[ Remove Graphics ],"
                 },
                 "NODE_CUSTOMGRAPHICS_3": {
                     "default":
-                    "org.cytoscape.ding.customgraphics.NullCustomGraphics,0,[ Remove Graphics ],"
+                        "org.cytoscape.ding.customgraphics.NullCustomGraphics,0,[ Remove Graphics ],"
                 },
                 "NODE_CUSTOMGRAPHICS_4": {
                     "default":
-                    "org.cytoscape.ding.customgraphics.NullCustomGraphics,0,[ Remove Graphics ],"
+                        "org.cytoscape.ding.customgraphics.NullCustomGraphics,0,[ Remove Graphics ],"
                 },
                 "NODE_CUSTOMGRAPHICS_5": {
                     "default":
-                    "org.cytoscape.ding.customgraphics.NullCustomGraphics,0,[ Remove Graphics ],"
+                        "org.cytoscape.ding.customgraphics.NullCustomGraphics,0,[ Remove Graphics ],"
                 },
                 "NODE_CUSTOMGRAPHICS_6": {
                     "default":
-                    "org.cytoscape.ding.customgraphics.NullCustomGraphics,0,[ Remove Graphics ],"
+                        "org.cytoscape.ding.customgraphics.NullCustomGraphics,0,[ Remove Graphics ],"
                 },
                 "NODE_CUSTOMGRAPHICS_7": {
                     "default":
-                    "org.cytoscape.ding.customgraphics.NullCustomGraphics,0,[ Remove Graphics ],"
+                        "org.cytoscape.ding.customgraphics.NullCustomGraphics,0,[ Remove Graphics ],"
                 },
                 "NODE_CUSTOMGRAPHICS_8": {
                     "default":
-                    "org.cytoscape.ding.customgraphics.NullCustomGraphics,0,[ Remove Graphics ],"
+                        "org.cytoscape.ding.customgraphics.NullCustomGraphics,0,[ Remove Graphics ],"
                 },
                 "NODE_CUSTOMGRAPHICS_9": {
                     "default":
-                    "org.cytoscape.ding.customgraphics.NullCustomGraphics,0,[ Remove Graphics ],"
+                        "org.cytoscape.ding.customgraphics.NullCustomGraphics,0,[ Remove Graphics ],"
                 },
                 "NODE_CUSTOMGRAPHICS_POSITION_1": {
                     "default": "C,C,c,0.00,0.00"
@@ -258,39 +258,39 @@ COMPONENTS = [
                 },
                 "NODE_CUSTOMPAINT_1": {
                     "default":
-                    "DefaultVisualizableVisualProperty(id=NODE_CUSTOMPAINT_1, name=Node Custom Paint 1)"
+                        "DefaultVisualizableVisualProperty(id=NODE_CUSTOMPAINT_1, name=Node Custom Paint 1)"
                 },
                 "NODE_CUSTOMPAINT_2": {
                     "default":
-                    "DefaultVisualizableVisualProperty(id=NODE_CUSTOMPAINT_2, name=Node Custom Paint 2)"
+                        "DefaultVisualizableVisualProperty(id=NODE_CUSTOMPAINT_2, name=Node Custom Paint 2)"
                 },
                 "NODE_CUSTOMPAINT_3": {
                     "default":
-                    "DefaultVisualizableVisualProperty(id=NODE_CUSTOMPAINT_3, name=Node Custom Paint 3)"
+                        "DefaultVisualizableVisualProperty(id=NODE_CUSTOMPAINT_3, name=Node Custom Paint 3)"
                 },
                 "NODE_CUSTOMPAINT_4": {
                     "default":
-                    "DefaultVisualizableVisualProperty(id=NODE_CUSTOMPAINT_4, name=Node Custom Paint 4)"
+                        "DefaultVisualizableVisualProperty(id=NODE_CUSTOMPAINT_4, name=Node Custom Paint 4)"
                 },
                 "NODE_CUSTOMPAINT_5": {
                     "default":
-                    "DefaultVisualizableVisualProperty(id=NODE_CUSTOMPAINT_5, name=Node Custom Paint 5)"
+                        "DefaultVisualizableVisualProperty(id=NODE_CUSTOMPAINT_5, name=Node Custom Paint 5)"
                 },
                 "NODE_CUSTOMPAINT_6": {
                     "default":
-                    "DefaultVisualizableVisualProperty(id=NODE_CUSTOMPAINT_6, name=Node Custom Paint 6)"
+                        "DefaultVisualizableVisualProperty(id=NODE_CUSTOMPAINT_6, name=Node Custom Paint 6)"
                 },
                 "NODE_CUSTOMPAINT_7": {
                     "default":
-                    "DefaultVisualizableVisualProperty(id=NODE_CUSTOMPAINT_7, name=Node Custom Paint 7)"
+                        "DefaultVisualizableVisualProperty(id=NODE_CUSTOMPAINT_7, name=Node Custom Paint 7)"
                 },
                 "NODE_CUSTOMPAINT_8": {
                     "default":
-                    "DefaultVisualizableVisualProperty(id=NODE_CUSTOMPAINT_8, name=Node Custom Paint 8)"
+                        "DefaultVisualizableVisualProperty(id=NODE_CUSTOMPAINT_8, name=Node Custom Paint 8)"
                 },
                 "NODE_CUSTOMPAINT_9": {
                     "default":
-                    "DefaultVisualizableVisualProperty(id=NODE_CUSTOMPAINT_9, name=Node Custom Paint 9)"
+                        "DefaultVisualizableVisualProperty(id=NODE_CUSTOMPAINT_9, name=Node Custom Paint 9)"
                 },
                 "NODE_DEPTH": {
                     "default": "0.0"
@@ -301,13 +301,16 @@ COMPONENTS = [
                         "attributeName": "change {time}",
                         "attributeType": "string",
                         "discreteMappingEntry": {
-                            "up": "#{:02X}{:02X}{:02X}".format(255, 0, 0),
+                            "up":
+                                "#{:02X}{:02X}{:02X}".format(255, 0, 0),
                             "mid_up":
-                            "#{:02X}{:02X}{:02X}".format(255, 102, 102),
-                            "mid": "#{:02X}{:02X}{:02X}".format(128, 128, 128),
+                                "#{:02X}{:02X}{:02X}".format(255, 102, 102),
+                            "mid":
+                                "#{:02X}{:02X}{:02X}".format(128, 128, 128),
                             "mid_down":
-                            "#{:02X}{:02X}{:02X}".format(102, 102, 255),
-                            "down": "#{:02X}{:02X}{:02X}".format(0, 0, 255),
+                                "#{:02X}{:02X}{:02X}".format(102, 102, 255),
+                            "down":
+                                "#{:02X}{:02X}{:02X}".format(0, 0, 255),
                         },
                     },
                 },
@@ -355,8 +358,9 @@ COMPONENTS = [
                     "default": "ROUND_RECTANGLE",
                     "discreteMapping": {
                         "attributeName":
-                        "post-translational modification {time}",
-                        "attributeType": "string",
+                            "post-translational modification {time}",
+                        "attributeType":
+                            "string",
                         "discreteMappingEntry": {
                             "{modifications[0]}": "RECTANGLE",
                         },
@@ -559,39 +563,39 @@ COMPONENTS = [
                 },
                 "NODE_CUSTOMGRAPHICS_1": {
                     "default":
-                    "org.cytoscape.ding.customgraphics.NullCustomGraphics,0,[ Remove Graphics ],"
+                        "org.cytoscape.ding.customgraphics.NullCustomGraphics,0,[ Remove Graphics ],"
                 },
                 "NODE_CUSTOMGRAPHICS_2": {
                     "default":
-                    "org.cytoscape.ding.customgraphics.NullCustomGraphics,0,[ Remove Graphics ],"
+                        "org.cytoscape.ding.customgraphics.NullCustomGraphics,0,[ Remove Graphics ],"
                 },
                 "NODE_CUSTOMGRAPHICS_3": {
                     "default":
-                    "org.cytoscape.ding.customgraphics.NullCustomGraphics,0,[ Remove Graphics ],"
+                        "org.cytoscape.ding.customgraphics.NullCustomGraphics,0,[ Remove Graphics ],"
                 },
                 "NODE_CUSTOMGRAPHICS_4": {
                     "default":
-                    "org.cytoscape.ding.customgraphics.NullCustomGraphics,0,[ Remove Graphics ],"
+                        "org.cytoscape.ding.customgraphics.NullCustomGraphics,0,[ Remove Graphics ],"
                 },
                 "NODE_CUSTOMGRAPHICS_5": {
                     "default":
-                    "org.cytoscape.ding.customgraphics.NullCustomGraphics,0,[ Remove Graphics ],"
+                        "org.cytoscape.ding.customgraphics.NullCustomGraphics,0,[ Remove Graphics ],"
                 },
                 "NODE_CUSTOMGRAPHICS_6": {
                     "default":
-                    "org.cytoscape.ding.customgraphics.NullCustomGraphics,0,[ Remove Graphics ],"
+                        "org.cytoscape.ding.customgraphics.NullCustomGraphics,0,[ Remove Graphics ],"
                 },
                 "NODE_CUSTOMGRAPHICS_7": {
                     "default":
-                    "org.cytoscape.ding.customgraphics.NullCustomGraphics,0,[ Remove Graphics ],"
+                        "org.cytoscape.ding.customgraphics.NullCustomGraphics,0,[ Remove Graphics ],"
                 },
                 "NODE_CUSTOMGRAPHICS_8": {
                     "default":
-                    "org.cytoscape.ding.customgraphics.NullCustomGraphics,0,[ Remove Graphics ],"
+                        "org.cytoscape.ding.customgraphics.NullCustomGraphics,0,[ Remove Graphics ],"
                 },
                 "NODE_CUSTOMGRAPHICS_9": {
                     "default":
-                    "org.cytoscape.ding.customgraphics.NullCustomGraphics,0,[ Remove Graphics ],"
+                        "org.cytoscape.ding.customgraphics.NullCustomGraphics,0,[ Remove Graphics ],"
                 },
                 "NODE_CUSTOMGRAPHICS_POSITION_1": {
                     "default": "C,C,c,0.00,0.00"
@@ -649,39 +653,39 @@ COMPONENTS = [
                 },
                 "NODE_CUSTOMPAINT_1": {
                     "default":
-                    "DefaultVisualizableVisualProperty(id=NODE_CUSTOMPAINT_1, name=Node Custom Paint 1)"
+                        "DefaultVisualizableVisualProperty(id=NODE_CUSTOMPAINT_1, name=Node Custom Paint 1)"
                 },
                 "NODE_CUSTOMPAINT_2": {
                     "default":
-                    "DefaultVisualizableVisualProperty(id=NODE_CUSTOMPAINT_2, name=Node Custom Paint 2)"
+                        "DefaultVisualizableVisualProperty(id=NODE_CUSTOMPAINT_2, name=Node Custom Paint 2)"
                 },
                 "NODE_CUSTOMPAINT_3": {
                     "default":
-                    "DefaultVisualizableVisualProperty(id=NODE_CUSTOMPAINT_3, name=Node Custom Paint 3)"
+                        "DefaultVisualizableVisualProperty(id=NODE_CUSTOMPAINT_3, name=Node Custom Paint 3)"
                 },
                 "NODE_CUSTOMPAINT_4": {
                     "default":
-                    "DefaultVisualizableVisualProperty(id=NODE_CUSTOMPAINT_4, name=Node Custom Paint 4)"
+                        "DefaultVisualizableVisualProperty(id=NODE_CUSTOMPAINT_4, name=Node Custom Paint 4)"
                 },
                 "NODE_CUSTOMPAINT_5": {
                     "default":
-                    "DefaultVisualizableVisualProperty(id=NODE_CUSTOMPAINT_5, name=Node Custom Paint 5)"
+                        "DefaultVisualizableVisualProperty(id=NODE_CUSTOMPAINT_5, name=Node Custom Paint 5)"
                 },
                 "NODE_CUSTOMPAINT_6": {
                     "default":
-                    "DefaultVisualizableVisualProperty(id=NODE_CUSTOMPAINT_6, name=Node Custom Paint 6)"
+                        "DefaultVisualizableVisualProperty(id=NODE_CUSTOMPAINT_6, name=Node Custom Paint 6)"
                 },
                 "NODE_CUSTOMPAINT_7": {
                     "default":
-                    "DefaultVisualizableVisualProperty(id=NODE_CUSTOMPAINT_7, name=Node Custom Paint 7)"
+                        "DefaultVisualizableVisualProperty(id=NODE_CUSTOMPAINT_7, name=Node Custom Paint 7)"
                 },
                 "NODE_CUSTOMPAINT_8": {
                     "default":
-                    "DefaultVisualizableVisualProperty(id=NODE_CUSTOMPAINT_8, name=Node Custom Paint 8)"
+                        "DefaultVisualizableVisualProperty(id=NODE_CUSTOMPAINT_8, name=Node Custom Paint 8)"
                 },
                 "NODE_CUSTOMPAINT_9": {
                     "default":
-                    "DefaultVisualizableVisualProperty(id=NODE_CUSTOMPAINT_9, name=Node Custom Paint 9)"
+                        "DefaultVisualizableVisualProperty(id=NODE_CUSTOMPAINT_9, name=Node Custom Paint 9)"
                 },
                 "NODE_DEPTH": {
                     "default": "0.0"
@@ -693,47 +697,47 @@ COMPONENTS = [
                         "attributeType": "string",
                         "discreteMappingEntry": {
                             "up":
-                            "#{:02X}{:02X}{:02X}".format(255, 0, 0),
+                                "#{:02X}{:02X}{:02X}".format(255, 0, 0),
                             "mid_up":
-                            "#{:02X}{:02X}{:02X}".format(255, 102, 102),
+                                "#{:02X}{:02X}{:02X}".format(255, 102, 102),
                             "mid":
-                            "#{:02X}{:02X}{:02X}".format(128, 128, 128),
+                                "#{:02X}{:02X}{:02X}".format(128, 128, 128),
                             "mid_down":
-                            "#{:02X}{:02X}{:02X}".format(102, 102, 255),
+                                "#{:02X}{:02X}{:02X}".format(102, 102, 255),
                             "down":
-                            "#{:02X}{:02X}{:02X}".format(0, 0, 255),
+                                "#{:02X}{:02X}{:02X}".format(0, 0, 255),
                             "{modifications[0]}_up {modifications[1]}_down":
-                            "#{:02X}{:02X}{:02X}".format(0, 255, 0),
+                                "#{:02X}{:02X}{:02X}".format(0, 255, 0),
                             "{modifications[0]}_up {modifications[1]}_mid_down":
-                            "#{:02X}{:02X}{:02X}".format(0, 255, 0),
+                                "#{:02X}{:02X}{:02X}".format(0, 255, 0),
                             "{modifications[0]}_mid_up {modifications[1]}_down":
-                            "#{:02X}{:02X}{:02X}".format(0, 255, 0),
+                                "#{:02X}{:02X}{:02X}".format(0, 255, 0),
                             "{modifications[0]}_mid_up {modifications[1]}_mid_down":
-                            "#{:02X}{:02X}{:02X}".format(0, 255, 0),
+                                "#{:02X}{:02X}{:02X}".format(0, 255, 0),
                             "{modifications[0]}_down {modifications[1]}_up":
-                            "#{:02X}{:02X}{:02X}".format(255, 255, 0),
+                                "#{:02X}{:02X}{:02X}".format(255, 255, 0),
                             "{modifications[0]}_down {modifications[1]}_mid_up":
-                            "#{:02X}{:02X}{:02X}".format(255, 255, 0),
+                                "#{:02X}{:02X}{:02X}".format(255, 255, 0),
                             "{modifications[0]}_mid_down {modifications[1]}_up":
-                            "#{:02X}{:02X}{:02X}".format(255, 255, 0),
+                                "#{:02X}{:02X}{:02X}".format(255, 255, 0),
                             "{modifications[0]}_mid_down {modifications[1]}_mid_up":
-                            "#{:02X}{:02X}{:02X}".format(255, 255, 0),
+                                "#{:02X}{:02X}{:02X}".format(255, 255, 0),
                             "{modifications[0]}_up {modifications[1]}_mid":
-                            "#{:02X}{:02X}{:02X}".format(255, 0, 0),
+                                "#{:02X}{:02X}{:02X}".format(255, 0, 0),
                             "{modifications[0]}_mid_up {modifications[1]}_mid":
-                            "#{:02X}{:02X}{:02X}".format(255, 102, 102),
+                                "#{:02X}{:02X}{:02X}".format(255, 102, 102),
                             "{modifications[0]}_mid_down {modifications[1]}_mid":
-                            "#{:02X}{:02X}{:02X}".format(102, 102, 255),
+                                "#{:02X}{:02X}{:02X}".format(102, 102, 255),
                             "{modifications[0]}_down {modifications[1]}_mid":
-                            "#{:02X}{:02X}{:02X}".format(0, 0, 255),
+                                "#{:02X}{:02X}{:02X}".format(0, 0, 255),
                             "{modifications[0]}_mid {modifications[1]}_up":
-                            "#{:02X}{:02X}{:02X}".format(255, 0, 0),
+                                "#{:02X}{:02X}{:02X}".format(255, 0, 0),
                             "{modifications[0]}_mid {modifications[1]}_mid_up":
-                            "#{:02X}{:02X}{:02X}".format(255, 102, 102),
+                                "#{:02X}{:02X}{:02X}".format(255, 102, 102),
                             "{modifications[0]}_mid {modifications[1]}_mid_down":
-                            "#{:02X}{:02X}{:02X}".format(102, 102, 255),
+                                "#{:02X}{:02X}{:02X}".format(102, 102, 255),
                             "{modifications[0]}_mid {modifications[1]}_down":
-                            "#{:02X}{:02X}{:02X}".format(0, 0, 255),
+                                "#{:02X}{:02X}{:02X}".format(0, 0, 255),
                         },
                     },
                 },
@@ -781,8 +785,9 @@ COMPONENTS = [
                     "default": "ROUND_RECTANGLE",
                     "discreteMapping": {
                         "attributeName":
-                        "post-translational modification {time}",
-                        "attributeType": "string",
+                            "post-translational modification {time}",
+                        "attributeType":
+                            "string",
                         "discreteMappingEntry": {
                             "{modifications[0]}": "RECTANGLE",
                             "{modifications[1]}": "TRIANGLE",

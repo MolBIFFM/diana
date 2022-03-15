@@ -1,5 +1,8 @@
 import json
+from typing import Callable
 import xml.etree.ElementTree as ET
+
+import networkx as nx
 
 from cytoscape.configuration import protein_protein_interaction_network_style
 from cytoscape.configuration import pathway_network_style
@@ -7,20 +10,35 @@ from cytoscape.configuration import ontology_network_style
 from networks import protein_protein_interaction_network, pathway_network, ontology_network
 
 
-def get_bar_chart(time, modification, sites, cy_range=(-2.0, 2.0)):
+def get_bar_chart(
+    time: int,
+    modification: str,
+    sites: int,
+    cy_range: tuple[float, float] = (-2.0, 2.0)) -> str:
+    """
+    Returns a bar chart specification for Cytoscape styles.
+
+    Args:
+        time: time of measurement associated with the change
+        modification: modification associated with the change
+        cy_range: range of log2-fold changes that the bar chart scales within
+    
+    Returns:
+       bar chart specification
+    """
     bar_chart = json.dumps({
         "cy_range":
-        cy_range,
+            cy_range,
         "cy_showRangeAxis":
-        True,
+            True,
         "cy_type":
-        "UP_DOWN",
+            "UP_DOWN",
         "cy_autoRange":
-        False,
+            False,
         "cy_colorScheme":
-        "BLUE_RED",
+            "BLUE_RED",
         "cy_showRangeZeroBaseline":
-        True,
+            True,
         "cy_colors": ["#FF0000", "#0000FF"],
         "cy_dataColumns": [
             "{} {} {}".format(time, modification, site + 1)
@@ -31,13 +49,30 @@ def get_bar_chart(time, modification, sites, cy_range=(-2.0, 2.0)):
 
 
 def get_protein_protein_interaction_network_styles(
-    network,
-    bar_chart_range=(-1.0, 1.0),
-    get_change=lambda network, change, time, modification, site_combination:
-    change,
-    site_combination=lambda sites: max(sites, key=abs),
-    confidence_score_combination=lambda confidence_scores: float(
-        bool(confidence_scores))):
+    network: nx.Graph,
+    bar_chart_range: tuple[float, float] = (-1.0, 1.0),
+    convert_change: Callable[
+        [nx.Graph, float, int, str, Callable[[tuple[float, ...]],
+                                             float]], float] = lambda network,
+    change, time, modification, site_combination: change,
+    site_combination: Callable[[tuple[float, ...]],
+                               float] = lambda sites: max(sites, key=abs),
+    confidence_score_combination: Callable[[dict[str, float]], float] = lambda
+    confidence_scores: float(bool(confidence_scores.values()))
+) -> ET.ElementTree:
+    """
+    Returns the Cytoscape styles for a protein-protein interaction network.
+
+    Args:
+        network: The protein-protein interaction network.
+        bar_chart_range: The range of log2-fold changes that the bar chart scales within.
+        get_change: The function to transform a proteins' log2-fold change.
+        site_combination: The function to derive a proteins' representative log2-fold change from its site-specific changes.
+        confidence_score_combination: The function to derive an edges' representative confidence from its confidence scores.
+    
+    Returns:
+       The Cytoscape styles for the protein-protein interaction network.
+    """
     styles = ET.ElementTree(
         ET.Element("vizmap", attrib={
             "id": "VizMap",
@@ -85,11 +120,11 @@ def get_protein_protein_interaction_network_styles(
                         "continuousMapping",
                         attrib={
                             "attributeName":
-                            visual_property["continuousMapping"]
-                            ["attributeName"],
+                                visual_property["continuousMapping"]
+                                ["attributeName"],
                             "attributeType":
-                            visual_property["continuousMapping"]
-                            ["attributeType"]
+                                visual_property["continuousMapping"]
+                                ["attributeType"]
                         })
 
                     for key, values in visual_property["continuousMapping"][
@@ -99,18 +134,18 @@ def get_protein_protein_interaction_network_styles(
                             "continuousMappingPoint",
                             attrib={
                                 "attrValue":
-                                key.format(max=confidence_score_combination({
-                                    database: 1.0
-                                    for database in
-                                    protein_protein_interaction_network.
-                                    get_databases(network)
-                                })),
+                                    key.format(
+                                        max=confidence_score_combination({
+                                            database: 1.0 for database in
+                                            protein_protein_interaction_network.
+                                            get_databases(network)
+                                        })),
                                 "equalValue":
-                                values["equalValue"],
+                                    values["equalValue"],
                                 "greaterValue":
-                                values["greaterValue"],
+                                    values["greaterValue"],
                                 "lesserValue":
-                                values["lesserValue"]
+                                    values["lesserValue"]
                             },
                         )
 
@@ -120,11 +155,11 @@ def get_protein_protein_interaction_network_styles(
                         "discreteMapping",
                         attrib={
                             "attributeName":
-                            visual_property["discreteMapping"]
-                            ["attributeName"].format(time=time),
+                                visual_property["discreteMapping"]
+                                ["attributeName"].format(time=time),
                             "attributeType":
-                            visual_property["discreteMapping"]
-                            ["attributeType"],
+                                visual_property["discreteMapping"]
+                                ["attributeType"],
                         },
                     )
 
@@ -135,9 +170,9 @@ def get_protein_protein_interaction_network_styles(
                             "discreteMappingEntry",
                             attrib={
                                 "attributeValue":
-                                key.format(modifications=modifications),
+                                    key.format(modifications=modifications),
                                 "value":
-                                value,
+                                    value,
                             },
                         )
 
@@ -147,11 +182,11 @@ def get_protein_protein_interaction_network_styles(
                         "passthroughMapping",
                         attrib={
                             "attributeName":
-                            visual_property["passthroughMapping"]
-                            ["attributeName"],
+                                visual_property["passthroughMapping"]
+                                ["attributeName"],
                             "attributeType":
-                            visual_property["passthroughMapping"]
-                            ["attributeType"],
+                                visual_property["passthroughMapping"]
+                                ["attributeType"],
                         },
                     )
 
@@ -171,23 +206,22 @@ def get_protein_protein_interaction_network_styles(
                                 protein_protein_interaction_network.get_sites(
                                     network, time, modification),
                                 cy_range=(
-                                    get_change(
+                                    convert_change(
                                         protein_protein_interaction_network,
                                         bar_chart_range[0], time, modification,
                                         site_combination),
-                                    get_change(
+                                    convert_change(
                                         protein_protein_interaction_network,
                                         bar_chart_range[1], time, modification,
                                         site_combination))))
 
                     elif visual_property_sub_element.get(
-                            "name"
-                    ) == "NODE_CUSTOMGRAPHICS_POSITION_{}".format(i + 1):
+                            "name") == "NODE_CUSTOMGRAPHICS_POSITION_{}".format(
+                                i + 1):
                         visual_property_sub_element.set(
                             "default",
-                            "{},{},c,0.00,0.00".format(*[("W",
-                                                          "E"), ("E",
-                                                                 "W")][i]),
+                            "{},{},c,0.00,0.00".format(*[("W", "E"), ("E",
+                                                                      "W")][i]),
                         )
 
     ET.indent(styles)
@@ -195,7 +229,16 @@ def get_protein_protein_interaction_network_styles(
     return styles
 
 
-def get_pathway_network_style(network):
+def get_pathway_network_style(network: nx.Graph) -> ET.ElementTree:
+    """
+    Returns the Cytoscape styles for a Reactome network.
+
+    Args:
+        network: The Reactome network.
+        
+    Returns:
+        The Cytoscape style for the Reactome network.
+    """
     style = ET.ElementTree(
         ET.Element("vizmap", attrib={
             "id": "VizMap",
@@ -238,9 +281,11 @@ def get_pathway_network_style(network):
                     "continuousMapping",
                     attrib={
                         "attributeName":
-                        visual_property["continuousMapping"]["attributeName"],
+                            visual_property["continuousMapping"]
+                            ["attributeName"],
                         "attributeType":
-                        visual_property["continuousMapping"]["attributeType"]
+                            visual_property["continuousMapping"]
+                            ["attributeType"]
                     })
 
                 for key, values in visual_property["continuousMapping"][
@@ -250,15 +295,15 @@ def get_pathway_network_style(network):
                         "continuousMappingPoint",
                         attrib={
                             "attrValue":
-                            key.format(max=max(
-                                pathway_network.get_pathway_sizes(
-                                    network).values())),
+                                key.format(max=max(
+                                    pathway_network.get_pathway_sizes(
+                                        network).values())),
                             "equalValue":
-                            values["equalValue"],
+                                values["equalValue"],
                             "greaterValue":
-                            values["greaterValue"],
+                                values["greaterValue"],
                             "lesserValue":
-                            values["lesserValue"]
+                                values["lesserValue"]
                         },
                     )
 
@@ -268,9 +313,9 @@ def get_pathway_network_style(network):
                     "discreteMapping",
                     attrib={
                         "attributeName":
-                        visual_property["discreteMapping"]["attributeName"],
+                            visual_property["discreteMapping"]["attributeName"],
                         "attributeType":
-                        visual_property["discreteMapping"]["attributeType"],
+                            visual_property["discreteMapping"]["attributeType"],
                     },
                 )
 
@@ -291,9 +336,11 @@ def get_pathway_network_style(network):
                     "passthroughMapping",
                     attrib={
                         "attributeName":
-                        visual_property["passthroughMapping"]["attributeName"],
+                            visual_property["passthroughMapping"]
+                            ["attributeName"],
                         "attributeType":
-                        visual_property["passthroughMapping"]["attributeType"],
+                            visual_property["passthroughMapping"]
+                            ["attributeType"],
                     },
                 )
 
@@ -302,7 +349,16 @@ def get_pathway_network_style(network):
     return style
 
 
-def get_ontology_network_style(network):
+def get_ontology_network_style(network: nx.Graph) -> ET.ElementTree:
+    """
+    Returns the Cytoscape styles for a Gene Ontology network.
+
+    Args:
+        network: The Gene Ontology network.
+        
+    Returns:
+        The Cytoscape style for the Gene Ontology network.
+    """
     style = ET.ElementTree(
         ET.Element("vizmap", attrib={
             "id": "VizMap",
@@ -345,9 +401,11 @@ def get_ontology_network_style(network):
                     "continuousMapping",
                     attrib={
                         "attributeName":
-                        visual_property["continuousMapping"]["attributeName"],
+                            visual_property["continuousMapping"]
+                            ["attributeName"],
                         "attributeType":
-                        visual_property["continuousMapping"]["attributeType"]
+                            visual_property["continuousMapping"]
+                            ["attributeType"]
                     })
 
                 for key, values in visual_property["continuousMapping"][
@@ -357,15 +415,15 @@ def get_ontology_network_style(network):
                         "continuousMappingPoint",
                         attrib={
                             "attrValue":
-                            key.format(max=max(
-                                ontology_network.get_term_sizes(
-                                    network).values())),
+                                key.format(max=max(
+                                    ontology_network.get_term_sizes(
+                                        network).values())),
                             "equalValue":
-                            values["equalValue"],
+                                values["equalValue"],
                             "greaterValue":
-                            values["greaterValue"],
+                                values["greaterValue"],
                             "lesserValue":
-                            values["lesserValue"]
+                                values["lesserValue"]
                         },
                     )
 
@@ -375,9 +433,9 @@ def get_ontology_network_style(network):
                     "discreteMapping",
                     attrib={
                         "attributeName":
-                        visual_property["discreteMapping"]["attributeName"],
+                            visual_property["discreteMapping"]["attributeName"],
                         "attributeType":
-                        visual_property["discreteMapping"]["attributeType"],
+                            visual_property["discreteMapping"]["attributeType"],
                     },
                 )
 
@@ -398,9 +456,11 @@ def get_ontology_network_style(network):
                     "passthroughMapping",
                     attrib={
                         "attributeName":
-                        visual_property["passthroughMapping"]["attributeName"],
+                            visual_property["passthroughMapping"]
+                            ["attributeName"],
                         "attributeType":
-                        visual_property["passthroughMapping"]["attributeType"],
+                            visual_property["passthroughMapping"]
+                            ["attributeType"],
                     },
                 )
 
@@ -409,7 +469,15 @@ def get_ontology_network_style(network):
     return style
 
 
-def export(styles, basename, suffix=""):
+def export(styles: ET.ElementTree, basename: str, suffix: str = "") -> None:
+    """
+    Exports the Cytoscape styles to [basename][suffix].xml.
+
+    Args:
+        styles: The Cytoscape styles.
+        basename: The base file name.
+        suffix: An optional addition to the base file name.
+    """
     styles.write(
         "{0}{1}.xml".format(basename, suffix),
         encoding="utf-8",

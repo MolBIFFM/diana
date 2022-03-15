@@ -1,12 +1,30 @@
+from ast import Call
+from typing import Callable
 import networkx as nx
 from databases import reactome
 from enrichment import correction, test
 
 
-def get_pathway_network(protein_protein_interaction_network,
-                        test=test.hypergeometric,
-                        correction=correction.benjamini_hochberg,
-                        taxon_identifier=9606):
+def get_pathway_network(protein_protein_interaction_network: nx.Graph,
+                        test: Callable[[int, int, int, int],
+                                       float] = test.hypergeometric,
+                        correction: Callable[[dict[str, float]], dict[
+                            str, float]] = correction.benjamini_hochberg,
+                        taxon_identifier: int = 9606) -> nx.Graph:
+    """
+    Assemble a Reactome network corresponding to the protein-protein interaction network. 
+    Nodes are Reactome pathways annotated with any proteins from the queried species. 
+    Edges are directed pathway relationships within Reactome.
+
+    Args:
+        protein_protein_interaction_network: The protein-protein interaction network.
+        test: The statistical test used to assess enrichment of a pathway by the protein-protein interaction network.
+        correction: The procedure to correct for testing of multiple pathways.
+        taxon_identifier: The taxonomy identifier of the queried species.
+
+    Returns:
+        The Reactome network.
+    """
     network = nx.DiGraph()
     for pathway, name in reactome.get_pathways(taxon_identifier):
         network.add_node(pathway)
@@ -21,11 +39,10 @@ def get_pathway_network(protein_protein_interaction_network,
         pathways[pathway].add(protein)
 
     pathways = {
-        pathway: pathways[pathway]
-        for pathway in pathways if pathways[pathway]
+        pathway: pathways[pathway] for pathway in pathways if pathways[pathway]
     }
-    network.remove_nodes_from(pathway for pathway in network
-                              if pathway not in pathways)
+    network.remove_nodes_from(
+        pathway for pathway in network if pathway not in pathways)
 
     mapped_proteins = set.union(*pathways.values())
 
@@ -37,8 +54,7 @@ def get_pathway_network(protein_protein_interaction_network,
 
     p_value = correction({
         pathway: test(
-            intersection[pathway], len(mapped_proteins),
-            len(pathways[pathway]),
+            intersection[pathway], len(mapped_proteins), len(pathways[pathway]),
             len(
                 mapped_proteins.intersection(
                     protein_protein_interaction_network.nodes())))
@@ -53,7 +69,16 @@ def get_pathway_network(protein_protein_interaction_network,
     return network
 
 
-def get_pathway_sizes(network):
+def get_pathway_sizes(network: nx.Graph) -> dict[str, int]:
+    """
+    Returns the sizes of Reactome pathway annotation.
+
+    Args:
+        network: The Reactome network
+    
+    Returns:
+        The number of proteins associated with any pathway in Reactome.
+    """
     return {
         pathway: network.nodes[pathway]["pathway proteins"]
         for pathway in network
@@ -61,6 +86,14 @@ def get_pathway_sizes(network):
 
 
 def export(network, basename, suffix=""):
+    """
+    Exports the Reactome network to [basename][suffix].graphml.
+
+    Args:
+        styles: The Reactome network.
+        basename: The base file name.
+        suffix: An optional addition to the base file name.
+    """
     nx.write_graphml_xml(network,
                          "{0}{1}.graphml".format(basename, suffix),
                          named_key_ids=True,
