@@ -9,7 +9,7 @@ import networkx as nx
 import pandas as pd
 
 from enrichment import correction, test
-from databases import biogrid, intact, mint, reactome, string, uniprot
+from databases import biogrid, gene_ontology, intact, mint, reactome, string, uniprot
 from modularization import modularization
 
 
@@ -1376,6 +1376,85 @@ def get_change_tendency(
                     network, time)
             } for time in get_times(network)
         } for module in modules
+    }
+
+
+def get_gene_ontology_enrichment(
+        networks: list[nx.Graph],
+        test: Callable[[int, int, int, int], float] = test.hypergeometric,
+        correction: Callable[[dict[int, float]],
+                             dict[int, float]] = correction.benjamini_hochberg,
+        taxonomy_identifier: int = 9606,
+        namespaces: list[str] = [
+            "cellular_compartment", "molecular_function", "biological_process"
+        ],
+        annotation_as_reference: bool = True
+) -> dict[nx.Graph, dict[str, float]]:
+    """
+    Test the protein-protein interaction networks for enrichment of Gene 
+    Ontology terms.
+
+    Args:
+        networks: The protein-protein interaction networks.
+        test: The statistical test used to assess enrichment of a Gene Ontology 
+            term.
+        correction: The procedure to correct for multiple testing of multiple 
+            terms and networks.
+        taxonomy_identifier: The taxonomy identifier.
+        namespaces: The Gene Ontology namespaces.
+        annotation_as_reference: If True, compute enrichment with respect to the 
+            entire species-specific Gene Ontology annotation in namespaces, else 
+            with respect to the union of the protein-protein interaction 
+            networks.
+
+    Returns:
+        Adjusted p-values for the enrichment of each Gene Ontology term by each 
+        network.
+    """
+    annotation = {}
+    for protein, term in gene_ontology.get_annotation(taxonomy_identifier, [{
+            "cellular_component": "C",
+            "molecular_function": "F",
+            "biological_process": "P"
+    }[ns] for ns in namespaces]):
+        if annotation_as_reference or any(
+                protein in network.nodes() for network in networks):
+            if term not in annotation:
+                annotation[term] = set()
+            annotation[term].add(protein)
+
+    annotation = {
+        term: proteins for term, proteins in annotation.items() if proteins
+    }
+
+    name = {}
+    for term in gene_ontology.get_ontology(namespaces):
+        if term["id"] in annotation:
+            name[term["id"]] = term["name"]
+
+    annotated_proteins = set.union(*annotation.values())
+
+    annotated_network_proteins = {
+        network: len(annotated_proteins.intersection(network.nodes()))
+        for network in networks
+    }
+
+    intersection = {
+        network: {
+            term: len(annotation[term].intersection(network.nodes()))
+            for term in annotation
+        } for network in networks
+    }
+
+    p_value = correction({(network, term):
+                          test(intersection[network][term],
+                               len(annotated_proteins), len(annotation[term]),
+                               annotated_network_proteins[network])
+                          for term in annotation for network in networks})
+
+    return {
+        network: {(term, name[term]): p_value[(network, term)]
+                  for term in annotation} for network in networks
     }
 
 

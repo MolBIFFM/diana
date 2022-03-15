@@ -343,7 +343,7 @@ A function to combine individual replicates into a single change. The default se
     {
       "proteins": [
         {
-          "logarithm": 2
+          "logarithm": 0
         }
       ]
     }
@@ -759,45 +759,45 @@ The function used to derive a proteins' representative change from a its individ
     {
       "Cytoscape": {
         "bar chart": {
-          "scoring": ""
+          "conversion": ""
         },
         "node color": {
-          "scoring": ""
+          "conversion": ""
         }
       },
       "module detection": {
         "change enrichment": {
-          "scoring": ""
+          "conversion": ""
         }
       },
       "Reactome network": {
         "union": [
           {
-            "scoring": ""
+            "conversion": ""
           }
         ],
         "intersection": [
           {
-            "scoring": ""
+            "conversion": ""
           }
         ]
       },
       "Gene Ontology network": {
         "union": [
           {
-            "scoring": ""
+            "conversion": ""
           }
         ],
         "intersection": [
           {
-            "scoring": ""
+            "conversion": ""
           }
         ]
       }
     }
 ]
 ```
-The scoring of changes that a threshold range refers to. It defaults to its log2-fold change but may be set to `"standard score"` or `"quantile"` with respect to the distribution of the change of a particular modification at a particular time of measurement in the network.
+The conversion of changes that change threshold range refers to. It defaults to log2-fold change but may be set to `"standard score"` or `"quantile"` with respect to the distribution of a change of a particular modification at a particular time of measurement in the network.
 
 ```json
 [
@@ -810,7 +810,7 @@ The scoring of changes that a threshold range refers to. It defaults to its log2
     }
 ]
 ```
-The range of the bar charts in Cytoscape. The default setting is `[-1.0, 1.0]` if `"scoring"` is not set, `[-2.0, 2.0]` if `"scoring"` is set to `"standard score"` and `[0.025, 0.975]` if `"scoring"` is set to `"quantile"`.
+The range of the bar charts in Cytoscape. The default setting is `[-1.0, 1.0]` if `"conversion"` is not set, `[-2.0, 2.0]` if `"conversion"` is set to `"standard score"` and `[0.025, 0.975]` if `"conversion"` is set to `"quantile"`.
 
 ```json
 [
@@ -852,7 +852,7 @@ The range of the bar charts in Cytoscape. The default setting is `[-1.0, 1.0]` i
     }
 ]
 ```
-The range of combined changes distinguishing proteins by whether the range is exceeded or not. The default setting is `[-1.0, 1.0]` if `"scoring"` is not set, `[-2.0, 2.0]` if `"scoring"` is set to `"standard score"` and `[0.025, 0.975]` if `"scoring"` is set to `"quantile"`.
+The range of combined changes distinguishing proteins by whether the range is exceeded or not. The default setting is `[-1.0, 1.0]` if `"conversion"` is not set, `[-2.0, 2.0]` if `"conversion"` is set to `"standard score"` and `[0.025, 0.975]` if `"conversion"` is set to `"quantile"`.
 
 ```json
 [
@@ -956,7 +956,7 @@ Available settings are `"binomial"` and `"hypergeometric"`.
     }
 ]
 ```
-The statistical test to assess the changes of each module in relation to the entire network. The default and currently only available setting is `"Wilcoxon"`.
+The statistical test to assess the changes of each module in relation to the entire network. The default and currently only available setting is `"Wilcoxon"`, the Wilcoxon rank sum test.
 
 ```json
 [
@@ -1056,10 +1056,10 @@ The Gene Ontology namespaces to consider. The default setting is `["cellular_com
 The configuration files provided in this repository exemplify projected workflows referring to data sets supplemented with the following publications.
 
 1. M. Hahn, A. Covarrubias-Pinto, L. Herhaus, S. Satpathy, K. Klann, K. B.
-Boyle, C. Münch, K. Rajalingam, F. Randow, C. Choudhary, and I. Dikic, "SIK2 orchestrates actin-dependent host response upon *Salmonella* infection", Proceedings of the National Academy of Sciences, vol. 118, no. 19, e2024144118, May 2021.
+Boyle, C. Münch, K. Rajalingam, F. Randow, C. Choudhary, and I. Dikic, **SIK2 orchestrates actin-dependent host response upon *Salmonella* infection**, Proceedings of the National Academy of Sciences, vol. 118, no. 19, e2024144118, May 2021.
 
-2. E. Fiskin, T. Bionda, I. Dikic, and C. Behrends, "Global Analysis of Host and Bacterial Ubiquitinome in Response to *Salmonella Typhimurium* Infection", Molecular Cell, vol. 62, no. 6, pp. 967-981, Jun. 2016.
+2. E. Fiskin, T. Bionda, I. Dikic, and C. Behrends, **Global Analysis of Host and Bacterial Ubiquitinome in Response to *Salmonella Typhimurium* Infection**, Molecular Cell, vol. 62, no. 6, pp. 967-981, Jun. 2016.
 
-3. K. Klann, D. Bojkova, G. Tascher, S. Ciesek, C. Münch, and J. Cinatl, "Growth Factor Receptor Signaling Inhibition Prevents SARS-CoV-2 Replication", Molecular Cell, vol. 80, no. 1, 164-174.e4, Oct. 2020.
+3. K. Klann, D. Bojkova, G. Tascher, S. Ciesek, C. Münch, and J. Cinatl, **Growth Factor Receptor Signaling Inhibition Prevents SARS-CoV-2 Replication**, Molecular Cell, vol. 80, no. 1, 164-174.e4, Oct. 2020.
 
-4. C. Schmutz, E. Ahrne, C. A. Kasper, T. Tschon, I. Sorg, R. F. Dreier, A. Schmidt, and C. Arrieumerlou, "Systems-Level Overview of Host Protein Phosphorylation During *Shigella flexneri* Infection Revealed by Phosphoproteomics", Molecular & Cellular Proteomics, vol. 12, no. 10, pp. 2952-2968, Oct. 2013.
+4. C. Schmutz, E. Ahrné, C. A. Kasper, T. Tschon, I. Sorg, R. F. Dreier, A. Schmidt, and C. Arrieumerlou, **Systems-Level Overview of Host Protein Phosphorylation During *Shigella flexneri* Infection Revealed by Phosphoproteomics**, Molecular & Cellular Proteomics, vol. 12, no. 10, pp. 2952-2968, Oct. 2013.

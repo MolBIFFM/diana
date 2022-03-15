@@ -341,7 +341,7 @@ def process_configuration(configurations: list[dict],
 
         if "Cytoscape" in configuration:
             if (configuration["Cytoscape"].get(
-                    "bar chart", {}).get("scoring") == "standard score"):
+                    "bar chart", {}).get("conversion") == "standard score"):
                 cytoscape_styles = styles.get_protein_protein_interaction_network_styles(
                     network,
                     bar_chart_range=configuration["Cytoscape"]["bar chart"].get(
@@ -356,7 +356,7 @@ def process_configuration(configurations: list[dict],
                         "edge transparency")])
 
             elif (configuration["Cytoscape"].get(
-                    "bar chart", {}).get("scoring") == "quantile"):
+                    "bar chart", {}).get("conversion") == "quantile"):
                 cytoscape_styles = styles.get_protein_protein_interaction_network_styles(
                     network,
                     bar_chart_range=configuration["Cytoscape"]["bar chart"].get(
@@ -398,7 +398,7 @@ def process_configuration(configurations: list[dict],
                 network)
 
             if (configuration["Cytoscape"].get(
-                    "node color", {}).get("scoring") == "standard score"):
+                    "node color", {}).get("conversion") == "standard score"):
                 protein_protein_interaction_network.set_changes(
                     network,
                     site_combination=combination.SITE_COMBINATION[
@@ -411,7 +411,7 @@ def process_configuration(configurations: list[dict],
                 )
 
             elif (configuration["Cytoscape"].get(
-                    "node color", {}).get("scoring") == "quantile"):
+                    "node color", {}).get("conversion") == "quantile"):
                 protein_protein_interaction_network.set_changes(
                     network,
                     site_combination=combination.SITE_COMBINATION[
@@ -440,7 +440,7 @@ def process_configuration(configurations: list[dict],
         )
 
         if "Gene Ontology enrichment" in configuration:
-            enrichment = gene_ontology.get_enrichment(
+            enrichment = protein_protein_interaction_network.get_gene_ontology_enrichment(
                 [network],
                 test=test.TEST[configuration["module detection"]
                                ["Gene Ontology enrichment"].get(
@@ -491,7 +491,7 @@ def process_configuration(configurations: list[dict],
                 if "annotation" in configuration["module detection"][
                         "Gene Ontology enrichment"]:
                     gene_ontology_enrichment[
-                        "annotation"] = gene_ontology.get_enrichment(
+                        "annotation"] = protein_protein_interaction_network.get_gene_ontology_enrichment(
                             modules,
                             test=test.TEST[configuration["module detection"][
                                 "Gene Ontology enrichment"]["annotation"].get(
@@ -512,7 +512,7 @@ def process_configuration(configurations: list[dict],
                 if "network" in configuration["module detection"][
                         "Gene Ontology enrichment"]:
                     gene_ontology_enrichment[
-                        "network"] = gene_ontology.get_enrichment(
+                        "network"] = protein_protein_interaction_network.get_gene_ontology_enrichment(
                             modules,
                             test=test.TEST[configuration["module detection"][
                                 "Gene Ontology enrichment"]["network"].get(
@@ -534,7 +534,7 @@ def process_configuration(configurations: list[dict],
 
             if "change enrichment" in configuration["module detection"]:
                 if (configuration["module detection"]["change enrichment"].get(
-                        "scoring") == "standard score"):
+                        "conversion") == "standard score"):
                     change_enrichment = protein_protein_interaction_network.get_change_enrichment(
                         network,
                         modules,
@@ -555,7 +555,7 @@ def process_configuration(configurations: list[dict],
                                                       "Benjamini-Hochberg")])
 
                 elif (configuration["module detection"]
-                      ["change enrichment"].get("scoring") == "quantile"):
+                      ["change enrichment"].get("conversion") == "quantile"):
                     change_enrichment = protein_protein_interaction_network.get_change_enrichment(
                         network,
                         modules,
@@ -694,7 +694,7 @@ def process_configuration(configurations: list[dict],
                             "post-translational modification"
                     ) in protein_protein_interaction_network.get_post_translational_modifications(
                             network, subset["time"]):
-                        if subset.get("scoring") == "standard score":
+                        if subset.get("conversion") == "standard score":
                             proteins.update(
                                 protein_protein_interaction_network.
                                 get_proteins(
@@ -723,7 +723,7 @@ def process_configuration(configurations: list[dict],
                                         combination.SITE_COMBINATION[subset.get(
                                             "site combination", "absmax")])))
 
-                        elif subset.get("scoring") == "quantile":
+                        elif subset.get("conversion") == "quantile":
                             proteins.update(
                                 protein_protein_interaction_network.
                                 get_proteins(
@@ -786,7 +786,7 @@ def process_configuration(configurations: list[dict],
                             "post-translational modification"
                     ) in protein_protein_interaction_network.get_post_translational_modifications(
                             network, subset["time"]):
-                        if subset.get("scoring") == "standard score":
+                        if subset.get("conversion") == "standard score":
                             proteins.intersection_update(
                                 protein_protein_interaction_network.
                                 get_proteins(
@@ -815,7 +815,7 @@ def process_configuration(configurations: list[dict],
                                         combination.SITE_COMBINATION[subset.get(
                                             "site combination", "absmax")])))
 
-                        elif subset.get("scoring") == "quantile":
+                        elif subset.get("conversion") == "quantile":
                             proteins.intersection_update(
                                 protein_protein_interaction_network.
                                 get_proteins(
@@ -895,7 +895,7 @@ def process_configuration(configurations: list[dict],
                             "post-translational modification"
                     ) in protein_protein_interaction_network.get_post_translational_modifications(
                             network, subset["time"]):
-                        if subset.get("scoring") == "standard score":
+                        if subset.get("conversion") == "standard score":
                             proteins.update(
                                 protein_protein_interaction_network.
                                 get_proteins(
@@ -924,7 +924,7 @@ def process_configuration(configurations: list[dict],
                                         combination.SITE_COMBINATION[subset.get(
                                             "site combination", "absmax")])))
 
-                        elif subset.get("scoring") == "quantile":
+                        elif subset.get("conversion") == "quantile":
                             proteins.update(
                                 protein_protein_interaction_network.
                                 get_proteins(
@@ -993,7 +993,7 @@ def process_configuration(configurations: list[dict],
                             "post-translational modification"
                     ) in protein_protein_interaction_network.get_post_translational_modifications(
                             network, subset["time"]):
-                        if subset.get("scoring") == "standard score":
+                        if subset.get("conversion") == "standard score":
                             proteins.intersection_update(
                                 protein_protein_interaction_network.
                                 get_proteins(
@@ -1022,7 +1022,7 @@ def process_configuration(configurations: list[dict],
                                         combination.SITE_COMBINATION[subset.get(
                                             "site combination", "absmax")])))
 
-                        elif subset.get("scoring") == "quantile":
+                        elif subset.get("conversion") == "quantile":
                             proteins.intersection_update(
                                 protein_protein_interaction_network.
                                 get_proteins(
