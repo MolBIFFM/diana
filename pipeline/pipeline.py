@@ -20,7 +20,7 @@ def process_configuration(configurations: list[dict],
     Executes workflows specified in configurations sequentially.
 
     Args:
-        configurations: The sequentially executed workflow specification.
+        configurations: The workflow specification.
         logger: A configuration-specific logger.
     """
     for i, configuration in enumerate(configurations, start=1):
@@ -37,14 +37,14 @@ def process_configuration(configurations: list[dict],
                         entry.get("accession format", "^(.+?)$")),
                     sheet_name=entry.get("sheet", 0),
                     header=entry.get("header", 1) - 1,
-                    taxon_identifier=entry.get("taxonomy identifier", 9606),
+                    taxonomy_identifier=entry.get("taxonomy identifier", 9606),
                 )
 
-            if "accessions" in entry:
+            elif "accessions" in entry:
                 protein_protein_interaction_network.add_genes_from(
                     network,
                     genes=entry["accessions"],
-                    taxon_identifier=entry.get("taxonomy identifier", 9606),
+                    taxonomy_identifier=entry.get("taxonomy identifier", 9606),
                 )
 
         for entry in configuration.get("proteins", {}):
@@ -71,7 +71,7 @@ def process_configuration(configurations: list[dict],
                     measurement_conversion=conversion.LOGARITHM[entry.get(
                         "logarithm")])
 
-            if "accessions" in entry:
+            elif "accessions" in entry:
                 protein_protein_interaction_network.add_proteins_from(
                     network, proteins=entry["accessions"])
 
@@ -102,7 +102,7 @@ def process_configuration(configurations: list[dict],
                         multi_validated_physical=configuration[
                             "protein-protein interactions"]["BioGRID"].get(
                                 "multi-validated physical", False),
-                        taxon_identifier=configuration[
+                        taxonomy_identifier=configuration[
                             "protein-protein interactions"]["BioGRID"].get(
                                 "taxonomy identifier", 9606),
                     )
@@ -121,7 +121,7 @@ def process_configuration(configurations: list[dict],
                                 "interaction types", []),
                         mi_score=configuration["protein-protein interactions"]
                         ["IntAct"].get("MI score", 0.0),
-                        taxon_identifier=configuration[
+                        taxonomy_identifier=configuration[
                             "protein-protein interactions"]["IntAct"].get(
                                 "taxonomy identifier", 9606),
                     )
@@ -140,7 +140,7 @@ def process_configuration(configurations: list[dict],
                                 "interaction types", []),
                         mi_score=configuration["protein-protein interactions"]
                         ["MINT"].get("MI score", 0.0),
-                        taxon_identifier=configuration[
+                        taxonomy_identifier=configuration[
                             "protein-protein interactions"]["MINT"].get(
                                 "taxonomy identifier", 9606),
                     )
@@ -157,7 +157,7 @@ def process_configuration(configurations: list[dict],
                         interaction_type=configuration[
                             "protein-protein interactions"]["Reactome"].get(
                                 "interaction type", []),
-                        taxon_identifier=configuration[
+                        taxonomy_identifier=configuration[
                             "protein-protein interactions"]["Reactome"].get(
                                 "taxonomy identifier", 9606),
                     )
@@ -208,7 +208,7 @@ def process_configuration(configurations: list[dict],
                                 "combined score", 0.0),
                         physical=configuration["protein-protein interactions"]
                         ["STRING"].get("physical", False),
-                        taxon_identifier=configuration[
+                        taxonomy_identifier=configuration[
                             "protein-protein interactions"]["STRING"].get(
                                 "taxonomy identifier", 9606),
                         version=configuration["protein-protein interactions"]
@@ -218,12 +218,12 @@ def process_configuration(configurations: list[dict],
                 neighbors += 1
 
             if neighbors:
-                for taxon_identifier in (
+                for taxonomy_identifier in (
                         configuration["protein-protein interactions"]
-                    [database].get("taxon_identifier", 9606) for database in
+                    [database].get("taxonomy_identifier", 9606) for database in
                     {"BioGRID", "IntAct", "MINT", "Reactome", "STRING"}):
                     protein_protein_interaction_network.annotate_proteins(
-                        network, taxon_identifier)
+                        network, taxonomy_identifier)
 
                 protein_protein_interaction_network.remove_unannotated_proteins(
                     network)
@@ -243,7 +243,7 @@ def process_configuration(configurations: list[dict],
                     multi_validated_physical=configuration[
                         "protein-protein interactions"]["BioGRID"].get(
                             "multi-validated physical", False),
-                    taxon_identifier=configuration[
+                    taxonomy_identifier=configuration[
                         "protein-protein interactions"]["BioGRID"].get(
                             "taxonomy identifier", 9606),
                 )
@@ -259,7 +259,7 @@ def process_configuration(configurations: list[dict],
                             "interaction types", []),
                     mi_score=configuration["protein-protein interactions"]
                     ["IntAct"].get("MI score", 0.0),
-                    taxon_identifier=configuration[
+                    taxonomy_identifier=configuration[
                         "protein-protein interactions"]["IntAct"].get(
                             "taxonomy identifier", 9606),
                 )
@@ -275,7 +275,7 @@ def process_configuration(configurations: list[dict],
                             "interaction types", []),
                     mi_score=configuration["protein-protein interactions"]
                     ["MINT"].get("MI score", 0.0),
-                    taxon_identifier=configuration[
+                    taxonomy_identifier=configuration[
                         "protein-protein interactions"]["MINT"].get(
                             "taxonomy identifier", 9606),
                 )
@@ -289,7 +289,7 @@ def process_configuration(configurations: list[dict],
                     interaction_type=configuration[
                         "protein-protein interactions"]["Reactome"].get(
                             "interaction type", []),
-                    taxon_identifier=configuration[
+                    taxonomy_identifier=configuration[
                         "protein-protein interactions"]["Reactome"].get(
                             "taxonomy identifier", 9606),
                 )
@@ -332,7 +332,7 @@ def process_configuration(configurations: list[dict],
                     ["STRING"].get("combined score", 0.0),
                     physical=configuration["protein-protein interactions"]
                     ["STRING"].get("physical", False),
-                    taxon_identifier=configuration[
+                    taxonomy_identifier=configuration[
                         "protein-protein interactions"]["STRING"].get(
                             "taxonomy identifier", 9606),
                     version=configuration["protein-protein interactions"]
@@ -448,7 +448,7 @@ def process_configuration(configurations: list[dict],
                 correction=correction.CORRECTION[
                     configuration["module detection"].get(
                         "correction", "Benjamini-Hochberg")],
-                taxon_identifier=configuration["module detection"]
+                taxonomy_identifier=configuration["module detection"]
                 ["Gene Ontology enrichment"].get("taxonomy identifier", 9606),
                 namespaces=configuration["module detection"]
                 ["Gene Ontology enrichment"].get("namespaces", [
@@ -487,22 +487,50 @@ def process_configuration(configurations: list[dict],
             protein_protein_interaction_network.remove_edge_weights(network)
 
             if "Gene Ontology enrichment" in configuration["module detection"]:
-                enrichment = gene_ontology.get_enrichment(
-                    modules,
-                    test=test.TEST[configuration["module detection"]
-                                   ["Gene Ontology enrichment"].get(
-                                       "test", "hypergeometric")],
-                    correction=correction.CORRECTION[
-                        configuration["module detection"].get(
-                            "correction", "Benjamini-Hochberg")],
-                    taxon_identifier=configuration["module detection"]
-                    ["Gene Ontology enrichment"].get("taxonomy identifier",
-                                                     9606),
-                    namespaces=configuration["module detection"]
-                    ["Gene Ontology enrichment"].get("namespaces", [
-                        "cellular_component", "molecular_function",
-                        "biological_process"
-                    ]))
+                gene_ontology_enrichment = {}
+                if "annotation" in configuration["module detection"][
+                        "Gene Ontology enrichment"]:
+                    gene_ontology_enrichment[
+                        "annotation"] = gene_ontology.get_enrichment(
+                            modules,
+                            test=test.TEST[configuration["module detection"][
+                                "Gene Ontology enrichment"]["annotation"].get(
+                                    "test", "hypergeometric")],
+                            correction=correction.CORRECTION[
+                                configuration["module detection"]
+                                ["Gene Ontology enrichment"]["annotation"].get(
+                                    "correction", "Benjamini-Hochberg")],
+                            taxonomy_identifier=configuration[
+                                "module detection"]["Gene Ontology enrichment"]
+                            ["annotation"].get("taxonomy identifier", 9606),
+                            namespaces=configuration["module detection"]
+                            ["Gene Ontology enrichment"]["annotation"].get(
+                                "namespaces", [
+                                    "cellular_component", "molecular_function",
+                                    "biological_process"
+                                ]))
+                if "network" in configuration["module detection"][
+                        "Gene Ontology enrichment"]:
+                    gene_ontology_enrichment[
+                        "network"] = gene_ontology.get_enrichment(
+                            modules,
+                            test=test.TEST[configuration["module detection"][
+                                "Gene Ontology enrichment"]["network"].get(
+                                    "test", "hypergeometric")],
+                            correction=correction.CORRECTION[
+                                configuration["module detection"]
+                                ["Gene Ontology enrichment"]["network"].get(
+                                    "correction", "Benjamini-Hochberg")],
+                            taxonomy_identifier=configuration[
+                                "module detection"]["Gene Ontology enrichment"]
+                            ["network"].get("taxonomy identifier", 9606),
+                            namespaces=configuration["module detection"]
+                            ["Gene Ontology enrichment"]["network"].get(
+                                "namespaces", [
+                                    "cellular_component", "molecular_function",
+                                    "biological_process"
+                                ]),
+                            annotation_as_reference=False)
 
             if "change enrichment" in configuration["module detection"]:
                 if (configuration["module detection"]["change enrichment"].get(
@@ -584,25 +612,35 @@ def process_configuration(configurations: list[dict],
                     key=lambda module: module.number_of_nodes(),
                     reverse=True),
                                        start=1):
-                protein_protein_interaction_network.export(
-                    module,
-                    logger.name,
-                    ".{}.{}".format(i, j)
-                    if len(configurations) > 1 else ".{}".format(j),
-                )
-
+                export = False
                 if "Gene Ontology enrichment" in configuration[
                         "module detection"]:
-                    for (term, name), p in sorted(enrichment[module].items(),
-                                                  key=lambda item: item[1]):
-                        if p <= configuration["module detection"][
-                                "Gene Ontology enrichment"].get("p", 1.0):
-                            logger.info("{}\t{}\t{}\t{:.2e}".format(
-                                j,
-                                term,
-                                name,
-                                p,
-                            ))
+                    if "annotation" in configuration["module detection"][
+                            "Gene Ontology enrichment"]:
+                        for (term, name), p in sorted(
+                                gene_ontology_enrichment["annotation"]
+                            [module].items(),
+                                key=lambda item: item[1]):
+                            if p <= configuration["module detection"][
+                                    "Gene Ontology enrichment"][
+                                        "annotation"].get("p", 1.0):
+                                export = True
+                                logger.info(
+                                    "{}\annotation {}\t{:.2e}\t{}".format(
+                                        j, term, p, name))
+
+                    if "network" in configuration["module detection"][
+                            "Gene Ontology enrichment"]:
+                        for (term, name), p in sorted(
+                                gene_ontology_enrichment["network"]
+                            [module].items(),
+                                key=lambda item: item[1]):
+                            if p <= configuration["module detection"][
+                                    "Gene Ontology enrichment"]["network"].get(
+                                        "p", 1.0):
+                                export = True
+                                logger.info("{}\tnetwork {}\t{:.2e}\t{}".format(
+                                    j, term, p, name))
 
                 if "change enrichment" in configuration["module detection"]:
                     for time in change_enrichment[module]:
@@ -611,8 +649,9 @@ def process_configuration(configurations: list[dict],
                                 key=lambda item: item[1]):
                             if p <= configuration["module detection"][
                                     "change enrichment"].get("p", 1.0):
+                                export = True
                                 logger.info(
-                                    "{}\t{} {} change enrichment\t{:.2e}".
+                                    "{}\tchange enrichment {} {}\t{:.2e}".
                                     format(
                                         j,
                                         time,
@@ -627,14 +666,22 @@ def process_configuration(configurations: list[dict],
                                 key=lambda item: item[1]):
                             if p <= configuration["module detection"][
                                     "change tendency"].get("p", 1.0):
+                                export = True
                                 logger.info(
-                                    "{}\t{} {} change tendency\t{:.2e}".format(
+                                    "{}\tchange tendency {} {}\t{:.2e}".format(
                                         j,
                                         time,
                                         modification,
                                         p,
                                     ))
 
+                if export:
+                    protein_protein_interaction_network.export(
+                        module,
+                        logger.name,
+                        ".{}.{}".format(i, j)
+                        if len(configurations) > 1 else ".{}".format(j),
+                    )
         if "Reactome network" in configuration:
             if "union" in configuration["Reactome network"]:
                 proteins = set()
@@ -725,7 +772,7 @@ def process_configuration(configurations: list[dict],
                     correction=correction.CORRECTION[
                         configuration["Reactome network"].get(
                             "correction", "Benjamini-Hochberg")],
-                    taxon_identifier=configuration["Reactome network"].get(
+                    taxonomy_identifier=configuration["Reactome network"].get(
                         "taxonomy identifier", 9606))
 
             elif "intersection" in configuration["Reactome network"]:
@@ -817,7 +864,7 @@ def process_configuration(configurations: list[dict],
                     correction=correction.CORRECTION[
                         configuration["Reactome network"].get(
                             "correction", "Benjamini-Hochberg")],
-                    taxon_identifier=configuration["Reactome network"].get(
+                    taxonomy_identifier=configuration["Reactome network"].get(
                         "taxonomy identifier", 9606))
 
             else:
@@ -828,7 +875,7 @@ def process_configuration(configurations: list[dict],
                     correction=correction.CORRECTION[
                         configuration["Reactome network"].get(
                             "correction", "Benjamini-Hochberg")],
-                    taxon_identifier=configuration["Reactome network"].get(
+                    taxonomy_identifier=configuration["Reactome network"].get(
                         "taxonomy identifier", 9606))
 
             pathway_network.export(reactome_network,
@@ -931,8 +978,8 @@ def process_configuration(configurations: list[dict],
                     correction=correction.CORRECTION[
                         configuration["Gene Ontology network"].get(
                             "correction", "Benjamini-Hochberg")],
-                    taxon_identifier=configuration["Gene Ontology network"].get(
-                        "taxonomy identifier", 9606))
+                    taxonomy_identifier=configuration["Gene Ontology network"].
+                    get("taxonomy identifier", 9606))
 
             elif "intersection" in configuration["Gene Ontology network"]:
                 proteins = set(network)
@@ -1029,8 +1076,8 @@ def process_configuration(configurations: list[dict],
                     correction=correction.CORRECTION[
                         configuration["Gene Ontology network"].get(
                             "correction", "Benjamini-Hochberg")],
-                    taxon_identifier=configuration["Gene Ontology network"].get(
-                        "taxonomy identifier", 9606))
+                    taxonomy_identifier=configuration["Gene Ontology network"].
+                    get("taxonomy identifier", 9606))
 
             else:
                 gene_ontology_network = ontology_network.get_ontology_network(
@@ -1045,8 +1092,8 @@ def process_configuration(configurations: list[dict],
                     correction=correction.CORRECTION[
                         configuration["Gene Ontology network"].get(
                             "correction", "Benjamini-Hochberg")],
-                    taxon_identifier=configuration["Gene Ontology network"].get(
-                        "taxonomy identifier", 9606))
+                    taxonomy_identifier=configuration["Gene Ontology network"].
+                    get("taxonomy identifier", 9606))
 
             ontology_network.export(gene_ontology_network,
                                     "{}.gene_ontology".format(logger.name))
@@ -1057,7 +1104,7 @@ def process_configuration(configurations: list[dict],
 
 def process_configuration_file(configuration_file: str) -> None:
     """
-    Launches execution of workflow specified in a configuration file.
+    Launches execution of a workflow.
 
     Args:
         configuration_file: file name of configuration file.

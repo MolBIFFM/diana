@@ -19,14 +19,15 @@ def get_protein_protein_interactions(
         textmining_transferred: float = 0.0,
         combined_score: float = 0.0,
         physical: bool = False,
-        taxon_identifier: int = 9606,
+        taxonomy_identifier: int = 9606,
         version: float = 11.5) -> Generator[tuple[str, str, float], None, None]:
     """
     Yields protein-protein interactions from STRING.
 
     Args:
         neighborhood: The normal gene neighborhood score threshold.
-        neighborhood_transferred: The transferred gene neighborhood score threshold.
+        neighborhood_transferred: The transferred gene neighborhood score 
+            threshold.
         fusion: The gene fusion score threshold.
         cooccurrence: The gene cooccurrence score threshold.
         homology: The homology score threshold.
@@ -40,16 +41,17 @@ def get_protein_protein_interactions(
         textmining_transferred: The transferred textmining score threshold.
         combined_score: The combined score threshold.
         physical: If True, yield only physical interactions.
-        taxon_identifier: The taxonomy identifier of the queried species.
+        taxonomy_identifier: The taxonomy identifier.
         version: The version of the STRING database to query.
 
     Yields:
-        Pairs of interacting proteins and the combined STRING score associated with the interaction.
+        Pairs of interacting proteins and the combined STRING score associated 
+            with the interaction.
     """
     uniprot_id_map = {}
     for row in download.tabular_txt(
-            "https://stringdb-static.org/download/protein.aliases.v{version}/{taxon_identifier}.protein.aliases.v{version}.txt.gz"
-            .format(taxon_identifier=taxon_identifier, version=version),
+            "https://stringdb-static.org/download/protein.aliases.v{version}/{taxonomy_identifier}.protein.aliases.v{version}.txt.gz"
+            .format(taxonomy_identifier=taxonomy_identifier, version=version),
             delimiter="\t",
             skiprows=1,
             usecols=[0, 1, 2],
@@ -78,14 +80,14 @@ def get_protein_protein_interactions(
     }
     thresholds["combined_score"] = combined_score
 
-    primary_accession = uniprot.get_primary_accession(taxon_identifier)
+    primary_accession = uniprot.get_primary_accession(taxonomy_identifier)
 
     for row in download.tabular_txt(
-            "https://stringdb-static.org/download/protein.physical.links.full.v{version}/{taxon_identifier}.protein.links.full.v{version}.txt.gz"
-            .format(taxon_identifier=taxon_identifier, version=version)
+            "https://stringdb-static.org/download/protein.physical.links.full.v{version}/{taxonomy_identifier}.protein.links.full.v{version}.txt.gz"
+            .format(taxonomy_identifier=taxonomy_identifier, version=version)
             if physical else
-            "https://stringdb-static.org/download/protein.links.full.v{version}/{taxon_identifier}.protein.links.full.v{version}.txt.gz"
-            .format(taxon_identifier=taxon_identifier, version=version),
+            "https://stringdb-static.org/download/protein.links.full.v{version}/{taxonomy_identifier}.protein.links.full.v{version}.txt.gz"
+            .format(taxonomy_identifier=taxonomy_identifier, version=version),
             delimiter=" ",
             header=0,
             usecols=["protein1", "protein2"] + list(thresholds.keys()),

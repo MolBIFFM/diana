@@ -104,7 +104,8 @@ def txt(url: str,
     Args:
         url: The file location.
         file_from_zip_archive: The file from the zip archive to extract.
-        buffering: The buffer size to process download, possible decompression and iteration of the file at.
+        buffering: The buffer size to process download, possible decompression 
+            and iteration of the file at.
 
 
     Yields:
@@ -163,7 +164,7 @@ def tabular_txt(url: str,
                 usecols: list[Union[int, str]] = [],
                 chunksize: int = 1048576) -> Generator[pd.Series, None, None]:
     """
-    Downloads, iterates and subsequently removes the tabular file at a given URL.
+    Downloads, iterates and subsequently removes the tabular file at a URL.
 
     Args:
         url: The file location.
@@ -172,7 +173,8 @@ def tabular_txt(url: str,
         header: The line number of the table header.
         skiprows: Number of initial rows of the file to skip before header.
         usecols: The table columns to consider.
-        chunksize: The buffer size to process download, decompression and iteration of the file at.
+        chunksize: The buffer size to process download, decompression and 
+            iteration of the file at.
 
 
     Yields:

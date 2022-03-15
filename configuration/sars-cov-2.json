@@ -50,21 +50,26 @@
         },
         "node color": {
           "combined change": [-1.0, 1.0]
-        },
-        "edge transparency": "number"
+        }
       },
       "Gene Ontology enrichment": {
         "p": 0.05
       },
       "module detection": {
-        "edge weight": "number",
         "Gene Ontology enrichment": {
-          "p": 0.05
+          "annotation": {
+            "p": 0.05
+          }, 
+          "network": {
+            "p": 0.05
+          }
         },
         "change enrichment": {
-          "test": "hypergeometric",
           "p": 0.05,
           "combined change": [-1.0, 1.0]
+        },
+        "change tendency": {
+          "p": 0.05
         }
       },
       "Reactome network": {

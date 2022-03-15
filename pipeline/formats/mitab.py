@@ -6,10 +6,12 @@ def parse(entry: str) -> dict[str, str]:
     Parse an entry in PSI-MITAB format.
 
     Args:
-        entry: A PSI-MITAB formatted entry, corresponding to 'namespace:"identifier"(term)'.
+        entry: A PSI-MITAB formatted entry, corresponding to 
+            'namespace:"identifier"(term)'.
 
     Returns:
-        A keyed representation of the entry, separating namespace, identifiers and terms
+        A keyed representation of the entry, separating namespace, identifiers 
+        and terms
     """
     if entry == "-":
         return {}

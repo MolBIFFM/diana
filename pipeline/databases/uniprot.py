@@ -4,13 +4,13 @@ from download import download
 
 
 def get_swissprot_entries(
-    taxon_identifier: int = 9606
+    taxonomy_identifier: int = 9606
 ) -> Generator[tuple[tuple[str], str, str], None, None]:
     """
     Yields SwissProt entries.
 
     Args:
-        taxon_identifier: The taxonomy identifier of the queried species.
+        taxonomy_identifier: The taxonomy identifier.
 
     Yields:
         An entries UniProt accessions, gene name and protein name.
@@ -80,7 +80,7 @@ def get_swissprot_entries(
                         [1].split("{")[0])
 
         elif line == "//":
-            if not taxon_identifier or tax_id == taxon_identifier:
+            if not taxonomy_identifier or tax_id == taxonomy_identifier:
                 yield (tuple(accessions), entry_gene_name.get("Name", "NA"),
                        entry_protein_name.get("Full", "NA"))
 
@@ -90,18 +90,19 @@ def get_swissprot_entries(
             rec_name, tax_id = False, 0
 
 
-def get_primary_accession(taxon_identifier: int = 9606) -> dict[str, set(str)]:
+def get_primary_accession(
+        taxonomy_identifier: int = 9606) -> dict[str, set[str]]:
     """
     Returns a map of primary UniProt accessions.
 
     Args:
-        taxon_identifier: The taxonomy identifier of the queried species.
+        taxonomy_identifier: The taxonomy identifier.
 
     Returns:
         A map of any secondary UniProt accessions to its primary equivalents.
     """
     primary_accession = {}
-    for accessions, _, _ in get_swissprot_entries(taxon_identifier):
+    for accessions, _, _ in get_swissprot_entries(taxonomy_identifier):
         for i, accession in enumerate(accessions):
             if i > 0:
                 if accession not in primary_accession:

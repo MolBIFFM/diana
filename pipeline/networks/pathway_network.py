@@ -9,23 +9,25 @@ def get_pathway_network(protein_protein_interaction_network: nx.Graph,
                                        float] = test.hypergeometric,
                         correction: Callable[[dict[str, float]], dict[
                             str, float]] = correction.benjamini_hochberg,
-                        taxon_identifier: int = 9606) -> nx.Graph:
+                        taxonomy_identifier: int = 9606) -> nx.Graph:
     """
-    Assemble a Reactome network corresponding to the protein-protein interaction network. 
-    Nodes are Reactome pathways annotated with any proteins from the queried species. 
-    Edges are directed pathway relationships within Reactome.
+    Assemble a Reactome network corresponding to the protein-protein interaction 
+    network. Nodes are Reactome pathways annotated with any proteins from the 
+    queried species. Edges are directed pathway relationships within Reactome.
 
     Args:
-        protein_protein_interaction_network: The protein-protein interaction network.
-        test: The statistical test used to assess enrichment of a pathway by the protein-protein interaction network.
+        protein_protein_interaction_network: The protein-protein interaction 
+            network.
+        test: The statistical test used to assess enrichment of a pathway by the 
+            protein-protein interaction network.
         correction: The procedure to correct for testing of multiple pathways.
-        taxon_identifier: The taxonomy identifier of the queried species.
+        taxonomy_identifier: The taxonomy identifier.
 
     Returns:
         The Reactome network.
     """
     network = nx.DiGraph()
-    for pathway, name in reactome.get_pathways(taxon_identifier):
+    for pathway, name in reactome.get_pathways(taxonomy_identifier):
         network.add_node(pathway)
         network.nodes[pathway]["pathway"] = name
 
@@ -34,7 +36,7 @@ def get_pathway_network(protein_protein_interaction_network: nx.Graph,
             network.add_edge(child, parent)
 
     pathways = {pathway: set() for pathway in network}
-    for protein, pathway in reactome.get_pathway_map(taxon_identifier):
+    for protein, pathway in reactome.get_pathway_map(taxonomy_identifier):
         pathways[pathway].add(protein)
 
     pathways = {

@@ -9,25 +9,27 @@ ORGANISM = {"data": {9606: "Homo sapiens"}, "file": {9606: "homo_sapiens",}}
 def get_protein_protein_interactions(
     interaction_type: list[str] = [],
     interaction_context: list[str] = [],
-    taxon_identifier: int = 9606,
+    taxonomy_identifier: int = 9606,
 ) -> Generator[tuple[str, str, float], None, None]:
     """
     Yields protein-protein interactions from Reactome.
 
     Args:
-        interaction_type: The accepted interaction type annotation. If none are specified, any is accepted.
-        interaction_context: The accepted interaction context annotation. If none are specified, any is accepted.
-        taxon_identifier: The taxonomy identifier of the queried species.
+        interaction_type: The accepted interaction type annotation. If none are 
+            specified, any is accepted.
+        interaction_context: The accepted interaction context annotation. If 
+            none are specified, any is accepted.
+        taxonomy_identifier: The taxonomy identifier.
 
     Yields:
         Pairs of interacting proteins.
     """
-    primary_accession = uniprot.get_primary_accession(taxon_identifier)
+    primary_accession = uniprot.get_primary_accession(taxonomy_identifier)
 
     for row in download.tabular_txt(
             "https://reactome.org/download/current/interactors/reactome.{organism}.interactions.tab-delimited.txt"
-            .format(
-                organism=ORGANISM["file"].get(taxon_identifier, "all_species")),
+            .format(organism=ORGANISM["file"].get(taxonomy_identifier,
+                                                  "all_species")),
             delimiter="\t",
             header=0,
             usecols=[
@@ -55,12 +57,13 @@ def get_protein_protein_interactions(
 
 
 def get_pathways(
-        taxon_identifier: int = 9606) -> Generator[tuple[str, str], None, None]:
+        taxonomy_identifier: int = 9606
+) -> Generator[tuple[str, str], None, None]:
     """
     Yields Reactome pathways.
 
     Args:
-        taxon_identifier: The taxonomy identifier of the queried species.
+        taxonomy_identifier: The taxonomy identifier.
 
     Yields:
         Pairs of stable pathway identifier and pathway name.
@@ -69,8 +72,8 @@ def get_pathways(
             "https://reactome.org/download/current/ReactomePathways.txt",
             delimiter="\t",
             usecols=[0, 1, 2]):
-        if not taxon_identifier or row[2] == ORGANISM["data"].get(
-                taxon_identifier):
+        if not taxonomy_identifier or row[2] == ORGANISM["data"].get(
+                taxonomy_identifier):
             yield (row[0], row[1])
 
 
@@ -89,23 +92,24 @@ def get_pathway_relations() -> Generator[tuple[str, str], None, None]:
 
 
 def get_pathway_map(
-        taxon_identifier: int = 9606) -> Generator[tuple[str, str], None, None]:
+        taxonomy_identifier: int = 9606
+) -> Generator[tuple[str, str], None, None]:
     """
     Yields Reactome pathway annotations.
 
     Args:
-        taxon_identifier: The taxonomy identifier of the queried species.
+        taxonomy_identifier: The taxonomy identifier.
 
     Yields:
         Pairs of protein accession and stable pathway identifier.
     """
-    primary_accession = uniprot.get_primary_accession(taxon_identifier)
+    primary_accession = uniprot.get_primary_accession(taxonomy_identifier)
 
     for row in download.tabular_txt(
             "https://reactome.org/download/current/UniProt2Reactome_All_Levels.txt",
             delimiter="\t",
             usecols=[0, 1, 5]):
-        if not taxon_identifier or row[5] == ORGANISM["data"].get(
-                taxon_identifier):
+        if not taxonomy_identifier or row[5] == ORGANISM["data"].get(
+                taxonomy_identifier):
             for protein in primary_accession.get(row[0], {row[0]}):
                 yield protein, row[1]

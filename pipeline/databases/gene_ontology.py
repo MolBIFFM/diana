@@ -13,7 +13,7 @@ def get_ontology(
     namespaces: list[str] = [
         "cellular_compartment", "molecular_function", "biological_process"
     ]
-) -> Generator[dict[str, Union[str, list[str]]]]:
+) -> Generator[dict[str, Union[str, list[str]]], None, None]:
     """
     Yields Gene Ontology terms from the given namespaces.
 
@@ -21,7 +21,8 @@ def get_ontology(
         namespaces: The Gene Ontology namespaces to consider terms from.
 
     Yields:
-        A dictionary containing a Gene Ontology terms id, name, namespace and related terms.
+        A dictionary containing a Gene Ontology terms id, name, namespace and 
+            related terms.
     """
     term = {}
     for line in download.txt("http://purl.obolibrary.org/obo/go.obo"):
@@ -50,79 +51,96 @@ def get_ontology(
 
 
 def get_annotation(
-        taxon_identifier: int = 9606) -> Generator[tuple[str, str], None, None]:
+    taxonomy_identifier: int = 9606,
+    namespaces: list[str] = ["C", "F", "P"]
+) -> Generator[tuple[str, str], None, None]:
     """
-    Yields Gene Ontology annotations.
+    Yields Gene Ontology annotations within specified namespaces.
 
     Args:
-        taxon_identifier: The taxonomy identifier of the queried species.
+        taxonomy_identifier: The taxonomy identifier.
+        namespace: The Gene Ontology namespace identifiers.
 
     Yields:
         Pairs of protein accessions and Gene Ontology term identifiers.
     """
-    primary_accession = uniprot.get_primary_accession(taxon_identifier)
+    primary_accession = uniprot.get_primary_accession(taxonomy_identifier)
 
     for row in download.tabular_txt(
             "http://geneontology.org/gene-associations/goa_{organism}.gaf.gz".
-            format(organism=ORGANISM["file"][taxon_identifier]),
+            format(organism=ORGANISM["file"][taxonomy_identifier]),
             skiprows=41,
             delimiter="\t",
-            usecols=[0, 1, 4, 12]):
-        if row[0] == "UniProtKB" and row[12] == "taxon:{}".format(
-                taxon_identifier):
+            usecols=[0, 1, 4, 8, 12]):
+        if row[0] == "UniProtKB" and row[8] in namespaces and row[
+                12] == "taxon:{}".format(taxonomy_identifier):
             for protein in primary_accession.get(row[1], {row[1]}):
                 yield (protein, row[4])
 
     for row in download.tabular_txt(
             "http://geneontology.org/gene-associations/goa_{organism}_isoform.gaf.gz"
-            .format(organism=ORGANISM["file"][taxon_identifier]),
+            .format(organism=ORGANISM["file"][taxonomy_identifier]),
             skiprows=41,
             delimiter="\t",
-            usecols=[0, 4, 12, 16]):
-        if row[0] == "UniProtKB" and row[12] == "taxon:{}".format(
-                taxon_identifier) and row[16].startswith("UniProtKB:"):
+            usecols=[0, 4, 8, 12, 16]):
+        if row[0] == "UniProtKB" and row[8] in namespaces and row[
+                12] == "taxon:{}".format(
+                    taxonomy_identifier) and row[16].startswith("UniProtKB:"):
             yield (row[16].split(":")[1], row[4])
 
 
 def get_enrichment(
-    networks: list[nx.Graph],
-    test: Callable[[int, int, int, int], float] = test.hypergeometric,
-    correction: Callable[[dict[int, float]],
-                         dict[int, float]] = correction.benjamini_hochberg,
-    taxon_identifier: int = 9606,
-    namespaces: list[str] = [
-        "cellular_compartment", "molecular_function", "biological_process"
-    ]
+        networks: list[nx.Graph],
+        test: Callable[[int, int, int, int], float] = test.hypergeometric,
+        correction: Callable[[dict[int, float]],
+                             dict[int, float]] = correction.benjamini_hochberg,
+        taxonomy_identifier: int = 9606,
+        namespaces: list[str] = [
+            "cellular_compartment", "molecular_function", "biological_process"
+        ],
+        annotation_as_reference: bool = True
 ) -> dict[nx.Graph, dict[str, float]]:
     """
-    Test the networks for enrichment of Gene Ontology terms with respect to the Gene Ontology annotation.
+    Test the protein-protein interaction networks for enrichment of Gene 
+    Ontology terms.
 
     Args:
-        networks: The Protein-protein interaction networks to be tested.
-        test: The statistical test used to assess enrichment of a Gene Ontology term by a network.
-        correction: The procedure to correct for multiple testing of multiple terms and networks.
-        taxon_identifier: The taxonomy identifier of the queried species.
-        namespaces: The Gene Ontology namespaces to consider terms from.
+        networks: The protein-protein interaction networks.
+        test: The statistical test used to assess enrichment of a Gene Ontology 
+            term.
+        correction: The procedure to correct for multiple testing of multiple 
+            terms and networks.
+        taxonomy_identifier: The taxonomy identifier.
+        namespaces: The Gene Ontology namespaces.
+        annotation_as_reference: If True, compute enrichment with respect to the 
+            entire species-specific Gene Ontology annotation in namespaces, else 
+            with respect to the union of the protein-protein interaction 
+            networks.
 
     Returns:
-        Adjusted p-values for the enrichment of each Gene Ontology term by each network.
+        Adjusted p-values for the enrichment of each Gene Ontology term by each 
+        network.
     """
     annotation = {}
-    for protein, term in get_annotation(taxon_identifier):
-        if term not in annotation:
-            annotation[term] = set()
-        annotation[term].add(protein)
+    for protein, term in get_annotation(taxonomy_identifier, [{
+            "cellular_component": "C",
+            "molecular_function": "F",
+            "biological_process": "P"
+    }[ns] for ns in namespaces]):
+        if annotation_as_reference or any(
+                protein in network.nodes() for network in networks):
+            if term not in annotation:
+                annotation[term] = set()
+            annotation[term].add(protein)
+
+    annotation = {
+        term: proteins for term, proteins in annotation.items() if proteins
+    }
 
     name = {}
     for term in get_ontology(namespaces):
         if term["id"] in annotation:
             name[term["id"]] = term["name"]
-
-    annotation = {
-        term: proteins
-        for term, proteins in annotation.items()
-        if proteins and term in name
-    }
 
     annotated_proteins = set.union(*annotation.values())
 

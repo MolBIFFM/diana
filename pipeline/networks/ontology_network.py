@@ -14,18 +14,21 @@ def get_ontology_network(protein_protein_interaction_network: nx.Graph,
                                         float] = test.hypergeometric,
                          correction: Callable[[dict[str, float]], dict[
                              str, float]] = correction.benjamini_hochberg,
-                         taxon_identifier: int = 9606) -> nx.Graph:
+                         taxonomy_identifier: int = 9606) -> nx.Graph:
     """
-    Assemble a Gene Ontology network corresponding to the protein-protein interaction network. 
-    Nodes are Gene Ontology terms annotated with any proteins from the queried species. 
-    Edges are directed term relationships within the Gene Ontology.
+    Assemble a Gene Ontology network corresponding to the protein-protein 
+    interaction network. Nodes are Gene Ontology terms annotated with any 
+    proteins from the queried species. Edges are directed term relationships 
+    within the Gene Ontology.
 
     Args:
-        protein_protein_interaction_network: The protein-protein interaction network.
+        protein_protein_interaction_network: The protein-protein interaction 
+            network.
         namespaces: The Gene Ontology namespaces to consider.
-        test: The statistical test used to assess enrichment of a term by the protein-protein interaction network.
+        test: The statistical test used to assess enrichment of a term by the 
+            protein-protein interaction network.
         correction: The procedure to correct for testing of multiple terms.
-        taxon_identifier: The taxonomy identifier of the queried species.
+        taxonomy_identifier: The taxonomy identifier.
 
     Returns:
         The Gene Ontology network.
@@ -39,14 +42,16 @@ def get_ontology_network(protein_protein_interaction_network: nx.Graph,
         for parent in term.get("is_a", []):
             network.add_edge(term["id"], parent)
 
-    annotation = {term: set() for term in network}
-    for protein, term in gene_ontology.get_annotation(taxon_identifier):
-        if term in annotation:
-            annotation[term].add(protein)
+    annotation = {}
+    for protein, term in gene_ontology.get_annotation(taxonomy_identifier, [{
+            "cellular_component": "C",
+            "molecular_function": "F",
+            "biological_process": "P"
+    }[ns] for ns in namespaces]):
+        if term in network and not term in annotation:
+            annotation[term] = set()
+        annotation[term].add(protein)
 
-    annotation = {
-        term: annotation[term] for term in annotation if annotation[term]
-    }
     network.remove_nodes_from(
         term for term in network if term not in annotation)
 
@@ -82,7 +87,8 @@ def get_term_sizes(network: nx.Graph) -> dict[str, int]:
         network: The Gene Ontology network
     
     Returns:
-        The number of proteins associated with any term in the Gene Ontology network.
+        The number of proteins associated with any term in the Gene Ontology 
+        network.
     """
     return {term: network.nodes[term]["annotated proteins"] for term in network}
 

@@ -10,22 +10,26 @@ def get_protein_protein_interactions(
     experimental_system_type: list[str] = [],
     interaction_throughput: list[str] = [],
     multi_validated_physical: bool = False,
-    taxon_identifier: int = 9606,
+    taxonomy_identifier: int = 9606,
 ) -> Generator[tuple[str, str], None, None]:
     """
     Yields protein-protein interactions from BioGRID.
 
     Args:
-        experimental_system: The accepted experimental evidence codes. If none are specified, any is accepted.
-        experimental_system_type: The accepted categories of experimental evidence. If none are specified, any is accepted.
-        interaction_throughput:  The accepted levels of interaction throughput. If none are specified, any is accepted.
-        multi-validated physical: If True, yield only multi-validated physical interactions.
-        taxon_identifier: The taxonomy identifier of the queried species.
+        experimental_system: The accepted experimental evidence codes. If none 
+            are specified, any is accepted.
+        experimental_system_type: The accepted categories of experimental 
+            evidence. If none are specified, any is accepted.
+        interaction_throughput:  The accepted levels of interaction throughput. 
+            If none are specified, any is accepted.
+        multi-validated physical: If True, yield only multi-validated physical 
+            interactions.
+        taxonomy_identifier: The taxonomy identifier.
 
     Yields:
         Pairs of interacting proteins.
     """
-    primary_accession = uniprot.get_primary_accession(taxon_identifier)
+    primary_accession = uniprot.get_primary_accession(taxonomy_identifier)
 
     for row in download.tabular_txt(
             "https://downloads.thebiogrid.org/Download/BioGRID/Latest-Release/BIOGRID-MV-Physical-LATEST.tab3.zip"
@@ -35,7 +39,7 @@ def get_protein_protein_interactions(
             r"BIOGRID-MV-Physical-[0-9]\.[0-9]\.[0-9]{3}\.tab3\.txt"
             if multi_validated_physical else
             r"BIOGRID-ORGANISM-{organism}-[0-9]\.[0-9]\.[0-9][0-9][0-9]\.tab3\.txt"
-            .format(organism=ORGANISM["file"][taxon_identifier]),
+            .format(organism=ORGANISM["file"][taxonomy_identifier]),
             delimiter="\t",
             header=0,
             usecols=[

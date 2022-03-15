@@ -157,13 +157,18 @@ A list of input gene accessions.
       },
       "module detection": {
         "Gene Ontology enrichment": {
-          "taxonomy identifier": 9606
+          "annotation": {
+            "taxonomy identifier": 9606
+          },
+          "network": {
+            "taxonomy identifier": 9606
+          }
         }
       }
     }
 ]
 ```
-The NCBI taxonomy ID of the host organism. The default and currently only supported setting is `9606`, corresponding to Homo sapiens.
+The NCBI taxonomy ID of the host organism. The default and currently only fully supported setting is `9606`, corresponding to Homo sapiens.
 
 ```json
 [
@@ -923,7 +928,12 @@ The resolution parameter of modularity optimized by module detection. The defaul
       },
       "module detection": {
         "Gene Ontology enrichment": {
-          "test": "hypergeometric"
+          "annotation": {
+            "test": "hypergeometric"
+          },
+          "network": {
+            "test": "hypergeometric"
+          }
         },
         "change enrichment": {
           "test": "hypergeometric"
@@ -956,7 +966,12 @@ The statistical test to assess the changes of each module in relation to the ent
       },
       "module detection": {
         "Gene Ontology enrichment": {
-          "correction": "Benjamini-Hochberg"
+          "annotation": {
+            "correction": "Benjamini-Hochberg"
+          },
+          "network": {
+            "correction": "Benjamini-Hochberg"
+          }
         },
         "change enrichment": {
           "correction": "Benjamini-Hochberg"
@@ -979,7 +994,12 @@ Available settings are `"Benjamini-Hochberg"` and `"Bonferroni"`.
       },
       "module detection": {
         "Gene Ontology enrichment": {
-          "p": 1.0
+          "annotation": {
+            "p": 1.0
+          },
+          "network": {
+            "p": 1.0
+          }
         },
         "change enrichment": {
           "p": 1.0
@@ -1005,11 +1025,20 @@ The threshold for corrected p-values. The default setting is `1.0`.
       },
       "module detection": {
         "Gene Ontology enrichment": {
-          "namespaces": [
-            "cellular_component",
-            "molecular_function",
-            "biological_process"
-          ]
+          "annotation": {
+            "namespaces": [
+              "cellular_component",
+              "molecular_function",
+              "biological_process"
+            ]
+          },
+          "network": {
+            "namespaces": [
+              "cellular_component",
+              "molecular_function",
+              "biological_process"
+            ]
+          }
         }
       },
       "Gene Ontology network": {
@@ -1024,4 +1053,13 @@ The threshold for corrected p-values. The default setting is `1.0`.
 ```
 The Gene Ontology namespaces to consider. The default setting is `["cellular_component", "molecular_function" "biological_process"]`, corresponding to the entire Gene Ontology.
 
-Configuration files exemplifying projected workflows refer to data supplemented with the following publications.
+The configuration files provided in this repository exemplify projected workflows referring to data sets supplemented with the following publications.
+
+1. M. Hahn, A. Covarrubias-Pinto, L. Herhaus, S. Satpathy, K. Klann, K. B.
+Boyle, C. Münch, K. Rajalingam, F. Randow, C. Choudhary, and I. Dikic, "SIK2 orchestrates actin-dependent host response upon *Salmonella* infection", Proceedings of the National Academy of Sciences, vol. 118, no. 19, e2024144118, May 2021.
+
+2. E. Fiskin, T. Bionda, I. Dikic, and C. Behrends, "Global Analysis of Host and Bacterial Ubiquitinome in Response to *Salmonella Typhimurium* Infection", Molecular Cell, vol. 62, no. 6, pp. 967-981, Jun. 2016.
+
+3. K. Klann, D. Bojkova, G. Tascher, S. Ciesek, C. Münch, and J. Cinatl, "Growth Factor Receptor Signaling Inhibition Prevents SARS-CoV-2 Replication", Molecular Cell, vol. 80, no. 1, 164-174.e4, Oct. 2020.
+
+4. C. Schmutz, E. Ahrne, C. A. Kasper, T. Tschon, I. Sorg, R. F. Dreier, A. Schmidt, and C. Arrieumerlou, "Systems-Level Overview of Host Protein Phosphorylation During *Shigella flexneri* Infection Revealed by Phosphoproteomics", Molecular & Cellular Proteomics, vol. 12, no. 10, pp. 2952-2968, Oct. 2013.

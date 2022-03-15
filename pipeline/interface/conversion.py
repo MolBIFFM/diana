@@ -1,7 +1,12 @@
 import math
 
 LOGARITHM = {
-    None: math.log2,
-    2: lambda x: x,
-    10: lambda x: math.log10(x) / math.log10(2.0),
+    None:
+        lambda changes, combination: math.log2(combination(changes)),
+    2:
+        lambda changes, combination: math.log2(
+            combination([math.pow(change, 2.0) for change in changes])),
+    10:
+        lambda changes, combination: math.log2(
+            combination([math.pow(change, 10.0) for change in changes])),
 }

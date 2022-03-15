@@ -11,25 +11,28 @@ def get_protein_protein_interactions(
     interaction_detection_methods: list[str] = [],
     interaction_types: list[str] = [],
     mi_score: float = 0.0,
-    taxon_identifier: int = 9606
+    taxonomy_identifier: int = 9606
 ) -> Generator[tuple[str, str, float], None, None]:
     """
     Yields protein-protein interactions from MINT.
 
     Args:
-        interaction_detection_methods: The accepted PSI-MI terms for interaction detection method. If none are specified, any is accepted.
-        interaction_types: The accepted PSI-MI terms for interaction type. If none are specified, any is accepted.
+        interaction_detection_methods: The accepted PSI-MI terms for interaction 
+            detection method. If none are specified, any is accepted.
+        interaction_types: The accepted PSI-MI terms for interaction type. 
+            If none are specified, any is accepted.
         mi_score: The PSI-MI score threshold.
-        taxon_identifier: The taxonomy identifier of the queried species.
+        taxonomy_identifier: The taxonomy identifier.
 
     Yields:
-        Pairs of interacting proteins and the PSI-MI score associated with the interaction.
+        Pairs of interacting proteins and the PSI-MI score associated with the 
+        interaction.
     """
-    primary_accession = uniprot.get_primary_accession(taxon_identifier)
+    primary_accession = uniprot.get_primary_accession(taxonomy_identifier)
 
     for row in download.tabular_txt(
             "http://www.ebi.ac.uk/Tools/webservices/psicquic/mint/webservices/current/search/query/{organism}"
-            .format(organism=ORGANISM["file"].get(taxon_identifier, "*")),
+            .format(organism=ORGANISM["file"].get(taxonomy_identifier, "*")),
             delimiter="\t",
             header=0,
             usecols=[
