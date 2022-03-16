@@ -12,7 +12,6 @@ import networkx as nx
 from cytoscape import styles
 from interface import combination, conversion, correction, modularization, test
 from networks import ontology_network, pathway_network, protein_protein_interaction_network
-from databases import gene_ontology
 
 
 def process_configuration(configurations: list[dict],
@@ -21,7 +20,7 @@ def process_configuration(configurations: list[dict],
     Executes workflows specified in configurations sequentially.
 
     Args:
-        configurations: The workflow specification.
+        configurations: The specification of workflows.
         logger: A configuration-specific logger.
     """
     for i, configuration in enumerate(configurations, start=1):

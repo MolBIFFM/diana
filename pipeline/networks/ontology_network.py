@@ -50,11 +50,8 @@ def get_ontology_network(protein_protein_interaction_network: nx.Graph,
             go_id[alt_id].add(term["id"])
 
     annotation = {}
-    for protein, term in gene_ontology.get_annotation(taxonomy_identifier, [{
-            "cellular_component": "C",
-            "molecular_function": "F",
-            "biological_process": "P"
-    }[ns] for ns in namespaces]):
+    for protein, term in gene_ontology.get_annotation(
+            taxonomy_identifier, gene_ontology.convert_namespaces(namespaces)):
         for primary_term in go_id.get(term, {term}):
             if primary_term not in annotation:
                 annotation[primary_term] = set()

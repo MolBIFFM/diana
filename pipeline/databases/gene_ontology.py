@@ -95,3 +95,24 @@ def get_annotation(
                 ":")[-1] == str(taxonomy_identifier) and row[4].startswith(
                     "UniProtKB:"):
             yield (row[4].split(":")[1], row[1])
+
+
+def convert_namespaces(
+    namespaces: list[str] = [
+        "cellular_component", "molecular_function", "biological_process"
+    ]
+) -> list[str]:
+    """
+    Converts Gene Ontology namespace identifiers.
+
+    Args:
+        namespaces: Gene Ontology namespaces.
+
+    Returns:
+        The corresponding identifiers used in annotation files.
+    """
+    return [{
+        "cellular_component": "C",
+        "molecular_function": "F",
+        "biological_process": "P"
+    }[ns] for ns in namespaces]

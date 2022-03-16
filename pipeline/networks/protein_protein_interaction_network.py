@@ -1423,11 +1423,8 @@ def get_gene_ontology_enrichment(
             go_id[alt_id].add(term["id"])
 
     annotation = {}
-    for protein, term in gene_ontology.get_annotation(taxonomy_identifier, [{
-            "cellular_component": "C",
-            "molecular_function": "F",
-            "biological_process": "P"
-    }[ns] for ns in namespaces]):
+    for protein, term in gene_ontology.get_annotation(
+            taxonomy_identifier, gene_ontology.convert_namespaces(namespaces)):
         if annotation_as_reference or any(
                 protein in network.nodes() for network in networks):
             for primary_term in go_id.get(term, {term}):

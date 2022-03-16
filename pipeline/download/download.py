@@ -12,7 +12,7 @@ import zipfile
 import pandas as pd
 
 
-def download_file(url: str, local_file_name: str, size: int = 1048576) -> None:
+def download_file(url: str, local_file_name: str, size: int = 1024) -> None:
     """
     Downloads a file from a URL.
 
@@ -33,7 +33,7 @@ def download_file(url: str, local_file_name: str, size: int = 1048576) -> None:
                 local_file.write(chunk)
 
 
-def decompress_gzip_file(compressed_file_name: str, size: int = 1048576) -> str:
+def decompress_gzip_file(compressed_file_name: str, size: int = 1024) -> str:
     """
     Decompresses a gzip compressed file and removes the compressed file.
 
@@ -98,7 +98,7 @@ def decompress_zip_file(compressed_file_name: str,
 
 def txt(url: str,
         file_from_zip_archive: str = "",
-        buffering: int = 1048576) -> Generator[str, None, None]:
+        buffering: int = 1024) -> Generator[str, None, None]:
     """
     Downloads, iterates and subsequently removes the file at a given URL.
 
@@ -163,7 +163,7 @@ def tabular_txt(url: str,
                 header: int = 0,
                 skiprows: int = 0,
                 usecols: list[Union[int, str]] = [],
-                chunksize: int = 1048576) -> Generator[pd.Series, None, None]:
+                chunksize: int = 1024) -> Generator[pd.Series, None, None]:
     """
     Downloads, iterates and subsequently removes the tabular file at a URL.
 
