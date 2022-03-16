@@ -7,8 +7,7 @@
           "sites": 5,
           "file": "data/salmonella/phosphorylation/Supplementary_Table_01.xlsx",
           "sheet": "Supplementary1",
-          "accession column": "Fasta.headers",
-          "accession format": "sp\\|(.+?)\\|[A-Z0-9]+_HUMAN",
+          "accession column": "Protein",
           "position column": "Positions.within.proteins",
           "replicate columns": [
             "Ratio.H.L.normalized.E1",
@@ -25,8 +24,7 @@
           "sites": 5,
           "file": "data/salmonella/phosphorylation/Supplementary_Table_01.xlsx",
           "sheet": "Supplementary1",
-          "accession column": "Fasta.headers",
-          "accession format": "sp\\|(.+?)\\|[A-Z0-9]+_HUMAN",
+          "accession column": "Protein",
           "position column": "Positions.within.proteins",
           "replicate columns": [
             "Ratio.M.L.normalized.E1",
@@ -43,8 +41,7 @@
           "sites": 5,
           "file": "data/salmonella/ubiquitination/20151119_HeLa_HCT116_05h_2h_all.xlsx",
           "sheet": "20151119_HeLa_HCT116_05h_2h_all",
-          "accession column": "Proteins",
-          "accession format": "(?=(?:^|;)(.+?)(?:;|$))",
+          "accession column": "Protein",
           "position column": "Positions within proteins",
           "position format": "(?=(?:^|;)(.+?)(?:;|$))",
           "replicate columns": [
@@ -62,8 +59,7 @@
           "sites": 5,
           "file": "data/salmonella/ubiquitination/20151119_HeLa_HCT116_05h_2h_all.xlsx",
           "sheet": "20151119_HeLa_HCT116_05h_2h_all",
-          "accession column": "Proteins",
-          "accession format": "(?=(?:^|;)(.+?)(?:;|$))",
+          "accession column": "Protein",
           "position column": "Positions within proteins",
           "position format": "(?=(?:^|;)(.+?)(?:;|$))",
           "replicate columns": [
