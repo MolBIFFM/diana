@@ -12,7 +12,7 @@ ORGANISM = {"file": {9606: "human"}}
 
 def get_ontology(
     namespaces: list[str] = [
-        "cellular_compartment", "molecular_function", "biological_process"
+        "cellular_component", "molecular_function", "biological_process"
     ]
 ) -> Generator[dict[str, Union[str, list[str]]], None, None]:
     """
@@ -22,10 +22,10 @@ def get_ontology(
         namespaces: The Gene Ontology namespaces to consider terms from.
 
     Yields:
-        A dictionary containing a Gene Ontology terms id, name, namespace and 
-            related terms.
+        A dictionary containing a Gene Ontology terms GO ID, name, namespace, 
+            related terms and alternative GO IDs.
     """
-    term = {}
+    term = {"id": "", "name": "", "namespace": "", "is_a": [], "alt_id": []}
     for line in download.txt("http://purl.obolibrary.org/obo/go.obo"):
         if any(
                 line.startswith("{}:".format(tag))
@@ -37,7 +37,13 @@ def get_ontology(
             if term.get("id") and term.get("name") and term.get(
                     "namespace") in namespaces:
                 yield term
-            term = {}
+            term = {
+                "id": "",
+                "name": "",
+                "namespace": "",
+                "is_a": [],
+                "alt_id": []
+            }
         elif any(
                 line.startswith("{}:".format(tag))
                 for tag in ("id", "name", "namespace")):
@@ -45,10 +51,11 @@ def get_ontology(
                             maxsplit=1)[0]] = line.split(":",
                                                          maxsplit=1)[1].strip()
         elif line.startswith("is_a:"):
-            if "is_a" not in term:
-                term["is_a"] = []
             term["is_a"].append(
                 line.split(":", maxsplit=1)[1].split("!")[0].strip())
+
+        elif line.startswith("alt_id:"):
+            term["alt_id"].append(line.split(":", maxsplit=1)[1].strip())
 
 
 def get_annotation(
@@ -73,10 +80,10 @@ def get_annotation(
             skiprows=41,
             delimiter="\t",
             usecols=[0, 1, 4, 8, 12]):
-        if row[0] == "UniProtKB" and row[8] in namespaces and row[
-                12] == "taxon:{}".format(taxonomy_identifier):
+        if row[0] == "UniProtKB" and row[3] in namespaces and row[4].split(
+                ":")[-1] == str(taxonomy_identifier):
             for protein in primary_accession.get(row[1], {row[1]}):
-                yield (protein, row[4])
+                yield (protein, row[2])
 
     for row in download.tabular_txt(
             "http://geneontology.org/gene-associations/goa_{organism}_isoform.gaf.gz"
@@ -84,7 +91,7 @@ def get_annotation(
             skiprows=41,
             delimiter="\t",
             usecols=[0, 4, 8, 12, 16]):
-        if row[0] == "UniProtKB" and row[8] in namespaces and row[
-                12] == "taxon:{}".format(
-                    taxonomy_identifier) and row[16].startswith("UniProtKB:"):
-            yield (row[16].split(":")[1], row[4])
+        if row[0] == "UniProtKB" and row[2] in namespaces and row[3].split(
+                ":")[-1] == str(taxonomy_identifier) and row[4].startswith(
+                    "UniProtKB:"):
+            yield (row[4].split(":")[1], row[1])

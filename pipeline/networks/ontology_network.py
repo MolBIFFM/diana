@@ -11,7 +11,7 @@ from enrichment import correction, test
 
 def get_ontology_network(protein_protein_interaction_network: nx.Graph,
                          namespaces: list[str] = [
-                             "cellular_compartment", "molecular_function",
+                             "cellular_component", "molecular_function",
                              "biological_process"
                          ],
                          test: Callable[[int, int, int, int],
@@ -35,7 +35,7 @@ def get_ontology_network(protein_protein_interaction_network: nx.Graph,
     Returns:
         The Gene Ontology network.
     """
-    network = nx.DiGraph()
+    network, go_id = nx.DiGraph(), {}
     for term in gene_ontology.get_ontology(namespaces):
         network.add_node(term["id"])
         network.nodes[term["id"]]["term"] = term["name"]
@@ -44,15 +44,21 @@ def get_ontology_network(protein_protein_interaction_network: nx.Graph,
         for parent in term.get("is_a", []):
             network.add_edge(term["id"], parent)
 
+        for alt_id in term["alt_id"]:
+            if alt_id not in go_id:
+                go_id[alt_id] = set()
+            go_id[alt_id].add(term["id"])
+
     annotation = {}
     for protein, term in gene_ontology.get_annotation(taxonomy_identifier, [{
             "cellular_component": "C",
             "molecular_function": "F",
             "biological_process": "P"
     }[ns] for ns in namespaces]):
-        if term in network and not term in annotation:
-            annotation[term] = set()
-        annotation[term].add(protein)
+        for primary_term in go_id.get(term, {term}):
+            if primary_term not in annotation:
+                annotation[primary_term] = set()
+            annotation[primary_term].add(protein)
 
     network.remove_nodes_from(
         term for term in network if term not in annotation)

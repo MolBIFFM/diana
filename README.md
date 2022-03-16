@@ -14,10 +14,9 @@ optional arguments:
   -p PROCESSES, --processes PROCESSES
                         maximum number of concurrent processes (default: 4)
 ```
+A configuration file specifies a list of workflows sequentially executed. Configuration files are processed concurrently.
 
 ## configuration
-A configuration file specifies a list of workflows sequentially executed. Configuration files are concurrently processed.
-
 
 ```json
 [
@@ -1055,7 +1054,7 @@ The modification considered to determine a subset of proteins.
 
 ---
 
-The configuration files provided in this repository exemplify projected workflows referring to data sets supplemented with the following publications.
+The configuration files provided in this repository refer to data sets supplemented with the following publications.
 
 1. M. Hahn, A. Covarrubias-Pinto, L. Herhaus, S. Satpathy, K. Klann, K. B.
 Boyle, C. Münch, K. Rajalingam, F. Randow, C. Choudhary, and I. Dikic, **SIK2 orchestrates actin-dependent host response upon *Salmonella* infection**, Proceedings of the National Academy of Sciences, vol. 118, no. 19, e2024144118, May 2021.

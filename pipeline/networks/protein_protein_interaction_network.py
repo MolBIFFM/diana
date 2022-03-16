@@ -302,7 +302,8 @@ def add_proteins_from_table(
                 if not pd.isna(row[replicate])
             ]
 
-            if len(measurements) >= min(num_replicates, len(replicates)):
+            if any(measurements) and len(measurements) >= min(
+                    num_replicates, len(replicates)):
                 for protein_accession, position in zip(protein_accessions,
                                                        positions):
                     if protein_accession not in proteins:
@@ -1381,16 +1382,17 @@ def get_change_tendency(
 
 
 def get_gene_ontology_enrichment(
-        networks: list[nx.Graph],
-        test: Callable[[int, int, int, int], float] = test.hypergeometric,
-        correction: Callable[[dict[int, float]],
-                             dict[int, float]] = correction.benjamini_hochberg,
-        taxonomy_identifier: int = 9606,
-        namespaces: list[str] = [
-            "cellular_compartment", "molecular_function", "biological_process"
-        ],
-        annotation_as_reference: bool = True
-) -> dict[nx.Graph, dict[str, float]]:
+    networks: list[nx.Graph],
+    test: Callable[[int, int, int, int], float] = test.hypergeometric,
+    correction: Callable[[dict[tuple[nx.Graph, str], float]],
+                         dict[tuple[nx.Graph, str],
+                              float]] = correction.benjamini_hochberg,
+    taxonomy_identifier: int = 9606,
+    namespaces: list[str] = [
+        "cellular_component", "molecular_function", "biological_process"
+    ],
+    annotation_as_reference: bool = True
+) -> dict[nx.Graph, dict[tuple[str, str], float]]:
     """
     Test the protein-protein interaction networks for enrichment of Gene 
     Ontology terms.
@@ -1412,6 +1414,14 @@ def get_gene_ontology_enrichment(
         Adjusted p-values for the enrichment of each Gene Ontology term by each 
         network.
     """
+    name, go_id = {}, {}
+    for term in gene_ontology.get_ontology(namespaces):
+        name[term["id"]] = term["name"]
+        for alt_id in term["alt_id"]:
+            if alt_id not in go_id:
+                go_id[alt_id] = set()
+            go_id[alt_id].add(term["id"])
+
     annotation = {}
     for protein, term in gene_ontology.get_annotation(taxonomy_identifier, [{
             "cellular_component": "C",
@@ -1420,18 +1430,14 @@ def get_gene_ontology_enrichment(
     }[ns] for ns in namespaces]):
         if annotation_as_reference or any(
                 protein in network.nodes() for network in networks):
-            if term not in annotation:
-                annotation[term] = set()
-            annotation[term].add(protein)
+            for primary_term in go_id.get(term, {term}):
+                if primary_term not in annotation:
+                    annotation[primary_term] = set()
+                annotation[primary_term].add(protein)
 
     annotation = {
         term: proteins for term, proteins in annotation.items() if proteins
     }
-
-    name = {}
-    for term in gene_ontology.get_ontology(namespaces):
-        if term["id"] in annotation:
-            name[term["id"]] = term["name"]
 
     annotated_proteins = set.union(*annotation.values())
 

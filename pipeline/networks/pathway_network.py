@@ -40,8 +40,10 @@ def get_pathway_network(protein_protein_interaction_network: nx.Graph,
         if child in network and parent in network:
             network.add_edge(child, parent)
 
-    pathways = {pathway: set() for pathway in network}
+    pathways = {}
     for protein, pathway in reactome.get_pathway_map(taxonomy_identifier):
+        if pathway not in pathways:
+            pathways[pathway] = set()
         pathways[pathway].add(protein)
 
     pathways = {

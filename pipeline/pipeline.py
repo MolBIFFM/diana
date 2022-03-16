@@ -460,10 +460,10 @@ def process_configuration(configurations: list[dict],
             for (term, name), p in sorted(enrichment[network].items(),
                                           key=lambda item: item[1]):
                 if p <= configuration["Gene Ontology enrichment"].get("p", 1.0):
-                    logger.info("{}\t{}\t{:.2e}".format(
+                    logger.info("{}\t{:.2e}\t{}".format(
                         term,
-                        name,
                         p,
+                        name,
                     ))
 
         if "module detection" in configuration:
@@ -971,7 +971,7 @@ def process_configuration(configurations: list[dict],
                     nx.induced_subgraph(network, proteins),
                     namespaces=configuration["Gene Ontology network"].get(
                         "namespaces", [
-                            "biological_process", "cellular_compartment",
+                            "biological_process", "cellular_component",
                             "molecular_function"
                         ]),
                     test=test.TEST[configuration["Gene Ontology network"].get(
@@ -1069,7 +1069,7 @@ def process_configuration(configurations: list[dict],
                     nx.induced_subgraph(network, proteins),
                     namespaces=configuration["Gene Ontology network"].get(
                         "namespaces", [
-                            "biological_process", "cellular_compartment",
+                            "biological_process", "cellular_component",
                             "molecular_function"
                         ]),
                     test=test.TEST[configuration["Gene Ontology network"].get(
@@ -1085,7 +1085,7 @@ def process_configuration(configurations: list[dict],
                     network,
                     namespaces=configuration["Gene Ontology network"].get(
                         "namespaces", [
-                            "biological_process", "cellular_compartment",
+                            "biological_process", "cellular_component",
                             "molecular_function"
                         ]),
                     test=test.TEST[configuration["Gene Ontology network"].get(
