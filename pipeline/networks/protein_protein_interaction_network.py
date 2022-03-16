@@ -344,6 +344,45 @@ def add_proteins_from_table(
                 time, modification, i + 1)] = proteins[protein][i][1]
 
 
+def get_proteins(
+        network: nx.Graph,
+        time: int,
+        modification: str,
+        site_combination: Callable[[tuple[float, ...]],
+                                   float] = lambda sites: max(sites, key=abs),
+        combined_change_filter: Callable[[float], bool] = bool) -> set[str]:
+    """
+    Returns proteins of a protein-protein interaction network with specified
+    changes.
+
+    Args:
+        network: The protein-protein interaction network.
+        time: The time of measurement.
+        modification: The type of post-translational modification.
+        site_combination: The function to derive protein-specific changes from
+            site-specific changes.
+        combined_change_filter: The predicate to filter combined changes.
+
+    Returns:
+        Proteins whose combined change of a particular type of
+        post-translational modification at a particular time of measurement
+        fulfil the predicate.
+    """
+    proteins = []
+    for protein in network:
+        sites = [
+            network.nodes[protein][change]
+            for change in network.nodes[protein]
+            if len(change.split("-")) == 3 and change.split("-")[0] == str(time)
+            and change.split("-")[1] == modification
+        ]
+
+        if sites and combined_change_filter(site_combination(sites)):
+            proteins.append(protein)
+
+    return set(proteins)
+
+
 def get_times(network: nx.Graph) -> tuple[int, ...]:
     """
     Returns the times of measurement represented in a protein-protein
@@ -413,153 +452,6 @@ def get_sites(network: nx.Graph, time: int, modification: str) -> int:
         for change in network.nodes[protein]
         if len(change.split("-")) == 3 and change.split("-")[0] == str(time) and
         change.split("-")[1] == modification)
-
-
-def get_changes(
-    network: nx.Graph,
-    time: int,
-    modification: str,
-    site_combination: Callable[[tuple[float, ...]],
-                               float] = lambda sites: max(sites, key=abs)
-) -> tuple[float, ...]:
-    """
-    Returns the distribution for a particular type of post-translational
-    modification at a particular time of measurement.
-
-    Args:
-        network: The protein-protein interaction network.
-        time: The time of measurement.
-        modification: The type of post-translational modification.
-        site_combination: The function to derive protein-specific changes from
-            site-specific changes.
-
-    Returns:
-        Protein-specific changes for a particular type of post-translational
-        modification at a particular time of measurement.
-    """
-    changes = []
-    for protein in network:
-        sites = tuple(network.nodes[protein][change]
-                      for change in network.nodes[protein]
-                      if len(change.split("-")) == 3 and change.split("-")[0] ==
-                      str(time) and change.split("-")[1] == modification)
-
-        if sites:
-            changes.append(site_combination(sites))
-
-    return tuple(changes)
-
-
-def convert_change_to_standard_score(
-    network: nx.Graph,
-    change: float,
-    time: int,
-    modification: str,
-    site_combination: Callable[[tuple[float, ...]],
-                               float] = lambda sites: max(sites, key=abs)
-) -> float:
-    """
-    Convert a change to its corresponding modification- and time-specific
-    standard score.
-
-    Args:
-        network: The protein-protein interaction network.
-        change: The change to convert.
-        time: The time of measurement.
-        modification: The type of post-translational modification.
-        site_combination: The function to derive protein-specific changes from
-            site-specific changes.
-
-    Returns:
-        The standard score corresponding to the change.
-    """
-    changes = get_changes(network, time, modification, site_combination)
-    mean = statistics.mean(changes)
-    stdev = statistics.stdev(changes, xbar=mean)
-    return (change - mean) / stdev
-
-
-def convert_standard_score_to_change(
-    network: nx.Graph,
-    standard_score: float,
-    time: int,
-    modification: str,
-    site_combination: Callable[[tuple[float, ...]],
-                               float] = lambda sites: max(sites, key=abs)
-) -> float:
-    """
-    Convert a modification- and time-specific standard score to its
-    corresponding change.
-
-    Args:
-        network: The protein-protein interaction network.
-        standard_score: The standard score to convert.
-        time: The time of measurement.
-        modification: The type of post-translational modification.
-        site_combination: The function to derive protein-specific changes from
-            site-specific changes.
-
-    Returns:
-        The change corresponding to the standard score.
-    """
-    changes = get_changes(network, time, modification, site_combination)
-    mean = statistics.mean(changes)
-    stdev = statistics.stdev(changes, xbar=mean)
-    return standard_score * stdev + mean
-
-
-def convert_change_to_quantile(
-    network: nx.Graph,
-    change: float,
-    time: int,
-    modification: str,
-    site_combination: Callable[[tuple[float, ...]],
-                               float] = lambda sites: max(sites, key=abs)
-) -> float:
-    """
-    Convert a change to its corresponding modification- and time-specific
-    quantile.
-
-    Args:
-        network: The protein-protein interaction network.
-        change: The change to convert.
-        time: The time of measurement.
-        modification: The type of post-translational modification.
-        site_combination: The function to derive protein-specific changes from
-            site-specific changes.
-
-    Returns:
-        The quantile corresponding to the change.
-    """
-    changes = get_changes(network, time, modification, site_combination)
-    return len([c for c in changes if c <= change]) / len(changes)
-
-
-def convert_quantile_to_change(
-    network: nx.Graph,
-    quantile: float,
-    time: int,
-    modification: str,
-    site_combination: Callable[[tuple[float, ...]],
-                               float] = lambda sites: max(sites, key=abs)
-) -> float:
-    """
-    Convert a modification- and time-specific quantile to its corresponding
-    change.
-
-    Args:
-        network: The protein-protein interaction network.
-        quantile: The quantile to convert.
-        time: The time of measurement.
-        modification: The type of post-translational modification.
-        site_combination: The function to derive protein-specific changes from
-            site-specific changes.
-
-    Returns:
-        The change corresponding to the quantile.
-    """
-    changes = get_changes(network, time, modification, site_combination)
-    return sorted(changes)[math.floor(quantile * (len(changes) - 1))]
 
 
 def set_post_translational_modification(network: nx.Graph) -> None:
@@ -1077,7 +969,7 @@ def add_protein_protein_interactions_from_string(
                 )
             else:
                 network.add_edge(interactor_a, interactor_b)
-                network.edges[interactor_a, interactor_b]["STRING"] = (score)
+                network.edges[interactor_a, interactor_b]["STRING"] = score
 
 
 def get_databases(network: nx.Graph) -> tuple[str, ...]:
@@ -1183,16 +1075,16 @@ def get_modules(network: nx.Graph,
     return [network.subgraph(community) for community in communities]
 
 
-def get_proteins(
-        network: nx.Graph,
-        time: int,
-        modification: str,
-        site_combination: Callable[[tuple[float, ...]],
-                                   float] = lambda sites: max(sites, key=abs),
-        combined_change_filter: Callable[[float], bool] = bool) -> set[str]:
+def get_changes(
+    network: nx.Graph,
+    time: int,
+    modification: str,
+    site_combination: Callable[[tuple[float, ...]],
+                               float] = lambda sites: max(sites, key=abs)
+) -> tuple[float, ...]:
     """
-    Returns proteins of a protein-protein interaction network with specified
-    changes.
+    Returns the change distribution for a particular type of post-translational
+    modification at a particular time of measurement.
 
     Args:
         network: The protein-protein interaction network.
@@ -1200,26 +1092,134 @@ def get_proteins(
         modification: The type of post-translational modification.
         site_combination: The function to derive protein-specific changes from
             site-specific changes.
-        combined_change_filter: The predicate to filter combined changes.
 
     Returns:
-        Proteins whose combined change of a particular type of
-        post-translational modification at a particular time of measurement
-        fulfil the predicate.
+        Protein-specific changes for a particular type of post-translational
+        modification at a particular time of measurement.
     """
-    proteins = []
+    changes = []
     for protein in network:
-        sites = [
-            network.nodes[protein][change]
-            for change in network.nodes[protein]
-            if len(change.split("-")) == 3 and change.split("-")[0] == str(time)
-            and change.split("-")[1] == modification
-        ]
+        sites = tuple(network.nodes[protein][change]
+                      for change in network.nodes[protein]
+                      if len(change.split("-")) == 3 and change.split("-")[0] ==
+                      str(time) and change.split("-")[1] == modification)
 
-        if sites and combined_change_filter(site_combination(sites)):
-            proteins.append(protein)
+        if sites:
+            changes.append(site_combination(sites))
 
-    return set(proteins)
+    return tuple(changes)
+
+
+def convert_change_to_standard_score(
+    network: nx.Graph,
+    change: float,
+    time: int,
+    modification: str,
+    site_combination: Callable[[tuple[float, ...]],
+                               float] = lambda sites: max(sites, key=abs)
+) -> float:
+    """
+    Converts a change to its corresponding modification- and time-specific
+    standard score.
+
+    Args:
+        network: The protein-protein interaction network.
+        change: The change to convert.
+        time: The time of measurement.
+        modification: The type of post-translational modification.
+        site_combination: The function to derive protein-specific changes from
+            site-specific changes.
+
+    Returns:
+        The standard score corresponding to the change.
+    """
+    changes = get_changes(network, time, modification, site_combination)
+    mean = statistics.mean(changes)
+    stdev = statistics.stdev(changes, xbar=mean)
+    return (change - mean) / stdev
+
+
+def convert_standard_score_to_change(
+    network: nx.Graph,
+    standard_score: float,
+    time: int,
+    modification: str,
+    site_combination: Callable[[tuple[float, ...]],
+                               float] = lambda sites: max(sites, key=abs)
+) -> float:
+    """
+    Converts a modification- and time-specific standard score to its
+    corresponding change.
+
+    Args:
+        network: The protein-protein interaction network.
+        standard_score: The standard score to convert.
+        time: The time of measurement.
+        modification: The type of post-translational modification.
+        site_combination: The function to derive protein-specific changes from
+            site-specific changes.
+
+    Returns:
+        The change corresponding to the standard score.
+    """
+    changes = get_changes(network, time, modification, site_combination)
+    mean = statistics.mean(changes)
+    stdev = statistics.stdev(changes, xbar=mean)
+    return standard_score * stdev + mean
+
+
+def convert_change_to_quantile(
+    network: nx.Graph,
+    change: float,
+    time: int,
+    modification: str,
+    site_combination: Callable[[tuple[float, ...]],
+                               float] = lambda sites: max(sites, key=abs)
+) -> float:
+    """
+    Converts a change to its corresponding modification- and time-specific
+    quantile.
+
+    Args:
+        network: The protein-protein interaction network.
+        change: The change to convert.
+        time: The time of measurement.
+        modification: The type of post-translational modification.
+        site_combination: The function to derive protein-specific changes from
+            site-specific changes.
+
+    Returns:
+        The quantile corresponding to the change.
+    """
+    changes = get_changes(network, time, modification, site_combination)
+    return len([c for c in changes if c <= change]) / len(changes)
+
+
+def convert_quantile_to_change(
+    network: nx.Graph,
+    quantile: float,
+    time: int,
+    modification: str,
+    site_combination: Callable[[tuple[float, ...]],
+                               float] = lambda sites: max(sites, key=abs)
+) -> float:
+    """
+    Convert a modification- and time-specific quantile to its corresponding
+    change.
+
+    Args:
+        network: The protein-protein interaction network.
+        quantile: The quantile to convert.
+        time: The time of measurement.
+        modification: The type of post-translational modification.
+        site_combination: The function to derive protein-specific changes from
+            site-specific changes.
+
+    Returns:
+        The change corresponding to the quantile.
+    """
+    changes = get_changes(network, time, modification, site_combination)
+    return sorted(changes)[math.floor(quantile * (len(changes) - 1))]
 
 
 def get_change_enrichment(
@@ -1266,28 +1266,36 @@ def get_change_enrichment(
     p_values = {}
     for time in get_times(network):
         for modification in get_post_translational_modifications(network, time):
-            modified_proteins = len(
-                get_proteins(network, time, modification, site_combination))
+            min_change = convert_change(network, changes[0], time, modification,
+                                        site_combination)
+            max_change = convert_change(network, changes[1], time, modification,
+                                        site_combination)
 
-            target_proteins = len(
-                get_proteins(
-                    network,
-                    time,
-                    modification,
-                    site_combination=site_combination,
-                    combined_change_filter=lambda combined_change:
-                    combined_change <= convert_change(network, changes[
-                        0], time, modification, site_combination) or
-                    combined_change >= convert_change(network, changes[
-                        1], time, modification, site_combination)))
+            modified_proteins = len([
+                change for change in get_changes(network, time, modification,
+                                                 site_combination) if change
+            ])
 
             modified_module_proteins = [
-                modified_proteins.intersection(module.nodes())
-                for module in modules
+                len([
+                    change for change in get_changes(module, time, modification,
+                                                     site_combination) if change
+                ]) for module in modules
             ]
 
+            target_proteins = len([
+                change for change in get_changes(network, time, modification,
+                                                 site_combination)
+                if change <= min_change or change >= max_change
+            ])
+
             target_module_proteins = [
-                target_proteins.intersection(module.nodes())
+                len([
+                    change
+                    for change in get_changes(module, time, modification,
+                                              site_combination)
+                    if change <= min_change or change >= max_change
+                ])
                 for module in modules
             ]
 
@@ -1345,7 +1353,6 @@ def get_change_location(
     p_values = {}
     for time in get_times(network):
         for modification in get_post_translational_modifications(network, time):
-
             network_changes = [
                 get_changes(nx.union_all([m
                                           for m in modules
