@@ -1,14 +1,14 @@
 """The interface for the IntAct database."""
 from formats import mitab
-from typing import Generator
+from typing import Container, Generator, Optional
 
 from databases import uniprot
-from download import download
+from access import iterate
 
 
 def get_protein_protein_interactions(
-    interaction_detection_methods: list[str] = [],
-    interaction_types: list[str] = [],
+    interaction_detection_methods: Optional[Container[str]] = None,
+    interaction_types: Optional[Container[str]] = None,
     mi_score: float = 0.0,
     taxonomy_identifier: int = 9606
 ) -> Generator[tuple[str, str, float], None, None]:
@@ -16,20 +16,20 @@ def get_protein_protein_interactions(
     Yields protein-protein interactions from IntAct.
 
     Args:
-        interaction_detection_methods: The accepted PSI-MI terms for interaction 
+        interaction_detection_methods: The accepted PSI-MI terms for interaction
             detection method. If none are specified, any is accepted.
-        interaction_types: The accepted PSI-MI terms for interaction type. 
+        interaction_types: The accepted PSI-MI terms for interaction type.
             If none are specified, any is accepted.
         mi_score: The PSI-MI score threshold.
         taxonomy_identifier: The taxonomy identifier.
 
     Yields:
-        Pairs of interacting proteins and the PSI-MI score associated with the 
+        Pairs of interacting proteins and the PSI-MI score associated with the
         interaction.
     """
     primary_accession = uniprot.get_primary_accession(taxonomy_identifier)
 
-    for row in download.tabular_txt(
+    for row in iterate.tabular_txt(
             "ftp://ftp.ebi.ac.uk/pub/databases/intact/current/psimitab/intact.zip",
             file_from_zip_archive="intact.txt",
             delimiter="\t",

@@ -4,7 +4,7 @@ import math
 import os
 import re
 import statistics
-from typing import Callable, Hashable, Union, Container
+from typing import Callable, Container, Hashable, Optional, Union
 
 import networkx as nx
 import pandas as pd
@@ -17,7 +17,7 @@ def get_protein_protein_interaction_network() -> nx.Graph():
     """
     Initializes a protein-protein interaction network.
 
-    Returns 
+    Returns
         The protein-protein interaction network.
 
     """
@@ -58,12 +58,12 @@ def add_genes_from(network: nx.Graph,
                    genes: Container,
                    taxonomy_identifier: int = 9606) -> None:
     """
-    Add primary Uniprot protein accessions corresponding to genes to a 
+    Add primary Uniprot protein accessions corresponding to genes to a
     protein-protein interaction network.
 
     Args:
         network: The protein-protein interaction network.
-        genes: The Uniprot gene accessions whose corresponding primary Uniprot 
+        genes: The Uniprot gene accessions whose corresponding primary Uniprot
             protein accessions are added.
         taxonomy_identifier: The taxonomy identifier.
     """
@@ -85,14 +85,14 @@ def add_genes_from_table(
     taxonomy_identifier: int = 9606,
 ) -> None:
     """
-    Parse UniProt gene accessions from a tabular file and add the corresponding 
+    Parse UniProt gene accessions from a tabular file and add the corresponding
     primary Uniprot protein accessions to a protein-protein interaction network.
 
     Args:
         network: The protein-protein interaction network.
         file_name: The file location of the file.
         gene_accession_column: The column containing UniProt gene accessions.
-        gene_accession_format: A regular expression to extract gene accessions 
+        gene_accession_format: A regular expression to extract gene accessions
             from an entry.
         sheet_name: The sheet to parse gene accessions from.
         header: The index of the header row.
@@ -137,12 +137,12 @@ def add_genes_from_table(
 
 def add_proteins_from(network: nx.Graph, proteins: Container) -> None:
     """
-    Add primary Uniprot protein accessions corresponding to proteins to a 
+    Add primary Uniprot protein accessions corresponding to proteins to a
     protein-protein interaction network.
 
     Args:
         network: The protein-protein interaction network.
-        proteins: The protein accessions whose corresponding primary Uniprot 
+        proteins: The protein accessions whose corresponding primary Uniprot
             protein accessions are added.
     """
     proteins_isoform = {}
@@ -194,43 +194,44 @@ def add_proteins_from_table(
     modification: str = "",
     position_column: str = Union[int, str],
     position_format: re.Pattern = re.compile("^(.+?)$"),
-    replicates: list[Union[int, str]] = [],
+    replicates: Optional[Container[Union[int, str]]] = None,
     sheet_name: Union[int, str] = 0,
     header: int = 0,
     num_sites: int = 100,
     num_replicates: int = 1,
-    replicate_combination: Callable[[list[float]], float] = statistics.mean,
+    replicate_combination: Callable[[Container[float]],
+                                    float] = statistics.mean,
     measurement_conversion: Callable[
-        [list[float], Callable[[list[float]], float]],
+        [Container[float], Callable[[Container[float]], float]],
         float] = lambda changes, combination: math.log2(combination(changes))
 ) -> None:
     """
-    Parse UniProt protein accessions and measurements of changes from a tabular 
-    file and add the corresponding primary Uniprot protein accessions to a 
+    Parse UniProt protein accessions and measurements of changes from a tabular
+    file and add the corresponding primary Uniprot protein accessions to a
     protein-protein interaction network.
 
     Args:
         network: The protein-protein interaction network.
         file_name: The file location of the file.
-        protein_accession_column: The column containing UniProt protein 
+        protein_accession_column: The column containing UniProt protein
             accessions.
-        protein_accession_format: A regular expression to extract protein 
+        protein_accession_format: A regular expression to extract protein
             accessions from a corresponding entry.
         time: The time of measurement to associate with changes.
-        modification: An identifier for the type of post-translational 
+        modification: An identifier for the type of post-translational
             modification to associate with changes.
-        position_column: The column containing sites corresponding to 
+        position_column: The column containing sites corresponding to
             measurements.
         replicates: The columns containing replicates of measurements.
         sheet_name: The sheet to parse protein accessions from.
         header: The index of the header row.
-        num_sites: The maximum number of measurements to associate with a 
+        num_sites: The maximum number of measurements to associate with a
             protein-accession, prioritized by largest absolute value.
-        num_replicates: The minimum number of replicates to accept a 
+        num_replicates: The minimum number of replicates to accept a
             measurement.
-        replicate_combination: A function to combine replicates into a single 
+        replicate_combination: A function to combine replicates into a single
             change.
-        measurement_conversion: A function to convert the measurements reported 
+        measurement_conversion: A function to convert the measurements reported
             to log2-scale.
     """
     if os.path.splitext(file_name)[1].lstrip(".") in (
@@ -345,15 +346,15 @@ def add_proteins_from_table(
 
 def get_times(network: nx.Graph) -> tuple[int, ...]:
     """
-    Returns the times of measurement represented in a protein-protein 
+    Returns the times of measurement represented in a protein-protein
     interaction network.
 
     Args:
         network: The protein-protein interaction network.
 
     Returns:
-        The times of measurement associated with any changes of any protein in 
-        the protein-protein interaction network. 
+        The times of measurement associated with any changes of any protein in
+        the protein-protein interaction network.
     """
     return tuple(
         sorted(
@@ -368,7 +369,7 @@ def get_times(network: nx.Graph) -> tuple[int, ...]:
 def get_post_translational_modifications(network: nx.Graph,
                                          time: int) -> tuple[str, ...]:
     """
-    Returns the types of post-translational modification represented in a 
+    Returns the types of post-translational modification represented in a
     protein-protein interaction network at a particular time of measurement.
 
     Args:
@@ -376,9 +377,9 @@ def get_post_translational_modifications(network: nx.Graph,
         time: The time of measurement.
 
     Returns:
-        The types of post-translational modification associated with any changes 
-        of any protein in the protein-protein interaction network at a 
-        particular time of measurement. 
+        The types of post-translational modification associated with any changes
+        of any protein in the protein-protein interaction network at a
+        particular time of measurement.
     """
     return tuple(
         sorted(
@@ -392,8 +393,8 @@ def get_post_translational_modifications(network: nx.Graph,
 
 def get_sites(network: nx.Graph, time: int, modification: str) -> int:
     """
-    Returns the number of sites of proteins in a protein-protein interaction 
-    network for a particular type of post-translational modification at a 
+    Returns the number of sites of proteins in a protein-protein interaction
+    network for a particular type of post-translational modification at a
     particular time of measurement.
 
     Args:
@@ -402,8 +403,8 @@ def get_sites(network: nx.Graph, time: int, modification: str) -> int:
         modification: The type of post-translational modification.
 
     Returns:
-        The maximum number of sites of any protein in a protein-protein 
-        interaction network for a particular type of post-translational 
+        The maximum number of sites of any protein in a protein-protein
+        interaction network for a particular type of post-translational
         modification at a particular time of measurement.
     """
     return max(
@@ -422,18 +423,18 @@ def get_changes(
                                float] = lambda sites: max(sites, key=abs)
 ) -> tuple[float, ...]:
     """
-    Returns the distribution for a particular type of post-translational 
+    Returns the distribution for a particular type of post-translational
     modification at a particular time of measurement.
 
     Args:
         network: The protein-protein interaction network.
         time: The time of measurement.
         modification: The type of post-translational modification.
-        site_combination: The function to derive protein-specific changes from 
+        site_combination: The function to derive protein-specific changes from
             site-specific changes.
 
     Returns:
-        Protein-specific changes for a particular type of post-translational 
+        Protein-specific changes for a particular type of post-translational
         modification at a particular time of measurement.
     """
     changes = []
@@ -458,15 +459,15 @@ def convert_change_to_standard_score(
                                float] = lambda sites: max(sites, key=abs)
 ) -> float:
     """
-    Convert a change to its corresponding modification- and time-specific 
+    Convert a change to its corresponding modification- and time-specific
     standard score.
-    
+
     Args:
         network: The protein-protein interaction network.
         change: The change to convert.
         time: The time of measurement.
         modification: The type of post-translational modification.
-        site_combination: The function to derive protein-specific changes from 
+        site_combination: The function to derive protein-specific changes from
             site-specific changes.
 
     Returns:
@@ -487,15 +488,15 @@ def convert_standard_score_to_change(
                                float] = lambda sites: max(sites, key=abs)
 ) -> float:
     """
-    Convert a modification- and time-specific standard score to its 
+    Convert a modification- and time-specific standard score to its
     corresponding change.
-    
+
     Args:
         network: The protein-protein interaction network.
         standard_score: The standard score to convert.
         time: The time of measurement.
         modification: The type of post-translational modification.
-        site_combination: The function to derive protein-specific changes from 
+        site_combination: The function to derive protein-specific changes from
             site-specific changes.
 
     Returns:
@@ -516,15 +517,15 @@ def convert_change_to_quantile(
                                float] = lambda sites: max(sites, key=abs)
 ) -> float:
     """
-    Convert a change to its corresponding modification- and time-specific 
+    Convert a change to its corresponding modification- and time-specific
     quantile.
-    
+
     Args:
         network: The protein-protein interaction network.
         change: The change to convert.
         time: The time of measurement.
         modification: The type of post-translational modification.
-        site_combination: The function to derive protein-specific changes from 
+        site_combination: The function to derive protein-specific changes from
             site-specific changes.
 
     Returns:
@@ -543,15 +544,15 @@ def convert_quantile_to_change(
                                float] = lambda sites: max(sites, key=abs)
 ) -> float:
     """
-    Convert a modification- and time-specific quantile to its corresponding 
+    Convert a modification- and time-specific quantile to its corresponding
     change.
-    
+
     Args:
         network: The protein-protein interaction network.
         quantile: The quantile to convert.
         time: The time of measurement.
         modification: The type of post-translational modification.
-        site_combination: The function to derive protein-specific changes from 
+        site_combination: The function to derive protein-specific changes from
             site-specific changes.
 
     Returns:
@@ -595,11 +596,11 @@ def set_changes(
 
     Args:
         network: The protein-protein interaction network.
-        site_combination: The function to derive protein-specific changes from 
+        site_combination: The function to derive protein-specific changes from
             site-specific changes.
-        changes: Proteins are classified by whether their representative exceed 
+        changes: Proteins are classified by whether their representative exceed
             either this range, the range defined by half the bounds or none.
-        convert_change: The function used convert the bounds to log2-fold 
+        convert_change: The function used convert the bounds to log2-fold
             changes.
     """
     times = get_times(network)
@@ -699,25 +700,26 @@ def set_changes(
                 network.nodes[protein]["change {}".format(time)] = "mid"
 
 
-def add_proteins_from_biogrid(network: nx.Graph,
-                              experimental_system: list[str] = [],
-                              experimental_system_type: list[str] = [],
-                              interaction_throughput: list[str] = [],
-                              multi_validated_physical: bool = False,
-                              taxonomy_identifier: int = 9606) -> None:
+def add_proteins_from_biogrid(
+        network: nx.Graph,
+        experimental_system: Optional[Container[str]] = None,
+        experimental_system_type: Optional[Container[str]] = None,
+        interaction_throughput: Optional[Container[str]] = None,
+        multi_validated_physical: bool = False,
+        taxonomy_identifier: int = 9606) -> None:
     """
-    Add proteins interacting with proteins in a protein-protein interaction 
+    Add proteins interacting with proteins in a protein-protein interaction
     network from BioGRID to the network.
 
     Args:
         network: The protein-protein interaction network.
-        experimental_system: The accepted experimental evidence codes. If none 
+        experimental_system: The accepted experimental evidence codes. If none
             are specified, any is accepted.
-        experimental_system_type: The accepted categories of experimental 
+        experimental_system_type: The accepted categories of experimental
             evidence. If none are specified, any is accepted.
-        interaction_throughput:  The accepted levels of interaction throughput. 
+        interaction_throughput:  The accepted levels of interaction throughput.
             If none are specified, any is accepted.
-        multi-validated physical: If True, consider only multi-validated 
+        multi-validated physical: If True, consider only multi-validated
             physical interactions.
         taxonomy_identifier: The taxonomy identifier.
     """
@@ -737,25 +739,25 @@ def add_proteins_from_biogrid(network: nx.Graph,
 
 def add_protein_protein_interactions_from_biogrid(
     network: nx.Graph,
-    experimental_system: list[str] = [],
-    experimental_system_type: list[str] = [],
-    interaction_throughput: list[str] = [],
+    experimental_system: Optional[Container[str]] = None,
+    experimental_system_type: Optional[Container[str]] = None,
+    interaction_throughput: Optional[Container[str]] = None,
     multi_validated_physical: bool = False,
     taxonomy_identifier: int = 9606,
 ) -> None:
     """
-    Adds protein-protein interactions from BioGRID to a protein-protein 
+    Adds protein-protein interactions from BioGRID to a protein-protein
     interaction network.
 
     Args:
         network: The protein-protein interaction network.
-        experimental_system: The accepted experimental evidence codes. If none 
+        experimental_system: The accepted experimental evidence codes. If none
             are specified, any is accepted.
-        experimental_system_type: The accepted categories of experimental 
+        experimental_system_type: The accepted categories of experimental
             evidence. If none are specified, any is accepted.
-        interaction_throughput:  The accepted levels of interaction throughput. 
+        interaction_throughput:  The accepted levels of interaction throughput.
             If none are specified, any is accepted.
-        multi-validated physical: If True, add only multi-validated physical 
+        multi-validated physical: If True, add only multi-validated physical
             interactions.
         taxonomy_identifier: The taxonomy identifier.
     """
@@ -770,19 +772,20 @@ def add_protein_protein_interactions_from_biogrid(
 
 
 def add_proteins_from_intact(network: nx.Graph,
-                             interaction_detection_methods: list[str] = [],
-                             interaction_types: list[str] = [],
+                             interaction_detection_methods: Optional[
+                                 Container[str]] = None,
+                             interaction_types: Optional[Container[str]] = None,
                              mi_score: float = 0.0,
                              taxonomy_identifier: int = 9606) -> None:
     """
-    Add proteins interacting with proteins in a protein-protein interaction 
+    Add proteins interacting with proteins in a protein-protein interaction
     network from IntAct to the network.
 
     Args:
         network: The protein-protein interaction network.
-        interaction_detection_methods: The accepted PSI-MI terms for interaction 
+        interaction_detection_methods: The accepted PSI-MI terms for interaction
             detection method. If none are specified, any is accepted.
-        interaction_types: The accepted PSI-MI terms for interaction type. If 
+        interaction_types: The accepted PSI-MI terms for interaction type. If
             none are specified, any is accepted.
         mi_score: The PSI-MI score threshold.
         taxonomy_identifier: The taxonomy identifier.
@@ -802,19 +805,19 @@ def add_proteins_from_intact(network: nx.Graph,
 
 def add_protein_protein_interactions_from_intact(
         network: nx.Graph,
-        interaction_detection_methods: list[str] = [],
-        interaction_types: list[str] = [],
+        interaction_detection_methods: Optional[Container[str]] = None,
+        interaction_types: Optional[Container[str]] = None,
         mi_score: float = 0.0,
         taxonomy_identifier: int = 9606) -> None:
     """
-    Adds protein-protein interactions from IntAct to a protein-protein 
+    Adds protein-protein interactions from IntAct to a protein-protein
     interaction network.
 
     Args:
         network: The protein-protein interaction network.
-        interaction_detection_methods: The accepted PSI-MI terms for interaction 
+        interaction_detection_methods: The accepted PSI-MI terms for interaction
             detection method. If none are specified, any is accepted.
-        interaction_types: The accepted PSI-MI terms for interaction type. 
+        interaction_types: The accepted PSI-MI terms for interaction type.
             If none are specified, any is accepted.
         mi_score: The PSI-MI score threshold.
         taxonomy_identifier: The taxonomy identifier.
@@ -834,19 +837,20 @@ def add_protein_protein_interactions_from_intact(
 
 
 def add_proteins_from_mint(network: nx.Graph,
-                           interaction_detection_methods: list[str] = [],
-                           interaction_types: list[str] = [],
+                           interaction_detection_methods: Optional[
+                               Container[str]] = None,
+                           interaction_types: Optional[Container[str]] = None,
                            mi_score: float = 0.0,
                            taxonomy_identifier: int = 9606) -> None:
     """
-    Add proteins interacting with proteins in a protein-protein interaction 
+    Add proteins interacting with proteins in a protein-protein interaction
     network from MINT to the network.
 
     Args:
         network: The protein-protein interaction network.
-        interaction_detection_methods: The accepted PSI-MI terms for interaction 
+        interaction_detection_methods: The accepted PSI-MI terms for interaction
             detection method. If none are specified, any is accepted.
-        interaction_types: The accepted PSI-MI terms for interaction type. 
+        interaction_types: The accepted PSI-MI terms for interaction type.
             If none are specified, any is accepted.
         mi_score: The PSI-MI score threshold.
         taxonomy_identifier: The taxonomy identifier.
@@ -866,17 +870,17 @@ def add_proteins_from_mint(network: nx.Graph,
 
 def add_protein_protein_interactions_from_mint(
         network: nx.Graph,
-        interaction_detection_methods: list[str] = [],
-        interaction_types: list[str] = [],
+        interaction_detection_methods: Optional[Container[str]] = None,
+        interaction_types: Optional[Container[str]] = None,
         mi_score: float = 0.0,
         taxonomy_identifier: int = 9606) -> None:
     """
-    Adds protein-protein interactions from MINT to a protein-protein interaction 
+    Adds protein-protein interactions from MINT to a protein-protein interaction
     network.
 
     Args:
         network: The protein-protein interaction network.
-        interaction_detection_methods: The accepted PSI-MI terms for interaction 
+        interaction_detection_methods: The accepted PSI-MI terms for interaction
             detection method. If none are specified, any is accepted.
         interaction_types: The accepted PSI-MI terms for interaction type.
             If none are specified, any is accepted.
@@ -897,19 +901,20 @@ def add_protein_protein_interactions_from_mint(
                 network.edges[interactor_a, interactor_b]["MINT"] = score
 
 
-def add_proteins_from_reactome(network: nx.Graph,
-                               interaction_type: list[str] = [],
-                               interaction_context: list[str] = [],
-                               taxonomy_identifier: int = 9606) -> None:
+def add_proteins_from_reactome(
+        network: nx.Graph,
+        interaction_type: Optional[Container[str]] = None,
+        interaction_context: Optional[Container[str]] = None,
+        taxonomy_identifier: int = 9606) -> None:
     """
-    Add proteins interacting with proteins in a protein-protein interaction 
+    Add proteins interacting with proteins in a protein-protein interaction
     network from Reactome to the network.
 
     Args:
         network: The protein-protein interaction network.
-        interaction_type: The accepted interaction type annotation. 
+        interaction_type: The accepted interaction type annotation.
             If none are specified, any is accepted.
-        interaction_context: The accepted interaction context annotation. 
+        interaction_context: The accepted interaction context annotation.
             If none are specified, any is accepted.
         taxonomy_identifier: The taxonomy identifier.
     """
@@ -928,19 +933,19 @@ def add_proteins_from_reactome(network: nx.Graph,
 
 def add_protein_protein_interactions_from_reactome(
     network: nx.Graph,
-    interaction_type: list[str] = [],
-    interaction_context: list[str] = [],
+    interaction_type: Optional[Container[str]] = None,
+    interaction_context: Optional[Container[str]] = None,
     taxonomy_identifier: int = 9606,
 ) -> None:
     """
-    Adds protein-protein interactions from Reactome to a protein-protein 
+    Adds protein-protein interactions from Reactome to a protein-protein
     interaction network.
 
     Args:
         network: The protein-protein interaction network.
-        interaction_type: The accepted interaction type annotation. 
+        interaction_type: The accepted interaction type annotation.
             If none are specified, any is accepted.
-        interaction_context: The accepted interaction context annotation. 
+        interaction_context: The accepted interaction context annotation.
             If none are specified, any is accepted.
         taxonomy_identifier: The taxonomy identifier.
     """
@@ -971,13 +976,13 @@ def add_proteins_from_string(network: nx.Graph,
                              taxonomy_identifier: int = 9606,
                              version: float = 11.5):
     """
-    Add proteins interacting with proteins in a protein-protein interaction 
+    Add proteins interacting with proteins in a protein-protein interaction
     network from MINT to the network.
 
     Args:
         network: The protein-protein interaction network.
         neighborhood: The normal gene neighborhood score threshold.
-        neighborhood_transferred: The transferred gene neighborhood score 
+        neighborhood_transferred: The transferred gene neighborhood score
             threshold.
         fusion: The gene fusion score threshold.
         cooccurrence: The gene cooccurrence score threshold.
@@ -1032,13 +1037,13 @@ def add_protein_protein_interactions_from_string(
         taxonomy_identifier: int = 9606,
         version: float = 11.5):
     """
-    Adds protein-protein interactions from STRING to a protein-protein 
+    Adds protein-protein interactions from STRING to a protein-protein
     interaction network.
 
     Args:
         network: The protein-protein interaction network.
         neighborhood: The normal gene neighborhood score threshold.
-        neighborhood_transferred: The transferred gene neighborhood score 
+        neighborhood_transferred: The transferred gene neighborhood score
             threshold.
         fusion: The gene fusion score threshold.
         cooccurrence: The gene cooccurrence score threshold.
@@ -1077,14 +1082,14 @@ def add_protein_protein_interactions_from_string(
 
 def get_databases(network: nx.Graph) -> tuple[str, ...]:
     """
-    Returns the protein-protein interaction databases represented in a 
+    Returns the protein-protein interaction databases represented in a
     protein-protein interaction network.
 
     Args:
         network: The protein-protein interaction network.
-    
+
     Returns:
-        The databases of edge scores associated with edges in the 
+        The databases of edge scores associated with edges in the
         protein-protein interaction network.
     """
     return tuple(
@@ -1105,7 +1110,7 @@ def set_edge_weights(
 
     Args:
         network: The protein-protein interaction network.
-        weight: The function to derive a combined confidence score from 
+        weight: The function to derive a combined confidence score from
             database-specific scores.
         attribute: The attribute name of the weight.
     """
@@ -1147,7 +1152,7 @@ def get_modules(network: nx.Graph,
         network: The protein-protein interaction network.
         module_size: The maximum module size. Community detection continues.
             subdivision of modles iteratively until it is met.
-        module_size_combination: The function to derive a representative value 
+        module_size_combination: The function to derive a representative value
             from module sizes.
         algorithm: The community detection algorithm.
         resolution: The resolution parameter for modularity.
@@ -1156,18 +1161,18 @@ def get_modules(network: nx.Graph,
     Returns:
         Modules of the protein-protein interaction network.
     """
-    G = network.copy()
-    G.remove_nodes_from(list(nx.isolates(G)))
+    copied_network = network.copy()
+    copied_network.remove_nodes_from(list(nx.isolates(copied_network)))
 
-    communities = algorithm(G, resolution, weight)
+    communities = algorithm(copied_network, resolution, weight)
 
     while (module_size_combination(len(community) for community in communities)
            > module_size):
 
         subdivision = False
         for i, subdivided_community in enumerate(
-                algorithm(G.subgraph(communities[j]), resolution, weight)
-                for j in range(len(communities))):
+                algorithm(copied_network.subgraph(communities[j]), resolution,
+                          weight) for j in range(len(communities))):
             if len(subdivided_community) > 1:
                 subdivision = True
                 communities[i:i + 1] = subdivided_community
@@ -1179,28 +1184,27 @@ def get_modules(network: nx.Graph,
 
 
 def get_proteins(
-    network: nx.Graph,
-    time: int,
-    modification: str,
-    site_combination: Callable[[tuple[float, ...]],
-                               float] = lambda sites: max(sites, key=abs),
-    combined_change_filter: Callable[
-        [float], bool] = lambda combined_sites: bool(combined_sites)):
+        network: nx.Graph,
+        time: int,
+        modification: str,
+        site_combination: Callable[[tuple[float, ...]],
+                                   float] = lambda sites: max(sites, key=abs),
+        combined_change_filter: Callable[[float], bool] = bool) -> set[str]:
     """
-    Returns proteins of a protein-protein interaction network with specified 
+    Returns proteins of a protein-protein interaction network with specified
     changes.
 
     Args:
         network: The protein-protein interaction network.
         time: The time of measurement.
         modification: The type of post-translational modification.
-        site_combination: The function to derive protein-specific changes from 
+        site_combination: The function to derive protein-specific changes from
             site-specific changes.
         combined_change_filter: The predicate to filter combined changes.
-    
+
     Returns:
-        Proteins whose combined change of a particular type of 
-        post-translational modification at a particular time of measurement 
+        Proteins whose combined change of a particular type of
+        post-translational modification at a particular time of measurement
         fulfil the predicate.
     """
     proteins = []
@@ -1215,7 +1219,7 @@ def get_proteins(
         if sites and combined_change_filter(site_combination(sites)):
             proteins.append(protein)
 
-    return proteins
+    return set(proteins)
 
 
 def get_change_enrichment(
@@ -1228,50 +1232,42 @@ def get_change_enrichment(
     change, time, modification, site_combination: change,
     site_combination: Callable[[tuple[float, ...]],
                                float] = lambda sites: max(sites, key=abs),
-    test: Callable[[int, int, int, int], float] = test.hypergeometric,
-    correction: Callable[[dict[tuple[nx.Graph, int, str], float]],
-                         dict[tuple[nx.Graph, int, str],
-                              float]] = correction.benjamini_hochberg,
+    enrichment_test: Callable[[int, int, int, int],
+                              float] = test.hypergeometric,
+    multiple_testing_correction: Callable[
+        [dict[tuple[nx.Graph, int, str], float]],
+        dict[tuple[nx.Graph, int, str], float]] = correction.benjamini_hochberg,
 ) -> dict[nx.Graph, dict[int, dict[str, float]]]:
     """
-    Test modules for enrichment of large protein-specific changes for each time 
-    of measurement and type of post-translational modification with respect to 
+    Test modules for enrichment of large protein-specific changes for each time
+    of measurement and type of post-translational modification with respect to
     the protein-protein interaction network.
 
     Args:
         network: The protein-protein interaction network.
         modules: The modules of the protein-protein interaction network.
-        changes: Proteins are classified by whether their representative change 
+        changes: Proteins are classified by whether their representative change
             exceeds this range.
-        convert_change: The function used convert the bounds to log2-fold 
+        convert_change: The function used convert the bounds to log2-fold
             changes.
-        site_combination: The function to derive protein-specific changes from 
+        site_combination: The function to derive protein-specific changes from
             site-specific changes.
-        test: The statistical test used to assess enrichment of proteins with 
-            large changes by a module.
-        correction: The procedure to correct for multiple testing of multiple 
-            modules, times of measurement and types of post-translational 
-                modification.
+        enrichment_test: The statistical test used to assess enrichment of
+            proteins with large changes by a module.
+        multiple_testing_correction: The procedure to correct for multiple
+            testing of multiple modules, times of measurement and types of
+            post-translational modification.
 
     Returns:
-        Adjusted p-values for the enrichment of large protein-specific changes 
-        by each module for each time of measurement and type of 
+        Adjusted p-values for the enrichment of large protein-specific changes
+        by each module for each time of measurement and type of
         post-translational modification.
     """
     p_values = {}
     for time in get_times(network):
         for modification in get_post_translational_modifications(network, time):
-            modified_proteins = len(get_proteins(network, time, modification))
-
-            modified_module_proteins = [
-                len(get_proteins(module, time, modification))
-                for module in modules
-            ]
-
-            change_range = (convert_change(network, changes[0], time,
-                                           modification, site_combination),
-                            convert_change(network, changes[1], time,
-                                           modification, site_combination))
+            modified_proteins = len(
+                get_proteins(network, time, modification, site_combination))
 
             target_proteins = len(
                 get_proteins(
@@ -1280,29 +1276,28 @@ def get_change_enrichment(
                     modification,
                     site_combination=site_combination,
                     combined_change_filter=lambda combined_change:
-                    combined_change <= change_range[
-                        0] or combined_change >= change_range[1],
-                ))
+                    combined_change <= convert_change(network, changes[
+                        0], time, modification, site_combination) or
+                    combined_change >= convert_change(network, changes[
+                        1], time, modification, site_combination)))
+
+            modified_module_proteins = [
+                modified_proteins.intersection(module.nodes())
+                for module in modules
+            ]
 
             target_module_proteins = [
-                len(
-                    get_proteins(
-                        module,
-                        time,
-                        modification,
-                        site_combination=site_combination,
-                        combined_change_filter=lambda combined_change:
-                        combined_change <= change_range[
-                            0] or combined_change >= change_range[1],
-                    )) for module in modules
+                target_proteins.intersection(module.nodes())
+                for module in modules
             ]
 
             p_values.update({(module, time, modification):
-                             test(target_module_proteins[i], modified_proteins,
-                                  target_proteins, modified_module_proteins[i])
+                             enrichment_test(target_module_proteins[i],
+                                             modified_proteins, target_proteins,
+                                             modified_module_proteins[i])
                              for i, module in enumerate(modules)})
 
-    p_values = correction(p_values)
+    p_values = multiple_testing_correction(p_values)
 
     return {
         module: {
@@ -1315,35 +1310,36 @@ def get_change_enrichment(
     }
 
 
-def get_change_tendency(
+def get_change_location(
     network: nx.Graph,
     modules: list[nx.Graph],
     site_combination: Callable[[tuple[float, ...]],
                                float] = lambda sites: max(sites, key=abs),
-    test: Callable[[tuple[float], tuple[float]], float] = test.wilcoxon,
-    correction: Callable[[dict[tuple[nx.Graph, int, str], float]],
-                         dict[tuple[nx.Graph, int, str],
-                              float]] = correction.benjamini_hochberg,
+    location_test: Callable[[tuple[float], tuple[float]],
+                            float] = test.wilcoxon,
+    multiple_testing_correction: Callable[
+        [dict[tuple[nx.Graph, int, str], float]],
+        dict[tuple[nx.Graph, int, str], float]] = correction.benjamini_hochberg,
 ) -> dict[nx.Graph, dict[int, dict[str, float]]]:
     """
-    Test modules for difference tendencies in protein-specific changes for each 
-    time of measurement and type of post-translational modification with respect 
+    Test modules for difference tendencies in protein-specific changes for each
+    time of measurement and type of post-translational modification with respect
     to the remaining protein-protein interaction network.
 
     Args:
         network: The protein-protein interaction network.
         modules: The modules of the protein-protein interaction network.
-        site_combination: The function to derive protein-specific changes from 
+        site_combination: The function to derive protein-specific changes from
             site-specific changes.
-        test: The statistical test used to assess enrichment of proteins with 
-            large changes by a module.
-        correction: The procedure to correct for multiple testing of multiple 
-            modules, times of measurement and types of post-translational
-            modification.
+        location_test: The statistical test used to assess location of
+            proteins with large changes by a module.
+        multiple_testing_correction: The procedure to correct for multiple
+            testing of multiple modules, times of measurement and types of
+            post-translational modification.
 
     Returns:
-        Adjusted p-values for the difference in central tendencies in 
-        protein-specific changes of modules for each time of measurement and 
+        Adjusted p-values for the difference in central tendencies in
+        protein-specific changes of modules for each time of measurement and
         type of post-translational modification.
     """
     p_values = {}
@@ -1364,10 +1360,11 @@ def get_change_tendency(
             ]
 
             p_values.update({(module, time, modification):
-                             test(module_changes[i], network_changes[i])
+                             location_test(module_changes[i],
+                                           network_changes[i])
                              for i, module in enumerate(modules)})
 
-    p_values = correction(p_values)
+    p_values = multiple_testing_correction(p_values)
 
     return {
         module: {
@@ -1382,35 +1379,35 @@ def get_change_tendency(
 
 def get_gene_ontology_enrichment(
     networks: list[nx.Graph],
-    test: Callable[[int, int, int, int], float] = test.hypergeometric,
-    correction: Callable[[dict[tuple[nx.Graph, str], float]],
-                         dict[tuple[nx.Graph, str],
-                              float]] = correction.benjamini_hochberg,
+    enrichment_test: Callable[[int, int, int, int],
+                              float] = test.hypergeometric,
+    multiple_testing_correction: Callable[[dict[tuple[
+        nx.Graph, str], float]], dict[tuple[nx.Graph, str],
+                                      float]] = correction.benjamini_hochberg,
     taxonomy_identifier: int = 9606,
-    namespaces: list[str] = [
-        "cellular_component", "molecular_function", "biological_process"
-    ],
+    namespaces: Container[str] = ("cellular_component", "molecular_function",
+                                  "biological_process"),
     annotation_as_reference: bool = True
 ) -> dict[nx.Graph, dict[tuple[str, str], float]]:
     """
-    Test the protein-protein interaction networks for enrichment of Gene 
+    Test the protein-protein interaction networks for enrichment of Gene
     Ontology terms.
 
     Args:
         networks: The protein-protein interaction networks.
-        test: The statistical test used to assess enrichment of a Gene Ontology 
-            term.
-        correction: The procedure to correct for multiple testing of multiple 
-            terms and networks.
+        enrichment_test: The statistical test used to assess enrichment of a
+            Gene Ontology term.
+        multiple_testing_correction: The procedure to correct for multiple
+            testing of multiple terms and networks.
         taxonomy_identifier: The taxonomy identifier.
         namespaces: The Gene Ontology namespaces.
-        annotation_as_reference: If True, compute enrichment with respect to the 
-            entire species-specific Gene Ontology annotation in namespaces, else 
-            with respect to the union of the protein-protein interaction 
+        annotation_as_reference: If True, compute enrichment with respect to the
+            entire species-specific Gene Ontology annotation in namespaces, else
+            with respect to the union of the protein-protein interaction
             networks.
 
     Returns:
-        Adjusted p-values for the enrichment of each Gene Ontology term by each 
+        Adjusted p-values for the enrichment of each Gene Ontology term by each
         network.
     """
     name, go_id = {}, {}
@@ -1449,11 +1446,13 @@ def get_gene_ontology_enrichment(
         } for network in networks
     }
 
-    p_value = correction({(network, term):
-                          test(intersection[network][term],
-                               len(annotated_proteins), len(annotation[term]),
-                               annotated_network_proteins[network])
-                          for term in annotation for network in networks})
+    p_value = multiple_testing_correction({
+        (network, term): enrichment_test(intersection[network][term],
+                                         len(annotated_proteins),
+                                         len(annotation[term]),
+                                         annotated_network_proteins[network])
+        for term in annotation for network in networks
+    })
 
     return {
         network: {(term, name[term]): p_value[(network, term)]

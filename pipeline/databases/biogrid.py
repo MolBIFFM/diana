@@ -1,15 +1,15 @@
 """The interface for the BioGRID database."""
-from typing import Generator
+from typing import Container, Generator, Optional
 from databases import uniprot
-from download import download
+from access import iterate
 
 ORGANISM = {"file": {9606: "Homo_sapiens"}}
 
 
 def get_protein_protein_interactions(
-    experimental_system: list[str] = [],
-    experimental_system_type: list[str] = [],
-    interaction_throughput: list[str] = [],
+    experimental_system: Optional[Container[str]] = None,
+    experimental_system_type: Optional[Container[str]] = None,
+    interaction_throughput: Optional[Container[str]] = None,
     multi_validated_physical: bool = False,
     taxonomy_identifier: int = 9606,
 ) -> Generator[tuple[str, str], None, None]:
@@ -17,13 +17,13 @@ def get_protein_protein_interactions(
     Yields protein-protein interactions from BioGRID.
 
     Args:
-        experimental_system: The accepted experimental evidence codes. If none 
+        experimental_system: The accepted experimental evidence codes. If none
             are specified, any is accepted.
-        experimental_system_type: The accepted categories of experimental 
+        experimental_system_type: The accepted categories of experimental
             evidence. If none are specified, any is accepted.
-        interaction_throughput:  The accepted levels of interaction throughput. 
+        interaction_throughput:  The accepted levels of interaction throughput.
             If none are specified, any is accepted.
-        multi-validated physical: If True, yield only multi-validated physical 
+        multi-validated physical: If True, yield only multi-validated physical
             interactions.
         taxonomy_identifier: The taxonomy identifier.
 
@@ -32,7 +32,7 @@ def get_protein_protein_interactions(
     """
     primary_accession = uniprot.get_primary_accession(taxonomy_identifier)
 
-    for row in download.tabular_txt(
+    for row in iterate.tabular_txt(
             "https://downloads.thebiogrid.org/Download/BioGRID/Latest-Release/BIOGRID-MV-Physical-LATEST.tab3.zip"
             if multi_validated_physical else
             "https://downloads.thebiogrid.org/Download/BioGRID/Latest-Release/BIOGRID-ORGANISM-LATEST.tab3.zip",

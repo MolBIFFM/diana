@@ -48,13 +48,14 @@ CONFIDENCE_SCORE_COMBINATION: dict[str, Callable[[Collection[float]], float]] = 
     "min":
         lambda confidence_scores: min(confidence_scores.values()),
     "number":
-        lambda confidence_scores: len(confidence_scores),
+        len,
     "sum":
-        lambda confidence_scores: sum(confidence_scores.values())**{
-            database: lambda confidence_scores: confidence_scores.get(
-                database, 0.0)
-            for database in {"BioGRID", "IntAct", "MINT", "Reactome", "STRING"}
-        },
-    None:
+        lambda confidence_scores: sum(confidence_scores.values()),
+    **{
+        database: lambda confidence_scores, database=database: confidence_scores.get(
+            database, 0.0) for database in {
+            "BioGRID", "IntAct", "MINT", "Reactome", "STRING"
+        }
+    }, None:
         lambda confidence_scores: float(bool(confidence_scores.values()))
 }

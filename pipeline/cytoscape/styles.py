@@ -23,7 +23,7 @@ def get_bar_chart(
         time: time of measurement associated with the change
         modification: modification associated with the change
         cy_range: range of log2-fold changes covered by the bar chart.
-    
+
     Returns:
        bar chart specification
     """
@@ -66,14 +66,14 @@ def get_protein_protein_interaction_network_styles(
 
     Args:
         network: The protein-protein interaction network.
-        bar_chart_range: The range of log2-fold changes covered by the bar 
+        bar_chart_range: The range of log2-fold changes covered by the bar
             chart.
         get_change: The function to transform a proteins' log2-fold change.
-        site_combination: The function to derive a proteins' representative 
+        site_combination: The function to derive a proteins' representative
             log2-fold change from its site-specific changes.
-        confidence_score_combination: The function to derive an edges' 
+        confidence_score_combination: The function to derive an edges'
             representative confidence from its confidence scores.
-    
+
     Returns:
        The Cytoscape styles for the protein-protein interaction network.
     """
@@ -239,7 +239,7 @@ def get_pathway_network_style(network: nx.Graph) -> ET.ElementTree:
 
     Args:
         network: The Reactome network.
-        
+
     Returns:
         The Cytoscape style for the Reactome network.
     """
@@ -359,7 +359,7 @@ def get_ontology_network_style(network: nx.Graph) -> ET.ElementTree:
 
     Args:
         network: The Gene Ontology network.
-        
+
     Returns:
         The Cytoscape style for the Gene Ontology network.
     """

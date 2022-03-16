@@ -1,7 +1,7 @@
 """The interface for UniProt."""
 from typing import Generator
 
-from download import download
+from access import iterate
 
 
 def get_swissprot_entries(
@@ -18,7 +18,7 @@ def get_swissprot_entries(
     """
     accessions, entry_gene_name, entry_protein_name = [], {}, {}
     rec_name, tax_id = False, 0
-    for line in download.txt(
+    for line in iterate.txt(
             "https://ftp.uniprot.org/pub/databases/uniprot/current_release/knowledgebase/complete/uniprot_sprot.dat.gz"
     ):
         if not line.strip():

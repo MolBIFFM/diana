@@ -1,16 +1,16 @@
 """The interface for the MINT database."""
-from typing import Generator
+from typing import Container, Generator, Optional
 
 from formats import mitab
 from databases import uniprot
-from download import download
+from access import iterate
 
 ORGANISM = {"file": {9606: "species:human"}}
 
 
 def get_protein_protein_interactions(
-    interaction_detection_methods: list[str] = [],
-    interaction_types: list[str] = [],
+    interaction_detection_methods: Optional[Container[str]] = None,
+    interaction_types: Optional[Container[str]] = None,
     mi_score: float = 0.0,
     taxonomy_identifier: int = 9606
 ) -> Generator[tuple[str, str, float], None, None]:
@@ -18,20 +18,20 @@ def get_protein_protein_interactions(
     Yields protein-protein interactions from MINT.
 
     Args:
-        interaction_detection_methods: The accepted PSI-MI terms for interaction 
+        interaction_detection_methods: The accepted PSI-MI terms for interaction
             detection method. If none are specified, any is accepted.
-        interaction_types: The accepted PSI-MI terms for interaction type. 
+        interaction_types: The accepted PSI-MI terms for interaction type.
             If none are specified, any is accepted.
         mi_score: The PSI-MI score threshold.
         taxonomy_identifier: The taxonomy identifier.
 
     Yields:
-        Pairs of interacting proteins and the PSI-MI score associated with the 
+        Pairs of interacting proteins and the PSI-MI score associated with the
         interaction.
     """
     primary_accession = uniprot.get_primary_accession(taxonomy_identifier)
 
-    for row in download.tabular_txt(
+    for row in iterate.tabular_txt(
             "https://www.ebi.ac.uk/Tools/webservices/psicquic/mint/webservices/current/search/query/{organism}"
             .format(organism=ORGANISM["file"].get(taxonomy_identifier, "*")),
             delimiter="\t",

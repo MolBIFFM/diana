@@ -1,8 +1,8 @@
 """Gene Ontology network
 
-Nodes are Gene Ontology terms annotated with any proteins from the queried 
+Nodes are Gene Ontology terms annotated with any proteins from the queried
 species. Edges are directed term relationships within the Gene Ontology."""
-from typing import Callable
+from typing import Callable, Container
 
 import networkx as nx
 from databases import gene_ontology
@@ -10,26 +10,27 @@ from analysis import correction, test
 
 
 def get_ontology_network(protein_protein_interaction_network: nx.Graph,
-                         namespaces: list[str] = [
-                             "cellular_component", "molecular_function",
-                             "biological_process"
-                         ],
-                         test: Callable[[int, int, int, int],
-                                        float] = test.hypergeometric,
-                         correction: Callable[[dict[str, float]], dict[
-                             str, float]] = correction.benjamini_hochberg,
+                         namespaces: Container[str] = ("cellular_component",
+                                                       "molecular_function",
+                                                       "biological_process"),
+                         enrichment_test: Callable[[int, int, int, int],
+                                                   float] = test.hypergeometric,
+                         multiple_testing_correction: Callable[
+                             [dict[str, float]],
+                             dict[str, float]] = correction.benjamini_hochberg,
                          taxonomy_identifier: int = 9606) -> nx.Graph:
     """
-    Assemble a Gene Ontology network corresponding to the protein-protein 
-    interaction network. 
+    Assemble a Gene Ontology network corresponding to the protein-protein
+    interaction network.
 
     Args:
-        protein_protein_interaction_network: The protein-protein interaction 
+        protein_protein_interaction_network: The protein-protein interaction
             network.
         namespaces: The Gene Ontology namespaces to consider.
-        test: The statistical test used to assess enrichment of a term by the 
-            protein-protein interaction network.
-        correction: The procedure to correct for testing of multiple terms.
+        enrichment_test: The statistical test used to assess enrichment of a
+            term by the protein-protein interaction network.
+        multiple_testing_correction: The procedure to correct for testing of
+            multiple terms.
         taxonomy_identifier: The taxonomy identifier.
 
     Returns:
@@ -67,8 +68,8 @@ def get_ontology_network(protein_protein_interaction_network: nx.Graph,
             protein_protein_interaction_network.nodes())) for term in annotation
     }
 
-    p_value = correction({
-        term: test(
+    p_value = multiple_testing_correction({
+        term: enrichment_test(
             intersection[term], len(annotated_proteins), len(annotation[term]),
             len(
                 annotated_proteins.intersection(
@@ -90,9 +91,9 @@ def get_term_sizes(network: nx.Graph) -> dict[str, int]:
 
     Args:
         network: The Gene Ontology network
-    
+
     Returns:
-        The number of proteins associated with any term in the Gene Ontology 
+        The number of proteins associated with any term in the Gene Ontology
         network.
     """
     return {term: network.nodes[term]["annotated proteins"] for term in network}

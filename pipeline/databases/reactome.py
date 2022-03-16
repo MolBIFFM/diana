@@ -1,24 +1,24 @@
 """The interface for the Reactome database."""
-from typing import Generator
+from typing import Container, Generator, Optional
 
 from databases import uniprot
-from download import download
+from access import iterate
 
 ORGANISM = {"data": {9606: "Homo sapiens"}, "file": {9606: "homo_sapiens",}}
 
 
 def get_protein_protein_interactions(
-    interaction_type: list[str] = [],
-    interaction_context: list[str] = [],
+    interaction_type: Optional[Container[str]] = None,
+    interaction_context: Optional[Container[str]] = None,
     taxonomy_identifier: int = 9606,
 ) -> Generator[tuple[str, str, float], None, None]:
     """
     Yields protein-protein interactions from Reactome.
 
     Args:
-        interaction_type: The accepted interaction type annotation. If none are 
+        interaction_type: The accepted interaction type annotation. If none are
             specified, any is accepted.
-        interaction_context: The accepted interaction context annotation. If 
+        interaction_context: The accepted interaction context annotation. If
             none are specified, any is accepted.
         taxonomy_identifier: The taxonomy identifier.
 
@@ -27,7 +27,7 @@ def get_protein_protein_interactions(
     """
     primary_accession = uniprot.get_primary_accession(taxonomy_identifier)
 
-    for row in download.tabular_txt(
+    for row in iterate.tabular_txt(
             "https://reactome.org/download/current/interactors/reactome.{organism}.interactions.tab-delimited.txt"
             .format(organism=ORGANISM["file"].get(taxonomy_identifier,
                                                   "all_species")),
@@ -69,7 +69,7 @@ def get_pathways(
     Yields:
         Pairs of stable pathway identifier and pathway name.
     """
-    for row in download.tabular_txt(
+    for row in iterate.tabular_txt(
             "https://reactome.org/download/current/ReactomePathways.txt",
             delimiter="\t",
             usecols=[0, 1, 2]):
@@ -85,7 +85,7 @@ def get_pathway_relations() -> Generator[tuple[str, str], None, None]:
     Yields:
         Pairs of parent and child stable pathway identifiers.
     """
-    for row in download.tabular_txt(
+    for row in iterate.tabular_txt(
             "https://reactome.org/download/current/ReactomePathwaysRelation.txt",
             delimiter="\t",
             usecols=[0, 1]):
@@ -106,7 +106,7 @@ def get_pathway_map(
     """
     primary_accession = uniprot.get_primary_accession(taxonomy_identifier)
 
-    for row in download.tabular_txt(
+    for row in iterate.tabular_txt(
             "https://reactome.org/download/current/UniProt2Reactome_All_Levels.txt",
             delimiter="\t",
             usecols=[0, 1, 5]):

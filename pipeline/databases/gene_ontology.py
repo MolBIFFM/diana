@@ -1,20 +1,16 @@
 """The interface for the Gene Ontology."""
-from typing import Generator, Union
-
-import networkx as nx
+from typing import Container, Generator, Union
 
 from databases import uniprot
-from download import download
-from analysis import test, correction
+from access import iterate
 
 ORGANISM = {"file": {9606: "human"}}
 
 
-def get_ontology(
-    namespaces: list[str] = [
-        "cellular_component", "molecular_function", "biological_process"
-    ]
-) -> Generator[dict[str, Union[str, list[str]]], None, None]:
+def get_ontology(namespaces: Container[str] = ("cellular_component",
+                                               "molecular_function",
+                                               "biological_process")
+                ) -> Generator[dict[str, Union[str, list[str]]], None, None]:
     """
     Yields Gene Ontology terms from the given namespaces.
 
@@ -22,18 +18,18 @@ def get_ontology(
         namespaces: The Gene Ontology namespaces to consider terms from.
 
     Yields:
-        Mappings containing a Gene Ontology terms' GO ID, name, namespace, 
+        Mappings containing a Gene Ontology terms' GO ID, name, namespace,
             related terms and alternative GO IDs.
     """
     term = {"id": "", "name": "", "namespace": "", "is_a": [], "alt_id": []}
-    for line in download.txt("http://purl.obolibrary.org/obo/go.obo"):
+    for line in iterate.txt("http://purl.obolibrary.org/obo/go.obo"):
         if any(
                 line.startswith("{}:".format(tag))
                 for tag in ("format-version", "data-version", "subsetdef",
                             "synonymtypedef", "default-namespace", "ontology",
                             "property_value")):
             continue
-        elif line == "[Term]" or line == "[Typedef]":
+        elif line in ("[Term]", "[Typedef]"):
             if term.get("id") and term.get("name") and term.get(
                     "namespace") in namespaces:
                 yield term
@@ -60,7 +56,7 @@ def get_ontology(
 
 def get_annotation(
     taxonomy_identifier: int = 9606,
-    namespaces: list[str] = ["C", "F", "P"]
+    namespaces: Container[str] = ("C", "F", "P")
 ) -> Generator[tuple[str, str], None, None]:
     """
     Yields Gene Ontology annotations within specified namespaces.
@@ -74,7 +70,7 @@ def get_annotation(
     """
     primary_accession = uniprot.get_primary_accession(taxonomy_identifier)
 
-    for row in download.tabular_txt(
+    for row in iterate.tabular_txt(
             "http://geneontology.org/gene-associations/goa_{organism}.gaf.gz".
             format(organism=ORGANISM["file"][taxonomy_identifier]),
             skiprows=41,
@@ -85,7 +81,7 @@ def get_annotation(
             for protein in primary_accession.get(row[1], {row[1]}):
                 yield (protein, row[2])
 
-    for row in download.tabular_txt(
+    for row in iterate.tabular_txt(
             "http://geneontology.org/gene-associations/goa_{organism}_isoform.gaf.gz"
             .format(organism=ORGANISM["file"][taxonomy_identifier]),
             skiprows=41,
@@ -97,11 +93,9 @@ def get_annotation(
             yield (row[4].split(":")[1], row[1])
 
 
-def convert_namespaces(
-    namespaces: list[str] = [
-        "cellular_component", "molecular_function", "biological_process"
-    ]
-) -> list[str]:
+def convert_namespaces(namespaces: Container[str] = (
+    "cellular_component", "molecular_function",
+    "biological_process")) -> tuple[str]:
     """
     Converts Gene Ontology namespace identifiers.
 
@@ -111,8 +105,8 @@ def convert_namespaces(
     Returns:
         The corresponding identifiers used in annotation files.
     """
-    return [{
+    return tuple({
         "cellular_component": "C",
         "molecular_function": "F",
         "biological_process": "P"
-    }[ns] for ns in namespaces]
+    }[ns] for ns in namespaces)

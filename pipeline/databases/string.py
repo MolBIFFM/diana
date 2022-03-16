@@ -1,7 +1,7 @@
 """The interface for the STRING database."""
 from typing import Generator
 from databases import uniprot
-from download import download
+from access import iterate
 
 
 def get_protein_protein_interactions(
@@ -27,7 +27,7 @@ def get_protein_protein_interactions(
 
     Args:
         neighborhood: The normal gene neighborhood score threshold.
-        neighborhood_transferred: The transferred gene neighborhood score 
+        neighborhood_transferred: The transferred gene neighborhood score
             threshold.
         fusion: The gene fusion score threshold.
         cooccurrence: The gene cooccurrence score threshold.
@@ -46,11 +46,11 @@ def get_protein_protein_interactions(
         version: The version of the STRING database to query.
 
     Yields:
-        Pairs of interacting proteins and the combined STRING score associated 
+        Pairs of interacting proteins and the combined STRING score associated
             with the interaction.
     """
     uniprot_id_map = {}
-    for row in download.tabular_txt(
+    for row in iterate.tabular_txt(
             "https://stringdb-static.org/download/protein.aliases.v{version}/{taxonomy_identifier}.protein.aliases.v{version}.txt.gz"
             .format(taxonomy_identifier=taxonomy_identifier, version=version),
             delimiter="\t",
@@ -83,7 +83,7 @@ def get_protein_protein_interactions(
 
     primary_accession = uniprot.get_primary_accession(taxonomy_identifier)
 
-    for row in download.tabular_txt(
+    for row in iterate.tabular_txt(
             "https://stringdb-static.org/download/protein.physical.links.full.v{version}/{taxonomy_identifier}.protein.links.full.v{version}.txt.gz"
             .format(taxonomy_identifier=taxonomy_identifier, version=version)
             if physical else

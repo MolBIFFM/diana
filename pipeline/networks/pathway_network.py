@@ -1,6 +1,6 @@
 """Reactome network
 
-Nodes are Reactome pathways annotated with any proteins from the queried 
+Nodes are Reactome pathways annotated with any proteins from the queried
 species. Edges are directed pathway relationships within Reactome.
 """
 
@@ -11,21 +11,23 @@ from analysis import correction, test
 
 
 def get_pathway_network(protein_protein_interaction_network: nx.Graph,
-                        test: Callable[[int, int, int, int],
-                                       float] = test.hypergeometric,
-                        correction: Callable[[dict[str, float]], dict[
-                            str, float]] = correction.benjamini_hochberg,
+                        enrichment_test: Callable[[int, int, int, int],
+                                                  float] = test.hypergeometric,
+                        multiple_testing_correction: Callable[
+                            [dict[str, float]],
+                            dict[str, float]] = correction.benjamini_hochberg,
                         taxonomy_identifier: int = 9606) -> nx.Graph:
     """
-    Assemble a Reactome network corresponding to the protein-protein interaction 
+    Assemble a Reactome network corresponding to the protein-protein interaction
     network.
 
     Args:
-        protein_protein_interaction_network: The protein-protein interaction 
+        protein_protein_interaction_network: The protein-protein interaction
             network.
-        test: The statistical test used to assess enrichment of a pathway by the 
-            protein-protein interaction network.
-        correction: The procedure to correct for testing of multiple pathways.
+        enrichment_test: The statistical test used to assess enrichment of a
+            pathway by the protein-protein interaction network.
+        multiple_testing_correction: The procedure to correct for testing of
+            multiple pathways.
         taxonomy_identifier: The taxonomy identifier.
 
     Returns:
@@ -60,8 +62,8 @@ def get_pathway_network(protein_protein_interaction_network: nx.Graph,
         for pathway in pathways
     }
 
-    p_value = correction({
-        pathway: test(
+    p_value = multiple_testing_correction({
+        pathway: enrichment_test(
             intersection[pathway], len(mapped_proteins), len(pathways[pathway]),
             len(
                 mapped_proteins.intersection(
@@ -83,7 +85,7 @@ def get_pathway_sizes(network: nx.Graph) -> dict[str, int]:
 
     Args:
         network: The Reactome network
-    
+
     Returns:
         The number of proteins associated with any pathway in Reactome.
     """
