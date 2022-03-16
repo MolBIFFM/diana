@@ -7,7 +7,7 @@ species. Edges are directed pathway relationships within Reactome.
 from typing import Callable
 import networkx as nx
 from databases import reactome
-from enrichment import correction, test
+from analysis import correction, test
 
 
 def get_pathway_network(protein_protein_interaction_network: nx.Graph,

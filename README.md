@@ -685,7 +685,7 @@ The version of STRING to query. The default setting is `11.5`.
     }
 ]
 ```
-The function used to derive a proteins' representative change from a its individual sites. The default setting is `"absmax"`, corresponding to the largest absolute change. Available settings are `"mean"`, `"median"`, `"max"`, `"absmax"`, `"min"`, `"absmin"`, `"sum"`, `"abssum"`.
+The function used to derive a proteins-specific change from a its individual sites. The default setting is `"absmax"`, corresponding to the largest absolute change. Available settings are `"mean"`, `"median"`, `"max"`, `"absmax"`, `"min"`, `"absmin"`, `"sum"`, `"abssum"`.
 
 
 
@@ -732,7 +732,7 @@ The function used to derive a proteins' representative change from a its individ
     }
 ]
 ```
-The conversion of changes that change threshold range refers to. It defaults to log2-fold change but may be set to `"standard score"` or `"quantile"` with respect to the distribution of a change of a particular modification at a particular time of measurement in the network.
+The conversion of changes that a combined change range refers to. It defaults to log2-fold change but may be set to `"standard score"` or `"quantile"` with respect to the distribution of a change of a particular modification at a particular time of measurement in the network.
 
 ```json
 [
@@ -820,7 +820,7 @@ The function used to derive a combined edge confidence score from scores in IntA
     }
 ]
 ```
-An upper bound on the number of nodes in any module. Modules are iteratively subdivided until this threshold is met. The default setting is the number of proteins in the network, corresponding to a single iteration.
+An upper bound on the number of nodes in any module. Modules are iteratively subdivided until this threshold is met. The default setting is the number of proteins in the network, corresponding to a single iteration of the community detection algorithm.
 
 ```json
 [

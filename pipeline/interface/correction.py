@@ -1,5 +1,5 @@
 """Mappings of configuration file entries to multiple testing corrections."""
-from enrichment import correction
+from analysis import correction
 
 CORRECTION = {
     "Benjamini-Hochberg": correction.benjamini_hochberg,

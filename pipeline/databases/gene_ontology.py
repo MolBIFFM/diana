@@ -5,7 +5,7 @@ import networkx as nx
 
 from databases import uniprot
 from download import download
-from enrichment import test, correction
+from analysis import test, correction
 
 ORGANISM = {"file": {9606: "human"}}
 

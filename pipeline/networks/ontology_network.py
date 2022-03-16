@@ -6,7 +6,7 @@ from typing import Callable
 
 import networkx as nx
 from databases import gene_ontology
-from enrichment import correction, test
+from analysis import correction, test
 
 
 def get_ontology_network(protein_protein_interaction_network: nx.Graph,
