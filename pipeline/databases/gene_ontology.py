@@ -1,8 +1,9 @@
 """The interface for the Gene Ontology."""
 from typing import Container, Generator, Union
 
-from databases import uniprot
 from access import iterate
+
+from databases import uniprot
 
 ORGANISM = {"file": {9606: "human"}}
 

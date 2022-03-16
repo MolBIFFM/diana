@@ -2,14 +2,9 @@
 import gzip
 import os
 import re
-import tempfile
-from typing import Generator, Union, Optional
-import urllib.parse
-import urllib.request
 import sys
+import tempfile
 import zipfile
-
-import pandas as pd
 
 
 def decompress_gzip_file(compressed_file_name: str, size: int = 1024) -> str:

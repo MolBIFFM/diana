@@ -1,15 +1,15 @@
 """Utilities to iterate local files."""
 import os
+import sys
 import tempfile
-from typing import Generator, Union, Optional
 import urllib.parse
 import urllib.request
-import sys
+from typing import Generator, Optional, Union
 
 import pandas as pd
 
-import download
-import decompress
+from access import decompress
+from access import download
 
 
 def txt(url: str,

@@ -1,8 +1,9 @@
 """The interface for the Reactome database."""
 from typing import Container, Generator, Optional
 
-from databases import uniprot
 from access import iterate
+
+from databases import uniprot
 
 ORGANISM = {"data": {9606: "Homo sapiens"}, "file": {9606: "homo_sapiens",}}
 

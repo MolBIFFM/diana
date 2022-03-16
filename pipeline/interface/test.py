@@ -1,5 +1,6 @@
 """Mappings of configuration file entries to statistical tests."""
 from typing import Callable, Collection
+
 from analysis import test
 
 ENRICHMENT_TEST: dict[str, Callable[[int, int, int, int], float]] = {

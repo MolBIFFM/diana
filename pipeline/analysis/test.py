@@ -1,5 +1,6 @@
 """Interfaces to statistical tests."""
 from typing import Collection
+
 import scipy.stats
 
 

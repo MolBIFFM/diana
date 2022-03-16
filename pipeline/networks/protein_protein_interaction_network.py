@@ -8,9 +8,9 @@ from typing import Callable, Container, Hashable, Optional, Union
 
 import networkx as nx
 import pandas as pd
-
 from analysis import correction, modularization, test
-from databases import biogrid, gene_ontology, intact, mint, reactome, string, uniprot
+from databases import (biogrid, gene_ontology, intact, mint, reactome, string,
+                       uniprot)
 
 
 def get_protein_protein_interaction_network() -> nx.Graph():

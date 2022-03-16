@@ -5,8 +5,8 @@ species. Edges are directed term relationships within the Gene Ontology."""
 from typing import Callable, Container
 
 import networkx as nx
-from databases import gene_ontology
 from analysis import correction, test
+from databases import gene_ontology
 
 
 def get_ontology_network(protein_protein_interaction_network: nx.Graph,

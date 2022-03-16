@@ -1,8 +1,8 @@
 """Utilities to download files."""
 import os
+import sys
 import urllib.parse
 import urllib.request
-import sys
 
 
 def download_file(url: str, local_file_name: str, size: int = 1024) -> None:

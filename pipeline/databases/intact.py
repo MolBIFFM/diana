@@ -1,9 +1,10 @@
 """The interface for the IntAct database."""
-from formats import mitab
 from typing import Container, Generator, Optional
 
-from databases import uniprot
 from access import iterate
+from formats import mitab
+
+from databases import uniprot
 
 
 def get_protein_protein_interactions(

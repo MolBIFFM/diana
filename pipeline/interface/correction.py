@@ -1,5 +1,6 @@
 """Mappings of configuration file entries to multiple testing corrections."""
 from typing import Callable, Hashable
+
 from analysis import correction
 
 CORRECTION: dict[str,

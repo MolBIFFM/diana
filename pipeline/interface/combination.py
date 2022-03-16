@@ -1,7 +1,7 @@
 """Mappings of configuration file entries to combining functions."""
 import math
-from typing import Callable, Collection
 import statistics
+from typing import Callable, Collection
 
 SITE_COMBINATION: dict[str, Callable[[Collection[float]], float]] = {
     "mean":

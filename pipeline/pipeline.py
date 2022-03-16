@@ -11,7 +11,8 @@ import networkx as nx
 
 from cytoscape import styles
 from interface import combination, conversion, correction, modularization, test
-from networks import ontology_network, pathway_network, protein_protein_interaction_network
+from networks import (ontology_network, pathway_network,
+                      protein_protein_interaction_network)
 
 
 def process_configuration(configurations: list[dict],

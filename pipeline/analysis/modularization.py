@@ -1,5 +1,6 @@
 """Community detection algorithms."""
 from typing import Hashable
+
 import networkx as nx
 
 

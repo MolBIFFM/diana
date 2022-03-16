@@ -1,14 +1,15 @@
 """Cytoscape styles"""
 import json
-from typing import Callable
 import xml.etree.ElementTree as ET
+from typing import Callable
 
 import networkx as nx
+from networks import (ontology_network, pathway_network,
+                      protein_protein_interaction_network)
 
-from cytoscape.configuration import protein_protein_interaction_network_style
-from cytoscape.configuration import pathway_network_style
-from cytoscape.configuration import ontology_network_style
-from networks import protein_protein_interaction_network, pathway_network, ontology_network
+from cytoscape.configuration import (ontology_network_style,
+                                     pathway_network_style,
+                                     protein_protein_interaction_network_style)
 
 
 def get_bar_chart(

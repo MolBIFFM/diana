@@ -1,7 +1,9 @@
 """The interface for the STRING database."""
 from typing import Generator
-from databases import uniprot
+
 from access import iterate
+
+from databases import uniprot
 
 
 def get_protein_protein_interactions(

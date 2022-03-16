@@ -1,9 +1,10 @@
 """The interface for the MINT database."""
 from typing import Container, Generator, Optional
 
-from formats import mitab
-from databases import uniprot
 from access import iterate
+from formats import mitab
+
+from databases import uniprot
 
 ORGANISM = {"file": {9606: "species:human"}}
 

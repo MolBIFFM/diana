@@ -1,5 +1,6 @@
 """Mappings of configuration file entries to community detection algorithms."""
 from typing import Callable, Hashable
+
 import networkx as nx
 from analysis import modularization
 
