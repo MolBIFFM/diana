@@ -284,7 +284,7 @@ A function to combine individual replicates into a single change. The default se
     }
 ]
 ```
-The base of the logarithm that changes are expressed as and converted from to log2 scale. By default, ratios are assumed.
+The base of the logarithm that changes are expressed as. By default, ratios are assumed.
 
 ```json
 [
@@ -884,7 +884,7 @@ Available settings are `"binomial"` and `"hypergeometric"`.
 [
     {
       "module detection": {
-        "change tendency": {
+        "change location": {
           "test": "Wilcoxon"
         }
       }
@@ -911,7 +911,7 @@ The statistical test to assess the changes of each module in relation to the ent
         "change enrichment": {
           "correction": "Benjamini-Hochberg"
         },
-        "change tendency": {
+        "change location": {
           "correction": "Benjamini-Hochberg"
         }
       }
@@ -939,7 +939,7 @@ Available settings are `"Benjamini-Hochberg"` and `"Bonferroni"`.
         "change enrichment": {
           "p": 1.0
         },
-        "change tendency": {
+        "change location": {
           "p": 1.0
         }
       }

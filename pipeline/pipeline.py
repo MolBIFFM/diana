@@ -442,9 +442,9 @@ def process_configuration(configurations: list[dict],
         if "Gene Ontology enrichment" in configuration:
             enrichment = protein_protein_interaction_network.get_gene_ontology_enrichment(
                 [network],
-                test=test.TEST[configuration["module detection"]
-                               ["Gene Ontology enrichment"].get(
-                                   "test", "hypergeometric")],
+                test=test.ENRICHMENT_TEST[configuration["module detection"]
+                                          ["Gene Ontology enrichment"].get(
+                                              "test", "hypergeometric")],
                 correction=correction.CORRECTION[
                     configuration["module detection"].get(
                         "correction", "Benjamini-Hochberg")],
@@ -493,8 +493,9 @@ def process_configuration(configurations: list[dict],
                     gene_ontology_enrichment[
                         "annotation"] = protein_protein_interaction_network.get_gene_ontology_enrichment(
                             modules,
-                            test=test.TEST[configuration["module detection"][
-                                "Gene Ontology enrichment"]["annotation"].get(
+                            test=test.ENRICHMENT_TEST[
+                                configuration["module detection"]
+                                ["Gene Ontology enrichment"]["annotation"].get(
                                     "test", "hypergeometric")],
                             correction=correction.CORRECTION[
                                 configuration["module detection"]
@@ -514,8 +515,9 @@ def process_configuration(configurations: list[dict],
                     gene_ontology_enrichment[
                         "network"] = protein_protein_interaction_network.get_gene_ontology_enrichment(
                             modules,
-                            test=test.TEST[configuration["module detection"][
-                                "Gene Ontology enrichment"]["network"].get(
+                            test=test.ENRICHMENT_TEST[
+                                configuration["module detection"]
+                                ["Gene Ontology enrichment"]["network"].get(
                                     "test", "hypergeometric")],
                             correction=correction.CORRECTION[
                                 configuration["module detection"]
@@ -547,8 +549,10 @@ def process_configuration(configurations: list[dict],
                             configuration["module detection"]
                             ["change enrichment"].get("site combination",
                                                       "absmax")],
-                        test=test.TEST[configuration["module detection"]
-                                       ["change enrichment"]["test"]],
+                        test=test.ENRICHMENT_TEST[
+                            configuration["module detection"]
+                            ["change enrichment"].get("test",
+                                                      "hypergeometric")],
                         correction=correction.CORRECTION[
                             configuration["module detection"]
                             ["change enrichment"].get("correction",
@@ -564,8 +568,10 @@ def process_configuration(configurations: list[dict],
                                                   (0.025, 0.975)),
                         convert_change=protein_protein_interaction_network.
                         convert_quantile_to_change,
-                        test=test.TEST[configuration["module detection"]
-                                       ["change enrichment"]["test"]],
+                        test=test.ENRICHMENT_TEST[
+                            configuration["module detection"]
+                            ["change enrichment"].get("test",
+                                                      "hypergeometric")],
                         correction=correction.CORRECTION[
                             configuration["module detection"]
                             ["change enrichment"].get("correction",
@@ -583,29 +589,30 @@ def process_configuration(configurations: list[dict],
                             configuration["module detection"]
                             ["change enrichment"].get("site combination",
                                                       "absmax")],
-                        test=test.TEST[configuration["module detection"]
-                                       ["change enrichment"]["test"]],
+                        test=test.ENRICHMENT_TEST[
+                            configuration["module detection"]
+                            ["change enrichment"].get("test",
+                                                      "hypergeometric")],
                         correction=correction.CORRECTION[
                             configuration["module detection"]
                             ["change enrichment"].get("correction",
                                                       "Benjamini-Hochberg")],
                     )
 
-            if "change tendency" in configuration["module detection"]:
+            if "change location" in configuration["module detection"]:
                 change_tendency = protein_protein_interaction_network.get_change_tendency(
                     network,
                     modules,
                     combination.SITE_COMBINATION[
                         configuration["module detection"]
-                        ["change enrichment"].get("site combination",
-                                                  "absmax")],
-                    test=test.TEST[configuration["module detection"]
-                                   ["change enrichment"].get(
-                                       "test", "Wilcoxon")],
+                        ["change location"].get("site combination", "absmax")],
+                    test=test.LOCATION_TEST[configuration["module detection"]
+                                            ["change location"].get(
+                                                "test", "Wilcoxon")],
                     correction=correction.CORRECTION[
                         configuration["module detection"]
-                        ["change enrichment"].get("correction",
-                                                  "Benjamini-Hochberg")])
+                        ["change location"].get("correction",
+                                                "Benjamini-Hochberg")])
 
             for j, module in enumerate(sorted(
                     modules,
@@ -659,16 +666,16 @@ def process_configuration(configurations: list[dict],
                                         p,
                                     ))
 
-                if "change tendency" in configuration["module detection"]:
+                if "change location" in configuration["module detection"]:
                     for time in change_tendency[module]:
                         for modification, p in sorted(
                                 change_tendency[module][time].items(),
                                 key=lambda item: item[1]):
                             if p <= configuration["module detection"][
-                                    "change tendency"].get("p", 1.0):
+                                    "change location"].get("p", 1.0):
                                 export = True
                                 logger.info(
-                                    "{}\tchange tendency {} {}\t{:.2e}".format(
+                                    "{}\tchange location {} {}\t{:.2e}".format(
                                         j,
                                         time,
                                         modification,
@@ -767,8 +774,9 @@ def process_configuration(configurations: list[dict],
 
                 reactome_network = pathway_network.get_pathway_network(
                     nx.induced_subgraph(network, proteins),
-                    test=test.TEST[configuration["Reactome network"].get(
-                        "test", "hypergeometric")],
+                    test=test.ENRICHMENT_TEST[
+                        configuration["Reactome network"].get(
+                            "test", "hypergeometric")],
                     correction=correction.CORRECTION[
                         configuration["Reactome network"].get(
                             "correction", "Benjamini-Hochberg")],
@@ -859,8 +867,9 @@ def process_configuration(configurations: list[dict],
 
                 reactome_network = pathway_network.get_pathway_network(
                     nx.induced_subgraph(network, proteins),
-                    test=test.TEST[configuration["Reactome network"].get(
-                        "test", "hypergeometric")],
+                    test=test.ENRICHMENT_TEST[
+                        configuration["Reactome network"].get(
+                            "test", "hypergeometric")],
                     correction=correction.CORRECTION[
                         configuration["Reactome network"].get(
                             "correction", "Benjamini-Hochberg")],
@@ -870,8 +879,9 @@ def process_configuration(configurations: list[dict],
             else:
                 reactome_network = pathway_network.get_pathway_network(
                     network,
-                    test=test.TEST[configuration["Reactome network"].get(
-                        "test", "hypergeometric")],
+                    test=test.ENRICHMENT_TEST[
+                        configuration["Reactome network"].get(
+                            "test", "hypergeometric")],
                     correction=correction.CORRECTION[
                         configuration["Reactome network"].get(
                             "correction", "Benjamini-Hochberg")],
@@ -973,8 +983,9 @@ def process_configuration(configurations: list[dict],
                             "biological_process", "cellular_component",
                             "molecular_function"
                         ]),
-                    test=test.TEST[configuration["Gene Ontology network"].get(
-                        "test", "hypergeometric")],
+                    test=test.ENRICHMENT_TEST[
+                        configuration["Gene Ontology network"].get(
+                            "test", "hypergeometric")],
                     correction=correction.CORRECTION[
                         configuration["Gene Ontology network"].get(
                             "correction", "Benjamini-Hochberg")],
@@ -1071,8 +1082,9 @@ def process_configuration(configurations: list[dict],
                             "biological_process", "cellular_component",
                             "molecular_function"
                         ]),
-                    test=test.TEST[configuration["Gene Ontology network"].get(
-                        "test", "hypergeometric")],
+                    test=test.ENRICHMENT_TEST[
+                        configuration["Gene Ontology network"].get(
+                            "test", "hypergeometric")],
                     correction=correction.CORRECTION[
                         configuration["Gene Ontology network"].get(
                             "correction", "Benjamini-Hochberg")],
@@ -1087,8 +1099,9 @@ def process_configuration(configurations: list[dict],
                             "biological_process", "cellular_component",
                             "molecular_function"
                         ]),
-                    test=test.TEST[configuration["Gene Ontology network"].get(
-                        "test", "hypergeometric")],
+                    test=test.ENRICHMENT_TEST[
+                        configuration["Gene Ontology network"].get(
+                            "test", "hypergeometric")],
                     correction=correction.CORRECTION[
                         configuration["Gene Ontology network"].get(
                             "correction", "Benjamini-Hochberg")],

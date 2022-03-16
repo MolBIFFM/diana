@@ -22,7 +22,7 @@ def get_ontology(
         namespaces: The Gene Ontology namespaces to consider terms from.
 
     Yields:
-        A dictionary containing a Gene Ontology terms GO ID, name, namespace, 
+        Mappings containing a Gene Ontology terms' GO ID, name, namespace, 
             related terms and alternative GO IDs.
     """
     term = {"id": "", "name": "", "namespace": "", "is_a": [], "alt_id": []}

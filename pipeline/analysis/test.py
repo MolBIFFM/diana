@@ -1,4 +1,5 @@
 """Interfaces to statistical tests."""
+from typing import Collection
 import scipy.stats
 
 
@@ -18,7 +19,7 @@ def hypergeometric(k: int, M: int, n: int, N: int) -> float:
     return scipy.stats.hypergeom.sf(k - 1, M, n, N)
 
 
-def wilcoxon(x: tuple[float, ...], y: tuple[float, ...]) -> float:
+def wilcoxon(x: Collection[float], y: Collection[float]) -> float:
     """
     Returns the p-value of the Wilcoxon rank-sum test of x and y.
     """

@@ -1,8 +1,9 @@
 """Mappings of bases to combination support logarithmic representation."""
 
 import math
+from typing import Callable, Collection
 
-LOGARITHM = {
+LOGARITHM: Callable[[Collection[float]], float] = {
     None:
         lambda changes, combination: math.log2(combination(changes)),
     2:

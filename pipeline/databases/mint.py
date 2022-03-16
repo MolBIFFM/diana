@@ -32,7 +32,7 @@ def get_protein_protein_interactions(
     primary_accession = uniprot.get_primary_accession(taxonomy_identifier)
 
     for row in download.tabular_txt(
-            "http://www.ebi.ac.uk/Tools/webservices/psicquic/mint/webservices/current/search/query/{organism}"
+            "https://www.ebi.ac.uk/Tools/webservices/psicquic/mint/webservices/current/search/query/{organism}"
             .format(organism=ORGANISM["file"].get(taxonomy_identifier, "*")),
             delimiter="\t",
             header=0,
