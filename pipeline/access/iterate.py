@@ -8,8 +8,7 @@ from typing import Generator, Optional, Union
 
 import pandas as pd
 
-from access import decompress
-from access import download
+from access import decompress, download
 
 
 def txt(url: str,
