@@ -37,9 +37,9 @@ def get_protein_protein_interactions(
     primary_accession = uniprot.get_primary_accession(taxonomy_identifier)
 
     for row in iterate.tabular_txt(
-        ("https://downloads.thebiogrid.org/Download/BioGRID/Latest-Release/BIOGRID-MV-Physical-{0}.{1}.{2}.tab3.zip"
+        ("https://downloads.thebiogrid.org/Download/BioGRID/Release-Archive/BIOGRID-{0}.{1}.{2}/BIOGRID-MV-Physical-{0}.{1}.{2}.tab3.zip"
          .format(*version) if multi_validated_physical else
-         "https://downloads.thebiogrid.org/Download/BioGRID/Latest-Release/BIOGRID-ORGANISM-{0}.{1}.{2}.tab3.zip"
+         "https://downloads.thebiogrid.org/Download/BioGRID/Release-Archive/BIOGRID-{0}.{1}.{2}/BIOGRID-ORGANISM-{0}.{1}.{2}.tab3.zip"
          .format(*version)) if version else
         ("https://downloads.thebiogrid.org/Download/BioGRID/Latest-Release/BIOGRID-MV-Physical-LATEST.tab3.zip"
          if multi_validated_physical else
