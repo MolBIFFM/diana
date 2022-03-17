@@ -111,7 +111,7 @@ def get_pathway_map(
             "https://reactome.org/download/current/UniProt2Reactome_All_Levels.txt",
             delimiter="\t",
             usecols=[0, 1, 5]):
-        if not taxonomy_identifier or row[5] == ORGANISM["data"].get(
+        if not taxonomy_identifier or row[2] == ORGANISM["data"].get(
                 taxonomy_identifier):
             for protein in primary_accession.get(row[0], {row[0]}):
                 yield protein, row[1]

@@ -1,10 +1,10 @@
-"""Protein-protein interaction network"""
+"""protein-protein interaction network"""
 import bisect
 import math
 import os
 import re
 import statistics
-from typing import Callable, Container, Hashable, Optional, Union
+from typing import Callable, Collection, Container, Hashable, Optional, Union
 
 import networkx as nx
 import pandas as pd
@@ -36,7 +36,7 @@ def annotate_proteins(network: nx.Graph,
     for accessions, gene_name, protein_name in uniprot.get_swissprot_entries(
             taxonomy_identifier):
         for protein in network:
-            if protein.split("-")[0] == accessions[0]:
+            if protein.split(" ")[0] == accessions[0]:
                 network.nodes[protein]["gene"] = gene_name
                 network.nodes[protein]["protein"] = protein_name
 
@@ -150,7 +150,7 @@ def add_proteins_from(network: nx.Graph, proteins: Container) -> None:
     for protein_accession in proteins:
         if "-" in protein_accession and protein_accession.split(
                 "-")[1].isnumeric():
-            protein, isoform = protein_accession.split("-")
+            protein, isoform = protein_accession.split(" ")
         else:
             protein, isoform = protein_accession, "0"
 
@@ -302,8 +302,7 @@ def add_proteins_from_table(
                 if not pd.isna(row[replicate])
             ]
 
-            if any(measurements) and len(measurements) >= min(
-                    num_replicates, len(replicates)):
+            if len(measurements) >= min(num_replicates, len(replicates)):
                 for protein_accession, position in zip(protein_accessions,
                                                        positions):
                     if protein_accession not in proteins:
@@ -340,7 +339,7 @@ def add_proteins_from_table(
             )[-num_sites:])
 
         for i in range(len(proteins[protein])):
-            network.nodes[protein]["{}-{}-{}".format(
+            network.nodes[protein]["{} {} {}".format(
                 time, modification, i + 1)] = proteins[protein][i][1]
 
 
@@ -348,8 +347,7 @@ def get_proteins(
         network: nx.Graph,
         time: int,
         modification: str,
-        site_combination: Callable[[tuple[float, ...]],
-                                   float] = lambda sites: max(sites, key=abs),
+        site_combination: Optional[Callable[[Collection[float]], float]] = None,
         combined_change_filter: Callable[[float], bool] = bool) -> set[str]:
     """
     Returns proteins of a protein-protein interaction network with specified
@@ -359,8 +357,8 @@ def get_proteins(
         network: The protein-protein interaction network.
         time: The time of measurement.
         modification: The type of post-translational modification.
-        site_combination: The function to derive protein-specific changes from
-            site-specific changes.
+        site_combination: An optional function to derive protein-specific
+            changes from site-specific changes.
         combined_change_filter: The predicate to filter combined changes.
 
     Returns:
@@ -373,8 +371,8 @@ def get_proteins(
         sites = [
             network.nodes[protein][change]
             for change in network.nodes[protein]
-            if len(change.split("-")) == 3 and change.split("-")[0] == str(time)
-            and change.split("-")[1] == modification
+            if len(change.split(" ")) == 3 and change.split(" ")[0] == str(time)
+            and change.split(" ")[1] == modification
         ]
 
         if sites and combined_change_filter(site_combination(sites)):
@@ -398,11 +396,11 @@ def get_times(network: nx.Graph) -> tuple[int, ...]:
     return tuple(
         sorted(
             set(
-                int(change.split("-")[0])
+                int(change.split(" ")[0])
                 for protein in network
                 for change in network.nodes[protein]
-                if len(change.split("-")) == 3 and
-                change.split("-")[0].isnumeric())))
+                if len(change.split(" ")) == 3 and
+                change.split(" ")[0].isnumeric())))
 
 
 def get_post_translational_modifications(network: nx.Graph,
@@ -423,11 +421,11 @@ def get_post_translational_modifications(network: nx.Graph,
     return tuple(
         sorted(
             set(
-                change.split("-")[1]
+                change.split(" ")[1]
                 for protein in network
                 for change in network.nodes[protein]
-                if len(change.split("-")) == 3 and
-                change.split("-")[0] == str(time))))
+                if len(change.split(" ")) == 3 and
+                change.split(" ")[0] == str(time))))
 
 
 def get_sites(network: nx.Graph, time: int, modification: str) -> int:
@@ -447,11 +445,11 @@ def get_sites(network: nx.Graph, time: int, modification: str) -> int:
         modification at a particular time of measurement.
     """
     return max(
-        int(change.split("-")[2])
+        int(change.split(" ")[2])
         for protein in network
         for change in network.nodes[protein]
-        if len(change.split("-")) == 3 and change.split("-")[0] == str(time) and
-        change.split("-")[1] == modification)
+        if len(change.split(" ")) == 3 and change.split(" ")[0] == str(time) and
+        change.split(" ")[1] == modification)
 
 
 def set_post_translational_modification(network: nx.Graph) -> None:
@@ -467,19 +465,18 @@ def set_post_translational_modification(network: nx.Graph) -> None:
                 time)] = "".join(
                     sorted(
                         set(
-                            change.split("-")[1]
+                            change.split(" ")[1]
                             for change in network.nodes[protein]
-                            if len(change.split("-")) == 3 and
-                            change.split("-")[0] == str(time))))
+                            if len(change.split(" ")) == 3 and
+                            change.split(" ")[0] == str(time))))
 
 
 def set_changes(
     network: nx.Graph,
-    site_combination: Callable[[tuple[float, ...]],
-                               float] = lambda sites: max(sites, key=abs),
+    site_combination: Optional[Callable[[Collection[float]], float]] = None,
     changes: tuple[float, float] = (-1.0, 1.0),
     convert_change: Callable[
-        [nx.Graph, float, int, str, Callable[[tuple[float, ...]],
+        [nx.Graph, float, int, str, Callable[[Collection[float]],
                                              float]], float] = lambda network,
     change, time, modification, site_combination: change,
 ) -> None:
@@ -488,7 +485,7 @@ def set_changes(
 
     Args:
         network: The protein-protein interaction network.
-        site_combination: The function to derive protein-specific changes from
+        site_combination: An optional function to derive protein-specific changes from
             site-specific changes.
         changes: Proteins are classified by whether their representative exceed
             either this range, the range defined by half the bounds or none.
@@ -527,8 +524,8 @@ def set_changes(
                 sites = [
                     network.nodes[protein][change]
                     for change in network.nodes[protein]
-                    if len(change.split("-")) == 3 and change.split("-")[0] ==
-                    str(time) and change.split("-")[1] == modification
+                    if len(change.split(" ")) == 3 and change.split(" ")[0] ==
+                    str(time) and change.split(" ")[1] == modification
                 ]
 
                 if sites:
@@ -540,7 +537,7 @@ def set_changes(
                     elif 1.0 * change_range[time][modification][
                             1] > combined_change >= 0.5 * change_range[time][
                                 modification][1]:
-                        classification[modification] = "mid_up"
+                        classification[modification] = "mid up"
                     elif 0.5 * change_range[time][modification][
                             1] > combined_change > 0.5 * change_range[time][
                                 modification][0]:
@@ -548,37 +545,37 @@ def set_changes(
                     elif 0.5 * change_range[time][modification][
                             0] >= combined_change > 1.0 * change_range[time][
                                 modification][0]:
-                        classification[modification] = "mid_down"
+                        classification[modification] = "mid down"
                     else:
                         classification[modification] = "down"
 
             if classification:
                 if set(classification.values()) == {"up"}:
                     network.nodes[protein]["change {}".format(time)] = "up"
-                elif set(classification.values()) == {"mid_up", "up"}:
+                elif set(classification.values()) == {"mid up", "up"}:
                     network.nodes[protein]["change {}".format(time)] = "up"
-                elif set(classification.values()) == {"mid", "mid_up", "up"}:
+                elif set(classification.values()) == {"mid", "mid up", "up"}:
                     network.nodes[protein]["change {}".format(time)] = "up"
 
-                elif set(classification.values()) == {"mid_up"}:
-                    network.nodes[protein]["change {}".format(time)] = "mid_up"
-                elif set(classification.values()) == {"mid", "mid_up"}:
-                    network.nodes[protein]["change {}".format(time)] = "mid_up"
+                elif set(classification.values()) == {"mid up"}:
+                    network.nodes[protein]["change {}".format(time)] = "mid up"
+                elif set(classification.values()) == {"mid", "mid up"}:
+                    network.nodes[protein]["change {}".format(time)] = "mid up"
 
                 elif set(classification.values()) == {"mid"}:
                     network.nodes[protein]["change {}".format(time)] = "mid"
 
-                elif set(classification.values()) == {"mid", "mid_down"}:
+                elif set(classification.values()) == {"mid", "mid down"}:
                     network.nodes[protein]["change {}".format(
-                        time)] = "mid_down"
-                elif set(classification.values()) == {"mid_down"}:
+                        time)] = "mid down"
+                elif set(classification.values()) == {"mid down"}:
                     network.nodes[protein]["change {}".format(
-                        time)] = "mid_down"
+                        time)] = "mid down"
 
                 elif set(
-                        classification.values()) == {"mid", "mid_down", "down"}:
+                        classification.values()) == {"mid", "mid down", "down"}:
                     network.nodes[protein]["change {}".format(time)] = "down"
-                elif set(classification.values()) == {"mid_down", "down"}:
+                elif set(classification.values()) == {"mid down", "down"}:
                     network.nodes[protein]["change {}".format(time)] = "down"
                 elif set(classification.values()) == {"down"}:
                     network.nodes[protein]["change {}".format(time)] = "down"
@@ -598,7 +595,8 @@ def add_proteins_from_biogrid(
         experimental_system_type: Optional[Container[str]] = None,
         interaction_throughput: Optional[Container[str]] = None,
         multi_validated_physical: bool = False,
-        taxonomy_identifier: int = 9606) -> None:
+        taxonomy_identifier: int = 9606,
+        version: Optional[tuple[int, int, int]] = None) -> None:
     """
     Add proteins interacting with proteins in a protein-protein interaction
     network from BioGRID to the network.
@@ -614,12 +612,13 @@ def add_proteins_from_biogrid(
         multi-validated physical: If True, consider only multi-validated
             physical interactions.
         taxonomy_identifier: The taxonomy identifier.
+        version: The version of the BioGRID database, if not passed, the latest.
     """
     nodes_to_add = set()
     for interactor_a, interactor_b in biogrid.get_protein_protein_interactions(
             experimental_system, experimental_system_type,
             interaction_throughput, multi_validated_physical,
-            taxonomy_identifier):
+            taxonomy_identifier, version):
         if (interactor_a in network and interactor_b not in network):
             nodes_to_add.add(interactor_b)
 
@@ -630,13 +629,13 @@ def add_proteins_from_biogrid(
 
 
 def add_protein_protein_interactions_from_biogrid(
-    network: nx.Graph,
-    experimental_system: Optional[Container[str]] = None,
-    experimental_system_type: Optional[Container[str]] = None,
-    interaction_throughput: Optional[Container[str]] = None,
-    multi_validated_physical: bool = False,
-    taxonomy_identifier: int = 9606,
-) -> None:
+        network: nx.Graph,
+        experimental_system: Optional[Container[str]] = None,
+        experimental_system_type: Optional[Container[str]] = None,
+        interaction_throughput: Optional[Container[str]] = None,
+        multi_validated_physical: bool = False,
+        taxonomy_identifier: int = 9606,
+        version: Optional[tuple[int, int, int]] = None) -> None:
     """
     Adds protein-protein interactions from BioGRID to a protein-protein
     interaction network.
@@ -652,11 +651,12 @@ def add_protein_protein_interactions_from_biogrid(
         multi-validated physical: If True, add only multi-validated physical
             interactions.
         taxonomy_identifier: The taxonomy identifier.
+        version: The version of the BioGRID database, if not passed, the latest.
     """
     for interactor_a, interactor_b in biogrid.get_protein_protein_interactions(
             experimental_system, experimental_system_type,
             interaction_throughput, multi_validated_physical,
-            taxonomy_identifier):
+            taxonomy_identifier, version):
         if (interactor_a in network and interactor_b in network and
                 interactor_a != interactor_b):
             network.add_edge(interactor_a, interactor_b)
@@ -1079,8 +1079,7 @@ def get_changes(
     network: nx.Graph,
     time: int,
     modification: str,
-    site_combination: Callable[[tuple[float, ...]],
-                               float] = lambda sites: max(sites, key=abs)
+    site_combination: Optional[Callable[[Collection[float]], float]] = None
 ) -> tuple[float, ...]:
     """
     Returns the change distribution for a particular type of post-translational
@@ -1090,8 +1089,8 @@ def get_changes(
         network: The protein-protein interaction network.
         time: The time of measurement.
         modification: The type of post-translational modification.
-        site_combination: The function to derive protein-specific changes from
-            site-specific changes.
+        site_combination: An optional function to derive protein-specific
+            changes from site-specific changes.
 
     Returns:
         Protein-specific changes for a particular type of post-translational
@@ -1099,13 +1098,18 @@ def get_changes(
     """
     changes = []
     for protein in network:
-        sites = tuple(network.nodes[protein][change]
-                      for change in network.nodes[protein]
-                      if len(change.split("-")) == 3 and change.split("-")[0] ==
-                      str(time) and change.split("-")[1] == modification)
+        sites = [
+            network.nodes[protein][change]
+            for change in network.nodes[protein]
+            if len(change.split(" ")) == 3 and change.split(" ")[0] == str(time)
+            and change.split(" ")[1] == modification
+        ]
 
         if sites:
-            changes.append(site_combination(sites))
+            if site_combination:
+                changes.append(site_combination(sites))
+            else:
+                changes.extend(sites)
 
     return tuple(changes)
 
@@ -1115,8 +1119,7 @@ def convert_change_to_standard_score(
     change: float,
     time: int,
     modification: str,
-    site_combination: Callable[[tuple[float, ...]],
-                               float] = lambda sites: max(sites, key=abs)
+    site_combination: Optional[Callable[[Collection[float]], float]] = None
 ) -> float:
     """
     Converts a change to its corresponding modification- and time-specific
@@ -1127,8 +1130,8 @@ def convert_change_to_standard_score(
         change: The change to convert.
         time: The time of measurement.
         modification: The type of post-translational modification.
-        site_combination: The function to derive protein-specific changes from
-            site-specific changes.
+        site_combination: An optional function to derive protein-specific
+            changes from site-specific changes.
 
     Returns:
         The standard score corresponding to the change.
@@ -1144,8 +1147,7 @@ def convert_standard_score_to_change(
     standard_score: float,
     time: int,
     modification: str,
-    site_combination: Callable[[tuple[float, ...]],
-                               float] = lambda sites: max(sites, key=abs)
+    site_combination: Optional[Callable[[Collection[float]], float]] = None
 ) -> float:
     """
     Converts a modification- and time-specific standard score to its
@@ -1156,8 +1158,8 @@ def convert_standard_score_to_change(
         standard_score: The standard score to convert.
         time: The time of measurement.
         modification: The type of post-translational modification.
-        site_combination: The function to derive protein-specific changes from
-            site-specific changes.
+        site_combination: An optional function to derive protein-specific
+            changes from site-specific changes.
 
     Returns:
         The change corresponding to the standard score.
@@ -1173,8 +1175,7 @@ def convert_change_to_quantile(
     change: float,
     time: int,
     modification: str,
-    site_combination: Callable[[tuple[float, ...]],
-                               float] = lambda sites: max(sites, key=abs)
+    site_combination: Optional[Callable[[Collection[float]], float]] = None
 ) -> float:
     """
     Converts a change to its corresponding modification- and time-specific
@@ -1185,8 +1186,8 @@ def convert_change_to_quantile(
         change: The change to convert.
         time: The time of measurement.
         modification: The type of post-translational modification.
-        site_combination: The function to derive protein-specific changes from
-            site-specific changes.
+        site_combination: An optional function to derive protein-specific
+            changes from site-specific changes.
 
     Returns:
         The quantile corresponding to the change.
@@ -1200,8 +1201,7 @@ def convert_quantile_to_change(
     quantile: float,
     time: int,
     modification: str,
-    site_combination: Callable[[tuple[float, ...]],
-                               float] = lambda sites: max(sites, key=abs)
+    site_combination: Optional[Callable[[Collection[float]], float]] = None
 ) -> float:
     """
     Convert a modification- and time-specific quantile to its corresponding
@@ -1212,8 +1212,8 @@ def convert_quantile_to_change(
         quantile: The quantile to convert.
         time: The time of measurement.
         modification: The type of post-translational modification.
-        site_combination: The function to derive protein-specific changes from
-            site-specific changes.
+        site_combination: An optional function to derive protein-specific
+            changes from site-specific changes.
 
     Returns:
         The change corresponding to the quantile.
@@ -1227,11 +1227,10 @@ def get_change_enrichment(
     modules: list[nx.Graph],
     changes: tuple[float, float] = (-1.0, 1.0),
     convert_change: Callable[
-        [nx.Graph, float, int, str, Callable[[tuple[float, ...]],
+        [nx.Graph, float, int, str, Callable[[Collection[float]],
                                              float]], float] = lambda network,
     change, time, modification, site_combination: change,
-    site_combination: Callable[[tuple[float, ...]],
-                               float] = lambda sites: max(sites, key=abs),
+    site_combination: Optional[Callable[[Collection[float]], float]] = None,
     enrichment_test: Callable[[int, int, int, int],
                               float] = test.hypergeometric,
     multiple_testing_correction: Callable[
@@ -1250,8 +1249,8 @@ def get_change_enrichment(
             exceeds this range.
         convert_change: The function used convert the bounds to log2-fold
             changes.
-        site_combination: The function to derive protein-specific changes from
-            site-specific changes.
+        site_combination: An optional function to derive protein-specific
+            changes from site-specific changes.
         enrichment_test: The statistical test used to assess enrichment of
             proteins with large changes by a module.
         multiple_testing_correction: The procedure to correct for multiple
@@ -1266,10 +1265,10 @@ def get_change_enrichment(
     p_values = {}
     for time in get_times(network):
         for modification in get_post_translational_modifications(network, time):
-            min_change = convert_change(network, changes[0], time, modification,
-                                        site_combination)
-            max_change = convert_change(network, changes[1], time, modification,
-                                        site_combination)
+            change_range = (convert_change(network, changes[0], time,
+                                           modification, site_combination),
+                            convert_change(network, changes[1], time,
+                                           modification, site_combination))
 
             modified_proteins = len([
                 change for change in get_changes(network, time, modification,
@@ -1286,7 +1285,7 @@ def get_change_enrichment(
             target_proteins = len([
                 change for change in get_changes(network, time, modification,
                                                  site_combination)
-                if change <= min_change or change >= max_change
+                if change <= change_range[0] or change >= change_range[1]
             ])
 
             target_module_proteins = [
@@ -1294,7 +1293,7 @@ def get_change_enrichment(
                     change
                     for change in get_changes(module, time, modification,
                                               site_combination)
-                    if change <= min_change or change >= max_change
+                    if change <= change_range[0] or change >= change_range[1]
                 ])
                 for module in modules
             ]
@@ -1321,9 +1320,8 @@ def get_change_enrichment(
 def get_change_location(
     network: nx.Graph,
     modules: list[nx.Graph],
-    site_combination: Callable[[tuple[float, ...]],
-                               float] = lambda sites: max(sites, key=abs),
-    location_test: Callable[[tuple[float], tuple[float]],
+    site_combination: Optional[Callable[[Collection[float]], float]] = None,
+    location_test: Callable[[Collection[float], Collection[float]],
                             float] = test.wilcoxon,
     multiple_testing_correction: Callable[
         [dict[tuple[nx.Graph, int, str], float]],
@@ -1337,8 +1335,8 @@ def get_change_location(
     Args:
         network: The protein-protein interaction network.
         modules: The modules of the protein-protein interaction network.
-        site_combination: The function to derive protein-specific changes from
-            site-specific changes.
+        site_combination: An optional function to derive protein-specific
+            changes from site-specific changes.
         location_test: The statistical test used to assess location of
             proteins with large changes by a module.
         multiple_testing_correction: The procedure to correct for multiple

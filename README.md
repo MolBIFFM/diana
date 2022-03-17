@@ -23,12 +23,12 @@ A configuration file specifies a list of workflows sequentially executed. Config
     {
       "genes": [
         {
-          "file": ""
+          "file": null
         }
       ],
       "proteins": [
         {
-          "file": ""
+          "file": null
         }
       ]
     }
@@ -41,12 +41,12 @@ The file location of the input file.
     {
       "genes": [
         {
-          "accession column": ""
+          "accession column": null
         }
       ],
       "proteins": [
         {
-          "accession column": ""
+          "accession column": null
         }
       ]
     }
@@ -77,12 +77,12 @@ A regular expression used to obtain gene or protein accessions from a cell value
     {
       "genes": [
         {
-          "sheet": ""
+          "sheet": 0
         }
       ],
       "proteins": [
         {
-          "sheet": ""
+          "sheet": 0
         }
       ]
     }
@@ -174,7 +174,7 @@ The NCBI taxonomy ID of the organism. The default and currently only fully suppo
     {
       "proteins": [
         {
-          "time": 0
+          "time": null
         }
       ]
     }
@@ -187,7 +187,7 @@ The time of measurement to be associated with the changes from the corresponding
     {
       "proteins": [
         {
-          "post-translational modification": ""
+          "post-translational modification": null
         }
       ]
     }
@@ -200,13 +200,13 @@ An identifier for the type of post-translational modification associate with cha
     {
       "proteins": [
         {
-          "position column": ""
+          "position column": null
         }
       ]
     }
 ]
 ```
-The table column corresponding to modification sites used, if available, to order the changes. The default setting is `""`.
+The table column corresponding to modification sites used, if available, to order the changes.
 
 ```json
 [
@@ -372,6 +372,19 @@ A list of accepted experimental system type annotations. The default setting is 
 ]
 ```
 If true, restrict query to multi-validated physical protein-protein interactions. The default setting is `false`.
+
+```json
+[
+    {
+      "protein-protein interactions": {
+        "BioGRID": {
+          "version": null
+        }
+      }
+    }
+]
+```
+The version of the BioGRID database to query, if `null` given, the latest is used. The default setting is `null`.
 
 ```json
 [
@@ -647,33 +660,35 @@ The version of STRING to query. The default setting is `11.5`.
     {
       "Cytoscape": {
         "bar chart": {
-          "site combination": "absmax",
+          "site combination": "absmax"
         },
         "node color": {
-          "site combination": "absmax",
+          "site combination": "absmax"
         }
       },
       "module detection": {
         "change enrichment": {
-          "site combination": "absmax",
+          "proteins": {
+            "site combination": "absmax"
+          } 
         }
       },
       "Reactome network": {
         "union": [
           {
-            "site combination": "absmax",
+            "site combination": "absmax"
           }
         ],
         "intersection": [
           {
-            "site combination": "absmax",
+            "site combination": "absmax"
           }
         ]
       },
       "Gene Ontology network": {
         "union": [
           {
-            "site combination": "absmax",
+            "site combination": "absmax"
           }
         ],
         "intersection": [
@@ -685,8 +700,7 @@ The version of STRING to query. The default setting is `11.5`.
     }
 ]
 ```
-The function used to derive a proteins-specific change from a its individual sites. The default setting is `"absmax"`, corresponding to the largest absolute change. Available settings are `"mean"`, `"median"`, `"max"`, `"absmax"`, `"min"`, `"absmin"`, `"sum"`, `"abssum"`.
-
+The function used to derive a proteins-specific change from a its individual sites. The default setting is `"absmax"`, corresponding to the largest absolute change. Available settings are `"mean"`, `"median"`, `"max"`, `"absmax"`, `"min"`, `"absmin"`, `"sum"`, `"abssum"` and `null`, such that sites are considered individually.
 
 
 ```json
@@ -694,38 +708,43 @@ The function used to derive a proteins-specific change from a its individual sit
     {
       "Cytoscape": {
         "bar chart": {
-          "conversion": ""
+          "conversion": null
         },
         "node color": {
-          "conversion": ""
+          "conversion": null
         }
       },
       "module detection": {
         "change enrichment": {
-          "conversion": ""
+          "proteins": {
+            "conversion": null
+          },
+          "sites": {
+            "conversion": null
+          }
         }
       },
       "Reactome network": {
         "union": [
           {
-            "conversion": ""
+            "conversion": null
           }
         ],
         "intersection": [
           {
-            "conversion": ""
+            "conversion": null
           }
         ]
       },
       "Gene Ontology network": {
         "union": [
           {
-            "conversion": ""
+            "conversion": null
           }
         ],
         "intersection": [
           {
-            "conversion": ""
+            "conversion": null
           }
         ]
       }
@@ -752,35 +771,40 @@ The range of the bar charts in Cytoscape. The default setting is `[-1.0, 1.0]` i
     {
       "Cytoscape": {
         "node color": {
-          "combined change": [-1.0, 1.0]
+          "change": [-1.0, 1.0]
         }
       },
       "module detection": {
         "change enrichment": {
-          "combined change": [-1.0, 1.0]
+          "proteins": {
+            "change": [-1.0, 1.0]
+          },
+          "sites": {
+            "change": [-1.0, 1.0]
+          }
         }
       },
       "Reactome network": {
         "union": [
           {
-            "combined change": [-1.0, 1.0]
+            "change": [-1.0, 1.0]
           }
         ],
         "intersection": [
           {
-            "combined change": [-1.0, 1.0]
+            "change": [-1.0, 1.0]
           }
         ]
       },
       "Gene Ontology network": {
         "union": [
           {
-            "combined change": [-1.0, 1.0]
+            "change": [-1.0, 1.0]
           }
         ],
         "intersection": [
           {
-            "combined change": [-1.0, 1.0]
+            "change": [-1.0, 1.0]
           }
         ]
       }
@@ -793,23 +817,23 @@ The range of combined changes distinguishing proteins by whether the range is ex
 [
     {
       "Cytoscape": {
-        "edge transparency": "",
+        "edge transparency": null,
       }
     }
 ]
 ```
-The function used to derive a combined edge confidence score from scores in IntAct, MINT and STRING as well as 1.0 used for BioGRID and Reactome, respectively for a lack of corresponding score. The combined score is reflected by edge transparency. By default any edge receives a score of 1.0. Available settings are `"mean"`, `"median"`, `"max"`, `"min"`, `"sum"`, `"number"`, `"BioGRID"`, `"IntAct"`, `"MINT"`, `"Reactome"`, `"STRING"`.
+The function used to derive a combined edge confidence score from scores in IntAct, MINT and STRING as well as 1.0 used for BioGRID and Reactome, respectively for a lack of corresponding score. The combined score is reflected by edge transparency. By default any edge receives a score of 1.0. Available settings are `null`,  `"mean"`, `"median"`, `"max"`, `"min"`, `"sum"`, `"number"`, `"BioGRID"`, `"IntAct"`, `"MINT"`, `"Reactome"`, `"STRING"`.
 
 ```json
 [
     {
       "module detection": {
-        "edge weight": ""
+        "edge weight": null
       }
     }
 ]
 ```
-The function used to derive a combined edge confidence score from scores in IntAct, MINT and STRING as well as 1.0 used for BioGRID and Reactome, respectively for a lack of corresponding scoring. The combined score utilized as edge weight in module detection. By default any edge receives a score of 1.0, corresponding to an unweighted network. Available settings are `"mean"`, `"median"`, `"max"`, `"min"`, `"sum"`, `"number"`, `"BioGRID"`, `"IntAct"`, `"MINT"`, `"Reactome"`, `"STRING"`.
+The function used to derive a combined edge confidence score from scores in IntAct, MINT and STRING as well as 1.0 used for BioGRID and Reactome, respectively for a lack of corresponding scoring. The combined score utilized as edge weight in module detection. By default any edge receives a score of 1.0, corresponding to an unweighted network. Available settings are `null`, `"mean"`, `"median"`, `"max"`, `"min"`, `"sum"`, `"number"`, `"BioGRID"`, `"IntAct"`, `"MINT"`, `"Reactome"`, `"STRING"`.
 
 ```json
 [
@@ -871,7 +895,12 @@ The resolution parameter of modularity optimized by module detection. The defaul
           }
         },
         "change enrichment": {
-          "test": "hypergeometric"
+          "proteins": {
+            "test": "hypergeometric"
+          },
+          "sites": {
+            "test": "hypergeometric"
+          }
         }
       }
     }
@@ -885,7 +914,12 @@ Available settings are `"binomial"` and `"hypergeometric"`.
     {
       "module detection": {
         "change location": {
-          "test": "Wilcoxon"
+          "proteins": {
+            "test": "Wilcoxon"
+          },
+          "sites": {
+            "test": "Wilcoxon"
+          }
         }
       }
     }
@@ -909,10 +943,20 @@ The statistical test to assess the changes of each module in relation to the ent
           }
         },
         "change enrichment": {
-          "correction": "Benjamini-Hochberg"
+          "proteins": {
+            "correction": "Benjamini-Hochberg"
+          },
+          "sites": {
+            "correction": "Benjamini-Hochberg"
+          }
         },
         "change location": {
-          "correction": "Benjamini-Hochberg"
+          "proteins": {
+            "correction": "Benjamini-Hochberg"
+          },
+          "sites": {
+            "correction": "Benjamini-Hochberg"
+          }
         }
       }
     }
@@ -937,10 +981,20 @@ Available settings are `"Benjamini-Hochberg"` and `"Bonferroni"`.
           }
         },
         "change enrichment": {
-          "p": 1.0
+          "proteins": {
+            "p": 1.0
+          },
+          "sites": {
+            "p": 1.0
+          }
         },
         "change location": {
-          "p": 1.0
+          "proteins": {
+            "p": 1.0
+          },
+          "sites": {
+            "p": 1.0
+          }
         }
       }
     }
@@ -994,24 +1048,24 @@ The Gene Ontology namespaces to consider. The default setting is `["cellular_com
       "Reactome network": {
         "union": [
           {
-            "time": 0
+            "time": null
           }
         ],
         "intersection": [
           {
-            "time": 0
+            "time": null
           }
         ]
       },
       "Gene Ontology network": {
         "union": [
           {
-            "time": 0
+            "time": null
           }
         ],
         "intersection": [
           {
-            "time": 0
+            "time": null
           }
         ]
       }
@@ -1026,24 +1080,24 @@ The time of measurement considered to determine a subset of proteins.
       "Reactome network": {
         "union": [
           {
-            "post-translational modification": ""
+            "post-translational modification": null
           }
         ],
         "intersection": [
           {
-            "post-translational modification": ""
+            "post-translational modification": null
           }
         ]
       },
       "Gene Ontology network": {
         "union": [
           {
-            "post-translational modification": ""
+            "post-translational modification": null
           }
         ],
         "intersection": [
           {
-            "post-translational modification": ""
+            "post-translational modification": null
           }
         ]
       }

@@ -304,11 +304,11 @@ COMPONENTS = [
                         "discreteMappingEntry": {
                             "up":
                                 "#{:02X}{:02X}{:02X}".format(255, 0, 0),
-                            "mid_up":
+                            "mid up":
                                 "#{:02X}{:02X}{:02X}".format(255, 102, 102),
                             "mid":
                                 "#{:02X}{:02X}{:02X}".format(128, 128, 128),
-                            "mid_down":
+                            "mid down":
                                 "#{:02X}{:02X}{:02X}".format(102, 102, 255),
                             "down":
                                 "#{:02X}{:02X}{:02X}".format(0, 0, 255),
@@ -699,11 +699,11 @@ COMPONENTS = [
                         "discreteMappingEntry": {
                             "up":
                                 "#{:02X}{:02X}{:02X}".format(255, 0, 0),
-                            "mid_up":
+                            "mid up":
                                 "#{:02X}{:02X}{:02X}".format(255, 102, 102),
                             "mid":
                                 "#{:02X}{:02X}{:02X}".format(128, 128, 128),
-                            "mid_down":
+                            "mid down":
                                 "#{:02X}{:02X}{:02X}".format(102, 102, 255),
                             "down":
                                 "#{:02X}{:02X}{:02X}".format(0, 0, 255),

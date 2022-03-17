@@ -14,6 +14,7 @@ def get_protein_protein_interactions(
     interaction_throughput: Optional[Container[str]] = None,
     multi_validated_physical: bool = False,
     taxonomy_identifier: int = 9606,
+    version: Optional[tuple[int, int, int]] = None
 ) -> Generator[tuple[str, str], None, None]:
     """
     Yields protein-protein interactions from BioGRID.
@@ -28,6 +29,7 @@ def get_protein_protein_interactions(
         multi-validated physical: If True, yield only multi-validated physical
             interactions.
         taxonomy_identifier: The taxonomy identifier.
+        version: The version of the BioGRID database, if not passed, the latest.
 
     Yields:
         Pairs of interacting proteins.
@@ -35,9 +37,14 @@ def get_protein_protein_interactions(
     primary_accession = uniprot.get_primary_accession(taxonomy_identifier)
 
     for row in iterate.tabular_txt(
-            "https://downloads.thebiogrid.org/Download/BioGRID/Latest-Release/BIOGRID-MV-Physical-LATEST.tab3.zip"
-            if multi_validated_physical else
-            "https://downloads.thebiogrid.org/Download/BioGRID/Latest-Release/BIOGRID-ORGANISM-LATEST.tab3.zip",
+        ("https://downloads.thebiogrid.org/Download/BioGRID/Latest-Release/BIOGRID-MV-Physical-{0}.{1}.{2}.tab3.zip"
+         .format(*version) if multi_validated_physical else
+         "https://downloads.thebiogrid.org/Download/BioGRID/Latest-Release/BIOGRID-ORGANISM-{0}.{1}.{2}.tab3.zip"
+         .format(*version)) if version else
+        ("https://downloads.thebiogrid.org/Download/BioGRID/Latest-Release/BIOGRID-MV-Physical-LATEST.tab3.zip"
+         if multi_validated_physical else
+         "https://downloads.thebiogrid.org/Download/BioGRID/Latest-Release/BIOGRID-ORGANISM-LATEST.tab3.zip"
+        ),
             file_from_zip_archive=
             r"BIOGRID-MV-Physical-[0-9]\.[0-9]\.[0-9]{3}\.tab3\.txt"
             if multi_validated_physical else
@@ -64,18 +71,15 @@ def get_protein_protein_interactions(
                  for it in row["Throughput"].split("|")))):
             for interactor_a in row["SWISS-PROT Accessions Interactor A"].split(
                     "|"):
-
                 if "-" in interactor_a and not interactor_a.split(
                         "-")[1].isnumeric():
                     interactor_a = interactor_a.split("-")[0]
-
                 for interactor_b in row[
                         "SWISS-PROT Accessions Interactor B"].split("|"):
 
                     if "-" in interactor_b and not interactor_b.split(
                             "-")[1].isnumeric():
                         interactor_b = interactor_b.split("-")[0]
-
                     for primary_interactor_a in primary_accession.get(
                             interactor_a, {interactor_a}):
                         for primary_interactor_b in primary_accession.get(

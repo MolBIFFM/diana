@@ -45,7 +45,7 @@ def get_protein_protein_interactions(
         combined_score: The combined score threshold.
         physical: If True, yield only physical interactions.
         taxonomy_identifier: The taxonomy identifier.
-        version: The version of the STRING database to query.
+        version: The version of the STRING database.
 
     Yields:
         Pairs of interacting proteins and the combined STRING score associated

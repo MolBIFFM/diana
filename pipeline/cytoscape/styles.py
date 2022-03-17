@@ -1,7 +1,7 @@
 """Cytoscape styles"""
 import json
 import xml.etree.ElementTree as ET
-from typing import Callable
+from typing import Callable, Collection
 
 import networkx as nx
 from networks import (ontology_network, pathway_network,
@@ -43,8 +43,8 @@ def get_bar_chart(
             True,
         "cy_colors": ["#FF0000", "#0000FF"],
         "cy_dataColumns": [
-            "{} {} {}".format(time, modification, site + 1)
-            for site in range(sites)
+            "{} {} {}".format(time, modification, site)
+            for site in range(1, sites + 1)
         ],
     })
     return "org.cytoscape.BarChart: {}".format(bar_chart)
@@ -54,10 +54,10 @@ def get_protein_protein_interaction_network_styles(
     network: nx.Graph,
     bar_chart_range: tuple[float, float] = (-1.0, 1.0),
     convert_change: Callable[
-        [nx.Graph, float, int, str, Callable[[tuple[float, ...]],
+        [nx.Graph, float, int, str, Callable[[Collection[float]],
                                              float]], float] = lambda network,
     change, time, modification, site_combination: change,
-    site_combination: Callable[[tuple[float, ...]],
+    site_combination: Callable[[Collection[float]],
                                float] = lambda sites: max(sites, key=abs),
     confidence_score_combination: Callable[[dict[str, float]], float] = lambda
     confidence_scores: float(bool(confidence_scores.values()))
