@@ -53,10 +53,8 @@ def get_bar_chart(
 def get_protein_protein_interaction_network_styles(
     network: nx.Graph,
     bar_chart_range: tuple[float, float] = (-1.0, 1.0),
-    convert_change: Callable[
-        [nx.Graph, float, int, str, Callable[[Collection[float]],
-                                             float]], float] = lambda network,
-    change, time, modification, site_combination: change,
+    convert_change: Callable[[float, Collection[float]],
+                             float] = lambda change, changes: change,
     site_combination: Callable[[Collection[float]],
                                float] = lambda sites: max(sites, key=abs),
     confidence_score_combination: Callable[[dict[str, float]], float] = lambda
@@ -212,13 +210,15 @@ def get_protein_protein_interaction_network_styles(
                                     network, time, modification),
                                 cy_range=(
                                     convert_change(
-                                        protein_protein_interaction_network,
-                                        bar_chart_range[0], time, modification,
-                                        site_combination),
+                                        bar_chart_range[0],
+                                        protein_protein_interaction_network.
+                                        get_changes(network, time, modification,
+                                                    site_combination)),
                                     convert_change(
-                                        protein_protein_interaction_network,
-                                        bar_chart_range[1], time, modification,
-                                        site_combination))))
+                                        bar_chart_range[1],
+                                        protein_protein_interaction_network.
+                                        get_changes(network, time, modification,
+                                                    site_combination)))))
 
                     elif visual_property_sub_element.get(
                             "name") == "NODE_CUSTOMGRAPHICS_POSITION_{}".format(

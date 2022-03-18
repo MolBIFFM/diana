@@ -475,10 +475,8 @@ def set_changes(
     network: nx.Graph,
     site_combination: Optional[Callable[[Collection[float]], float]] = None,
     changes: tuple[float, float] = (-1.0, 1.0),
-    convert_change: Callable[
-        [nx.Graph, float, int, str, Callable[[Collection[float]],
-                                             float]], float] = lambda network,
-    change, time, modification, site_combination: change,
+    convert_change: Callable[[float, Collection[float]],
+                             float] = lambda change, changes: change
 ) -> None:
     """
     Annotate nodes with summary of change trend.
@@ -501,19 +499,14 @@ def set_changes(
     change_range = {
         time: {
             modification: (convert_change(
-                network,
                 changes[0],
-                time,
-                modification,
-                site_combination,
+                get_changes(network, time, modification, site_combination),
             ),
                            convert_change(
-                               network,
                                changes[1],
-                               time,
-                               modification,
-                               site_combination,
-                           )) for modification in modifications[time]
+                               get_changes(network, time, modification,
+                                           site_combination)))
+            for modification in modifications[time]
         } for time in times
     }
 
@@ -1114,122 +1107,12 @@ def get_changes(
     return tuple(changes)
 
 
-def convert_change_to_standard_score(
-    network: nx.Graph,
-    change: float,
-    time: int,
-    modification: str,
-    site_combination: Optional[Callable[[Collection[float]], float]] = None
-) -> float:
-    """
-    Converts a change to its corresponding modification- and time-specific
-    standard score.
-
-    Args:
-        network: The protein-protein interaction network.
-        change: The change to convert.
-        time: The time of measurement.
-        modification: The type of post-translational modification.
-        site_combination: An optional function to derive protein-specific
-            changes from site-specific changes.
-
-    Returns:
-        The standard score corresponding to the change.
-    """
-    changes = get_changes(network, time, modification, site_combination)
-    mean = statistics.mean(changes)
-    stdev = statistics.stdev(changes, xbar=mean)
-    return (change - mean) / stdev
-
-
-def convert_standard_score_to_change(
-    network: nx.Graph,
-    standard_score: float,
-    time: int,
-    modification: str,
-    site_combination: Optional[Callable[[Collection[float]], float]] = None
-) -> float:
-    """
-    Converts a modification- and time-specific standard score to its
-    corresponding change.
-
-    Args:
-        network: The protein-protein interaction network.
-        standard_score: The standard score to convert.
-        time: The time of measurement.
-        modification: The type of post-translational modification.
-        site_combination: An optional function to derive protein-specific
-            changes from site-specific changes.
-
-    Returns:
-        The change corresponding to the standard score.
-    """
-    changes = get_changes(network, time, modification, site_combination)
-    mean = statistics.mean(changes)
-    stdev = statistics.stdev(changes, xbar=mean)
-    return standard_score * stdev + mean
-
-
-def convert_change_to_quantile(
-    network: nx.Graph,
-    change: float,
-    time: int,
-    modification: str,
-    site_combination: Optional[Callable[[Collection[float]], float]] = None
-) -> float:
-    """
-    Converts a change to its corresponding modification- and time-specific
-    quantile.
-
-    Args:
-        network: The protein-protein interaction network.
-        change: The change to convert.
-        time: The time of measurement.
-        modification: The type of post-translational modification.
-        site_combination: An optional function to derive protein-specific
-            changes from site-specific changes.
-
-    Returns:
-        The quantile corresponding to the change.
-    """
-    changes = get_changes(network, time, modification, site_combination)
-    return len([c for c in changes if c <= change]) / len(changes)
-
-
-def convert_quantile_to_change(
-    network: nx.Graph,
-    quantile: float,
-    time: int,
-    modification: str,
-    site_combination: Optional[Callable[[Collection[float]], float]] = None
-) -> float:
-    """
-    Convert a modification- and time-specific quantile to its corresponding
-    change.
-
-    Args:
-        network: The protein-protein interaction network.
-        quantile: The quantile to convert.
-        time: The time of measurement.
-        modification: The type of post-translational modification.
-        site_combination: An optional function to derive protein-specific
-            changes from site-specific changes.
-
-    Returns:
-        The change corresponding to the quantile.
-    """
-    changes = get_changes(network, time, modification, site_combination)
-    return sorted(changes)[math.floor(quantile * (len(changes) - 1))]
-
-
 def get_change_enrichment(
     network: nx.Graph,
     modules: list[nx.Graph],
     changes: tuple[float, float] = (-1.0, 1.0),
-    convert_change: Callable[
-        [nx.Graph, float, int, str, Callable[[Collection[float]],
-                                             float]], float] = lambda network,
-    change, time, modification, site_combination: change,
+    convert_change: Callable[[float, Collection[float]],
+                             float] = lambda change, changes: change,
     site_combination: Optional[Callable[[Collection[float]], float]] = None,
     enrichment_test: Callable[[int, int, int, int],
                               float] = test.hypergeometric,
@@ -1265,10 +1148,13 @@ def get_change_enrichment(
     p_values = {}
     for time in get_times(network):
         for modification in get_post_translational_modifications(network, time):
-            change_range = (convert_change(network, changes[0], time,
-                                           modification, site_combination),
-                            convert_change(network, changes[1], time,
-                                           modification, site_combination))
+            change_range = (convert_change(
+                changes[0],
+                get_changes(network, time, modification, site_combination)),
+                            convert_change(
+                                changes[1],
+                                get_changes(network, time, modification,
+                                            site_combination)))
 
             modified_proteins = len([
                 change for change in get_changes(network, time, modification,
