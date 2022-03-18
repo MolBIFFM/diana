@@ -4,26 +4,14 @@ import statistics
 from typing import Callable, Collection
 
 SITE_COMBINATION: dict[str, Callable[[Collection[float]], float]] = {
-    "mean":
-        lambda changes: math.log2(
-            statistics.mean(math.pow(2.0, change) for change in changes)),
-    "median":
-        lambda changes: math.log2(
-            statistics.median(math.pow(2.0, change) for change in changes)),
-    "max":
-        max,
-    "absmax":
-        lambda changes: max(changes, key=abs),
-    "min":
-        min,
-    "absmin":
-        lambda changes: min(changes, key=abs),
-    "sum":
-        lambda changes: math.log2(
-            sum(math.pow(2.0, change) for change in changes)),
-    "abssum":
-        lambda changes: math.log2(
-            sum(abs(math.pow(2.0, change)) for change in changes)),
+    "mean": statistics.mean,
+    "median": statistics.median,
+    "max": max,
+    "absmax": lambda changes: max(changes, key=abs),
+    "min": min,
+    "absmin": lambda changes: min(changes, key=abs),
+    "sum": sum,
+    "abssum": lambda changes: sum(abs(change) for change in changes),
 }
 
 REPLICATE_COMBINATION: dict[str, Callable[[Collection[float]], float]] = {
