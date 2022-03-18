@@ -389,10 +389,10 @@ def process_workflow(configuration: dict,
         else:
             cytoscape_styles = styles.get_protein_protein_interaction_network_styles(
                 network,
-                bar_chart_range=configuration["Cytoscape"]["bar chart"].get(
-                    "range", (-1.0, 1.0)),
+                bar_chart_range=configuration["Cytoscape"].get(
+                    "bar chart", {}).get("range", (-1.0, 1.0)),
                 site_combination=combination.SITE_COMBINATION[
-                    configuration["Cytoscape"]["bar chart"].get(
+                    configuration["Cytoscape"].get("bar chart", {}).get(
                         "site combination", "absmax")],
                 confidence_score_combination=combination.
                 CONFIDENCE_SCORE_COMBINATION[configuration["Cytoscape"].get(
@@ -406,8 +406,7 @@ def process_workflow(configuration: dict,
 
         styles.export(
             cytoscape_styles,
-            logger.name,
-            ".{}".format(index) if index else "",
+            "{}.{}".format(logger.name, index) if index else logger.name,
         )
 
         protein_protein_interaction_network.set_post_translational_modification(
@@ -443,16 +442,15 @@ def process_workflow(configuration: dict,
             protein_protein_interaction_network.set_changes(
                 network,
                 site_combination=combination.SITE_COMBINATION[
-                    configuration["Cytoscape"]["node color"].get(
+                    configuration["Cytoscape"].get("node color", {}).get(
                         "site combination", "absmax")],
-                changes=configuration["Cytoscape"]["node color"].get(
+                changes=configuration["Cytoscape"].get("node color", {}).get(
                     "change", (-1.0, 1.0)),
             )
 
     protein_protein_interaction_network.export(
         network,
-        logger.name,
-        ".{}".format(index) if index else "",
+        "{}.{}".format(logger.name, index) if index else logger.name,
     )
 
     if "Gene Ontology enrichment" in configuration:
@@ -729,7 +727,7 @@ def process_workflow(configuration: dict,
                                 "Gene Ontology enrichment"]["annotation"].get(
                                     "p", 1.0):
                             export = True
-                            logger.info("{} annotation\t{}\t{:.2e}\t{}".format(
+                            logger.info("{}\tannotation\t{}\t{:.2e}\t{}".format(
                                 k, term, p, name))
 
                 if "network" in configuration["module detection"][
@@ -741,7 +739,7 @@ def process_workflow(configuration: dict,
                                 "Gene Ontology enrichment"]["network"].get(
                                     "p", 1.0):
                             export = True
-                            logger.info("{} network\t{}\t{:.2e}\t{}".format(
+                            logger.info("{}\tnetwork\t{}\t{:.2e}\t{}".format(
                                 k, term, p, name))
 
             if "change enrichment" in configuration["module detection"]:
@@ -824,204 +822,9 @@ def process_workflow(configuration: dict,
             if export:
                 protein_protein_interaction_network.export(
                     module,
-                    logger.name,
-                    ".{}.{}".format(index, k) if index else ".{}".format(k),
+                    "{}.{}.{}".format(logger.name, index, k)
+                    if index else "{}.{}".format(logger.name, k),
                 )
-    if "Reactome network" in configuration:
-        if "union" in configuration["Reactome network"]:
-            proteins = set()
-            for subset in configuration["Reactome network"]["union"]:
-                if subset.get(
-                        "time"
-                ) in protein_protein_interaction_network.get_times(
-                        network
-                ) and subset.get(
-                        "post-translational modification"
-                ) in protein_protein_interaction_network.get_post_translational_modifications(
-                        network, subset["time"]):
-                    if subset.get("conversion") == "standard score":
-                        change_range = (
-                            protein_protein_interaction_network.
-                            convert_standard_score_to_change(
-                                network,
-                                subset.get("change",
-                                           (-2.0, 2.0))[0], subset["time"],
-                                subset["post-translational modification"],
-                                combination.SITE_COMBINATION[subset.get(
-                                    "site combination", "absmax")]),
-                            protein_protein_interaction_network.
-                            convert_standard_score_to_change(
-                                network,
-                                subset.get("change",
-                                           (-2.0, 2.0))[1], subset["time"],
-                                subset["post-translational modification"],
-                                combination.SITE_COMBINATION[subset.get(
-                                    "site combination", "absmax")]))
-                        proteins.update(
-                            protein_protein_interaction_network.get_proteins(
-                                network, subset["time"],
-                                subset["post-translational modification"],
-                                combination.SITE_COMBINATION[subset.get(
-                                    "site combination", "absmax")],
-                                lambda change: change <= change_range[
-                                    0] or change >= change_range[1]))
-
-                    elif subset.get("conversion") == "quantile":
-                        change_range = (
-                            protein_protein_interaction_network.
-                            convert_quantile_to_change(
-                                network,
-                                subset.get("change",
-                                           (0.025, 0.975))[0], subset["time"],
-                                subset["post-translational modification"],
-                                combination.SITE_COMBINATION[subset.get(
-                                    "site combination", "absmax")]),
-                            protein_protein_interaction_network.
-                            convert_quantile_to_change(
-                                network,
-                                subset.get("change",
-                                           (0.025, 0.975))[1], subset["time"],
-                                subset["post-translational modification"],
-                                combination.SITE_COMBINATION[subset.get(
-                                    "site combination", "absmax")]))
-                        proteins.update(
-                            protein_protein_interaction_network.get_proteins(
-                                network, subset["time"],
-                                subset["post-translational modification"],
-                                combination.SITE_COMBINATION[subset.get(
-                                    "site combination", "absmax")],
-                                lambda change: change <= change_range[
-                                    0] or change >= change_range[1]))
-                    else:
-                        change_range = (subset.get("change", (-1.0, 1.0))[0],
-                                        subset.get("change", (-1.0, 1.0))[1])
-                        proteins.update(
-                            protein_protein_interaction_network.get_proteins(
-                                network, subset["time"],
-                                subset["post-translational modification"],
-                                combination.SITE_COMBINATION[subset.get(
-                                    "site combination", "absmax")],
-                                lambda change: change <= change_range[
-                                    0] or change >= change_range[1]))
-
-            reactome_network = pathway_network.get_pathway_network(
-                nx.induced_subgraph(network, proteins),
-                enrichment_test=test.ENRICHMENT_TEST[
-                    configuration["Reactome network"].get(
-                        "test", "hypergeometric")],
-                multiple_testing_correction=correction.CORRECTION[
-                    configuration["Reactome network"].get(
-                        "correction", "Benjamini-Hochberg")],
-                taxonomy_identifier=configuration["Reactome network"].get(
-                    "taxonomy identifier", 9606))
-
-        elif "intersection" in configuration["Reactome network"]:
-            proteins = set(network.nodes())
-            for subset in configuration["Reactome network"]["intersection"]:
-                if subset.get(
-                        "time"
-                ) in protein_protein_interaction_network.get_times(
-                        network
-                ) and subset.get(
-                        "post-translational modification"
-                ) in protein_protein_interaction_network.get_post_translational_modifications(
-                        network, subset["time"]):
-                    if subset.get("conversion") == "standard score":
-                        change_range = (
-                            protein_protein_interaction_network.
-                            convert_standard_score_to_change(
-                                network,
-                                subset.get("change",
-                                           (-2.0, 2.0))[0], subset["time"],
-                                subset["post-translational modification"],
-                                combination.SITE_COMBINATION[subset.get(
-                                    "site combination", "absmax")]),
-                            protein_protein_interaction_network.
-                            convert_standard_score_to_change(
-                                network,
-                                subset.get("change",
-                                           (-2.0, 2.0))[1], subset["time"],
-                                subset["post-translational modification"],
-                                combination.SITE_COMBINATION[subset.get(
-                                    "site combination", "absmax")]))
-                        proteins.intersection_update(
-                            protein_protein_interaction_network.get_proteins(
-                                network, subset["time"],
-                                subset["post-translational modification"],
-                                combination.SITE_COMBINATION[subset.get(
-                                    "site combination", "absmax")],
-                                lambda change: change <= change_range[
-                                    0] or change >= change_range[1]))
-
-                    elif subset.get("conversion") == "quantile":
-                        change_range = (
-                            protein_protein_interaction_network.
-                            convert_quantile_to_change(
-                                network,
-                                subset.get("change",
-                                           (0.025, 0.975))[0], subset["time"],
-                                subset["post-translational modification"],
-                                combination.SITE_COMBINATION[subset.get(
-                                    "site combination", "absmax")]),
-                            protein_protein_interaction_network.
-                            convert_quantile_to_change(
-                                network,
-                                subset.get("change",
-                                           (0.025, 0.975))[1], subset["time"],
-                                subset["post-translational modification"],
-                                combination.SITE_COMBINATION[subset.get(
-                                    "site combination", "absmax")]))
-                        proteins.intersection_update(
-                            protein_protein_interaction_network.get_proteins(
-                                network, subset["time"],
-                                subset["post-translational modification"],
-                                combination.SITE_COMBINATION[subset.get(
-                                    "site combination", "absmax")],
-                                lambda change: change <= change_range[
-                                    0] or change >= change_range[1]))
-                    else:
-                        change_range = (subset.get("change", (-1.0, 1.0))[0],
-                                        subset.get("change", (-1.0, 1.0))[1])
-                        proteins.intersection_update(
-                            protein_protein_interaction_network.get_proteins(
-                                network, subset["time"],
-                                subset["post-translational modification"],
-                                combination.SITE_COMBINATION[subset.get(
-                                    "site combination", "absmax")],
-                                lambda change: change <= change_range[
-                                    0] or change >= change_range[1]))
-
-            reactome_network = pathway_network.get_pathway_network(
-                nx.induced_subgraph(network, proteins),
-                enrichment_test=test.ENRICHMENT_TEST[
-                    configuration["Reactome network"].get(
-                        "test", "hypergeometric")],
-                multiple_testing_correction=correction.CORRECTION[
-                    configuration["Reactome network"].get(
-                        "correction", "Benjamini-Hochberg")],
-                taxonomy_identifier=configuration["Reactome network"].get(
-                    "taxonomy identifier", 9606))
-
-        else:
-            reactome_network = pathway_network.get_pathway_network(
-                network,
-                enrichment_test=test.ENRICHMENT_TEST[
-                    configuration["Reactome network"].get(
-                        "test", "hypergeometric")],
-                multiple_testing_correction=correction.CORRECTION[
-                    configuration["Reactome network"].get(
-                        "correction", "Benjamini-Hochberg")],
-                taxonomy_identifier=configuration["Reactome network"].get(
-                    "taxonomy identifier", 9606))
-
-        pathway_network.export(reactome_network,
-                               "{}.reactome".format(logger.name),
-                               ".{}".format(index) if index else "")
-
-        if "Cytoscape" in configuration:
-            styles.export(styles.get_pathway_network_style(reactome_network),
-                          "{}.reactome".format(logger.name),
-                          ".{}".format(index) if index else "")
 
     if "Gene Ontology network" in configuration:
         if "union" in configuration["Gene Ontology network"]:
@@ -1116,7 +919,17 @@ def process_workflow(configuration: dict,
                 taxonomy_identifier=configuration["Gene Ontology network"].get(
                     "taxonomy identifier", 9606))
 
-        elif "intersection" in configuration["Gene Ontology network"]:
+            ontology_network.export(
+                gene_ontology_network, "{}.go.{}".format(logger.name, index)
+                if index else "{}.go".format(logger.name))
+
+            if "Cytoscape" in configuration:
+                styles.export(
+                    styles.get_ontology_network_style(gene_ontology_network),
+                    "{}.go.{}".format(logger.name, index)
+                    if index else "{}.go".format(logger.name))
+
+        if "intersection" in configuration["Gene Ontology network"]:
             proteins = set(network.nodes())
             for subset in configuration["Gene Ontology network"][
                     "intersection"]:
@@ -1209,32 +1022,259 @@ def process_workflow(configuration: dict,
                 taxonomy_identifier=configuration["Gene Ontology network"].get(
                     "taxonomy identifier", 9606))
 
-        else:
+            ontology_network.export(
+                gene_ontology_network, "{}.go.{}".format(logger.name, index)
+                if index else "{}.go".format(logger.name))
+
+            if "Cytoscape" in configuration:
+                styles.export(
+                    styles.get_ontology_network_style(gene_ontology_network),
+                    "{}.go.{}".format(logger.name, index)
+                    if index else "{}.go".format(logger.name))
+
+        if "network" in configuration["Gene Ontology network"]:
             gene_ontology_network = ontology_network.get_ontology_network(
                 network,
-                namespaces=configuration["Gene Ontology network"].get(
-                    "namespaces", [
-                        "biological_process", "cellular_component",
-                        "molecular_function"
-                    ]),
+                namespaces=configuration["Gene Ontology network"]
+                ["network"].get("namespaces", [
+                    "biological_process", "cellular_component",
+                    "molecular_function"
+                ]),
                 enrichment_test=test.ENRICHMENT_TEST[
-                    configuration["Gene Ontology network"].get(
+                    configuration["Gene Ontology network"]["network"].get(
                         "test", "hypergeometric")],
                 multiple_testing_correction=correction.CORRECTION[
-                    configuration["Gene Ontology network"].get(
+                    configuration["Gene Ontology network"]["network"].get(
                         "correction", "Benjamini-Hochberg")],
-                taxonomy_identifier=configuration["Gene Ontology network"].get(
+                taxonomy_identifier=configuration["Gene Ontology network"]
+                ["network"].get("taxonomy identifier", 9606))
+
+            ontology_network.export(
+                gene_ontology_network, "{}.go.{}".format(logger.name, index)
+                if index else "{}.go".format(logger.name))
+
+            if "Cytoscape" in configuration:
+                styles.export(
+                    styles.get_ontology_network_style(gene_ontology_network),
+                    "{}.go.{}".format(logger.name, index)
+                    if index else "{}.go".format(logger.name))
+
+    if "Reactome network" in configuration:
+        if "union" in configuration["Reactome network"]:
+            proteins = set()
+            for subset in configuration["Reactome network"]["union"]:
+                if subset.get(
+                        "time"
+                ) in protein_protein_interaction_network.get_times(
+                        network
+                ) and subset.get(
+                        "post-translational modification"
+                ) in protein_protein_interaction_network.get_post_translational_modifications(
+                        network, subset["time"]):
+                    if subset.get("conversion") == "standard score":
+                        change_range = (
+                            protein_protein_interaction_network.
+                            convert_standard_score_to_change(
+                                network,
+                                subset.get("change",
+                                           (-2.0, 2.0))[0], subset["time"],
+                                subset["post-translational modification"],
+                                combination.SITE_COMBINATION[subset.get(
+                                    "site combination", "absmax")]),
+                            protein_protein_interaction_network.
+                            convert_standard_score_to_change(
+                                network,
+                                subset.get("change",
+                                           (-2.0, 2.0))[1], subset["time"],
+                                subset["post-translational modification"],
+                                combination.SITE_COMBINATION[subset.get(
+                                    "site combination", "absmax")]))
+                        proteins.update(
+                            protein_protein_interaction_network.get_proteins(
+                                network, subset["time"],
+                                subset["post-translational modification"],
+                                combination.SITE_COMBINATION[subset.get(
+                                    "site combination", "absmax")],
+                                lambda change: change <= change_range[
+                                    0] or change >= change_range[1]))
+
+                    elif subset.get("conversion") == "quantile":
+                        change_range = (
+                            protein_protein_interaction_network.
+                            convert_quantile_to_change(
+                                network,
+                                subset.get("change",
+                                           (0.025, 0.975))[0], subset["time"],
+                                subset["post-translational modification"],
+                                combination.SITE_COMBINATION[subset.get(
+                                    "site combination", "absmax")]),
+                            protein_protein_interaction_network.
+                            convert_quantile_to_change(
+                                network,
+                                subset.get("change",
+                                           (0.025, 0.975))[1], subset["time"],
+                                subset["post-translational modification"],
+                                combination.SITE_COMBINATION[subset.get(
+                                    "site combination", "absmax")]))
+                        proteins.update(
+                            protein_protein_interaction_network.get_proteins(
+                                network, subset["time"],
+                                subset["post-translational modification"],
+                                combination.SITE_COMBINATION[subset.get(
+                                    "site combination", "absmax")],
+                                lambda change: change <= change_range[
+                                    0] or change >= change_range[1]))
+                    else:
+                        change_range = (subset.get("change", (-1.0, 1.0))[0],
+                                        subset.get("change", (-1.0, 1.0))[1])
+                        proteins.update(
+                            protein_protein_interaction_network.get_proteins(
+                                network, subset["time"],
+                                subset["post-translational modification"],
+                                combination.SITE_COMBINATION[subset.get(
+                                    "site combination", "absmax")],
+                                lambda change: change <= change_range[
+                                    0] or change >= change_range[1]))
+
+            reactome_network = pathway_network.get_pathway_network(
+                nx.induced_subgraph(network, proteins),
+                enrichment_test=test.ENRICHMENT_TEST[
+                    configuration["Reactome network"].get(
+                        "test", "hypergeometric")],
+                multiple_testing_correction=correction.CORRECTION[
+                    configuration["Reactome network"].get(
+                        "correction", "Benjamini-Hochberg")],
+                taxonomy_identifier=configuration["Reactome network"].get(
                     "taxonomy identifier", 9606))
 
-        ontology_network.export(gene_ontology_network,
-                                "{}.gene_ontology".format(logger.name),
-                                ".{}".format(index) if index else "")
+            pathway_network.export(
+                reactome_network, "{}.reactome.{}".format(logger.name, index)
+                if index else "{}.reactome".format(logger.name))
 
-        if "Cytoscape" in configuration:
-            styles.export(
-                styles.get_ontology_network_style(gene_ontology_network),
-                "{}.go".format(logger.name),
-                ".{}".format(index) if index else "")
+            if "Cytoscape" in configuration:
+                styles.export(
+                    styles.get_pathway_network_style(reactome_network),
+                    "{}.reactome.{}".format(logger.name, index)
+                    if index else "{}.reactome".format(logger.name))
+
+        if "intersection" in configuration["Reactome network"]:
+            proteins = set(network.nodes())
+            for subset in configuration["Reactome network"]["intersection"]:
+                if subset.get(
+                        "time"
+                ) in protein_protein_interaction_network.get_times(
+                        network
+                ) and subset.get(
+                        "post-translational modification"
+                ) in protein_protein_interaction_network.get_post_translational_modifications(
+                        network, subset["time"]):
+                    if subset.get("conversion") == "standard score":
+                        change_range = (
+                            protein_protein_interaction_network.
+                            convert_standard_score_to_change(
+                                network,
+                                subset.get("change",
+                                           (-2.0, 2.0))[0], subset["time"],
+                                subset["post-translational modification"],
+                                combination.SITE_COMBINATION[subset.get(
+                                    "site combination", "absmax")]),
+                            protein_protein_interaction_network.
+                            convert_standard_score_to_change(
+                                network,
+                                subset.get("change",
+                                           (-2.0, 2.0))[1], subset["time"],
+                                subset["post-translational modification"],
+                                combination.SITE_COMBINATION[subset.get(
+                                    "site combination", "absmax")]))
+                        proteins.intersection_update(
+                            protein_protein_interaction_network.get_proteins(
+                                network, subset["time"],
+                                subset["post-translational modification"],
+                                combination.SITE_COMBINATION[subset.get(
+                                    "site combination", "absmax")],
+                                lambda change: change <= change_range[
+                                    0] or change >= change_range[1]))
+
+                    elif subset.get("conversion") == "quantile":
+                        change_range = (
+                            protein_protein_interaction_network.
+                            convert_quantile_to_change(
+                                network,
+                                subset.get("change",
+                                           (0.025, 0.975))[0], subset["time"],
+                                subset["post-translational modification"],
+                                combination.SITE_COMBINATION[subset.get(
+                                    "site combination", "absmax")]),
+                            protein_protein_interaction_network.
+                            convert_quantile_to_change(
+                                network,
+                                subset.get("change",
+                                           (0.025, 0.975))[1], subset["time"],
+                                subset["post-translational modification"],
+                                combination.SITE_COMBINATION[subset.get(
+                                    "site combination", "absmax")]))
+                        proteins.intersection_update(
+                            protein_protein_interaction_network.get_proteins(
+                                network, subset["time"],
+                                subset["post-translational modification"],
+                                combination.SITE_COMBINATION[subset.get(
+                                    "site combination", "absmax")],
+                                lambda change: change <= change_range[
+                                    0] or change >= change_range[1]))
+                    else:
+                        change_range = (subset.get("change", (-1.0, 1.0))[0],
+                                        subset.get("change", (-1.0, 1.0))[1])
+                        proteins.intersection_update(
+                            protein_protein_interaction_network.get_proteins(
+                                network, subset["time"],
+                                subset["post-translational modification"],
+                                combination.SITE_COMBINATION[subset.get(
+                                    "site combination", "absmax")],
+                                lambda change: change <= change_range[
+                                    0] or change >= change_range[1]))
+
+            reactome_network = pathway_network.get_pathway_network(
+                nx.induced_subgraph(network, proteins),
+                enrichment_test=test.ENRICHMENT_TEST[
+                    configuration["Reactome network"].get(
+                        "test", "hypergeometric")],
+                multiple_testing_correction=correction.CORRECTION[
+                    configuration["Reactome network"].get(
+                        "correction", "Benjamini-Hochberg")],
+                taxonomy_identifier=configuration["Reactome network"].get(
+                    "taxonomy identifier", 9606))
+
+            pathway_network.export(
+                reactome_network, "{}.reactome.{}".format(logger.name, index)
+                if index else "{}.reactome".format(logger.name))
+
+            if "Cytoscape" in configuration:
+                styles.export(
+                    styles.get_pathway_network_style(reactome_network),
+                    "{}.reactome.{}".format(logger.name, index)
+                    if index else "{}.reactome".format(logger.name))
+
+        if "network" in configuration["Reactome network"]:
+            reactome_network = pathway_network.get_pathway_network(
+                network,
+                enrichment_test=test.ENRICHMENT_TEST[
+                    configuration["Reactome network"]["network"].get(
+                        "test", "hypergeometric")],
+                multiple_testing_correction=correction.CORRECTION[
+                    configuration["Reactome network"]["network"].get(
+                        "correction", "Benjamini-Hochberg")],
+                taxonomy_identifier=configuration["Reactome network"]
+                ["network"].get("taxonomy identifier", 9606))
+
+            pathway_network.export(
+                reactome_network, "{}.reactome.{}".format(logger.name, index)
+                if index else "{}.reactome".format(logger.name))
+
+            if "Cytoscape" in configuration:
+                styles.export(
+                    styles.get_pathway_network_style(reactome_network),
+                    "{}.reactome.{}".format(logger.name, index)
+                    if index else "{}.reactome".format(logger.name))
 
 
 def process_configuration_file(configuration_file: str) -> None:
@@ -1286,7 +1326,8 @@ def main() -> None:
             max_workers=args.processes) as executor:
         for process in executor.map(process_configuration_file,
                                     args.configurations):
-            process.results()
+            if process:
+                process.results()
 
 
 if __name__ == "__main__":

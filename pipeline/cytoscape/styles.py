@@ -474,17 +474,16 @@ def get_ontology_network_style(network: nx.Graph) -> ET.ElementTree:
     return style
 
 
-def export(styles: ET.ElementTree, basename: str, suffix: str = "") -> None:
+def export(styles: ET.ElementTree, basename: str) -> None:
     """
     Exports the Cytoscape styles.
 
     Args:
         styles: The Cytoscape styles.
         basename: The base file name.
-        suffix: An optional addition to the base file name.
     """
     styles.write(
-        "{0}{1}.xml".format(basename, suffix),
+        "{}.xml".format(basename),
         encoding="utf-8",
         xml_declaration=True,
     )

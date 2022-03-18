@@ -49,11 +49,7 @@ def get_pathway_network(protein_protein_interaction_network: nx.Graph,
             pathways[pathway] = set()
         pathways[pathway].add(protein)
 
-    pathways = {
-        pathway: pathways[pathway] for pathway in pathways if pathways[pathway]
-    }
-    network.remove_nodes_from(
-        pathway for pathway in network if pathway not in pathways)
+    network = nx.induced_subgraph(network, pathways)
 
     mapped_proteins = set.union(*pathways.values())
 
@@ -96,16 +92,15 @@ def get_pathway_sizes(network: nx.Graph) -> dict[str, int]:
     }
 
 
-def export(network, basename, suffix=""):
+def export(network: nx.Graph, basename: str) -> None:
     """
     Exports the Reactome network.
 
     Args:
         network: The Reactome network.
         basename: The base file name.
-        suffix: An addition to the base file name.
     """
     nx.write_graphml_xml(network,
-                         "{0}{1}.graphml".format(basename, suffix),
+                         "{}.graphml".format(basename),
                          named_key_ids=True,
                          infer_numeric_types=True)

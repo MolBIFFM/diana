@@ -36,7 +36,7 @@ def annotate_proteins(network: nx.Graph,
     for accessions, gene_name, protein_name in uniprot.get_swissprot_entries(
             taxonomy_identifier):
         for protein in network:
-            if protein.split(" ")[0] == accessions[0]:
+            if protein.split("-")[0] == accessions[0]:
                 network.nodes[protein]["gene"] = gene_name
                 network.nodes[protein]["protein"] = protein_name
 
@@ -150,7 +150,7 @@ def add_proteins_from(network: nx.Graph, proteins: Container) -> None:
     for protein_accession in proteins:
         if "-" in protein_accession and protein_accession.split(
                 "-")[1].isnumeric():
-            protein, isoform = protein_accession.split(" ")
+            protein, isoform = protein_accession.split("-")
         else:
             protein, isoform = protein_accession, "0"
 
@@ -319,7 +319,7 @@ def add_proteins_from_table(
                 if protein_accession not in proteins:
                     proteins[protein_accession] = []
 
-    primary_accession = add_proteins_from(network, proteins.keys())
+    primary_accession = add_proteins_from(network, proteins)
 
     for protein in list(proteins):
         if protein in primary_accession:
@@ -583,7 +583,7 @@ def set_changes(
                     network.nodes[protein]["change {}".format(time)] = " ".join(
                         "{}_{}".format(modification,
                                        classification[modification])
-                        for modification in sorted(classification.keys()))
+                        for modification in sorted(classification))
 
             else:
                 network.nodes[protein]["change {}".format(time)] = "mid"
@@ -1093,7 +1093,7 @@ def get_changes(
             changes from site-specific changes.
 
     Returns:
-        Protein-specific changes for a particular type of post-translational
+        Changes for a particular type of post-translational
         modification at a particular time of measurement.
     """
     changes = []
@@ -1465,16 +1465,15 @@ def get_gene_ontology_enrichment(
     }
 
 
-def export(network: nx.Graph, basename: str, suffix: str = "") -> None:
+def export(network: nx.Graph, basename: str) -> None:
     """
     Exports the protein-protein interaction network.
 
     Args:
         network: The protein-protein interaction network.
         basename: The base file name.
-        suffix: An addition to the base file name.
     """
     nx.write_graphml_xml(network,
-                         "{0}{1}.graphml".format(basename, suffix),
+                         "{}.graphml".format(basename),
                          named_key_ids=True,
                          infer_numeric_types=True)

@@ -18,6 +18,8 @@ A configuration file specifies a list of workflows sequentially executed. Config
 
 ## configuration
 
+The specification of input genes or proteins.
+
 ```json
 [
     {
@@ -124,6 +126,7 @@ The line number of the header to skip initial lines of the sheet. The default se
     }
 ]
 ```
+
 A list of input gene or protein accessions.
 
 ```json
@@ -133,37 +136,7 @@ A list of input gene or protein accessions.
         {
           "taxonomy identifier": 9606
         }
-      ],
-      "protein-protein interactions": {
-        "BioGRID": {
-          "taxonomy identifier": 9606
-        },
-        "IntAct": {
-          "taxonomy identifier": 9606
-        }, 
-        "MINT": {
-          "taxonomy identifier": 9606
-        },
-        "Reactome": {
-          "taxonomy identifier": 9606
-        },
-        "STRING": {
-          "taxonomy identifier": 9606
-        }
-      },
-      "Gene Ontology enrichment": {
-        "taxonomy identifier": 9606
-      },
-      "module detection": {
-        "Gene Ontology enrichment": {
-          "annotation": {
-            "taxonomy identifier": 9606
-          },
-          "network": {
-            "taxonomy identifier": 9606
-          }
-        }
-      }
+      ]
     }
 ]
 ```
@@ -239,19 +212,6 @@ A list of columns to parse modification changes from. The default setting is `[]
     {
       "proteins": [
         {
-          "sites": 5
-        }
-      ]
-    }
-]
-```
-The maximum number of modification sites to associate with each protein prioritized by largest absolute change. The default setting is `5`.
-
-```json
-[
-    {
-      "proteins": [
-        {
           "replicates": 1
         }
       ]
@@ -259,6 +219,19 @@ The maximum number of modification sites to associate with each protein prioriti
 ]
 ```
 A threshold on the number of replicates to accept a measurement. The default setting is `1`.
+
+```json
+[
+    {
+      "proteins": [
+        {
+          "sites": 5
+        }
+      ]
+    }
+]
+```
+The maximum number of modification sites to associate with each protein prioritized by largest absolute change. The default setting is `5`.
 
 ```json
 [
@@ -293,33 +266,11 @@ The base of the logarithm that changes are expressed as. By default, ratios are 
     }
 ]
 ```
-A list of input protein-protein interaction networks in GraphML format.
+A list of input protein-protein interaction networks.
 
-```json
-[
-    {
-      "protein-protein interactions": {
-        "BioGRID": {
-          "neighbors": 0
-        },
-        "IntAct": {
-          "neighbors": 0
-        }, 
-        "MINT": {
-          "neighbors": 0
-        },
-        "Reactome": {
-          "neighbors": 0
-        },
-        "STRING": {
-          "neighbors": 0
-        }
-      }
-    }
-]
-```
-An integer k specifying the extension of the network by proteins separated by up to k protein-protein interactions satisfying the requirements from the input proteins in the corresponding database. The default setting is 0, corresponding to no extension.
+---
 
+The specification of sources of protein-protein interactions for the assembly of the protein-protein interaction network.
 
 ```json
 [
@@ -652,12 +603,82 @@ If true, restrict query to physical protein-protein interactions. The default se
       }
     }
 ]
+
 ```
 The version of STRING to query. The default setting is `11.5`.
 
 ```json
 [
     {
+      "protein-protein interactions": {
+        "BioGRID": {
+          "neighbors": 0
+        },
+        "IntAct": {
+          "neighbors": 0
+        }, 
+        "MINT": {
+          "neighbors": 0
+        },
+        "Reactome": {
+          "neighbors": 0
+        },
+        "STRING": {
+          "neighbors": 0
+        }
+      }
+    }
+]
+```
+An integer k specifying the extension of the network by proteins separated by up to k protein-protein interactions satisfying the requirements from the input proteins in the corresponding database. The default setting is 0, corresponding to no extension.
+
+
+
+```json
+[
+    {
+      "protein-protein interactions": {
+        "BioGRID": {
+          "taxonomy identifier": 9606
+        },
+        "IntAct": {
+          "taxonomy identifier": 9606
+        }, 
+        "MINT": {
+          "taxonomy identifier": 9606
+        },
+        "Reactome": {
+          "taxonomy identifier": 9606
+        },
+        "STRING": {
+          "taxonomy identifier": 9606
+        }
+      }
+    }
+]
+```
+The NCBI taxonomy ID of the organism. The default and currently only fully supported setting is `9606`, corresponding to Homo sapiens.
+
+---
+
+The specification of Cytoscape styles.
+
+```json
+[
+    {
+      "Cytoscape": {
+        "node color": {
+          "change": [-1.0, 1.0]
+        }
+      },
+    }
+]
+```
+The range of combined changes distinguishing proteins by whether the range is exceeded or not. The default setting is `[-1.0, 1.0]` if `"conversion"` is not set, `[-2.0, 2.0]` if `"conversion"` is set to `"standard score"` and `[0.025, 0.975]` if `"conversion"` is set to `"quantile"`.
+
+```json
+[
+    {
       "Cytoscape": {
         "bar chart": {
           "site combination": "absmax"
@@ -665,43 +686,11 @@ The version of STRING to query. The default setting is `11.5`.
         "node color": {
           "site combination": "absmax"
         }
-      },
-      "module detection": {
-        "change enrichment": {
-          "proteins": {
-            "site combination": "absmax"
-          } 
-        }
-      },
-      "Reactome network": {
-        "union": [
-          {
-            "site combination": "absmax"
-          }
-        ],
-        "intersection": [
-          {
-            "site combination": "absmax"
-          }
-        ]
-      },
-      "Gene Ontology network": {
-        "union": [
-          {
-            "site combination": "absmax"
-          }
-        ],
-        "intersection": [
-          {
-            "site combination": "absmax",
-          }
-        ]
       }
     }
 ]
 ```
 The function used to derive a proteins-specific change from a its individual sites. The default setting is `"absmax"`, corresponding to the largest absolute change. Available settings are `"mean"`, `"median"`, `"max"`, `"absmax"`, `"min"`, `"absmin"`, `"sum"`, `"abssum"` and `null`, such that sites are considered individually.
-
 
 ```json
 [
@@ -713,45 +702,11 @@ The function used to derive a proteins-specific change from a its individual sit
         "node color": {
           "conversion": null
         }
-      },
-      "module detection": {
-        "change enrichment": {
-          "proteins": {
-            "conversion": null
-          },
-          "sites": {
-            "conversion": null
-          }
-        }
-      },
-      "Reactome network": {
-        "union": [
-          {
-            "conversion": null
-          }
-        ],
-        "intersection": [
-          {
-            "conversion": null
-          }
-        ]
-      },
-      "Gene Ontology network": {
-        "union": [
-          {
-            "conversion": null
-          }
-        ],
-        "intersection": [
-          {
-            "conversion": null
-          }
-        ]
       }
     }
 ]
 ```
-The conversion of changes that a combined change range refers to. It defaults to log2-fold change but may be set to `"standard score"` or `"quantile"` with respect to the distribution of a change of a particular modification at a particular time of measurement in the network.
+The conversion of changes that a change range refers to. It defaults to log2-fold change but may be set to `"standard score"` or `"quantile"` with respect to the distribution of a change of a particular modification at a particular time of measurement in the network.
 
 ```json
 [
@@ -764,54 +719,7 @@ The conversion of changes that a combined change range refers to. It defaults to
     }
 ]
 ```
-The range of the bar charts in Cytoscape. The default setting is `[-1.0, 1.0]` if `"conversion"` is not set, `[-2.0, 2.0]` if `"conversion"` is set to `"standard score"` and `[0.025, 0.975]` if `"conversion"` is set to `"quantile"`.
-
-```json
-[
-    {
-      "Cytoscape": {
-        "node color": {
-          "change": [-1.0, 1.0]
-        }
-      },
-      "module detection": {
-        "change enrichment": {
-          "proteins": {
-            "change": [-1.0, 1.0]
-          },
-          "sites": {
-            "change": [-1.0, 1.0]
-          }
-        }
-      },
-      "Reactome network": {
-        "union": [
-          {
-            "change": [-1.0, 1.0]
-          }
-        ],
-        "intersection": [
-          {
-            "change": [-1.0, 1.0]
-          }
-        ]
-      },
-      "Gene Ontology network": {
-        "union": [
-          {
-            "change": [-1.0, 1.0]
-          }
-        ],
-        "intersection": [
-          {
-            "change": [-1.0, 1.0]
-          }
-        ]
-      }
-    }
-]
-```
-The range of combined changes distinguishing proteins by whether the range is exceeded or not. The default setting is `[-1.0, 1.0]` if `"conversion"` is not set, `[-2.0, 2.0]` if `"conversion"` is set to `"standard score"` and `[0.025, 0.975]` if `"conversion"` is set to `"quantile"`.
+The range of the bar charts. The default setting is `[-1.0, 1.0]` if `"conversion"` is not set, `[-2.0, 2.0]` if `"conversion"` is set to `"standard score"` and `[0.025, 0.975]` if `"conversion"` is set to `"quantile"`.
 
 ```json
 [
@@ -824,16 +732,74 @@ The range of combined changes distinguishing proteins by whether the range is ex
 ```
 The function used to derive a combined edge confidence score from scores in IntAct, MINT and STRING as well as 1.0 used for BioGRID and Reactome, respectively for a lack of corresponding score. The combined score is reflected by edge transparency. By default any edge receives a score of 1.0. Available settings are `null`,  `"mean"`, `"median"`, `"max"`, `"min"`, `"sum"`, `"number"`, `"BioGRID"`, `"IntAct"`, `"MINT"`, `"Reactome"`, `"STRING"`.
 
+---
+
+The specification of Gene Ontology enrichment analysis of the protein-protein interaction network.
+
 ```json
 [
     {
-      "module detection": {
-        "edge weight": null
+      "Gene Ontology enrichment": {
+        "test": "hypergeometric"
       }
     }
 ]
 ```
-The function used to derive a combined edge confidence score from scores in IntAct, MINT and STRING as well as 1.0 used for BioGRID and Reactome, respectively for a lack of corresponding scoring. The combined score utilized as edge weight in module detection. By default any edge receives a score of 1.0, corresponding to an unweighted network. Available settings are `null`, `"mean"`, `"median"`, `"max"`, `"min"`, `"sum"`, `"number"`, `"BioGRID"`, `"IntAct"`, `"MINT"`, `"Reactome"`, `"STRING"`.
+The statistical test to assess enrichment. The default setting is `"hypergeometric"`.
+Available settings are `"binomial"` and `"hypergeometric"`.
+
+```json
+[
+    {
+      "Gene Ontology enrichment": {
+        "correction": "Benjamini-Hochberg"
+      }
+    }
+]
+```
+The procedure to adjust p-values for multiple testing. The default setting is `"Benjamini-Hochberg"`.
+Available settings are `"Benjamini-Hochberg"` and `"Bonferroni"`.
+
+```json
+[
+    {
+      "Gene Ontology enrichment": {
+        "p": 1.0
+      }
+    }
+]
+```
+The threshold for corrected p-values. The default setting is `1.0`.
+
+```json
+[
+    {
+      "Gene Ontology enrichment": {
+        "namespaces": [
+          "cellular_component",
+          "molecular_function",
+          "biological_process"
+        ]
+      }
+    }
+]
+```
+The Gene Ontology namespaces to consider. The default setting is `["cellular_component", "molecular_function" "biological_process"]`, corresponding to the entire Gene Ontology.
+
+```json
+[
+    {
+      "Gene Ontology enrichment": {
+        "taxonomy identifier": 9606
+      }
+    }
+]
+```
+The NCBI taxonomy ID of the organism. The default and currently only fully supported setting is `9606`, corresponding to Homo sapiens.
+
+---
+
+The specification of modularization of the protein-protein interaction network.
 
 ```json
 [
@@ -882,9 +848,72 @@ The resolution parameter of modularity optimized by module detection. The defaul
 ```json
 [
     {
-      "Gene Ontology enrichment": {
-        "test": "hypergeometric"
-      },
+      "module detection": {
+        "edge weight": null
+      }
+    }
+]
+```
+The function used to derive a combined edge confidence score from scores in IntAct, MINT and STRING as well as 1.0 used for BioGRID and Reactome, respectively for a lack of corresponding scoring. The combined score utilized as edge weight in module detection. By default any edge receives a score of 1.0, corresponding to an unweighted network. Available settings are `null`, `"mean"`, `"median"`, `"max"`, `"min"`, `"sum"`, `"number"`, `"BioGRID"`, `"IntAct"`, `"MINT"`, `"Reactome"`, `"STRING"`.
+
+---
+
+The specification of modularization of statistical tests of individual modules with respect to Gene Ontology enrichment and the distribution of changes in the protein-protein interaction network.
+
+```json
+[
+    {
+      "module detection": {
+        "change enrichment": {
+          "proteins": {
+            "site combination": "absmax"
+          } 
+        }
+      }
+    }
+]
+```
+The function used to derive a proteins-specific change from a its individual sites. The default setting is `"absmax"`, corresponding to the largest absolute change. Available settings are `"mean"`, `"median"`, `"max"`, `"absmax"`, `"min"`, `"absmin"`, `"sum"`, `"abssum"` and `null`, such that sites are considered individually.
+
+```json
+[
+    {
+      "module detection": {
+        "change enrichment": {
+          "proteins": {
+            "change": [-1.0, 1.0]
+          },
+          "sites": {
+            "change": [-1.0, 1.0]
+          }
+        }
+      }
+    }
+]
+```
+The range of combined changes distinguishing proteins by whether the range is exceeded or not. The default setting is `[-1.0, 1.0]` if `"conversion"` is not set, `[-2.0, 2.0]` if `"conversion"` is set to `"standard score"` and `[0.025, 0.975]` if `"conversion"` is set to `"quantile"`.
+
+```json
+[
+    {
+      "module detection": {
+        "change enrichment": {
+          "proteins": {
+            "conversion": null
+          },
+          "sites": {
+            "conversion": null
+          }
+        }
+      }
+    }
+]
+```
+The conversion of changes that a change range refers to. It defaults to log2-fold change but may be set to `"standard score"` or `"quantile"` with respect to the distribution of a change of a particular modification at a particular time of measurement in the network.
+
+```json
+[
+    {
       "module detection": {
         "Gene Ontology enrichment": {
           "annotation": {
@@ -930,9 +959,6 @@ The statistical test to assess the changes of each module in relation to the ent
 ```json
 [
     {
-      "Gene Ontology enrichment": {
-        "correction": "Benjamini-Hochberg"
-      },
       "module detection": {
         "Gene Ontology enrichment": {
           "annotation": {
@@ -968,9 +994,6 @@ Available settings are `"Benjamini-Hochberg"` and `"Bonferroni"`.
 ```json
 [
     {
-      "Gene Ontology enrichment": {
-        "p": 1.0
-      },
       "module detection": {
         "Gene Ontology enrichment": {
           "annotation": {
@@ -1005,13 +1028,6 @@ The threshold for corrected p-values. The default setting is `1.0`.
 ```json
 [
     {
-      "Gene Ontology enrichment": {
-        "namespaces": [
-          "cellular_component",
-          "molecular_function",
-          "biological_process"
-        ]
-      },
       "module detection": {
         "Gene Ontology enrichment": {
           "annotation": {
@@ -1029,13 +1045,6 @@ The threshold for corrected p-values. The default setting is `1.0`.
             ]
           }
         }
-      },
-      "Gene Ontology network": {
-        "namespaces": [
-            "cellular_component",
-            "molecular_function",
-            "biological_process"
-        ]
       }
     }
 ]
@@ -1045,7 +1054,29 @@ The Gene Ontology namespaces to consider. The default setting is `["cellular_com
 ```json
 [
     {
-      "Reactome network": {
+      "module detection": {
+        "Gene Ontology enrichment": {
+          "annotation": {
+            "taxonomy identifier": 9606
+          },
+          "network": {
+            "taxonomy identifier": 9606
+          }
+        }
+      }
+    }
+]
+```
+The NCBI taxonomy ID of the organism. The default and currently only fully supported setting is `9606`, corresponding to Homo sapiens.
+
+---
+
+The specification of Gene Ontology network assembly from the protein-protein interaction network. A Gene Ontology network is composed of applicable Gene Ontolgy terms and their relations. Its node annotation reflects the representation of Gene Ontology terms by the protein-protein interaction network.
+
+```json
+[
+    {
+      "Gene Ontology network": {
         "union": [
           {
             "time": null
@@ -1056,8 +1087,191 @@ The Gene Ontology namespaces to consider. The default setting is `["cellular_com
             "time": null
           }
         ]
-      },
+      }
+    }
+]
+```
+The time of measurement considered to determine a subset of proteins.
+
+```json
+[
+    {   
       "Gene Ontology network": {
+        "union": [
+          {
+            "post-translational modification": null
+          }
+        ],
+        "intersection": [
+          {
+            "post-translational modification": null
+          }
+        ]
+      }
+    }
+]
+```
+The modification considered to determine a subset of proteins.
+
+```json
+[
+    {
+      "Gene Ontology network": {
+        "union": [
+          {
+            "site combination": "absmax"
+          }
+        ],
+        "intersection": [
+          {
+            "site combination": "absmax",
+          }
+        ]
+      }
+    }
+]
+```
+The function used to derive a proteins-specific change from a its individual sites. The default setting is `"absmax"`, corresponding to the largest absolute change. Available settings are `"mean"`, `"median"`, `"max"`, `"absmax"`, `"min"`, `"absmin"`, `"sum"`, `"abssum"` and `null`, such that sites are considered individually.
+
+```json
+[
+    {
+      "Gene Ontology network": {
+        "union": [
+          {
+            "conversion": null
+          }
+        ],
+        "intersection": [
+          {
+            "conversion": null
+          }
+        ]
+      }
+    }
+]
+```
+The conversion of changes that a change range refers to. It defaults to log2-fold change but may be set to `"standard score"` or `"quantile"` with respect to the distribution of a change of a particular modification at a particular time of measurement in the network.
+
+```json
+[
+    {
+      "Gene Ontology network": {
+        "union": [
+          {
+            "change": [-1.0, 1.0]
+          }
+        ],
+        "intersection": [
+          {
+            "change": [-1.0, 1.0]
+          }
+        ]
+      }
+    }
+]
+```
+The range of combined changes distinguishing proteins by whether the range is exceeded or not. The default setting is `[-1.0, 1.0]` if `"conversion"` is not set, `[-2.0, 2.0]` if `"conversion"` is set to `"standard score"` and `[0.025, 0.975]` if `"conversion"` is set to `"quantile"`.
+
+```json
+[
+    {
+      "Gene Ontology network": {
+        "network": {
+          "test": "hypergeometric"
+        },
+        "union": {
+          "test": "hypergeometric"
+        },
+        "intersection": {
+          "test": "hypergeometric"
+        }
+      }
+    }
+]
+```
+The statistical test to assess enrichment. The default setting is `"hypergeometric"`.
+Available settings are `"binomial"` and `"hypergeometric"`.
+
+```json
+[
+    {
+      "Gene Ontology network": {
+        "network": {
+          "correction": "Benjamini-Hochberg"
+        },
+        "union": {
+          "correction": "Benjamini-Hochberg"
+        },
+        "intersection": {
+          "correction": "Benjamini-Hochberg"
+        }
+      }
+    }
+]
+```
+The procedure to adjust p-values for multiple testing. The default setting is `"Benjamini-Hochberg"`.
+Available settings are `"Benjamini-Hochberg"` and `"Bonferroni"`.
+
+```json
+[
+    {
+      "Gene Ontology network": {
+        "network": {
+          "namespaces": [
+              "cellular_component",
+              "molecular_function",
+              "biological_process"
+          ]
+        },
+        "union": {
+          "namespaces": [
+            "cellular_component",
+            "molecular_function",
+            "biological_process"
+          ]
+        },
+        "intersection": {
+          "namespaces": [
+            "cellular_component",
+            "molecular_function",
+            "biological_process"
+          ]
+        }
+      }
+    }
+]
+```
+The Gene Ontology namespaces to consider. The default setting is `["cellular_component", "molecular_function" "biological_process"]`, corresponding to the entire Gene Ontology.
+
+```json
+[
+    {
+      "Gene Ontology network": {
+        "network": {
+          "taxonomy identifier": 9606
+        },
+        "union": {
+          "taxonomy identifier": 9606
+        },
+        "intersection": {
+          "taxonomy identifier": 9606
+        }
+      }
+    }
+]
+```
+
+The NCBI taxonomy ID of the organism. The default and currently only fully supported setting is `9606`, corresponding to Homo sapiens.
+
+---
+
+The specification of Reactome network assembly from the protein-protein interaction network. A Reactome network is composed of applicable Reactome pathways and their relations. Its annotation reflects the representation of Reactome pathways by the protein-protein interaction network.
+
+```json
+[
+    {
+      "Reactome network": {
         "union": [
           {
             "time": null
@@ -1088,23 +1302,111 @@ The time of measurement considered to determine a subset of proteins.
             "post-translational modification": null
           }
         ]
-      },
-      "Gene Ontology network": {
+      }
+    }
+]
+```
+The modification considered to determine a subset of proteins.
+
+```json
+[
+    {
+      "Reactome network": {
         "union": [
           {
-            "post-translational modification": null
+            "site combination": "absmax"
           }
         ],
         "intersection": [
           {
-            "post-translational modification": null
+            "site combination": "absmax"
           }
         ]
       }
     }
 ]
 ```
-The modification considered to determine a subset of proteins.
+The function used to derive a proteins-specific change from a its individual sites. The default setting is `"absmax"`, corresponding to the largest absolute change. Available settings are `"mean"`, `"median"`, `"max"`, `"absmax"`, `"min"`, `"absmin"`, `"sum"`, `"abssum"` and `null`, such that sites are considered individually.
+
+```json
+[
+    {
+      "Reactome network": {
+        "union": [
+          {
+            "conversion": null
+          }
+        ],
+        "intersection": [
+          {
+            "conversion": null
+          }
+        ]
+      }
+    }
+]
+```
+The conversion of changes that a change range refers to. It defaults to log2-fold change but may be set to `"standard score"` or `"quantile"` with respect to the distribution of a change of a particular modification at a particular time of measurement in the network.
+
+```json
+[
+    {
+      "Reactome network": {
+        "union": [
+          {
+            "change": [-1.0, 1.0]
+          }
+        ],
+        "intersection": [
+          {
+            "change": [-1.0, 1.0]
+          }
+        ]
+      }
+    }
+]
+```
+The range of combined changes distinguishing proteins by whether the range is exceeded or not. The default setting is `[-1.0, 1.0]` if `"conversion"` is not set, `[-2.0, 2.0]` if `"conversion"` is set to `"standard score"` and `[0.025, 0.975]` if `"conversion"` is set to `"quantile"`.
+
+```json
+[
+    {
+      "Reactome network": {
+        "network": {
+          "test": "hypergeometric"
+        },
+        "union": {
+          "test": "hypergeometric"
+        },
+        "intersection": {
+          "test": "hypergeometric"
+        }
+      }
+    }
+]
+```
+The statistical test to assess enrichment. The default setting is `"hypergeometric"`.
+Available settings are `"binomial"` and `"hypergeometric"`.
+
+```json
+[
+    {
+      "Reactome network": {
+        "network": {
+          "correction": "Benjamini-Hochberg"
+        },
+        "union": {
+          "correction": "Benjamini-Hochberg"
+        },
+        "intersection": {
+          "correction": "Benjamini-Hochberg"
+        }
+      }
+    }
+]
+```
+The procedure to adjust p-values for multiple testing. The default setting is `"Benjamini-Hochberg"`.
+Available settings are `"Benjamini-Hochberg"` and `"Bonferroni"`.
 
 ---
 

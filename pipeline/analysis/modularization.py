@@ -29,7 +29,7 @@ def clauset_newman_moore(network: nx.Graph,
     """
     A = nx.linalg.graphmatrix.adjacency_matrix(network, weight=weight)
     n = network.number_of_nodes()
-    k = [A[i].sum() for i in range(n)]
+    k = [sum(A[i, l] for l in range(n)) for i in range(n)]
     m = sum(k) / 2.0
     a = [k[i] / (2.0 * m) for i in range(n)]
 
@@ -155,7 +155,7 @@ def louvain(network: nx.Graph,
 
         A = nx.linalg.graphmatrix.adjacency_matrix(network, weight=weight)
         n = network.number_of_nodes()
-        k = [A[i].sum() for i in range(n)]
+        k = [sum(A[i, l] for l in range(n)) for i in range(n)]
         m = sum(k) / 2.0
 
         sigma_tot = [A[ci].sum() for ci in range(n)]
@@ -172,7 +172,7 @@ def louvain(network: nx.Graph,
             modularity_optimization = False
 
             for i in range(n):
-                sigma_tot[community[i]] -= A[i].sum()
+                sigma_tot[community[i]] -= sum(A[i, l] for l in range(n))
                 sigma_in[community[i]] -= sum(
                     [A[i, l] for l in range(n) if community[l] == community[i]])
 
@@ -195,9 +195,9 @@ def louvain(network: nx.Graph,
                               (sigma_tot[community[i]] /
                                (2 * m))**2 - resolution * (k[i] / (2 * m))**2))
 
-                sigma_tot[community[i]] += A[i].sum()
+                sigma_tot[community[i]] += sum(A[i, l] for l in range(n))
                 sigma_in[community[i]] += sum(
-                    [A[i, l] for l in range(n) if community[l] == community[i]])
+                    A[i, l] for l in range(n) if community[l] == community[i])
 
                 k_in[i, community[i]] += A[i, i]
 
@@ -208,19 +208,19 @@ def louvain(network: nx.Graph,
                         modularity_optimization = True
                         community_aggregation = True
 
-                        sigma_tot[community[i]] -= A[i].sum()
-                        sigma_tot[community[max_j]] += A[i].sum()
+                        sigma_tot[community[i]] -= sum(
+                            A[i, l] for l in range(n))
+                        sigma_tot[community[max_j]] += sum(
+                            A[i, l] for l in range(n))
 
-                        sigma_in[community[i]] -= sum([
+                        sigma_in[community[i]] -= sum(
                             A[i, l]
                             for l in range(n)
-                            if community[l] == community[i]
-                        ])
-                        sigma_in[community[max_j]] += sum([
+                            if community[l] == community[i])
+                        sigma_in[community[max_j]] += sum(
                             A[i, l]
                             for l in range(n)
-                            if community[l] == community[max_j]
-                        ])
+                            if community[l] == community[max_j])
 
                         for l in range(n):
                             k_in[l, community[i]] -= A[l, i]

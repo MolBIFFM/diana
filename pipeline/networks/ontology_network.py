@@ -58,8 +58,7 @@ def get_ontology_network(protein_protein_interaction_network: nx.Graph,
                 annotation[primary_term] = set()
             annotation[primary_term].add(protein)
 
-    network.remove_nodes_from(
-        term for term in network if term not in annotation)
+    network = nx.induced_subgraph(network, annotation)
 
     annotated_proteins = set.union(*annotation.values())
 
@@ -99,16 +98,15 @@ def get_term_sizes(network: nx.Graph) -> dict[str, int]:
     return {term: network.nodes[term]["annotated proteins"] for term in network}
 
 
-def export(network: nx.Graph, basename: str, suffix: str = "") -> None:
+def export(network: nx.Graph, basename: str) -> None:
     """
     Exports the Gene Ontology network.
 
     Args:
         network: The Gene Ontology network.
         basename: The base file name.
-        suffix: An addition to the base file name.
     """
     nx.write_graphml_xml(network,
-                         "{0}{1}.graphml".format(basename, suffix),
+                         "{}.graphml".format(basename),
                          named_key_ids=True,
                          infer_numeric_types=True)
