@@ -954,7 +954,7 @@ Available settings are `"binomial"` and `"hypergeometric"`.
     }
 ]
 ```
-The statistical test to assess the changes of each module in relation to the entire network. The default and currently only available setting is `"Wilcoxon"`, the Wilcoxon rank sum test.
+The statistical test to assess the change location of each module in relation to the entire network. The default and setting is `"Wilcoxon"`, the Wilcoxon rank-sum test. Available settings are `"Welch"` and `"Wilcoxon"`.
 
 ```json
 [

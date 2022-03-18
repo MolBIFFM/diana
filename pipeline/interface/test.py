@@ -10,5 +10,6 @@ ENRICHMENT_TEST: dict[str, Callable[[int, int, int, int], float]] = {
 
 LOCATION_TEST: dict[str, Callable[[Collection[float], Collection[float]],
                                   float]] = {
-                                      "Wilcoxon": test.wilcoxon
+                                      "Wilcoxon": test.wilcoxon,
+                                      "Welch": test.welch
                                   }

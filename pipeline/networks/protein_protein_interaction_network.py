@@ -1104,7 +1104,7 @@ def get_changes(
                     site_combination(
                         math.log2(
                             site_combination(
-                                math.pow(2.0, change) for change in changes))))
+                                math.pow(2.0, site) for site in sites))))
             else:
                 changes.extend(sites)
 
