@@ -1101,10 +1101,9 @@ def get_changes(
         if sites:
             if site_combination:
                 changes.append(
-                    site_combination(
-                        math.log2(
-                            site_combination(
-                                math.pow(2.0, site) for site in sites))))
+                    math.log2(
+                        site_combination(
+                            math.pow(2.0, site) for site in sites)))
             else:
                 changes.extend(sites)
 
