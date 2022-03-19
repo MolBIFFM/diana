@@ -392,9 +392,8 @@ def process_workflow(configuration: dict,
                 configuration["Cytoscape"].get("node color",
                                                {}).get("site combination",
                                                        "absmax")],
-            changes=default.CHANGE_RANGE[conversion.CHANGE_CONVERSION[
-                configuration["Cytoscape"].get("node color",
-                                               {}).get("conversion")]],
+            changes=default.CHANGE_RANGE[configuration["Cytoscape"].get(
+                "node color", {}).get("conversion")],
             convert_change=conversion.CHANGE_CONVERSION[
                 configuration["Cytoscape"].get("node color",
                                                {}).get("conversion")],
