@@ -69,8 +69,7 @@ def get_pathway_network(protein_protein_interaction_network: nx.Graph,
     })
 
     for pathway in network:
-        network.nodes[pathway]["pathway proteins"] = len(pathways[pathway])
-        network.nodes[pathway]["network proteins"] = intersection[pathway]
+        network.nodes[pathway]["proteins"] = intersection[pathway]
         network.nodes[pathway]["p-value"] = p_value[pathway]
 
     return network

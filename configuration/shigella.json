@@ -4,23 +4,19 @@
         {
           "time": 15,
           "post-translational modification": "P",
-          "sites": 5,
           "file": "data/shigella/phosphorylation/mcp.M113.029918-2.xls",
           "sheet": "wt15min",
-          "header": 1,
           "accession column": "protein",
           "accession format": "sp\\|(.+?)\\|[A-Z0-9]+_HUMAN",
           "position column": "phosphosite",
           "position format": "(?:^|,)(\\d+)_[STY]",
           "replicate columns": [
             "wt15minvscontrolratio"
-          ],
-          "logarithm": 10
+          ]
         },
         {
           "time": 30,
           "post-translational modification": "P",
-          "sites": 5,
           "file": "data/shigella/phosphorylation/mcp.M113.029918-2.xls",
           "sheet": "wt30min",
           "accession column": "protein",
@@ -29,13 +25,11 @@
           "position format": "(?:^|,)(\\d+)_[STY]",
           "replicate columns": [
             "wt30minvscontrolratio"
-          ],
-          "logarithm": 10
+          ]
         },
         {
           "time": 60,
           "post-translational modification": "P",
-          "sites": 5,
           "file": "data/shigella/phosphorylation/mcp.M113.029918-2.xls",
           "sheet": "wt60min",
           "accession column": "protein",
@@ -44,13 +38,11 @@
           "position format": "(?:^|,)(\\d+)_[STY]",
           "replicate columns": [
             "wt60minvscontrolratio"
-          ],
-          "logarithm": 10
+          ]
         },
         {
           "time": 120,
           "post-translational modification": "P",
-          "sites": 5,
           "file": "data/shigella/phosphorylation/mcp.M113.029918-2.xls",
           "sheet": "wt120min",
           "accession column": "protein",
@@ -59,8 +51,7 @@
           "position format": "(?:^|,)(\\d+)_[STY]",
           "replicate columns": [
             "wt120minvscontrolratio"
-          ],
-          "logarithm": 10
+          ]
         }
       ],
       "protein-protein interactions": {

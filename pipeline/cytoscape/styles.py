@@ -304,11 +304,15 @@ def get_pathway_network_style(network: nx.Graph) -> ET.ElementTree:
                                     pathway_network.get_pathway_sizes(
                                         network).values())),
                             "equalValue":
-                                values["equalValue"],
+                                values["equalValue"].format(size=35 + max(
+                                    pathway_network.get_pathway_sizes(
+                                        network).values())),
                             "greaterValue":
                                 values["greaterValue"],
                             "lesserValue":
-                                values["lesserValue"]
+                                values["lesserValue"].format(size=35 + max(
+                                    pathway_network.get_pathway_sizes(
+                                        network).values()))
                         },
                     )
 
@@ -424,11 +428,15 @@ def get_ontology_network_style(network: nx.Graph) -> ET.ElementTree:
                                     ontology_network.get_term_sizes(
                                         network).values())),
                             "equalValue":
-                                values["equalValue"],
+                                values["equalValue"].format(max=35 + max(
+                                    ontology_network.get_term_sizes(
+                                        network).values())),
                             "greaterValue":
                                 values["greaterValue"],
                             "lesserValue":
-                                values["lesserValue"]
+                                values["lesserValue"].format(max=35 + max(
+                                    ontology_network.get_term_sizes(
+                                        network).values()))
                         },
                     )
 

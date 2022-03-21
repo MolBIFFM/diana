@@ -360,7 +360,7 @@ COMPONENTS = {
             "NODE_SIZE": {
                 "default": "35.0",
                 "continuousMapping": {
-                    "attributeName": "annotated proteins",
+                    "attributeName": "proteins",
                     "attributeType": "float",
                     "continuousMappingPoint": {
                         "1.0": {
@@ -369,9 +369,9 @@ COMPONENTS = {
                             "lesserValue": "1.0"
                         },
                         "{max}": {
-                            "equalValue": "175.0",
+                            "equalValue": "{size}",
                             "greaterValue": "1.0",
-                            "lesserValue": "175.0"
+                            "lesserValue": "{size}"
                         },
                     }
                 }

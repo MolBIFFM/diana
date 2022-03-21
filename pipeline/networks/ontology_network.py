@@ -77,8 +77,7 @@ def get_ontology_network(protein_protein_interaction_network: nx.Graph,
     })
 
     for term in network:
-        network.nodes[term]["annotated proteins"] = len(annotation[term])
-        network.nodes[term]["network proteins"] = intersection[term]
+        network.nodes[term]["proteins"] = intersection[term]
         network.nodes[term]["p-value"] = p_value[term]
 
     return network

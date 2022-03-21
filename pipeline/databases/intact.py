@@ -10,7 +10,7 @@ from databases import uniprot
 def get_protein_protein_interactions(
     interaction_detection_methods: Optional[Container[str]] = None,
     interaction_types: Optional[Container[str]] = None,
-    mi_score: float = 0.0,
+    psi_mi_score: float = 0.0,
     taxonomy_identifier: int = 9606
 ) -> Generator[tuple[str, str, float], None, None]:
     """
@@ -21,7 +21,7 @@ def get_protein_protein_interactions(
             detection method. If none are specified, any is accepted.
         interaction_types: The accepted PSI-MI terms for interaction type.
             If none are specified, any is accepted.
-        mi_score: The PSI-MI score threshold.
+        psi_mi_score: The PSI-MI score threshold.
         taxonomy_identifier: The taxonomy identifier.
 
     Yields:
@@ -56,7 +56,7 @@ def get_protein_protein_interactions(
                  row["Interaction type(s)"], "psi-mi", interaction_types)) and
             (score := mitab.get_identifiers_from_namespace(
                 row["Confidence value(s)"], "intact-miscore")) and
-                float(score[0]) >= mi_score):
+                float(score[0]) >= psi_mi_score):
             for interactor_a in mitab.get_identifiers_from_namespace(
                     row["#ID(s) interactor A"],
                     "uniprotkb") + mitab.get_identifiers_from_namespace(

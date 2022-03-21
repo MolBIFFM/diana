@@ -251,13 +251,13 @@ A function to combine individual replicates into a single change. The default se
     {
       "proteins": [
         {
-          "logarithm": 0
+          "logarithm": null
         }
       ]
     }
 ]
 ```
-The base of the logarithm that changes are expressed as. By default, ratios are assumed.
+The base of the logarithm that changes are expressed as. By default, ratios are assumed. Available settings are `null`, `2` and `10`.
 
 ```json
 [
@@ -374,10 +374,10 @@ A list of accepted PSI-MI terms interaction types. The default setting is `[]`, 
     {
       "protein-protein interactions": {
         "IntAct": {
-          "MI score": []
+          "score": []
         },
         "MINT": {
-          "MI score": []
+          "score": []
         }
       }
     }
@@ -416,7 +416,7 @@ A list of accepted interaction type annotations. The default setting is `[]`, co
     {
       "protein-protein interactions": {
         "STRING": {
-          "neighborhood": 0.0
+          "neighborhood score": 0.0
         }
       }
     }
@@ -429,7 +429,7 @@ The STRING gene neighborhood score threshold. The default setting is `0.0`, corr
     {
       "protein-protein interactions": {
         "STRING": {
-          "neighborhood transferred": 0.0
+          "neighborhood transferred score": 0.0
         }
       }
     }
@@ -442,7 +442,7 @@ The STRING transferred gene neighborhood score threshold. The default setting is
     {
       "protein-protein interactions": {
         "STRING": {
-          "fusion": 0.0
+          "fusion score": 0.0
         }
       }
     }
@@ -455,7 +455,7 @@ The STRING gene fusion score threshold. The default setting is `0.0`, correspond
     {
       "protein-protein interactions": {
         "STRING": {
-          "cooccurrence": 0.0
+          "cooccurrence score": 0.0
         }
       }
     }
@@ -468,7 +468,7 @@ The STRING gene coooccurrence score threshold. The default setting is `0.0`, cor
     {
       "protein-protein interactions": {
         "STRING": {
-          "coexpression": 0.0
+          "coexpression score": 0.0
         }
       }
     }
@@ -481,7 +481,7 @@ The STRING gene coexpression score threshold. The default setting is `0.0`, corr
     {
       "protein-protein interactions": {
         "STRING": {
-          "coexpression transferred": 0.0
+          "coexpression transferred score": 0.0
         }
       }
     }
@@ -494,7 +494,7 @@ The STRING transferred gene coexpression score threshold. The default setting is
     {
       "protein-protein interactions": {
         "STRING": {
-          "experiments": 0.0
+          "experiments score": 0.0
         }
       }
     }
@@ -507,7 +507,7 @@ The STRING experiments score threshold. The default setting is `0.0`, correspond
     {
       "protein-protein interactions": {
         "STRING": {
-          "experiments transferred": 0.0
+          "experiments transferred score": 0.0
         }
       }
     }
@@ -520,7 +520,7 @@ The STRING transferred experiments score threshold. The default setting is `0.0`
     {
       "protein-protein interactions": {
         "STRING": {
-          "database": 0.0
+          "database score": 0.0
         }
       }
     }
@@ -533,7 +533,7 @@ The STRING database score threshold. The default setting is `0.0`, corresponding
     {
       "protein-protein interactions": {
         "STRING": {
-          "database transferred": 0.0
+          "database transferred score": 0.0
         }
       }
     }
@@ -546,7 +546,7 @@ The STRING transferred database score threshold. The default setting is `0.0`, c
     {
       "protein-protein interactions": {
         "STRING": {
-          "textmining": 0.0
+          "textmining score": 0.0
         }
       }
     }
@@ -559,7 +559,7 @@ The STRING  textmining score threshold. The default setting is `0.0`, correspond
     {
       "protein-protein interactions": {
         "STRING": {
-          "textmining transferred": 0.0
+          "textmining transferred score": 0.0
         }
       }
     }
@@ -572,7 +572,7 @@ The STRING transferred textmining score threshold. The default setting is `0.0`,
     {
       "protein-protein interactions": {
         "STRING": {
-          "combined": 0.0
+          "combined score": 0.0
         }
       }
     }
@@ -858,7 +858,7 @@ The function used to derive a combined edge confidence score from scores in IntA
 
 ---
 
-The specification of modularization of statistical tests of individual modules with respect to Gene Ontology enrichment and the distribution of changes in the protein-protein interaction network.
+The specification of modularization of statistical tests of individual modules with respect to Gene Ontology enrichment and the distribution of changes in the protein-protein interaction network. The tests act as filter on the exported modules of the protein-protein interaction network.
 
 ```json
 [

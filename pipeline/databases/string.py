@@ -20,7 +20,7 @@ def get_protein_protein_interactions(
         database_transferred: float = 0.0,
         textmining: float = 0.0,
         textmining_transferred: float = 0.0,
-        combined_score: float = 0.0,
+        combined: float = 0.0,
         physical: bool = False,
         taxonomy_identifier: int = 9606,
         version: float = 11.5) -> Generator[tuple[str, str, float], None, None]:
@@ -42,7 +42,7 @@ def get_protein_protein_interactions(
         database_transferred: The transferred database score threshold.
         textmining: The normal textmining score threshold.
         textmining_transferred: The transferred textmining score threshold.
-        combined_score: The combined score threshold.
+        combined: The combined score threshold.
         physical: If True, yield only physical interactions.
         taxonomy_identifier: The taxonomy identifier.
         version: The version of the STRING database.
@@ -81,7 +81,7 @@ def get_protein_protein_interactions(
             "textmining_transferred": textmining_transferred,
         }.items() if threshold
     }
-    thresholds["combined_score"] = combined_score
+    thresholds["combined"] = combined
 
     primary_accession = uniprot.get_primary_accession(taxonomy_identifier)
 
@@ -104,4 +104,4 @@ def get_protein_protein_interactions(
                         for primary_interactor_b in primary_accession.get(
                                 interactor_b, {interactor_b}):
                             yield (primary_interactor_a, primary_interactor_b,
-                                   row["combined_score"] / 1000)
+                                   row["combined"] / 1000)

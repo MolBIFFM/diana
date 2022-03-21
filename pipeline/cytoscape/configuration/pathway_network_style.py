@@ -351,18 +351,18 @@ COMPONENTS = {
             "NODE_SIZE": {
                 "default": "35.0",
                 "continuousMapping": {
-                    "attributeName": "pathway proteins",
+                    "attributeName": "proteins",
                     "attributeType": "float",
                     "continuousMappingPoint": {
-                        "1.0": {
+                        "0.0": {
                             "equalValue": "35.0",
                             "greaterValue": "35.0",
                             "lesserValue": "1.0"
                         },
                         "{max}": {
-                            "equalValue": "175.0",
+                            "equalValue": "{size}",
                             "greaterValue": "1.0",
-                            "lesserValue": "175.0"
+                            "lesserValue": "{size}"
                         },
                     }
                 }

@@ -139,8 +139,8 @@ def process_workflow(configuration: dict,
                     interaction_types=configuration[
                         "protein-protein interactions"]["IntAct"].get(
                             "interaction types", []),
-                    mi_score=configuration["protein-protein interactions"]
-                    ["IntAct"].get("MI score", 0.0),
+                    psi_mi_score=configuration["protein-protein interactions"]
+                    ["IntAct"].get("score", 0.0),
                     taxonomy_identifier=configuration[
                         "protein-protein interactions"]["IntAct"].get(
                             "taxonomy identifier", 9606),
@@ -158,8 +158,8 @@ def process_workflow(configuration: dict,
                     interaction_types=configuration[
                         "protein-protein interactions"]["MINT"].get(
                             "interaction types", []),
-                    mi_score=configuration["protein-protein interactions"]
-                    ["MINT"].get("MI score", 0.0),
+                    psi_mi_score=configuration["protein-protein interactions"]
+                    ["MINT"].get("score", 0.0),
                     taxonomy_identifier=configuration[
                         "protein-protein interactions"]["MINT"].get(
                             "taxonomy identifier", 9606),
@@ -189,37 +189,37 @@ def process_workflow(configuration: dict,
                 protein_protein_interaction_network.add_proteins_from_string(
                     network,
                     neighborhood=configuration["protein-protein interactions"]
-                    ["STRING"].get("neighborhood", 0.0),
+                    ["STRING"].get("neighborhood score", 0.0),
                     neighborhood_transferred=configuration[
                         "protein-protein interactions"]["STRING"].get(
-                            "neighborhood transferred", 0.0),
+                            "neighborhood transferred score", 0.0),
                     fusion=configuration["protein-protein interactions"]
-                    ["STRING"].get("fusion", 0.0),
+                    ["STRING"].get("fusion score", 0.0),
                     cooccurence=configuration["protein-protein interactions"]
-                    ["STRING"].get("cooccurence", 0.0),
+                    ["STRING"].get("cooccurence score", 0.0),
                     homology=configuration["protein-protein interactions"]
-                    ["STRING"].get("homology", 0.0),
+                    ["STRING"].get("homology score", 0.0),
                     coexpression=configuration["protein-protein interactions"]
-                    ["STRING"].get("coexpression", 0.0),
+                    ["STRING"].get("coexpression score", 0.0),
                     coexpression_transferred=configuration[
                         "protein-protein interactions"]["STRING"].get(
-                            "coexpression transferred", 0.0),
+                            "coexpression transferred score", 0.0),
                     experiments=configuration["protein-protein interactions"]
-                    ["STRING"].get("experiments", 0.0),
+                    ["STRING"].get("experiments score", 0.0),
                     experiments_transferred=configuration[
                         "protein-protein interactions"]["STRING"].get(
-                            "experiments transferred", 0.0),
+                            "experiments transferred score", 0.0),
                     database=configuration["protein-protein interactions"]
-                    ["STRING"].get("database", 0.0),
+                    ["STRING"].get("database score", 0.0),
                     database_transferred=configuration[
                         "protein-protein interactions"]["STRING"].get(
-                            "database transferred", 0.0),
+                            "database transferred score", 0.0),
                     textmining=configuration["protein-protein interactions"]
-                    ["STRING"].get("textmining", 0.0),
+                    ["STRING"].get("textmining score", 0.0),
                     textmining_transferred=configuration[
                         "protein-protein interactions"]["STRING"].get(
-                            "textmining transferred", 0.0),
-                    combined_score=configuration["protein-protein interactions"]
+                            "textmining transferred score", 0.0),
+                    combined=configuration["protein-protein interactions"]
                     ["STRING"].get("combined score", 0.0),
                     physical=configuration["protein-protein interactions"]
                     ["STRING"].get("physical", False),
@@ -276,8 +276,8 @@ def process_workflow(configuration: dict,
                         "interaction detection methods", []),
                 interaction_types=configuration["protein-protein interactions"]
                 ["IntAct"].get("interaction types", []),
-                mi_score=configuration["protein-protein interactions"]
-                ["IntAct"].get("MI score", 0.0),
+                psi_mi_score=configuration["protein-protein interactions"]
+                ["IntAct"].get("score", 0.0),
                 taxonomy_identifier=configuration[
                     "protein-protein interactions"]["IntAct"].get(
                         "taxonomy identifier", 9606),
@@ -291,8 +291,8 @@ def process_workflow(configuration: dict,
                         "interaction detection methods", []),
                 interaction_types=configuration["protein-protein interactions"]
                 ["MINT"].get("interaction types", []),
-                mi_score=configuration["protein-protein interactions"]
-                ["MINT"].get("MI score", 0.0),
+                psi_mi_score=configuration["protein-protein interactions"]
+                ["MINT"].get("score", 0.0),
                 taxonomy_identifier=configuration[
                     "protein-protein interactions"]["MINT"].get(
                         "taxonomy identifier", 9606),
@@ -315,37 +315,37 @@ def process_workflow(configuration: dict,
             protein_protein_interaction_network.add_protein_protein_interactions_from_string(
                 network,
                 neighborhood=configuration["protein-protein interactions"]
-                ["STRING"].get("neighborhood", 0.0),
+                ["STRING"].get("neighborhood score", 0.0),
                 neighborhood_transferred=configuration[
                     "protein-protein interactions"]["STRING"].get(
-                        "neighborhood transferred", 0.0),
+                        "neighborhood transferred score", 0.0),
                 fusion=configuration["protein-protein interactions"]
-                ["STRING"].get("fusion", 0.0),
+                ["STRING"].get("fusion score", 0.0),
                 cooccurence=configuration["protein-protein interactions"]
-                ["STRING"].get("cooccurence", 0.0),
+                ["STRING"].get("cooccurence score", 0.0),
                 homology=configuration["protein-protein interactions"]
-                ["STRING"].get("homology", 0.0),
+                ["STRING"].get("homology score", 0.0),
                 coexpression=configuration["protein-protein interactions"]
-                ["STRING"].get("coexpression", 0.0),
+                ["STRING"].get("coexpression score", 0.0),
                 coexpression_transferred=configuration[
                     "protein-protein interactions"]["STRING"].get(
-                        "coexpression transferred", 0.0),
+                        "coexpression transferred score", 0.0),
                 experiments=configuration["protein-protein interactions"]
-                ["STRING"].get("experiments", 0.0),
+                ["STRING"].get("experiments score", 0.0),
                 experiments_transferred=configuration[
                     "protein-protein interactions"]["STRING"].get(
-                        "experiments transferred", 0.0),
+                        "experiments transferred score", 0.0),
                 database=configuration["protein-protein interactions"]
-                ["STRING"].get("database", 0.0),
+                ["STRING"].get("database score", 0.0),
                 database_transferred=configuration[
                     "protein-protein interactions"]["STRING"].get(
-                        "database transferred", 0.0),
+                        "database transferred score", 0.0),
                 textmining=configuration["protein-protein interactions"]
-                ["STRING"].get("textmining", 0.0),
+                ["STRING"].get("textmining score", 0.0),
                 textmining_transferred=configuration[
                     "protein-protein interactions"]["STRING"].get(
-                        "textmining transferred", 0.0),
-                combined_score=configuration["protein-protein interactions"]
+                        "textmining transferred score", 0.0),
+                combined=configuration["protein-protein interactions"]
                 ["STRING"].get("combined score", 0.0),
                 physical=configuration["protein-protein interactions"]
                 ["STRING"].get("physical", False),

@@ -660,7 +660,7 @@ def add_proteins_from_intact(network: nx.Graph,
                              interaction_detection_methods: Optional[
                                  Container[str]] = None,
                              interaction_types: Optional[Container[str]] = None,
-                             mi_score: float = 0.0,
+                             psi_mi_score: float = 0.0,
                              taxonomy_identifier: int = 9606) -> None:
     """
     Add proteins interacting with proteins in a protein-protein interaction
@@ -672,12 +672,12 @@ def add_proteins_from_intact(network: nx.Graph,
             detection method. If none are specified, any is accepted.
         interaction_types: The accepted PSI-MI terms for interaction type. If
             none are specified, any is accepted.
-        mi_score: The PSI-MI score threshold.
+        psi_mi_score: The PSI-MI score threshold.
         taxonomy_identifier: The taxonomy identifier.
     """
     nodes_to_add = set()
     for interactor_a, interactor_b, _ in intact.get_protein_protein_interactions(
-            interaction_detection_methods, interaction_types, mi_score,
+            interaction_detection_methods, interaction_types, psi_mi_score,
             taxonomy_identifier):
         if (interactor_a in network and interactor_b not in network):
             nodes_to_add.add(interactor_b)
@@ -692,7 +692,7 @@ def add_protein_protein_interactions_from_intact(
         network: nx.Graph,
         interaction_detection_methods: Optional[Container[str]] = None,
         interaction_types: Optional[Container[str]] = None,
-        mi_score: float = 0.0,
+        psi_mi_score: float = 0.0,
         taxonomy_identifier: int = 9606) -> None:
     """
     Adds protein-protein interactions from IntAct to a protein-protein
@@ -704,11 +704,11 @@ def add_protein_protein_interactions_from_intact(
             detection method. If none are specified, any is accepted.
         interaction_types: The accepted PSI-MI terms for interaction type.
             If none are specified, any is accepted.
-        mi_score: The PSI-MI score threshold.
+        psi_mi_score: The PSI-MI score threshold.
         taxonomy_identifier: The taxonomy identifier.
     """
     for interactor_a, interactor_b, score in intact.get_protein_protein_interactions(
-            interaction_detection_methods, interaction_types, mi_score,
+            interaction_detection_methods, interaction_types, psi_mi_score,
             taxonomy_identifier):
         if (interactor_a in network and interactor_b in network and
                 interactor_a != interactor_b):
@@ -725,7 +725,7 @@ def add_proteins_from_mint(network: nx.Graph,
                            interaction_detection_methods: Optional[
                                Container[str]] = None,
                            interaction_types: Optional[Container[str]] = None,
-                           mi_score: float = 0.0,
+                           psi_mi_score: float = 0.0,
                            taxonomy_identifier: int = 9606) -> None:
     """
     Add proteins interacting with proteins in a protein-protein interaction
@@ -737,12 +737,12 @@ def add_proteins_from_mint(network: nx.Graph,
             detection method. If none are specified, any is accepted.
         interaction_types: The accepted PSI-MI terms for interaction type.
             If none are specified, any is accepted.
-        mi_score: The PSI-MI score threshold.
+        psi_mi_score: The PSI-MI score threshold.
         taxonomy_identifier: The taxonomy identifier.
     """
     nodes_to_add = set()
     for interactor_a, interactor_b, _ in mint.get_protein_protein_interactions(
-            interaction_detection_methods, interaction_types, mi_score,
+            interaction_detection_methods, interaction_types, psi_mi_score,
             taxonomy_identifier):
         if (interactor_a in network and interactor_b not in network):
             nodes_to_add.add(interactor_b)
@@ -757,7 +757,7 @@ def add_protein_protein_interactions_from_mint(
         network: nx.Graph,
         interaction_detection_methods: Optional[Container[str]] = None,
         interaction_types: Optional[Container[str]] = None,
-        mi_score: float = 0.0,
+        psi_mi_score: float = 0.0,
         taxonomy_identifier: int = 9606) -> None:
     """
     Adds protein-protein interactions from MINT to a protein-protein interaction
@@ -769,11 +769,11 @@ def add_protein_protein_interactions_from_mint(
             detection method. If none are specified, any is accepted.
         interaction_types: The accepted PSI-MI terms for interaction type.
             If none are specified, any is accepted.
-        mi_score: The PSI-MI score threshold.
+        psi_mi_score: The PSI-MI score threshold.
         taxonomy_identifier: The taxonomy identifier.
     """
     for interactor_a, interactor_b, score in mint.get_protein_protein_interactions(
-            interaction_detection_methods, interaction_types, mi_score,
+            interaction_detection_methods, interaction_types, psi_mi_score,
             taxonomy_identifier):
         if (interactor_a in network and interactor_b in network and
                 interactor_a != interactor_b):
@@ -856,7 +856,7 @@ def add_proteins_from_string(network: nx.Graph,
                              database_transferred: float = 0.0,
                              textmining: float = 0.0,
                              textmining_transferred: float = 0.0,
-                             combined_score: float = 0.0,
+                             combined: float = 0.0,
                              physical: bool = False,
                              taxonomy_identifier: int = 9606,
                              version: float = 11.5):
@@ -880,7 +880,7 @@ def add_proteins_from_string(network: nx.Graph,
         database_transferred: The transferred database score threshold.
         textmining: The normal textmining score threshold.
         textmining_transferred: The transferred textmining score threshold.
-        combined_score: The combined score threshold.
+        combined: The combined score threshold.
         physical: If True, consider only physical interactions.
         taxonomy_identifier: The taxonomy identifier.
         version: The version of the STRING database.
@@ -891,8 +891,8 @@ def add_proteins_from_string(network: nx.Graph,
             neighborhood, neighborhood_transferred, fusion, cooccurence,
             homology, coexpression, coexpression_transferred, experiments,
             experiments_transferred, database, database_transferred, textmining,
-            textmining_transferred, combined_score, physical,
-            taxonomy_identifier, version):
+            textmining_transferred, combined, physical, taxonomy_identifier,
+            version):
         if (interactor_a in network and interactor_b not in network):
             nodes_to_add.add(interactor_b)
 
@@ -917,7 +917,7 @@ def add_protein_protein_interactions_from_string(
         database_transferred: float = 0.0,
         textmining: float = 0.0,
         textmining_transferred: float = 0.0,
-        combined_score: float = 0.0,
+        combined: float = 0.0,
         physical: bool = False,
         taxonomy_identifier: int = 9606,
         version: float = 11.5):
@@ -941,7 +941,7 @@ def add_protein_protein_interactions_from_string(
         database_transferred: The transferred database score threshold.
         textmining: The normal textmining score threshold.
         textmining_transferred: The transferred textmining score threshold.
-        combined_score: The combined score threshold.
+        combined: The combined score threshold.
         physical: If True, add only physical interactions.
         taxonomy_identifier: The taxonomy identifier.
         version: The version of the STRING database.
@@ -950,8 +950,8 @@ def add_protein_protein_interactions_from_string(
             neighborhood, neighborhood_transferred, fusion, cooccurence,
             homology, coexpression, coexpression_transferred, experiments,
             experiments_transferred, database, database_transferred, textmining,
-            textmining_transferred, combined_score, physical,
-            taxonomy_identifier, version):
+            textmining_transferred, combined, physical, taxonomy_identifier,
+            version):
         if (interactor_a in network and interactor_b in network and
                 interactor_a != interactor_b):
             if network.has_edge(interactor_a, interactor_b):
