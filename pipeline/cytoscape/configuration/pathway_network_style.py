@@ -361,7 +361,7 @@ COMPONENTS = {
                         },
                         "{max}": {
                             "equalValue": "{size}",
-                            "greaterValue": "1.0",
+                            "greaterValue": "{size}",
                             "lesserValue": "{size}"
                         },
                     }

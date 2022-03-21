@@ -84,15 +84,15 @@
           ]
         },
         "IntAct": {
-          "MI score": 0.27
+          "score": 0.27
         },
         "MINT": {
-          "MI score": 0.27
+          "score": 0.27
         },
         "Reactome": {
         },
         "STRING": {
-          "experiments": 0.7,
+          "experiments score": 0.7,
           "combined score": 0.7
         }
       },

@@ -1,6 +1,11 @@
 # pipeline
 protein-protein interaction network assembly and analysis
 
+## setup
+```
+pip3 install -r pipeline/requirements.txt 
+```
+
 ## command line interface
 ```
 usage: pipeline.py [-h] -c CONFIGURATIONS [CONFIGURATIONS ...] [-l {CRITICAL,ERROR,WARNING,INFO,DEBUG}] [-p PROCESSES]
@@ -147,7 +152,7 @@ The NCBI taxonomy ID of the organism. The default and currently only fully suppo
     {
       "proteins": [
         {
-          "time": null
+          "time": 0
         }
       ]
     }
@@ -160,7 +165,7 @@ The time of measurement to be associated with the changes from the corresponding
     {
       "proteins": [
         {
-          "post-translational modification": null
+          "post-translational modification": ""
         }
       ]
     }
@@ -374,10 +379,10 @@ A list of accepted PSI-MI terms interaction types. The default setting is `[]`, 
     {
       "protein-protein interactions": {
         "IntAct": {
-          "score": []
+          "score": 0.0
         },
         "MINT": {
-          "score": []
+          "score": 0.0
         }
       }
     }
