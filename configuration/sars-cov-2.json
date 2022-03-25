@@ -82,15 +82,6 @@
           }
         }
       },
-      "Reactome network": {
-        "union": [
-          {
-            "time": 60,
-            "post-translational modification": "P",
-            "change": [-1.0, 1.0]
-          }
-        ]
-      },
       "Gene Ontology network": {
         "union": [
           {
@@ -99,6 +90,15 @@
             "change": [-1.0, 1.0]
           }
         ] 
+      },
+      "Reactome network": {
+        "union": [
+          {
+            "time": 60,
+            "post-translational modification": "P",
+            "change": [-1.0, 1.0]
+          }
+        ]
       }
     }
   ]

@@ -5,6 +5,7 @@ protein-protein interaction network assembly and analysis
 ```
 pip3 install -r pipeline/requirements.txt 
 ```
+Developed using Python 3.9.7 on Ubuntu 21.10.
 
 ## command line interface
 ```
@@ -22,7 +23,6 @@ optional arguments:
 A configuration file specifies a list of workflows sequentially executed. Configuration files are processed concurrently.
 
 ## configuration
-
 The specification of input genes or proteins.
 
 ```json
@@ -859,7 +859,7 @@ The resolution parameter of modularity optimized by module detection. The defaul
     }
 ]
 ```
-The function used to derive a combined edge confidence score from scores in IntAct, MINT and STRING as well as 1.0 used for BioGRID and Reactome, respectively for a lack of corresponding scoring. The combined score utilized as edge weight in module detection. By default any edge receives a score of 1.0, corresponding to an unweighted network. Available settings are `null`, `"mean"`, `"median"`, `"max"`, `"min"`, `"sum"`, `"number"`, `"BioGRID"`, `"IntAct"`, `"MINT"`, `"Reactome"`, `"STRING"`.
+The function used to derive a combined edge confidence score from scores in IntAct, MINT and STRING as well as 1.0 used for BioGRID and Reactome, respectively for a lack of corresponding scoring. The combined score is utilized as edge weight in module detection. By default any edge receives a score of 1.0, corresponding to an unweighted network. Available settings are `null`, `"mean"`, `"median"`, `"max"`, `"min"`, `"sum"`, `"number"`, `"BioGRID"`, `"IntAct"`, `"MINT"`, `"Reactome"`, `"STRING"`.
 
 ---
 
@@ -1076,7 +1076,7 @@ The NCBI taxonomy ID of the organism. The default and currently only fully suppo
 
 ---
 
-The specification of Gene Ontology network assembly from the protein-protein interaction network. A Gene Ontology network is composed of applicable Gene Ontolgy terms and their relations. Its node annotation reflects the representation of Gene Ontology terms by the protein-protein interaction network.
+The specification of Gene Ontology network assembly from the protein-protein interaction network. A Gene Ontology network is composed of applicable Gene Ontology terms and their relations. It reflects the representation of Gene Ontology terms by the protein-protein interaction network.
 
 ```json
 [
@@ -1182,15 +1182,7 @@ The range of combined changes distinguishing proteins by whether the range is ex
 [
     {
       "Gene Ontology network": {
-        "network": {
-          "test": "hypergeometric"
-        },
-        "union": {
-          "test": "hypergeometric"
-        },
-        "intersection": {
-          "test": "hypergeometric"
-        }
+        "test": "hypergeometric"
       }
     }
 ]
@@ -1202,15 +1194,7 @@ Available settings are `"binomial"` and `"hypergeometric"`.
 [
     {
       "Gene Ontology network": {
-        "network": {
-          "correction": "Benjamini-Hochberg"
-        },
-        "union": {
-          "correction": "Benjamini-Hochberg"
-        },
-        "intersection": {
-          "correction": "Benjamini-Hochberg"
-        }
+        "correction": "Benjamini-Hochberg"
       }
     }
 ]
@@ -1222,27 +1206,11 @@ Available settings are `"Benjamini-Hochberg"` and `"Bonferroni"`.
 [
     {
       "Gene Ontology network": {
-        "network": {
-          "namespaces": [
-              "cellular_component",
-              "molecular_function",
-              "biological_process"
-          ]
-        },
-        "union": {
-          "namespaces": [
-            "cellular_component",
-            "molecular_function",
-            "biological_process"
-          ]
-        },
-        "intersection": {
-          "namespaces": [
-            "cellular_component",
-            "molecular_function",
-            "biological_process"
-          ]
-        }
+        "namespaces": [
+          "cellular_component",
+          "molecular_function",
+          "biological_process"
+        ]
       }
     }
 ]
@@ -1253,15 +1221,7 @@ The Gene Ontology namespaces to consider. The default setting is `["cellular_com
 [
     {
       "Gene Ontology network": {
-        "network": {
-          "taxonomy identifier": 9606
-        },
-        "union": {
-          "taxonomy identifier": 9606
-        },
-        "intersection": {
-          "taxonomy identifier": 9606
-        }
+        "taxonomy identifier": 9606
       }
     }
 ]
@@ -1271,7 +1231,7 @@ The NCBI taxonomy ID of the organism. The default and currently only fully suppo
 
 ---
 
-The specification of Reactome network assembly from the protein-protein interaction network. A Reactome network is composed of applicable Reactome pathways and their relations. Its annotation reflects the representation of Reactome pathways by the protein-protein interaction network.
+The specification of Reactome network assembly from the protein-protein interaction network. A Reactome network is composed of applicable Reactome pathways and their relations. It reflects the representation of Reactome pathways by the protein-protein interaction network.
 
 ```json
 [
@@ -1377,15 +1337,7 @@ The range of combined changes distinguishing proteins by whether the range is ex
 [
     {
       "Reactome network": {
-        "network": {
-          "test": "hypergeometric"
-        },
-        "union": {
-          "test": "hypergeometric"
-        },
-        "intersection": {
-          "test": "hypergeometric"
-        }
+        "test": "hypergeometric"
       }
     }
 ]
@@ -1397,15 +1349,7 @@ Available settings are `"binomial"` and `"hypergeometric"`.
 [
     {
       "Reactome network": {
-        "network": {
-          "correction": "Benjamini-Hochberg"
-        },
-        "union": {
-          "correction": "Benjamini-Hochberg"
-        },
-        "intersection": {
-          "correction": "Benjamini-Hochberg"
-        }
+        "correction": "Benjamini-Hochberg"
       }
     }
 ]
@@ -1415,7 +1359,7 @@ Available settings are `"Benjamini-Hochberg"` and `"Bonferroni"`.
 
 ---
 
-The configuration files provided in this repository refer to data sets supplemented with the following publications.
+The configuration files provided refer to data sets supplemented with the following publications.
 
 1. M. Hahn, A. Covarrubias-Pinto, L. Herhaus, S. Satpathy, K. Klann, K. B.
 Boyle, C. Münch, K. Rajalingam, F. Randow, C. Choudhary, and I. Dikic, **SIK2 orchestrates actin-dependent host response upon *Salmonella* infection**, Proceedings of the National Academy of Sciences, vol. 118, no. 19, e2024144118, May 2021.

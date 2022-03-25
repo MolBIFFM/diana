@@ -9,8 +9,10 @@ from typing import Callable, Collection, Container, Hashable, Optional, Union
 import networkx as nx
 import pandas as pd
 from analysis import correction, modularization, test
-from databases import (biogrid, gene_ontology, intact, mint, reactome, string,
-                       uniprot)
+from databases import uniprot
+from databases.ontologies import gene_ontology
+from databases.protein_protein_interactions import (biogrid, intact, mint,
+                                                    reactome, string)
 
 
 def get_protein_protein_interaction_network() -> nx.Graph():
@@ -170,11 +172,11 @@ def add_proteins_from(network: nx.Graph, proteins: Container) -> None:
                         network.nodes[accessions[0]]["protein"] = protein_name
 
                     elif i == 0:
-                        network.add_node("{}-{}".format(accession, isoform))
-                        network.nodes["{}-{}".format(
-                            accession, isoform)]["gene"] = gene_name
-                        network.nodes["{}-{}".format(
-                            accession, isoform)]["protein"] = protein_name
+                        network.add_node(f"{accession}-{isoform}")
+                        network.nodes[f"{accession}-{isoform}"][
+                            "gene"] = gene_name
+                        network.nodes[f"{accession}-{isoform}"][
+                            "protein"] = protein_name
 
                 if i > 0:
                     if accession not in primary_accession:
@@ -339,8 +341,8 @@ def add_proteins_from_table(
             )[-num_sites:])
 
         for i in range(len(proteins[protein])):
-            network.nodes[protein]["{} {} {}".format(
-                time, modification, i + 1)] = proteins[protein][i][1]
+            network.nodes[protein][f"{time} {modification} {i + 1}"] = proteins[
+                protein][i][1]
 
 
 def get_proteins(
@@ -461,8 +463,8 @@ def set_post_translational_modification(network: nx.Graph) -> None:
     """
     for time in get_times(network):
         for protein in network:
-            network.nodes[protein]["post-translational modification {}".format(
-                time)] = "".join(
+            network.nodes[protein][
+                f"post-translational modification {time}"] = "".join(
                     sorted(
                         set(
                             change.split(" ")[1]
@@ -544,42 +546,39 @@ def set_changes(
 
             if classification:
                 if set(classification.values()) == {"up"}:
-                    network.nodes[protein]["change {}".format(time)] = "up"
+                    network.nodes[protein][f"change {time}"] = "up"
                 elif set(classification.values()) == {"mid up", "up"}:
-                    network.nodes[protein]["change {}".format(time)] = "up"
+                    network.nodes[protein][f"change {time}"] = "up"
                 elif set(classification.values()) == {"mid", "mid up", "up"}:
-                    network.nodes[protein]["change {}".format(time)] = "up"
+                    network.nodes[protein][f"change {time}"] = "up"
 
                 elif set(classification.values()) == {"mid up"}:
-                    network.nodes[protein]["change {}".format(time)] = "mid up"
+                    network.nodes[protein][f"change {time}"] = "mid up"
                 elif set(classification.values()) == {"mid", "mid up"}:
-                    network.nodes[protein]["change {}".format(time)] = "mid up"
+                    network.nodes[protein][f"change {time}"] = "mid up"
 
                 elif set(classification.values()) == {"mid"}:
-                    network.nodes[protein]["change {}".format(time)] = "mid"
+                    network.nodes[protein][f"change {time}"] = "mid"
 
                 elif set(classification.values()) == {"mid", "mid down"}:
-                    network.nodes[protein]["change {}".format(
-                        time)] = "mid down"
+                    network.nodes[protein][f"change {time}"] = "mid down"
                 elif set(classification.values()) == {"mid down"}:
-                    network.nodes[protein]["change {}".format(
-                        time)] = "mid down"
+                    network.nodes[protein][f"change {time}"] = "mid down"
 
                 elif set(
                         classification.values()) == {"mid", "mid down", "down"}:
-                    network.nodes[protein]["change {}".format(time)] = "down"
+                    network.nodes[protein][f"change {time}"] = "down"
                 elif set(classification.values()) == {"mid down", "down"}:
-                    network.nodes[protein]["change {}".format(time)] = "down"
+                    network.nodes[protein][f"change {time}"] = "down"
                 elif set(classification.values()) == {"down"}:
-                    network.nodes[protein]["change {}".format(time)] = "down"
+                    network.nodes[protein][f"change {time}"] = "down"
                 else:
-                    network.nodes[protein]["change {}".format(time)] = " ".join(
-                        "{}_{}".format(modification,
-                                       classification[modification])
+                    network.nodes[protein][f"change {time}"] = " ".join(
+                        f"{modification}_{classification[modification]}"
                         for modification in sorted(classification))
 
             else:
-                network.nodes[protein]["change {}".format(time)] = "mid"
+                network.nodes[protein][f"change {time}"] = "mid"
 
 
 def add_proteins_from_biogrid(
@@ -856,7 +855,7 @@ def add_proteins_from_string(network: nx.Graph,
                              database_transferred: float = 0.0,
                              textmining: float = 0.0,
                              textmining_transferred: float = 0.0,
-                             combined: float = 0.0,
+                             combined_score: float = 0.0,
                              physical: bool = False,
                              taxonomy_identifier: int = 9606,
                              version: float = 11.5):
@@ -880,7 +879,7 @@ def add_proteins_from_string(network: nx.Graph,
         database_transferred: The transferred database score threshold.
         textmining: The normal textmining score threshold.
         textmining_transferred: The transferred textmining score threshold.
-        combined: The combined score threshold.
+        combined_score: The combined score threshold.
         physical: If True, consider only physical interactions.
         taxonomy_identifier: The taxonomy identifier.
         version: The version of the STRING database.
@@ -891,8 +890,8 @@ def add_proteins_from_string(network: nx.Graph,
             neighborhood, neighborhood_transferred, fusion, cooccurence,
             homology, coexpression, coexpression_transferred, experiments,
             experiments_transferred, database, database_transferred, textmining,
-            textmining_transferred, combined, physical, taxonomy_identifier,
-            version):
+            textmining_transferred, combined_score, physical,
+            taxonomy_identifier, version):
         if (interactor_a in network and interactor_b not in network):
             nodes_to_add.add(interactor_b)
 
@@ -917,7 +916,7 @@ def add_protein_protein_interactions_from_string(
         database_transferred: float = 0.0,
         textmining: float = 0.0,
         textmining_transferred: float = 0.0,
-        combined: float = 0.0,
+        combined_score: float = 0.0,
         physical: bool = False,
         taxonomy_identifier: int = 9606,
         version: float = 11.5):
@@ -941,7 +940,7 @@ def add_protein_protein_interactions_from_string(
         database_transferred: The transferred database score threshold.
         textmining: The normal textmining score threshold.
         textmining_transferred: The transferred textmining score threshold.
-        combined: The combined score threshold.
+        combined_score: The combined score threshold.
         physical: If True, add only physical interactions.
         taxonomy_identifier: The taxonomy identifier.
         version: The version of the STRING database.
@@ -950,8 +949,8 @@ def add_protein_protein_interactions_from_string(
             neighborhood, neighborhood_transferred, fusion, cooccurence,
             homology, coexpression, coexpression_transferred, experiments,
             experiments_transferred, database, database_transferred, textmining,
-            textmining_transferred, combined, physical, taxonomy_identifier,
-            version):
+            textmining_transferred, combined_score, physical,
+            taxonomy_identifier, version):
         if (interactor_a in network and interactor_b in network and
                 interactor_a != interactor_b):
             if network.has_edge(interactor_a, interactor_b):
@@ -1363,6 +1362,6 @@ def export(network: nx.Graph, basename: str) -> None:
         basename: The base file name.
     """
     nx.write_graphml_xml(network,
-                         "{}.graphml".format(basename),
+                         f"{basename}.graphml",
                          named_key_ids=True,
                          infer_numeric_types=True)

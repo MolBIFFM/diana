@@ -1,24 +1,28 @@
-"""Gene Ontology network
+"""
+Gene Ontology network
 
-Nodes are Gene Ontology terms annotated with any proteins from the queried
-species. Edges are directed term relationships within the Gene Ontology."""
+Nodes are Gene Ontology terms annotated with proteins from a protein-protein 
+interaction network species. Edges are directed term relationships within the 
+Gene Ontology.
+"""
+
 from typing import Callable, Container
 
 import networkx as nx
 from analysis import correction, test
-from databases import gene_ontology
+from databases.ontologies import gene_ontology
 
 
-def get_ontology_network(protein_protein_interaction_network: nx.Graph,
-                         namespaces: Container[str] = ("cellular_component",
-                                                       "molecular_function",
-                                                       "biological_process"),
-                         enrichment_test: Callable[[int, int, int, int],
-                                                   float] = test.hypergeometric,
-                         multiple_testing_correction: Callable[
-                             [dict[str, float]],
-                             dict[str, float]] = correction.benjamini_hochberg,
-                         taxonomy_identifier: int = 9606) -> nx.Graph:
+def get_gene_ontology_network(
+        protein_protein_interaction_network: nx.Graph,
+        namespaces: Container[str] = ("cellular_component",
+                                      "molecular_function",
+                                      "biological_process"),
+        enrichment_test: Callable[[int, int, int, int],
+                                  float] = test.hypergeometric,
+        multiple_testing_correction: Callable[[dict[str, float]], dict[
+            str, float]] = correction.benjamini_hochberg,
+        taxonomy_identifier: int = 9606) -> nx.Graph:
     """
     Assemble a Gene Ontology network corresponding to the protein-protein
     interaction network.
@@ -26,7 +30,7 @@ def get_ontology_network(protein_protein_interaction_network: nx.Graph,
     Args:
         protein_protein_interaction_network: The protein-protein interaction
             network.
-        namespaces: The Gene Ontology namespaces to consider.
+        namespaces: The Gene Ontology namespaces.
         enrichment_test: The statistical test used to assess enrichment of a
             term by the protein-protein interaction network.
         multiple_testing_correction: The procedure to correct for testing of
@@ -58,7 +62,8 @@ def get_ontology_network(protein_protein_interaction_network: nx.Graph,
                 annotation[primary_term] = set()
             annotation[primary_term].add(protein)
 
-    network = nx.induced_subgraph(network, annotation)
+    network.remove_nodes_from(
+        [term for term in network if term not in annotation])
 
     annotated_proteins = set.union(*annotation.values())
 
@@ -76,6 +81,9 @@ def get_ontology_network(protein_protein_interaction_network: nx.Graph,
         for term in network
     })
 
+    network.remove_nodes_from(
+        [term for term in annotation if not intersection[term]])
+
     for term in network:
         network.nodes[term]["proteins"] = intersection[term]
         network.nodes[term]["p-value"] = p_value[term]
@@ -88,13 +96,13 @@ def get_term_sizes(network: nx.Graph) -> dict[str, int]:
     Returns the sizes of Gene Ontology term annotation.
 
     Args:
-        network: The Gene Ontology network
+        network: The Gene Ontology network.
 
     Returns:
         The number of proteins associated with any term in the Gene Ontology
         network.
     """
-    return {term: network.nodes[term]["annotated proteins"] for term in network}
+    return {term: network.nodes[term]["proteins"] for term in network}
 
 
 def export(network: nx.Graph, basename: str) -> None:
@@ -106,6 +114,6 @@ def export(network: nx.Graph, basename: str) -> None:
         basename: The base file name.
     """
     nx.write_graphml_xml(network,
-                         "{}.graphml".format(basename),
+                         f"{basename}.graphml",
                          named_key_ids=True,
                          infer_numeric_types=True)

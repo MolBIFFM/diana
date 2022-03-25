@@ -25,7 +25,7 @@ def get_ontology(namespaces: Container[str] = ("cellular_component",
     term = {"id": "", "name": "", "namespace": "", "is_a": [], "alt_id": []}
     for line in iterate.txt("http://purl.obolibrary.org/obo/go.obo"):
         if any(
-                line.startswith("{}:".format(tag))
+                line.startswith(f"{tag}:")
                 for tag in ("format-version", "data-version", "subsetdef",
                             "synonymtypedef", "default-namespace", "ontology",
                             "property_value")):
@@ -42,7 +42,7 @@ def get_ontology(namespaces: Container[str] = ("cellular_component",
                 "alt_id": []
             }
         elif any(
-                line.startswith("{}:".format(tag))
+                line.startswith(f"{tag}:")
                 for tag in ("id", "name", "namespace")):
             term[line.split(":",
                             maxsplit=1)[0]] = line.split(":",
@@ -72,8 +72,7 @@ def get_annotation(
     primary_accession = uniprot.get_primary_accession(taxonomy_identifier)
 
     for row in iterate.tabular_txt(
-            "http://geneontology.org/gene-associations/goa_{organism}.gaf.gz".
-            format(organism=ORGANISM["file"][taxonomy_identifier]),
+            f"http://geneontology.org/gene-associations/goa_{ORGANISM['file'][taxonomy_identifier]}.gaf.gz",
             skiprows=41,
             delimiter="\t",
             usecols=[0, 1, 4, 8, 12]):
@@ -83,8 +82,7 @@ def get_annotation(
                 yield (protein, row[2])
 
     for row in iterate.tabular_txt(
-            "http://geneontology.org/gene-associations/goa_{organism}_isoform.gaf.gz"
-            .format(organism=ORGANISM["file"][taxonomy_identifier]),
+            f"http://geneontology.org/gene-associations/goa_{ORGANISM['file'][taxonomy_identifier]}_isoform.gaf.gz",
             skiprows=41,
             delimiter="\t",
             usecols=[0, 4, 8, 12, 16]):

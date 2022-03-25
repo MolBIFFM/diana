@@ -1,4 +1,4 @@
-"""Cytoscape styles"""
+"""Cytoscape style specifications"""
 import json
 import xml.etree.ElementTree as ET
 from typing import Callable, Collection
@@ -6,10 +6,13 @@ from typing import Callable, Collection
 import networkx as nx
 from networks import (ontology_network, pathway_network,
                       protein_protein_interaction_network)
-
-from cytoscape.configuration import (ontology_network_style,
-                                     pathway_network_style,
-                                     protein_protein_interaction_network_style)
+from cytoscape.configuration import \
+    ontology_network as ontology_network_configuration
+from cytoscape.configuration import \
+    pathway_network as pathway_network_configuration
+from cytoscape.configuration import \
+    protein_protein_interaction_network as \
+    protein_protein_interaction_network_configuration
 
 
 def get_bar_chart(
@@ -43,11 +46,10 @@ def get_bar_chart(
             True,
         "cy_colors": ["#FF0000", "#0000FF"],
         "cy_dataColumns": [
-            "{} {} {}".format(time, modification, site)
-            for site in range(1, sites + 1)
+            f"{time} {modification} {site}" for site in range(1, sites + 1)
         ],
     })
-    return "org.cytoscape.BarChart: {}".format(bar_chart)
+    return f"org.cytoscape.BarChart: {bar_chart}"
 
 
 def get_protein_protein_interaction_network_styles(
@@ -89,12 +91,12 @@ def get_protein_protein_interaction_network_styles(
                                                  "visualStyle",
                                                  attrib={"name": str(time)})
 
-        for component in protein_protein_interaction_network_style.COMPONENTS[
+        for component in protein_protein_interaction_network_configuration.COMPONENTS[
                 len(modifications) - 1]:
             component_sub_element = ET.SubElement(visual_style_sub_element,
                                                   component)
 
-            for name, dependency in protein_protein_interaction_network_style.COMPONENTS[
+            for name, dependency in protein_protein_interaction_network_configuration.COMPONENTS[
                     len(modifications) - 1][component]["dependency"].items():
                 ET.SubElement(
                     component_sub_element,
@@ -105,7 +107,7 @@ def get_protein_protein_interaction_network_styles(
                     },
                 )
 
-            for name, visual_property in protein_protein_interaction_network_style.COMPONENTS[
+            for name, visual_property in protein_protein_interaction_network_configuration.COMPONENTS[
                     len(modifications) -
                     1][component]["visualProperty"].items():
                 visual_property_sub_element = ET.SubElement(
@@ -200,7 +202,7 @@ def get_protein_protein_interaction_network_styles(
             if i < 2:
                 for visual_property_sub_element in visual_property_sub_elements:
                     if visual_property_sub_element.get(
-                            "name") == "NODE_CUSTOMGRAPHICS_{}".format(i + 1):
+                            "name") == f"NODE_CUSTOMGRAPHICS_{i+1}":
                         visual_property_sub_element.set(
                             "default",
                             get_bar_chart(
@@ -221,12 +223,10 @@ def get_protein_protein_interaction_network_styles(
                                                     site_combination)))))
 
                     elif visual_property_sub_element.get(
-                            "name") == "NODE_CUSTOMGRAPHICS_POSITION_{}".format(
-                                i + 1):
+                            "name") == f"NODE_CUSTOMGRAPHICS_POSITION_{i + 1}":
                         visual_property_sub_element.set(
                             "default",
-                            "{},{},c,0.00,0.00".format(*[("W", "E"), ("E",
-                                                                      "W")][i]),
+                            f"{('W', 'E')[i]},{('E', 'W')[i]},c,0.00,0.00",
                         )
 
     ET.indent(styles)
@@ -234,15 +234,15 @@ def get_protein_protein_interaction_network_styles(
     return styles
 
 
-def get_pathway_network_style(network: nx.Graph) -> ET.ElementTree:
+def get_gene_ontology_network_style(network: nx.Graph) -> ET.ElementTree:
     """
-    Returns the Cytoscape styles for a Reactome network.
+    Returns the Cytoscape styles for a Gene Ontology network.
 
     Args:
-        network: The Reactome network.
+        network: The Gene Ontology network.
 
     Returns:
-        The Cytoscape style for the Reactome network.
+        The Cytoscape style for the Gene Ontology network.
     """
     style = ET.ElementTree(
         ET.Element("vizmap", attrib={
@@ -252,14 +252,14 @@ def get_pathway_network_style(network: nx.Graph) -> ET.ElementTree:
 
     visual_style_sub_element = ET.SubElement(style.getroot(),
                                              "visualStyle",
-                                             attrib={"name": "pathway"})
+                                             attrib={"name": "ontology"})
 
-    for component in pathway_network_style.COMPONENTS:
+    for component in ontology_network_configuration.COMPONENTS:
         component_sub_element = ET.SubElement(visual_style_sub_element,
                                               component)
 
-        for name, dependency in pathway_network_style.COMPONENTS[component][
-                "dependency"].items():
+        for name, dependency in ontology_network_configuration.COMPONENTS[
+                component]["dependency"].items():
             ET.SubElement(
                 component_sub_element,
                 "dependency",
@@ -269,7 +269,7 @@ def get_pathway_network_style(network: nx.Graph) -> ET.ElementTree:
                 },
             )
 
-        for name, visual_property in pathway_network_style.COMPONENTS[
+        for name, visual_property in ontology_network_configuration.COMPONENTS[
                 component]["visualProperty"].items():
             visual_property_sub_element = ET.SubElement(
                 component_sub_element,
@@ -300,21 +300,25 @@ def get_pathway_network_style(network: nx.Graph) -> ET.ElementTree:
                         "continuousMappingPoint",
                         attrib={
                             "attrValue":
-                                key.format(max=max(
-                                    pathway_network.get_pathway_sizes(
-                                        network).values())),
+                                key.format(max=float(
+                                    max(
+                                        ontology_network.get_term_sizes(
+                                            network).values()))),
                             "equalValue":
-                                values["equalValue"].format(size=35 + max(
-                                    pathway_network.get_pathway_sizes(
-                                        network).values())),
+                                values["equalValue"].format(size=35.0 + float(
+                                    max(
+                                        ontology_network.get_term_sizes(
+                                            network).values()))),
                             "greaterValue":
-                                values["greaterValue"].format(size=35 + max(
-                                    pathway_network.get_pathway_sizes(
-                                        network).values())),
+                                values["greaterValue"].format(size=35.0 + float(
+                                    max(
+                                        ontology_network.get_term_sizes(
+                                            network).values()))),
                             "lesserValue":
-                                values["lesserValue"].format(size=35 + max(
-                                    pathway_network.get_pathway_sizes(
-                                        network).values()))
+                                values["lesserValue"].format(size=35.0 + float(
+                                    max(
+                                        ontology_network.get_term_sizes(
+                                            network).values())))
                         },
                     )
 
@@ -360,15 +364,15 @@ def get_pathway_network_style(network: nx.Graph) -> ET.ElementTree:
     return style
 
 
-def get_ontology_network_style(network: nx.Graph) -> ET.ElementTree:
+def get_reactome_network_style(network: nx.Graph) -> ET.ElementTree:
     """
-    Returns the Cytoscape styles for a Gene Ontology network.
+    Returns the Cytoscape styles for a Reactome network.
 
     Args:
-        network: The Gene Ontology network.
+        network: The Reactome network.
 
     Returns:
-        The Cytoscape style for the Gene Ontology network.
+        The Cytoscape style for the Reactome network.
     """
     style = ET.ElementTree(
         ET.Element("vizmap", attrib={
@@ -378,14 +382,14 @@ def get_ontology_network_style(network: nx.Graph) -> ET.ElementTree:
 
     visual_style_sub_element = ET.SubElement(style.getroot(),
                                              "visualStyle",
-                                             attrib={"name": "ontology"})
+                                             attrib={"name": "pathway"})
 
-    for component in ontology_network_style.COMPONENTS:
+    for component in pathway_network_configuration.COMPONENTS:
         component_sub_element = ET.SubElement(visual_style_sub_element,
                                               component)
 
-        for name, dependency in ontology_network_style.COMPONENTS[component][
-                "dependency"].items():
+        for name, dependency in pathway_network_configuration.COMPONENTS[
+                component]["dependency"].items():
             ET.SubElement(
                 component_sub_element,
                 "dependency",
@@ -395,7 +399,7 @@ def get_ontology_network_style(network: nx.Graph) -> ET.ElementTree:
                 },
             )
 
-        for name, visual_property in ontology_network_style.COMPONENTS[
+        for name, visual_property in pathway_network_configuration.COMPONENTS[
                 component]["visualProperty"].items():
             visual_property_sub_element = ET.SubElement(
                 component_sub_element,
@@ -426,21 +430,25 @@ def get_ontology_network_style(network: nx.Graph) -> ET.ElementTree:
                         "continuousMappingPoint",
                         attrib={
                             "attrValue":
-                                key.format(max=max(
-                                    ontology_network.get_term_sizes(
-                                        network).values())),
+                                key.format(max=float(
+                                    max(
+                                        pathway_network.get_pathway_sizes(
+                                            network).values()))),
                             "equalValue":
-                                values["equalValue"].format(size=35 + max(
-                                    ontology_network.get_term_sizes(
-                                        network).values())),
+                                values["equalValue"].format(size=35.0 + float(
+                                    max(
+                                        pathway_network.get_pathway_sizes(
+                                            network).values()))),
                             "greaterValue":
-                                values["greaterValue"].format(size=35 + max(
-                                    ontology_network.get_term_sizes(
-                                        network).values())),
+                                values["greaterValue"].format(size=35.0 + float(
+                                    max(
+                                        pathway_network.get_pathway_sizes(
+                                            network).values()))),
                             "lesserValue":
-                                values["lesserValue"].format(size=35 + max(
-                                    ontology_network.get_term_sizes(
-                                        network).values()))
+                                values["lesserValue"].format(size=35.0 + float(
+                                    max(
+                                        pathway_network.get_pathway_sizes(
+                                            network).values())))
                         },
                     )
 
@@ -495,7 +503,7 @@ def export(styles: ET.ElementTree, basename: str) -> None:
         basename: The base file name.
     """
     styles.write(
-        "{}.xml".format(basename),
+        f"{basename}.xml",
         encoding="utf-8",
         xml_declaration=True,
     )

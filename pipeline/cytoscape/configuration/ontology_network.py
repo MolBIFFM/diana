@@ -18,7 +18,7 @@ COMPONENTS = {
                 "default": ""
             },
             "EDGE_LABEL_COLOR": {
-                "default": "#{:02X}{:02X}{:02X}".format(0, 0, 0)
+                "default": f"#{0:02X}{0:02X}{0:02X}"
             },
             "EDGE_LABEL_FONT_FACE": {
                 "default": "Dialog.plain,plain,10"
@@ -36,37 +36,37 @@ COMPONENTS = {
                 "default": "SOLID"
             },
             "EDGE_PAINT": {
-                "default": "#{:02X}{:02X}{:02X}".format(50, 50, 50)
+                "default": f"#{50:02X}{50:02X}{50:02X}"
             },
             "EDGE_SELECTED": {
                 "default": "false"
             },
             "EDGE_SELECTED_PAINT": {
-                "default": "#{:02X}{:02X}{:02X}".format(255, 0, 0)
+                "default": f"#{255:02X}{0:02X}{0:02X}"
             },
             "EDGE_SOURCE_ARROW_SELECTED_PAINT": {
-                "default": "#{:02X}{:02X}{:02X}".format(255, 255, 0)
+                "default": f"#{255:02X}{255:02X}{0:02X}"
             },
             "EDGE_SOURCE_ARROW_SHAPE": {
                 "default": "NONE"
             },
             "EDGE_SOURCE_ARROW_UNSELECTED_PAINT": {
-                "default": "#{:02X}{:02X}{:02X}".format(0, 0, 0)
+                "default": f"#{0:02X}{0:02X}{0:02X}"
             },
             "EDGE_STROKE_SELECTED_PAINT": {
-                "default": "#{:02X}{:02X}{:02X}".format(255, 0, 0)
+                "default": f"#{255:02X}{0:02X}{0:02X}"
             },
             "EDGE_STROKE_UNSELECTED_PAINT": {
-                "default": "#{:02X}{:02X}{:02X}".format(132, 132, 132)
+                "default": f"#{132:02X}{132:02X}{132:02X}"
             },
             "EDGE_TARGET_ARROW_SELECTED_PAINT": {
-                "default": "#{:02X}{:02X}{:02X}".format(255, 255, 0)
+                "default": f"#{255:02X}{255:02X}{0:02X}"
             },
             "EDGE_TARGET_ARROW_SHAPE": {
                 "default": "DELTA"
             },
             "EDGE_TARGET_ARROW_UNSELECTED_PAINT": {
-                "default": "#{:02X}{:02X}{:02X}".format(0, 0, 0)
+                "default": f"#{0:02X}{0:02X}{0:02X}"
             },
             "EDGE_TOOLTIP": {
                 "default": ""
@@ -75,7 +75,7 @@ COMPONENTS = {
                 "default": "255"
             },
             "EDGE_UNSELECTED_PAINT": {
-                "default": "#{:02X}{:02X}{:02X}".format(64, 64, 64)
+                "default": f"#{64:02X}{64:02X}{64:02X}"
             },
             "EDGE_VISIBLE": {
                 "default": "true"
@@ -89,7 +89,7 @@ COMPONENTS = {
         "dependency": {},
         "visualProperty": {
             "NETWORK_BACKGROUND_PAINT": {
-                "default": "#{:02X}{:02X}{:02X}".format(255, 255, 255)
+                "default": f"#{255:02X}{255:02X}{255:02X}"
             },
             "NETWORK_CENTER_X_LOCATION": {
                 "default": "0.0"
@@ -137,7 +137,7 @@ COMPONENTS = {
                 "default": "10.0"
             },
             "NODE_BORDER_PAINT": {
-                "default": "#{:02X}{:02X}{:02X}".format(204, 204, 204)
+                "default": f"#{204:02X}{204:02X}{204:02X}"
             },
             "NODE_BORDER_STROKE": {
                 "default": "SOLID"
@@ -281,26 +281,20 @@ COMPONENTS = {
                 "default": "0.0"
             },
             "NODE_FILL_COLOR": {
-                "default": "#{:02X}{:02X}{:02X}".format(137, 208, 255),
+                "default": f"#{137:02X}{208:02X}{255:02X}",
                 "continuousMapping": {
                     "attributeName": "p-value",
                     "attributeType": "float",
                     "continuousMappingPoint": {
                         "0.0": {
-                            "equalValue":
-                                "#{:02X}{:02X}{:02X}".format(255, 0, 0),
-                            "greaterValue":
-                                "#{:02X}{:02X}{:02X}".format(255, 0, 0),
-                            "lesserValue":
-                                "#{:02X}{:02X}{:02X}".format(255, 0, 0)
+                            "equalValue": f"#{255:02X}{0:02X}{0:02X}",
+                            "greaterValue": f"#{255:02X}{0:02X}{0:02X}",
+                            "lesserValue": f"#{255:02X}{0:02X}{0:02X}"
                         },
                         "1.0": {
-                            "equalValue":
-                                "#{:02X}{:02X}{:02X}".format(255, 255, 255),
-                            "greaterValue":
-                                "#{:02X}{:02X}{:02X}".format(255, 255, 255),
-                            "lesserValue":
-                                "#{:02X}{:02X}{:02X}".format(255, 255, 255)
+                            "equalValue": f"#{255:02X}{255:02X}{255:02X}",
+                            "greaterValue": f"#{255:02X}{255:02X}{255:02X}",
+                            "lesserValue": f"#{255:02X}{255:02X}{255:02X}"
                         }
                     }
                 }
@@ -316,7 +310,7 @@ COMPONENTS = {
                 },
             },
             "NODE_LABEL_COLOR": {
-                "default": "#{:02X}{:02X}{:02X}".format(0, 0, 0)
+                "default": f"#{0:02X}{0:02X}{0:02X}"
             },
             "NODE_LABEL_FONT_FACE": {
                 "default": "SansSerif.plain,plain,12"
@@ -337,13 +331,13 @@ COMPONENTS = {
                 "default": "true"
             },
             "NODE_PAINT": {
-                "default": "#{:02X}{:02X}{:02X}".format(30, 144, 255)
+                "default": f"#{30:02X}{144:02X}{255:02X}"
             },
             "NODE_SELECTED": {
                 "default": "false"
             },
             "NODE_SELECTED_PAINT": {
-                "default": "#{:02X}{:02X}{:02X}".format(255, 255, 0)
+                "default": f"#{255:02X}{255:02X}{0:02X}"
             },
             "NODE_SHAPE": {
                 "default": "ROUND_RECTANGLE",
@@ -364,9 +358,9 @@ COMPONENTS = {
                     "attributeType": "float",
                     "continuousMappingPoint": {
                         "1.0": {
-                            "equalValue": "35.0",
-                            "greaterValue": "35.0",
-                            "lesserValue": "1.0"
+                            "equalValue": "36.0",
+                            "greaterValue": "36.0",
+                            "lesserValue": "36.0"
                         },
                         "{max}": {
                             "equalValue": "{size}",

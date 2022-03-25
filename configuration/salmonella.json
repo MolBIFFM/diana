@@ -135,7 +135,7 @@
           }
         }
       },
-      "Reactome network": {
+      "Gene Ontology network": {
         "union": [
           {
             "time": 30,
@@ -159,7 +159,7 @@
           }
         ]
       },
-      "Gene Ontology network": {
+      "Reactome network": {
         "union": [
           {
             "time": 30,

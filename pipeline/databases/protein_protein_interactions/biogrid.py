@@ -37,10 +37,10 @@ def get_protein_protein_interactions(
     primary_accession = uniprot.get_primary_accession(taxonomy_identifier)
 
     for row in iterate.tabular_txt(
-        ("https://downloads.thebiogrid.org/Download/BioGRID/Release-Archive/BIOGRID-{0}.{1}.{2}/BIOGRID-MV-Physical-{0}.{1}.{2}.tab3.zip"
-         .format(*version) if multi_validated_physical else
-         "https://downloads.thebiogrid.org/Download/BioGRID/Release-Archive/BIOGRID-{0}.{1}.{2}/BIOGRID-ORGANISM-{0}.{1}.{2}.tab3.zip"
-         .format(*version)) if version else
+        (f"https://downloads.thebiogrid.org/Download/BioGRID/Release-Archive/BIOGRID-{version[0]}.{version[1]}.{version[2]}/BIOGRID-MV-Physical-{version[0]}.{version[1]}.{version[2]}.tab3.zip"
+         if multi_validated_physical else
+         f"https://downloads.thebiogrid.org/Download/BioGRID/Release-Archive/BIOGRID-{version[0]}.{version[1]}.{version[2]}/BIOGRID-ORGANISM-{version[0]}.{version[1]}.{version[2]}.tab3.zip"
+        ) if version else
         ("https://downloads.thebiogrid.org/Download/BioGRID/Latest-Release/BIOGRID-MV-Physical-LATEST.tab3.zip"
          if multi_validated_physical else
          "https://downloads.thebiogrid.org/Download/BioGRID/Latest-Release/BIOGRID-ORGANISM-LATEST.tab3.zip"
@@ -48,8 +48,7 @@ def get_protein_protein_interactions(
             file_from_zip_archive=
             r"BIOGRID-MV-Physical-[0-9]\.[0-9]\.[0-9]{3}\.tab3\.txt"
             if multi_validated_physical else
-            r"BIOGRID-ORGANISM-{organism}-[0-9]\.[0-9]\.[0-9][0-9][0-9]\.tab3\.txt"
-            .format(organism=ORGANISM["file"][taxonomy_identifier]),
+            fr"BIOGRID-ORGANISM-{ORGANISM['file'][taxonomy_identifier]}-[0-9]\.[0-9]\.[0-9][0-9][0-9]\.tab3\.txt",
             delimiter="\t",
             header=0,
             usecols=[

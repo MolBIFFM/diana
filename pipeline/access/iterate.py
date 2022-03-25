@@ -13,7 +13,7 @@ from access import decompress, download
 
 def txt(url: str,
         file_from_zip_archive: str = "",
-        buffering: int = 1024) -> Generator[str, None, None]:
+        buffering: int = 8192) -> Generator[str, None, None]:
     """
     Downloads, iterates and subsequently removes the file at a given URL.
 
@@ -29,19 +29,18 @@ def txt(url: str,
     """
     if not os.path.exists(
             os.path.join(
-                tempfile.gettempdir(), "{}-{}".format(
-                    os.path.splitext(os.path.basename(sys.argv[0]))[0],
-                    os.getpid()))):
+                tempfile.gettempdir(),
+                f"{os.path.splitext(os.path.basename(sys.argv[0]))[0]}-{os.getpid()}"
+            )):
         os.mkdir(
             os.path.join(
-                tempfile.gettempdir(), "{}-{}".format(
-                    os.path.splitext(os.path.basename(sys.argv[0]))[0],
-                    os.getpid())))
+                tempfile.gettempdir(),
+                f"{os.path.splitext(os.path.basename(sys.argv[0]))[0]}-{os.getpid()}"
+            ))
 
     local_file_name = os.path.join(
         tempfile.gettempdir(),
-        "{}-{}".format(
-            os.path.splitext(os.path.basename(sys.argv[0]))[0], os.getpid()),
+        f"{os.path.splitext(os.path.basename(sys.argv[0]))[0]}-{os.getpid()}",
         os.path.split(urllib.parse.urlparse(url).path)[1],
     )
 
@@ -63,14 +62,14 @@ def txt(url: str,
 
     if not os.listdir(
             os.path.join(
-                tempfile.gettempdir(), "{}-{}".format(
-                    os.path.splitext(os.path.basename(sys.argv[0]))[0],
-                    os.getpid()))):
+                tempfile.gettempdir(),
+                f"{os.path.splitext(os.path.basename(sys.argv[0]))[0]}-{os.getpid()}"
+            )):
         os.rmdir(
             os.path.join(
-                tempfile.gettempdir(), "{}-{}".format(
-                    os.path.splitext(os.path.basename(sys.argv[0]))[0],
-                    os.getpid())))
+                tempfile.gettempdir(),
+                f"{os.path.splitext(os.path.basename(sys.argv[0]))[0]}-{os.getpid()}"
+            ))
 
 
 def tabular_txt(url: str,
@@ -79,7 +78,7 @@ def tabular_txt(url: str,
                 header: int = 0,
                 skiprows: int = 0,
                 usecols: Optional[list[Union[int, str]]] = None,
-                chunksize: int = 1024) -> Generator[pd.Series, None, None]:
+                chunksize: int = 8192) -> Generator[pd.Series, None, None]:
     """
     Downloads, iterates and subsequently removes the tabular file at a URL.
 
@@ -93,25 +92,23 @@ def tabular_txt(url: str,
         chunksize: The buffer size to process download, decompression and
             iteration of the file at.
 
-
     Yields:
         Rows of the file at a given URL.
     """
     if not os.path.exists(
             os.path.join(
-                tempfile.gettempdir(), "{}-{}".format(
-                    os.path.splitext(os.path.basename(sys.argv[0]))[0],
-                    os.getpid()))):
+                tempfile.gettempdir(),
+                f"{os.path.splitext(os.path.basename(sys.argv[0]))[0]}-{os.getpid()}"
+            )):
         os.mkdir(
             os.path.join(
-                tempfile.gettempdir(), "{}-{}".format(
-                    os.path.splitext(os.path.basename(sys.argv[0]))[0],
-                    os.getpid())))
+                tempfile.gettempdir(),
+                f"{os.path.splitext(os.path.basename(sys.argv[0]))[0]}-{os.getpid()}"
+            ))
 
     local_file_name = os.path.join(
         tempfile.gettempdir(),
-        "{}-{}".format(
-            os.path.splitext(os.path.basename(sys.argv[0]))[0], os.getpid()),
+        f"{os.path.splitext(os.path.basename(sys.argv[0]))[0]}-{os.getpid()}",
         os.path.split(urllib.parse.urlparse(url).path)[1],
     )
 
@@ -147,11 +144,11 @@ def tabular_txt(url: str,
 
     if not os.listdir(
             os.path.join(
-                tempfile.gettempdir(), "{}-{}".format(
-                    os.path.splitext(os.path.basename(sys.argv[0]))[0],
-                    os.getpid()))):
+                tempfile.gettempdir(),
+                f"{os.path.splitext(os.path.basename(sys.argv[0]))[0]}-{os.getpid()}"
+            )):
         os.rmdir(
             os.path.join(
-                tempfile.gettempdir(), "{}-{}".format(
-                    os.path.splitext(os.path.basename(sys.argv[0]))[0],
-                    os.getpid())))
+                tempfile.gettempdir(),
+                f"{os.path.splitext(os.path.basename(sys.argv[0]))[0]}-{os.getpid()}"
+            ))

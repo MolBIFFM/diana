@@ -22,12 +22,12 @@ def parse(entry: str) -> dict[str, str]:
 
             if "(" in identifier_term and ")" in identifier_term:
                 identifier = identifier_term[:identifier_term.find("(")].strip(
-                    "\"")
+                    '"')
 
                 term = identifier_term[identifier_term.find("(") +
-                                       1:identifier_term.find(")")].strip("\"")
+                                       1:identifier_term.find(")")].strip('"')
             else:
-                identifier = identifier_term.strip("\"")
+                identifier = identifier_term.strip('"')
                 term = None
 
             if namespace in values:

@@ -20,7 +20,7 @@ def get_protein_protein_interactions(
         database_transferred: float = 0.0,
         textmining: float = 0.0,
         textmining_transferred: float = 0.0,
-        combined: float = 0.0,
+        combined_score: float = 0.0,
         physical: bool = False,
         taxonomy_identifier: int = 9606,
         version: float = 11.5) -> Generator[tuple[str, str, float], None, None]:
@@ -42,7 +42,7 @@ def get_protein_protein_interactions(
         database_transferred: The transferred database score threshold.
         textmining: The normal textmining score threshold.
         textmining_transferred: The transferred textmining score threshold.
-        combined: The combined score threshold.
+        combined_score: The combined score threshold.
         physical: If True, yield only physical interactions.
         taxonomy_identifier: The taxonomy identifier.
         version: The version of the STRING database.
@@ -53,8 +53,7 @@ def get_protein_protein_interactions(
     """
     uniprot_id_map = {}
     for row in iterate.tabular_txt(
-            "https://stringdb-static.org/download/protein.aliases.v{version}/{taxonomy_identifier}.protein.aliases.v{version}.txt.gz"
-            .format(taxonomy_identifier=taxonomy_identifier, version=version),
+            f"https://stringdb-static.org/download/protein.aliases.v{version}/{taxonomy_identifier}.protein.aliases.v{version}.txt.gz",
             delimiter="\t",
             skiprows=1,
             usecols=[0, 1, 2],
@@ -81,16 +80,14 @@ def get_protein_protein_interactions(
             "textmining_transferred": textmining_transferred,
         }.items() if threshold
     }
-    thresholds["combined"] = combined
+    thresholds["combined_score"] = combined_score
 
     primary_accession = uniprot.get_primary_accession(taxonomy_identifier)
 
     for row in iterate.tabular_txt(
-            "https://stringdb-static.org/download/protein.physical.links.full.v{version}/{taxonomy_identifier}.protein.links.full.v{version}.txt.gz"
-            .format(taxonomy_identifier=taxonomy_identifier, version=version)
+            f"https://stringdb-static.org/download/protein.physical.links.full.v{version}/{taxonomy_identifier}.protein.links.full.v{version}.txt.gz"
             if physical else
-            "https://stringdb-static.org/download/protein.links.full.v{version}/{taxonomy_identifier}.protein.links.full.v{version}.txt.gz"
-            .format(taxonomy_identifier=taxonomy_identifier, version=version),
+            f"https://stringdb-static.org/download/protein.links.full.v{version}/{taxonomy_identifier}.protein.links.full.v{version}.txt.gz",
             delimiter=" ",
             header=0,
             usecols=["protein1", "protein2"] + list(thresholds.keys()),
@@ -104,4 +101,4 @@ def get_protein_protein_interactions(
                         for primary_interactor_b in primary_accession.get(
                                 interactor_b, {interactor_b}):
                             yield (primary_interactor_a, primary_interactor_b,
-                                   row["combined"] / 1000)
+                                   row["combined_score"] / 1000)

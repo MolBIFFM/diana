@@ -121,30 +121,6 @@
           }
         }
       },
-      "Reactome network": {  
-        "union": [
-          {
-            "time": 15,
-            "post-translational modification": "P",
-            "change": [-1.0, 1.0]
-          },
-          {
-            "time": 30,
-            "post-translational modification": "P",
-            "change": [-1.0, 1.0]
-          },
-          {
-            "time": 60,
-            "post-translational modification": "P",
-            "change": [-1.0, 1.0]
-          },
-          {
-            "time": 120,
-            "post-translational modification": "P",
-            "change": [-1.0, 1.0]
-          }
-        ]     
-      },
       "Gene Ontology network": {
         "union": [
           {
@@ -168,6 +144,30 @@
             "change": [-1.0, 1.0]
           }
         ]      
+      },
+      "Reactome network": {  
+        "union": [
+          {
+            "time": 15,
+            "post-translational modification": "P",
+            "change": [-1.0, 1.0]
+          },
+          {
+            "time": 30,
+            "post-translational modification": "P",
+            "change": [-1.0, 1.0]
+          },
+          {
+            "time": 60,
+            "post-translational modification": "P",
+            "change": [-1.0, 1.0]
+          },
+          {
+            "time": 120,
+            "post-translational modification": "P",
+            "change": [-1.0, 1.0]
+          }
+        ]     
       }
     }
   ]

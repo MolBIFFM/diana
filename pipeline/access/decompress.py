@@ -7,7 +7,7 @@ import tempfile
 import zipfile
 
 
-def decompress_gzip_file(compressed_file_name: str, size: int = 1024) -> str:
+def decompress_gzip_file(compressed_file_name: str, size: int = 8192) -> str:
     """
     Decompresses a gzip compressed file and removes the compressed file.
 
@@ -51,20 +51,20 @@ def decompress_zip_file(compressed_file_name: str,
 
         if not os.path.exists(
                 os.path.join(
-                    tempfile.gettempdir(), "{}-{}".format(
-                        os.path.splitext(os.path.basename(sys.argv[0]))[0],
-                        os.getpid()), file)):
+                    tempfile.gettempdir(),
+                    f"{os.path.splitext(os.path.basename(sys.argv[0]))[0]}-{os.getpid()}",
+                    file)):
             decompressed_file_name = archive.extract(
                 file,
                 path=os.path.join(
-                    tempfile.gettempdir(), "{}-{}".format(
-                        os.path.splitext(os.path.basename(sys.argv[0]))[0],
-                        os.getpid())))
+                    tempfile.gettempdir(),
+                    f"{os.path.splitext(os.path.basename(sys.argv[0]))[0]}-{os.getpid()}"
+                ))
         else:
             decompressed_file_name = os.path.join(
-                tempfile.gettempdir(), "{}-{}".format(
-                    os.path.splitext(os.path.basename(sys.argv[0]))[0],
-                    os.getpid()), file)
+                tempfile.gettempdir(),
+                f"{os.path.splitext(os.path.basename(sys.argv[0]))[0]}-{os.getpid()}",
+                file)
 
     os.remove(compressed_file_name)
     return decompressed_file_name

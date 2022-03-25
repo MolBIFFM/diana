@@ -18,7 +18,7 @@ COMPONENTS = [
                     "default": ""
                 },
                 "EDGE_LABEL_COLOR": {
-                    "default": "#{:02X}{:02X}{:02X}".format(0, 0, 0)
+                    "default": f"#{0:02X}{0:02X}{0:02X}"
                 },
                 "EDGE_LABEL_FONT_FACE": {
                     "default": "Dialog.plain,plain,10"
@@ -36,37 +36,37 @@ COMPONENTS = [
                     "default": "SOLID"
                 },
                 "EDGE_PAINT": {
-                    "default": "#{:02X}{:02X}{:02X}".format(50, 50, 50)
+                    "default": f"#{50:02X}{50:02X}{50:02X}"
                 },
                 "EDGE_SELECTED": {
                     "default": "false"
                 },
                 "EDGE_SELECTED_PAINT": {
-                    "default": "#{:02X}{:02X}{:02X}".format(255, 0, 0)
+                    "default": f"#{255:02X}{0:02X}{0:02X}"
                 },
                 "EDGE_SOURCE_ARROW_SELECTED_PAINT": {
-                    "default": "#{:02X}{:02X}{:02X}".format(255, 255, 0)
+                    "default": f"#{255:02X}{255:02X}{0:02X}"
                 },
                 "EDGE_SOURCE_ARROW_SHAPE": {
                     "default": "NONE"
                 },
                 "EDGE_SOURCE_ARROW_UNSELECTED_PAINT": {
-                    "default": "#{:02X}{:02X}{:02X}".format(0, 0, 0)
+                    "default": f"#{0:02X}{0:02X}{0:02X}"
                 },
                 "EDGE_STROKE_SELECTED_PAINT": {
-                    "default": "#{:02X}{:02X}{:02X}".format(255, 0, 0)
+                    "default": f"#{255:02X}{0:02X}{0:02X}"
                 },
                 "EDGE_STROKE_UNSELECTED_PAINT": {
-                    "default": "#{:02X}{:02X}{:02X}".format(132, 132, 132)
+                    "default": f"#{132:02X}{132:02X}{132:02X}"
                 },
                 "EDGE_TARGET_ARROW_SELECTED_PAINT": {
-                    "default": "#{:02X}{:02X}{:02X}".format(255, 255, 0)
+                    "default": f"#{255:02X}{255:02X}{0:02X}"
                 },
                 "EDGE_TARGET_ARROW_SHAPE": {
                     "default": "NONE"
                 },
                 "EDGE_TARGET_ARROW_UNSELECTED_PAINT": {
-                    "default": "#{:02X}{:02X}{:02X}".format(0, 0, 0)
+                    "default": f"#{0:02X}{0:02X}{0:02X}"
                 },
                 "EDGE_TOOLTIP": {
                     "default": ""
@@ -91,7 +91,7 @@ COMPONENTS = [
                     }
                 },
                 "EDGE_UNSELECTED_PAINT": {
-                    "default": "#{:02X}{:02X}{:02X}".format(64, 64, 64)
+                    "default": f"#{64:02X}{64:02X}{64:02X}"
                 },
                 "EDGE_VISIBLE": {
                     "default": "true"
@@ -105,7 +105,7 @@ COMPONENTS = [
             "dependency": {},
             "visualProperty": {
                 "NETWORK_BACKGROUND_PAINT": {
-                    "default": "#{:02X}{:02X}{:02X}".format(255, 255, 255)
+                    "default": f"#{255:02X}{255:02X}{255:02X}"
                 },
                 "NETWORK_CENTER_X_LOCATION": {
                     "default": "0.0"
@@ -153,7 +153,7 @@ COMPONENTS = [
                     "default": "10.0"
                 },
                 "NODE_BORDER_PAINT": {
-                    "default": "#{:02X}{:02X}{:02X}".format(204, 204, 204)
+                    "default": f"#{204:02X}{204:02X}{204:02X}"
                 },
                 "NODE_BORDER_STROKE": {
                     "default": "SOLID"
@@ -297,21 +297,16 @@ COMPONENTS = [
                     "default": "0.0"
                 },
                 "NODE_FILL_COLOR": {
-                    "default": "#{:02X}{:02X}{:02X}".format(128, 128, 128),
+                    "default": f"#{128:02X}{128:02X}{128:02X}",
                     "discreteMapping": {
                         "attributeName": "change {time}",
                         "attributeType": "string",
                         "discreteMappingEntry": {
-                            "up":
-                                "#{:02X}{:02X}{:02X}".format(255, 0, 0),
-                            "mid up":
-                                "#{:02X}{:02X}{:02X}".format(255, 102, 102),
-                            "mid":
-                                "#{:02X}{:02X}{:02X}".format(128, 128, 128),
-                            "mid down":
-                                "#{:02X}{:02X}{:02X}".format(102, 102, 255),
-                            "down":
-                                "#{:02X}{:02X}{:02X}".format(0, 0, 255),
+                            "up": f"#{255:02X}{0:02X}{0:02X}",
+                            "mid up": f"#{255:02X}{102:02X}{102:02X}",
+                            "mid": f"#{128:02X}{128:02X}{128:02X}",
+                            "mid down": f"#{102:02X}{102:02X}{255:02X}",
+                            "down": f"#{0:02X}{0:02X}{255:02X}",
                         },
                     },
                 },
@@ -326,7 +321,7 @@ COMPONENTS = [
                     },
                 },
                 "NODE_LABEL_COLOR": {
-                    "default": "#{:02X}{:02X}{:02X}".format(0, 0, 0)
+                    "default": f"#{0:02X}{0:02X}{0:02X}"
                 },
                 "NODE_LABEL_FONT_FACE": {
                     "default": "SansSerif.plain,plain,12"
@@ -347,13 +342,13 @@ COMPONENTS = [
                     "default": "true"
                 },
                 "NODE_PAINT": {
-                    "default": "#{:02X}{:02X}{:02X}".format(30, 144, 255)
+                    "default": f"#{30:02X}{144:02X}{255:02X}"
                 },
                 "NODE_SELECTED": {
                     "default": "false"
                 },
                 "NODE_SELECTED_PAINT": {
-                    "default": "#{:02X}{:02X}{:02X}".format(255, 255, 0)
+                    "default": f"#{255:02X}{255:02X}{0:02X}"
                 },
                 "NODE_SHAPE": {
                     "default": "ROUND_RECTANGLE",
@@ -413,7 +408,7 @@ COMPONENTS = [
                     "default": ""
                 },
                 "EDGE_LABEL_COLOR": {
-                    "default": "#{:02X}{:02X}{:02X}".format(0, 0, 0)
+                    "default": f"#{0:02X}{0:02X}{0:02X}"
                 },
                 "EDGE_LABEL_FONT_FACE": {
                     "default": "Dialog.plain,plain,10"
@@ -431,37 +426,37 @@ COMPONENTS = [
                     "default": "SOLID"
                 },
                 "EDGE_PAINT": {
-                    "default": "#{:02X}{:02X}{:02X}".format(50, 50, 50)
+                    "default": f"#{50:02X}{50:02X}{50:02X}"
                 },
                 "EDGE_SELECTED": {
                     "default": "false"
                 },
                 "EDGE_SELECTED_PAINT": {
-                    "default": "#{:02X}{:02X}{:02X}".format(255, 0, 0)
+                    "default": f"#{255:02X}{0:02X}{0:02X}"
                 },
                 "EDGE_SOURCE_ARROW_SELECTED_PAINT": {
-                    "default": "#{:02X}{:02X}{:02X}".format(255, 255, 0)
+                    "default": f"#{255:02X}{255:02X}{0:02X}"
                 },
                 "EDGE_SOURCE_ARROW_SHAPE": {
                     "default": "NONE"
                 },
                 "EDGE_SOURCE_ARROW_UNSELECTED_PAINT": {
-                    "default": "#{:02X}{:02X}{:02X}".format(0, 0, 0)
+                    "default": f"#{0:02X}{0:02X}{0:02X}"
                 },
                 "EDGE_STROKE_SELECTED_PAINT": {
-                    "default": "#{:02X}{:02X}{:02X}".format(255, 0, 0)
+                    "default": f"#{255:02X}{0:02X}{0:02X}"
                 },
                 "EDGE_STROKE_UNSELECTED_PAINT": {
-                    "default": "#{:02X}{:02X}{:02X}".format(132, 132, 132)
+                    "default": f"#{132:02X}{132:02X}{132:02X}"
                 },
                 "EDGE_TARGET_ARROW_SELECTED_PAINT": {
-                    "default": "#{:02X}{:02X}{:02X}".format(255, 255, 0)
+                    "default": f"#{255:02X}{255:02X}{0:02X}"
                 },
                 "EDGE_TARGET_ARROW_SHAPE": {
                     "default": "NONE"
                 },
                 "EDGE_TARGET_ARROW_UNSELECTED_PAINT": {
-                    "default": "#{:02X}{:02X}{:02X}".format(0, 0, 0)
+                    "default": f"#{0:02X}{0:02X}{0:02X}"
                 },
                 "EDGE_TOOLTIP": {
                     "default": ""
@@ -486,7 +481,7 @@ COMPONENTS = [
                     }
                 },
                 "EDGE_UNSELECTED_PAINT": {
-                    "default": "#{:02X}{:02X}{:02X}".format(64, 64, 64)
+                    "default": f"#{64:02X}{64:02X}{64:02X}"
                 },
                 "EDGE_VISIBLE": {
                     "default": "true"
@@ -500,7 +495,7 @@ COMPONENTS = [
             "dependency": {},
             "visualProperty": {
                 "NETWORK_BACKGROUND_PAINT": {
-                    "default": "#{:02X}{:02X}{:02X}".format(255, 255, 255)
+                    "default": f"#{255:02X}{255:02X}{255:02X}"
                 },
                 "NETWORK_CENTER_X_LOCATION": {
                     "default": "0.0"
@@ -548,7 +543,7 @@ COMPONENTS = [
                     "default": "10.0"
                 },
                 "NODE_BORDER_PAINT": {
-                    "default": "#{:02X}{:02X}{:02X}".format(204, 204, 204)
+                    "default": f"#{204:02X}{204:02X}{204:02X}"
                 },
                 "NODE_BORDER_STROKE": {
                     "default": "SOLID"
@@ -692,53 +687,53 @@ COMPONENTS = [
                     "default": "0.0"
                 },
                 "NODE_FILL_COLOR": {
-                    "default": "#{:02X}{:02X}{:02X}".format(128, 128, 128),
+                    "default": f"#{128:02X}{128:02X}{128:02X}",
                     "discreteMapping": {
                         "attributeName": "change {time}",
                         "attributeType": "string",
                         "discreteMappingEntry": {
                             "up":
-                                "#{:02X}{:02X}{:02X}".format(255, 0, 0),
+                                f"#{255:02X}{0:02X}{0:02X}",
                             "mid up":
-                                "#{:02X}{:02X}{:02X}".format(255, 102, 102),
+                                f"#{255:02X}{102:02X}{102:02X}",
                             "mid":
-                                "#{:02X}{:02X}{:02X}".format(128, 128, 128),
+                                f"#{128:02X}{128:02X}{128:02X}",
                             "mid down":
-                                "#{:02X}{:02X}{:02X}".format(102, 102, 255),
+                                f"#{102:02X}{102:02X}{255:02X}",
                             "down":
-                                "#{:02X}{:02X}{:02X}".format(0, 0, 255),
+                                f"#{0:02X}{0:02X}{255:02X}",
                             "{modifications[0]}_up {modifications[1]}_down":
-                                "#{:02X}{:02X}{:02X}".format(0, 255, 0),
+                                f"#{0:02X}{255:02X}{0:02X}",
                             "{modifications[0]}_up {modifications[1]}_mid_down":
-                                "#{:02X}{:02X}{:02X}".format(0, 255, 0),
+                                f"#{0:02X}{255:02X}{0:02X}",
                             "{modifications[0]}_mid_up {modifications[1]}_down":
-                                "#{:02X}{:02X}{:02X}".format(0, 255, 0),
+                                f"#{0:02X}{255:02X}{0:02X}",
                             "{modifications[0]}_mid_up {modifications[1]}_mid_down":
-                                "#{:02X}{:02X}{:02X}".format(0, 255, 0),
+                                f"#{0:02X}{255:02X}{0:02X}",
                             "{modifications[0]}_down {modifications[1]}_up":
-                                "#{:02X}{:02X}{:02X}".format(255, 255, 0),
+                                f"#{255:02X}{255:02X}{0:02X}",
                             "{modifications[0]}_down {modifications[1]}_mid_up":
-                                "#{:02X}{:02X}{:02X}".format(255, 255, 0),
+                                f"#{255:02X}{255:02X}{0:02X}",
                             "{modifications[0]}_mid_down {modifications[1]}_up":
-                                "#{:02X}{:02X}{:02X}".format(255, 255, 0),
+                                f"#{255:02X}{255:02X}{0:02X}",
                             "{modifications[0]}_mid_down {modifications[1]}_mid_up":
-                                "#{:02X}{:02X}{:02X}".format(255, 255, 0),
+                                f"#{255:02X}{255:02X}{0:02X}",
                             "{modifications[0]}_up {modifications[1]}_mid":
-                                "#{:02X}{:02X}{:02X}".format(255, 0, 0),
+                                f"#{255:02X}{0:02X}{0:02X}",
                             "{modifications[0]}_mid_up {modifications[1]}_mid":
-                                "#{:02X}{:02X}{:02X}".format(255, 102, 102),
+                                f"#{255:02X}{102:02X}{102:02X}",
                             "{modifications[0]}_mid_down {modifications[1]}_mid":
-                                "#{:02X}{:02X}{:02X}".format(102, 102, 255),
+                                f"#{102:02X}{102:02X}{255:02X}",
                             "{modifications[0]}_down {modifications[1]}_mid":
-                                "#{:02X}{:02X}{:02X}".format(0, 0, 255),
+                                f"#{0:02X}{0:02X}{255:02X}",
                             "{modifications[0]}_mid {modifications[1]}_up":
-                                "#{:02X}{:02X}{:02X}".format(255, 0, 0),
+                                f"#{255:02X}{0:02X}{0:02X}",
                             "{modifications[0]}_mid {modifications[1]}_mid_up":
-                                "#{:02X}{:02X}{:02X}".format(255, 102, 102),
+                                f"#{255:02X}{102:02X}{102:02X}",
                             "{modifications[0]}_mid {modifications[1]}_mid_down":
-                                "#{:02X}{:02X}{:02X}".format(102, 102, 255),
+                                f"#{102:02X}{102:02X}{255:02X}",
                             "{modifications[0]}_mid {modifications[1]}_down":
-                                "#{:02X}{:02X}{:02X}".format(0, 0, 255),
+                                f"#{0:02X}{0:02X}{255:02X}",
                         },
                     },
                 },
@@ -753,7 +748,7 @@ COMPONENTS = [
                     },
                 },
                 "NODE_LABEL_COLOR": {
-                    "default": "#{:02X}{:02X}{:02X}".format(0, 0, 0)
+                    "default": f"#{0:02X}{0:02X}{0:02X}"
                 },
                 "NODE_LABEL_FONT_FACE": {
                     "default": "SansSerif.plain,plain,12"
@@ -774,13 +769,13 @@ COMPONENTS = [
                     "default": "true"
                 },
                 "NODE_PAINT": {
-                    "default": "#{:02X}{:02X}{:02X}".format(30, 144, 255)
+                    "default": f"#{30:02X}{144:02X}{255:02X}"
                 },
                 "NODE_SELECTED": {
                     "default": "false"
                 },
                 "NODE_SELECTED_PAINT": {
-                    "default": "#{:02X}{:02X}{:02X}".format(255, 255, 0)
+                    "default": f"#{255:02X}{255:02X}{0:02X}"
                 },
                 "NODE_SHAPE": {
                     "default": "ROUND_RECTANGLE",
