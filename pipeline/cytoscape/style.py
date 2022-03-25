@@ -6,13 +6,12 @@ from typing import Callable, Collection
 import networkx as nx
 from networks import (ontology_network, pathway_network,
                       protein_protein_interaction_network)
-from cytoscape.configuration import \
-    ontology_network as ontology_network_configuration
-from cytoscape.configuration import \
-    pathway_network as pathway_network_configuration
-from cytoscape.configuration import \
+
+from cytoscape.styles import ontology_network as ontology_network_style
+from cytoscape.styles import pathway_network as pathway_network_style
+from cytoscape.styles import \
     protein_protein_interaction_network as \
-    protein_protein_interaction_network_configuration
+    protein_protein_interaction_network_style
 
 
 def get_bar_chart(
@@ -91,12 +90,12 @@ def get_protein_protein_interaction_network_styles(
                                                  "visualStyle",
                                                  attrib={"name": str(time)})
 
-        for component in protein_protein_interaction_network_configuration.COMPONENTS[
+        for component in protein_protein_interaction_network_style.COMPONENTS[
                 len(modifications) - 1]:
             component_sub_element = ET.SubElement(visual_style_sub_element,
                                                   component)
 
-            for name, dependency in protein_protein_interaction_network_configuration.COMPONENTS[
+            for name, dependency in protein_protein_interaction_network_style.COMPONENTS[
                     len(modifications) - 1][component]["dependency"].items():
                 ET.SubElement(
                     component_sub_element,
@@ -107,7 +106,7 @@ def get_protein_protein_interaction_network_styles(
                     },
                 )
 
-            for name, visual_property in protein_protein_interaction_network_configuration.COMPONENTS[
+            for name, visual_property in protein_protein_interaction_network_style.COMPONENTS[
                     len(modifications) -
                     1][component]["visualProperty"].items():
                 visual_property_sub_element = ET.SubElement(
@@ -254,12 +253,12 @@ def get_gene_ontology_network_style(network: nx.Graph) -> ET.ElementTree:
                                              "visualStyle",
                                              attrib={"name": "ontology"})
 
-    for component in ontology_network_configuration.COMPONENTS:
+    for component in ontology_network_style.COMPONENTS:
         component_sub_element = ET.SubElement(visual_style_sub_element,
                                               component)
 
-        for name, dependency in ontology_network_configuration.COMPONENTS[
-                component]["dependency"].items():
+        for name, dependency in ontology_network_style.COMPONENTS[component][
+                "dependency"].items():
             ET.SubElement(
                 component_sub_element,
                 "dependency",
@@ -269,7 +268,7 @@ def get_gene_ontology_network_style(network: nx.Graph) -> ET.ElementTree:
                 },
             )
 
-        for name, visual_property in ontology_network_configuration.COMPONENTS[
+        for name, visual_property in ontology_network_style.COMPONENTS[
                 component]["visualProperty"].items():
             visual_property_sub_element = ET.SubElement(
                 component_sub_element,
@@ -384,12 +383,12 @@ def get_reactome_network_style(network: nx.Graph) -> ET.ElementTree:
                                              "visualStyle",
                                              attrib={"name": "pathway"})
 
-    for component in pathway_network_configuration.COMPONENTS:
+    for component in pathway_network_style.COMPONENTS:
         component_sub_element = ET.SubElement(visual_style_sub_element,
                                               component)
 
-        for name, dependency in pathway_network_configuration.COMPONENTS[
-                component]["dependency"].items():
+        for name, dependency in pathway_network_style.COMPONENTS[component][
+                "dependency"].items():
             ET.SubElement(
                 component_sub_element,
                 "dependency",
@@ -399,7 +398,7 @@ def get_reactome_network_style(network: nx.Graph) -> ET.ElementTree:
                 },
             )
 
-        for name, visual_property in pathway_network_configuration.COMPONENTS[
+        for name, visual_property in pathway_network_style.COMPONENTS[
                 component]["visualProperty"].items():
             visual_property_sub_element = ET.SubElement(
                 component_sub_element,

@@ -10,7 +10,7 @@ from typing import Callable, Container
 
 import networkx as nx
 from analysis import correction, test
-from databases.ontologies import gene_ontology
+from databases import gene_ontology
 
 
 def get_gene_ontology_network(

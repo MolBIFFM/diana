@@ -9,7 +9,7 @@ from typing import Callable
 
 import networkx as nx
 from analysis import correction, test
-from databases.pathways import reactome
+from databases import reactome
 
 
 def get_reactome_network(protein_protein_interaction_network: nx.Graph,
