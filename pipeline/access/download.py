@@ -5,7 +5,7 @@ import urllib.parse
 import urllib.request
 
 
-def download_file(url: str, local_file_name: str, size: int = 8192) -> None:
+def download_file(url: str, local_file_name: str, size: int = 4096) -> None:
     """
     Downloads a file from a URL.
 

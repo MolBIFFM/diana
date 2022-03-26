@@ -129,7 +129,7 @@ COMPONENTS = {
                 "value": "true"
             },
             "nodeSizeLocked": {
-                "value": "false"
+                "value": "true"
             },
         },
         "visualProperty": {
