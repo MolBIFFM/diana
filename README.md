@@ -1,5 +1,5 @@
 # pipeline
-protein-protein interaction network assembly and analysis
+protein-protein interaction network assembly and analysis from mass spectrometry data
 
 ## setup
 ```
