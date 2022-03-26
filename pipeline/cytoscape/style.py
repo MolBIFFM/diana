@@ -138,12 +138,12 @@ def get_protein_protein_interaction_network_styles(
                             "continuousMappingPoint",
                             attrib={
                                 "attrValue":
-                                    key.format(
-                                        max=confidence_score_combination({
+                                    key.format(max=float(
+                                        confidence_score_combination({
                                             database: 1.0 for database in
                                             protein_protein_interaction_network.
                                             get_databases(network)
-                                        })),
+                                        }))),
                                 "equalValue":
                                     values["equalValue"],
                                 "greaterValue":

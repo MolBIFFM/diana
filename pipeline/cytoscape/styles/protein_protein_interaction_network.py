@@ -80,11 +80,11 @@ COMPONENTS = [
                             "0.0": {
                                 "equalValue": "0",
                                 "greaterValue": "0",
-                                "lesserValue": "1"
+                                "lesserValue": "0"
                             },
                             "{max:.1f}": {
                                 "equalValue": "255",
-                                "greaterValue": "1",
+                                "greaterValue": "255",
                                 "lesserValue": "255"
                             },
                         }
