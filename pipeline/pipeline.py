@@ -56,8 +56,9 @@ def process_workflow(configuration: dict,
                 gene_accession_column=entry["accession column"],
                 gene_accession_format=re.compile(
                     entry.get("accession format", "^(.+?)$")),
-                sheet_name=entry.get("sheet", 0),
-                header=entry.get("header", 0),
+                sheet_name=entry.get("sheet", 1) -
+                1 if isinstance(entry.get("sheet", 1), int) else entry["sheet"],
+                header=entry.get("header", 1) - 1,
                 taxonomy_identifier=entry.get("taxonomy identifier", 9606),
             )
 
@@ -82,8 +83,9 @@ def process_workflow(configuration: dict,
                 position_format=re.compile(
                     entry.get("position format", "^(.+?)$")),
                 replicates=entry.get("replicate columns", []),
-                sheet_name=entry.get("sheet", 0),
-                header=entry.get("header", 0),
+                sheet_name=entry.get("sheet", 1) -
+                1 if isinstance(entry.get("sheet", 1), int) else entry["sheet"],
+                header=entry.get("header", 1) - 1,
                 num_sites=entry.get("sites", 5),
                 num_replicates=entry.get("replicates", 1),
                 replicate_combination=combination.REPLICATE_COMBINATION[

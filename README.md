@@ -84,36 +84,36 @@ A regular expression used to obtain gene or protein accessions from a cell value
     {
       "genes": [
         {
-          "sheet": 0
+          "sheet": 1
         }
       ],
       "proteins": [
         {
-          "sheet": 0
+          "sheet": 1
         }
       ]
     }
 ]
 ```
-The sheet of a file. The default setting is `0` corresponding to the first sheet of the file.
+The sheet of a file. The default setting is `1` corresponding to the first sheet of the file.
 
 ```json
 [
     {
       "genes": [
         {
-          "header": 0
+          "header": 1
         }
       ],
       "proteins": [
         {
-          "header": 0
+          "header": 1
         }
       ]
     }
 ]
 ```
-The line number of the header to skip initial lines. The default setting is `0`, corresponding to the first line of the sheet.
+The line number of the header, allowing to skip initial lines. The default setting is `1`, corresponding to the first line of the sheet.
 
 ```json
 [
