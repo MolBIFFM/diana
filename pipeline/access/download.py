@@ -1,6 +1,7 @@
 """Utilities to download files."""
 import os
 import sys
+import time
 import urllib.parse
 import urllib.request
 
@@ -20,7 +21,13 @@ def download_file(url: str, local_file_name: str, size: int = 1024) -> None:
             "User-Agent": os.path.splitext(os.path.basename(sys.argv[0]))[0]
         })
 
-    with urllib.request.urlopen(request) as response:
-        with open(local_file_name, "wb") as local_file:
-            while chunk := response.read(size):
-                local_file.write(chunk)
+    while True:
+        try:
+            with urllib.request.urlopen(request) as response:
+                with open(local_file_name, "wb") as local_file:
+                    while chunk := response.read(size):
+                        local_file.write(chunk)
+            break
+
+        except urllib.error.URLError:
+            time.sleep(60)

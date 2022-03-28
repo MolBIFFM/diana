@@ -1,10 +1,13 @@
 """Utilities to iterate local files."""
+import gzip
 import os
 import sys
 import tempfile
 import urllib.parse
 import urllib.request
 from typing import Generator, Optional, Union
+import time
+import zipfile
 
 import pandas as pd
 
@@ -44,16 +47,24 @@ def txt(url: str,
         os.path.split(urllib.parse.urlparse(url).path)[1],
     )
 
-    if not os.path.exists(local_file_name):
-        download.download_file(url, local_file_name, buffering)
+    while True:
+        try:
+            if not os.path.exists(local_file_name):
+                download.download_file(url, local_file_name, buffering)
 
-    file_name_extension = os.path.splitext(local_file_name)[1]
-    if file_name_extension == ".gz":
-        local_file_name = decompress.decompress_gzip_file(
-            local_file_name, buffering)
-    elif file_name_extension == ".zip":
-        local_file_name = decompress.decompress_zip_file(
-            local_file_name, file_from_zip_archive)
+            file_name_extension = os.path.splitext(local_file_name)[1]
+
+            if file_name_extension == ".gz":
+                local_file_name = decompress.decompress_gzip_file(
+                    local_file_name, buffering)
+            elif file_name_extension == ".zip":
+                local_file_name = decompress.decompress_zip_file(
+                    local_file_name, file_from_zip_archive)
+            break
+
+        except (gzip.BadGzipFile, zipfile.BadZipFile):
+            time.sleep(60)
+
     with open(local_file_name, buffering=buffering) as local_file:
         for line in local_file:
             yield line.rstrip("\n")
@@ -112,16 +123,23 @@ def tabular_txt(url: str,
         os.path.split(urllib.parse.urlparse(url).path)[1],
     )
 
-    if not os.path.exists(local_file_name):
-        download.download_file(url, local_file_name, chunksize)
+    while True:
+        try:
+            if not os.path.exists(local_file_name):
+                download.download_file(url, local_file_name, chunksize)
 
-    file_name_extension = os.path.splitext(local_file_name)[1]
-    if file_name_extension == ".gz":
-        local_file_name = decompress.decompress_gzip_file(
-            local_file_name, chunksize)
-    elif file_name_extension == ".zip":
-        local_file_name = decompress.decompress_zip_file(
-            local_file_name, file_from_zip_archive)
+            file_name_extension = os.path.splitext(local_file_name)[1]
+
+            if file_name_extension == ".gz":
+                local_file_name = decompress.decompress_gzip_file(
+                    local_file_name, chunksize)
+            elif file_name_extension == ".zip":
+                local_file_name = decompress.decompress_zip_file(
+                    local_file_name, file_from_zip_archive)
+            break
+
+        except (gzip.BadGzipFile, zipfile.BadZipFile):
+            time.sleep(60)
 
     if not delimiter:
         if os.path.splitext(local_file_name)[1] == ".csv":
