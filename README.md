@@ -1,11 +1,12 @@
 # pipeline
+
 protein-protein interaction network assembly and analysis from mass spectrometry data
 
 ## setup
 ```
 pip3 install -r pipeline/requirements.txt 
 ```
-Developed using Python 3.9.7 on Ubuntu 21.10.
+Developed using Python 3.9.7, Ubuntu 21.10 and Cytoscape 3.9.1.
 
 ## command line interface
 ```
@@ -23,6 +24,15 @@ optional arguments:
 A configuration file specifies a list of workflows sequentially executed. Configuration files are processed concurrently.
 
 ## configuration
+
+The configuration specifies the assembly of a protein-protein interaction network from a set of input genes or proteins, optionally associated with mass spectrometry data using protein-protein interaction data from BioGRID, IntAct, MINT, Reactome or STRING, optionally extended to neighborhoods of the input, based on UniProt identifiers.
+
+Enrichment of Gene Ontology terms by the protein-protein interaction network or its individual modules can be assessed, as well as the distribution of mass spectrometry measurements. For this, measurements can either be interpreted in a binary fashion, measuring enrichment of proteins exhibiting changes exceeding a specified threshold by separate modules or comparing the distribution of changes within them with the remaining network.
+
+Enrichment of Gene Ontology terms as well as Reactome pathways can be assessed and exported with the underlying network structure represented in these databases. Along with the networks, specific Cytoscape styles can be generated.
+
+---
+
 The specification of input genes or proteins.
 
 ```json
@@ -1359,13 +1369,39 @@ Available settings are `"Benjamini-Hochberg"` and `"Bonferroni"`.
 
 ---
 
+pipeline utilizes the following external libraries.
+
+1. A. A. Hagberg, D. A. Schult and P. J. Swart, **Exploring network structure, dynamics, and function using NetworkX**, Proceedings of the 7th Python in Science Conference, pp. 11-15, Aug. 2008
+   
+2. W. McKinney, **Data Structures for Statistical Computing in Python**, Proceedings of the 9th Python in Science Conference, pp. 56-61, Jun. 2010.
+
+3. P. Virtanen, R. Gommers, T. E. Oliphant, M. Haberland, T. Reddy, D. Cournapeau, E. Burovski, P. Peterson, W. Weckesser, J. Bright, S. J. van der Walt, M. Brett, J. Wilson, K. J. Millman, N. Mayorov, A. R. J. Nelson, E. Jones, R. Kern, Eric L., C. J. Carey, İ. Polat, Y. Feng, E. W. Moore, J. VanderPlas, D. Laxalde, J. Perktold, R. Cimrman, I. Henriksen, E. A. Quintero, C. R. Harris, A. M. Archibald, A. H. Ribeiro, F. Pedregosa, P. van Mulbregt, SciPy 1.0 Contributors,  **SciPy 1.0: Fundamental Algorithms for Scientific Computing in Python**, Nature Methods, vol. 17 no.3, pp.261-272, Feb. 2020
+
+pipeline accesses the following resources.
+
+1. R. Oughtred, J. Rust, C. Chang, B. J. Breitkreutz, C. Stark, A. Willems, L. Boucher, G. Leung, N. Kolas, F. Zhang, S.Dolma, J. Coulombe-Huntington, A. Chatr-Aryamontri, K. Dolinski, M. Tyers, **The BioGRID database: A comprehensive biomedical resource of curated protein, genetic, and chemical interactions**, Protein Science, vol. 30, no. 1, pp. 187-200, Oct. 18
+   
+2. M. Ashburner, C. A. Ball, J. A. Blake, D. Botstein, H. Butler, J. M.Cherry, A. P. Davis, K. Dolinski, S. S. Dwight, J. T. Eppig, M. A. Harris, D. P. Hill, L. Issel-Tarver, A. Kasarskis, S. Lewis, J. C. Matese, J.  E. Richardson, M. Ringwald, G. M. Rubin, G. Sherlock, **Gene Ontology: tool for the unification of biology**, Nature Genetics,  vol. 25, no. 1, pp. 25-29, May 2000
+
+3. The Gene Ontology Consortium, **The Gene Ontology resource: enriching a GOld mine**, Nucleic Acids Research, vol. 49, no. D1, pp. D325-D334, Jan. 2021
+  
+4. S. Orchard, M. Ammari, B. Aranda, L. Breuza, L. Briganti, F. Broackes-Carter, N. H. Campbell, G. Chavali, C. Chen, N del-Toro , M. Duesbury, M. Dumousseau, E. Galeota, U. Hinz, M. Iannuccelli, S. Jagannathan, R. Jimenez, J. Khadake, A. Lagreid, L. Licata, R. C. Lovering, B. Meldal, A. N. Melidoni, M. Milagros, D. Peluso, L. Perfetto, P. Porras, A. Raghunath, S. Ricard-Blum, B. Roechert, A. Stutz, M. Tognolli, K. van Roey, G. Cesareni, H. Hermjakob, **The MIntAct project--IntAct as a common curation platform for 11 molecular interaction databases**, Nucleic Acids Research, vol. 42, no. D1, pp. D358-D363, Jan. 2014
+   
+5. L. Licata, L. Briganti, D. Peluso, L. Perfetto, M. Iannuccelli, E. Galeota, F. Sacco, A. Palma, A. P. Nardozza, E. Santonico, L. Castagnoli, G. Cesareni, **MINT, the molecular interaction database: 2012 update**, Nucleic Acids Research, vol. 40, no. D1, pp. D857-D861, Jan. 2012
+   
+6. M. Gillespie, B. Jassal, R. Stephan, M. Milacic, K. Rothfels, A. Senff-Ribeiro, J. Griss, C. Sevilla, L. Matthews, C. Gong, C. Deng, T. Varusai, E. Ragueneau, Y. Haider, B. May, V. Shamovsky, J. Weiser, T. Brunson, N. Sanati, L. Beckman, X. Shao, A. Fabregat, K. Sidiropoulos, J. Murillo, G. Viteri, J. Cook, S. Shorser, G. Bader, E. Demir, C. Sander, R. Haw, G. Wu, L. Stein, H. Hermjakob, P. D’Eustachio, **The reactome pathway knowledgebase 2022**, Nucleic Acids Research, vol. 50, no. D1, pp.  D687-D692, Jan. 2022
+   
+7. D. Szklarczyk, A. L. Gable, D. Lyon, A. Junge, S. Wyder, J. Huerta-Cepas, M. Simonovic, N. T. Doncheva, J. H. Morris, P. Bork, L. J. Jensen, C. von Mering, **STRING v11: protein–protein association networks with increased coverage, supporting functional discovery in genome-wide experimental datasets**, Nucleic Acids Research, vol. 47, no. D1, pp. D607-D613, Jan. 2019
+    
+8. The UniProt Consortium, **UniProt: the universal protein knowledgebase in 2021**, Nucleic Acids Research, vol. 49, no. D1, pp. D480-D489, Jan 2021
+   
 The configuration files provided refer to data sets supplemented with the following publications.
 
 1. M. Hahn, A. Covarrubias-Pinto, L. Herhaus, S. Satpathy, K. Klann, K. B.
-Boyle, C. Münch, K. Rajalingam, F. Randow, C. Choudhary, and I. Dikic, **SIK2 orchestrates actin-dependent host response upon *Salmonella* infection**, Proceedings of the National Academy of Sciences, vol. 118, no. 19, e2024144118, May 2021.
+Boyle, C. Münch, K. Rajalingam, F. Randow, C. Choudhary, and I. Dikic, **SIK2 orchestrates actin-dependent host response upon *Salmonella* infection**, Proceedings of the National Academy of Sciences, vol. 118, no. 19, May 2021.
 
-2. E. Fiskin, T. Bionda, I. Dikic, and C. Behrends, **Global Analysis of Host and Bacterial Ubiquitinome in Response to *Salmonella Typhimurium* Infection**, Molecular Cell, vol. 62, no. 6, pp. 967-981, Jun. 2016.
+1. E. Fiskin, T. Bionda, I. Dikic, and C. Behrends, **Global Analysis of Host and Bacterial Ubiquitinome in Response to *Salmonella Typhimurium* Infection**, Molecular Cell, vol. 62, no. 6, pp. 967-981, Jun. 2016.
 
-3. K. Klann, D. Bojkova, G. Tascher, S. Ciesek, C. Münch, and J. Cinatl, **Growth Factor Receptor Signaling Inhibition Prevents SARS-CoV-2 Replication**, Molecular Cell, vol. 80, no. 1, 164-174.e4, Oct. 2020.
+2. K. Klann, D. Bojkova, G. Tascher, S. Ciesek, C. Münch, and J. Cinatl, **Growth Factor Receptor Signaling Inhibition Prevents SARS-CoV-2 Replication**, Molecular Cell, vol. 80, no. 1, 164-174.e4, Oct. 2020.
 
-4. C. Schmutz, E. Ahrné, C. A. Kasper, T. Tschon, I. Sorg, R. F. Dreier, A. Schmidt, and C. Arrieumerlou, **Systems-Level Overview of Host Protein Phosphorylation During *Shigella flexneri* Infection Revealed by Phosphoproteomics**, Molecular & Cellular Proteomics, vol. 12, no. 10, pp. 2952-2968, Oct. 2013.
+3. C. Schmutz, E. Ahrné, C. A. Kasper, T. Tschon, I. Sorg, R. F. Dreier, A. Schmidt, and C. Arrieumerlou, **Systems-Level Overview of Host Protein Phosphorylation During *Shigella flexneri* Infection Revealed by Phosphoproteomics**, Molecular & Cellular Proteomics, vol. 12, no. 10, pp. 2952-2968, Oct. 2013.
