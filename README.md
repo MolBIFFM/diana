@@ -1369,7 +1369,7 @@ Available settings are `"Benjamini-Hochberg"` and `"Bonferroni"`.
 
 ---
 
-pipeline utilizes the following external libraries.
+The following external libraries are utilized.
 
 1. A. A. Hagberg, D. A. Schult and P. J. Swart, **Exploring network structure, dynamics, and function using NetworkX**, Proceedings of the 7th Python in Science Conference, pp. 11-15, Aug. 2008
    
@@ -1377,7 +1377,9 @@ pipeline utilizes the following external libraries.
 
 3. P. Virtanen, R. Gommers, T. E. Oliphant, M. Haberland, T. Reddy, D. Cournapeau, E. Burovski, P. Peterson, W. Weckesser, J. Bright, S. J. van der Walt, M. Brett, J. Wilson, K. J. Millman, N. Mayorov, A. R. J. Nelson, E. Jones, R. Kern, Eric L., C. J. Carey, İ. Polat, Y. Feng, E. W. Moore, J. VanderPlas, D. Laxalde, J. Perktold, R. Cimrman, I. Henriksen, E. A. Quintero, C. R. Harris, A. M. Archibald, A. H. Ribeiro, F. Pedregosa, P. van Mulbregt, SciPy 1.0 Contributors,  **SciPy 1.0: Fundamental Algorithms for Scientific Computing in Python**, Nature Methods, vol. 17 no.3, pp.261-272, Feb. 2020
 
-pipeline accesses the following resources.
+---
+
+The following resources can be accessed.
 
 1. R. Oughtred, J. Rust, C. Chang, B. J. Breitkreutz, C. Stark, A. Willems, L. Boucher, G. Leung, N. Kolas, F. Zhang, S.Dolma, J. Coulombe-Huntington, A. Chatr-Aryamontri, K. Dolinski, M. Tyers, **The BioGRID database: A comprehensive biomedical resource of curated protein, genetic, and chemical interactions**, Protein Science, vol. 30, no. 1, pp. 187-200, Oct. 18
    
@@ -1394,6 +1396,8 @@ pipeline accesses the following resources.
 7. D. Szklarczyk, A. L. Gable, D. Lyon, A. Junge, S. Wyder, J. Huerta-Cepas, M. Simonovic, N. T. Doncheva, J. H. Morris, P. Bork, L. J. Jensen, C. von Mering, **STRING v11: protein–protein association networks with increased coverage, supporting functional discovery in genome-wide experimental datasets**, Nucleic Acids Research, vol. 47, no. D1, pp. D607-D613, Jan. 2019
     
 8. The UniProt Consortium, **UniProt: the universal protein knowledgebase in 2021**, Nucleic Acids Research, vol. 49, no. D1, pp. D480-D489, Jan 2021
+
+---
    
 The configuration files provided refer to data sets supplemented with the following publications.
 
