@@ -10,8 +10,8 @@ SITE_COMBINATION: dict[str, Callable[[Collection[float]], float]] = {
     "absmax": lambda changes: max(changes, key=abs),
     "min": min,
     "absmin": lambda changes: min(changes, key=abs),
-    "sum": sum,
-    "abssum": lambda changes: sum(abs(change) for change in changes),
+    "sum": math.fsum,
+    "abssum": lambda changes: math.fsum(abs(change) for change in changes),
 }
 
 REPLICATE_COMBINATION: dict[str, Callable[[Collection[float]], float]] = {
@@ -38,7 +38,7 @@ CONFIDENCE_SCORE_COMBINATION: dict[str, Callable[[Collection[float]], float]] = 
     "number":
         len,
     "sum":
-        lambda confidence_scores: sum(confidence_scores.values()),
+        lambda confidence_scores: math.fsum(confidence_scores.values()),
     **{
         database: lambda confidence_scores, database=database: confidence_scores.get(
             database, 0.0) for database in {
