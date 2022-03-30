@@ -1,5 +1,4 @@
 """Community detection algorithms."""
-import math
 from typing import Hashable
 
 import networkx as nx
@@ -30,8 +29,8 @@ def clauset_newman_moore(network: nx.Graph,
     """
     A = nx.linalg.graphmatrix.adjacency_matrix(network, weight=weight)
     n = network.number_of_nodes()
-    k = [math.fsum(A[i, l] for l in range(n)) for i in range(n)]
-    m = math.fsum(k) / 2.0
+    k = [sum(A[i, l] for l in range(n)) for i in range(n)]
+    m = sum(k) / 2.0
     a = [k[i] / (2.0 * m) for i in range(n)]
 
     communities = [{node} for node in network.nodes()]
@@ -156,8 +155,8 @@ def louvain(network: nx.Graph,
 
         A = nx.linalg.graphmatrix.adjacency_matrix(network, weight=weight)
         n = network.number_of_nodes()
-        k = [math.fsum(A[i, l] for l in range(n)) for i in range(n)]
-        m = math.fsum(k) / 2.0
+        k = [sum(A[i, l] for l in range(n)) for i in range(n)]
+        m = sum(k) / 2.0
 
         sigma_tot = [A[ci].sum() for ci in range(n)]
         sigma_in = [A[ci, ci] for ci in range(n)]
@@ -173,8 +172,8 @@ def louvain(network: nx.Graph,
             modularity_optimization = False
 
             for i in range(n):
-                sigma_tot[community[i]] -= math.fsum(A[i, l] for l in range(n))
-                sigma_in[community[i]] -= math.fsum(
+                sigma_tot[community[i]] -= sum(A[i, l] for l in range(n))
+                sigma_in[community[i]] -= sum(
                     [A[i, l] for l in range(n) if community[l] == community[i]])
 
                 k_in[i, community[i]] -= A[i, i]
@@ -184,20 +183,24 @@ def louvain(network: nx.Graph,
                     if A[i, j] and community[i] != community[j]:
                         delta_q[j] = (
                             ((sigma_in[community[j]] + k_in[i, community[j]]) /
-                             (2 * m) - resolution *
-                             ((sigma_tot[community[j]] + k[i]) / (2 * m))**2) -
-                            (sigma_in[community[j]] / (2 * m) - resolution *
+                             (2.0 * m) - resolution *
+                             ((sigma_tot[community[j]] + k[i]) /
+                              (2.0 * m))**2.0) -
+                            (sigma_in[community[j]] / (2.0 * m) - resolution *
                              (sigma_tot[community[j]] /
-                              (2 * m))**2 - resolution * (k[i] / (2 * m))**2)
+                              (2.0 * m))**2.0 - resolution * (k[i] /
+                                                              (2.0 * m))**2.0)
                         ) - (((sigma_in[community[i]] + k_in[i, community[i]]) /
-                              (2 * m) - resolution *
-                              ((sigma_tot[community[i]] + k[i]) / (2 * m))**2) -
-                             (sigma_in[community[i]] / (2 * m) - resolution *
+                              (2.0 * m) - resolution *
+                              ((sigma_tot[community[i]] + k[i]) /
+                               (2.0 * m))**2.0) -
+                             (sigma_in[community[i]] / (2.0 * m) - resolution *
                               (sigma_tot[community[i]] /
-                               (2 * m))**2 - resolution * (k[i] / (2 * m))**2))
+                               (2.0 * m))**2.0 - resolution * (k[i] /
+                                                               (2.0 * m))**2.0))
 
-                sigma_tot[community[i]] += math.fsum(A[i, l] for l in range(n))
-                sigma_in[community[i]] += math.fsum(
+                sigma_tot[community[i]] += sum(A[i, l] for l in range(n))
+                sigma_in[community[i]] += sum(
                     A[i, l] for l in range(n) if community[l] == community[i])
 
                 k_in[i, community[i]] += A[i, i]
@@ -209,16 +212,16 @@ def louvain(network: nx.Graph,
                         modularity_optimization = True
                         community_aggregation = True
 
-                        sigma_tot[community[i]] -= math.fsum(
+                        sigma_tot[community[i]] -= sum(
                             A[i, l] for l in range(n))
-                        sigma_tot[community[max_j]] += math.fsum(
+                        sigma_tot[community[max_j]] += sum(
                             A[i, l] for l in range(n))
 
-                        sigma_in[community[i]] -= math.fsum(
+                        sigma_in[community[i]] -= sum(
                             A[i, l]
                             for l in range(n)
                             if community[l] == community[i])
-                        sigma_in[community[max_j]] += math.fsum(
+                        sigma_in[community[max_j]] += sum(
                             A[i, l]
                             for l in range(n)
                             if community[l] == community[max_j])
