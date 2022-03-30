@@ -1,8 +1,4 @@
-"""
-pipeline
-protein-protein interaction network assembly and analysis
-"""
-
+"""pipeline"""
 import argparse
 import concurrent.futures
 import json
