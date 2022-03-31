@@ -4,14 +4,15 @@ import xml.etree.ElementTree as ET
 from typing import Callable, Collection
 
 import networkx as nx
-from networks import (ontology_network, pathway_network,
-                      protein_protein_interaction_network)
+from networks import (gene_ontology_network,
+                      protein_protein_interaction_network, reactome_network)
 
-from cytoscape.styles import ontology_network as ontology_network_style
-from cytoscape.styles import pathway_network as pathway_network_style
+from cytoscape.styles import \
+    gene_ontology_network as gene_ontology_network_style
 from cytoscape.styles import \
     protein_protein_interaction_network as \
     protein_protein_interaction_network_style
+from cytoscape.styles import reactome_network as reactome_network_style
 
 
 def get_bar_chart(
@@ -256,12 +257,12 @@ def get_gene_ontology_network_style(network: nx.Graph) -> ET.ElementTree:
                                              "visualStyle",
                                              attrib={"name": "ontology"})
 
-    for component in ontology_network_style.COMPONENTS:
+    for component in gene_ontology_network_style.COMPONENTS:
         component_sub_element = ET.SubElement(visual_style_sub_element,
                                               component)
 
-        for name, dependency in ontology_network_style.COMPONENTS[component][
-                "dependency"].items():
+        for name, dependency in gene_ontology_network_style.COMPONENTS[
+                component]["dependency"].items():
             ET.SubElement(
                 component_sub_element,
                 "dependency",
@@ -271,7 +272,7 @@ def get_gene_ontology_network_style(network: nx.Graph) -> ET.ElementTree:
                 },
             )
 
-        for name, visual_property in ontology_network_style.COMPONENTS[
+        for name, visual_property in gene_ontology_network_style.COMPONENTS[
                 component]["visualProperty"].items():
             visual_property_sub_element = ET.SubElement(
                 component_sub_element,
@@ -304,22 +305,22 @@ def get_gene_ontology_network_style(network: nx.Graph) -> ET.ElementTree:
                             "attrValue":
                                 key.format(max=float(
                                     max(
-                                        ontology_network.get_term_sizes(
+                                        gene_ontology_network.get_term_sizes(
                                             network).values()))),
                             "equalValue":
                                 values["equalValue"].format(size=35.0 + float(
                                     max(
-                                        ontology_network.get_term_sizes(
+                                        gene_ontology_network.get_term_sizes(
                                             network).values()))),
                             "greaterValue":
                                 values["greaterValue"].format(size=35.0 + float(
                                     max(
-                                        ontology_network.get_term_sizes(
+                                        gene_ontology_network.get_term_sizes(
                                             network).values()))),
                             "lesserValue":
                                 values["lesserValue"].format(size=35.0 + float(
                                     max(
-                                        ontology_network.get_term_sizes(
+                                        gene_ontology_network.get_term_sizes(
                                             network).values())))
                         },
                     )
@@ -386,11 +387,11 @@ def get_reactome_network_style(network: nx.Graph) -> ET.ElementTree:
                                              "visualStyle",
                                              attrib={"name": "pathway"})
 
-    for component in pathway_network_style.COMPONENTS:
+    for component in reactome_network_style.COMPONENTS:
         component_sub_element = ET.SubElement(visual_style_sub_element,
                                               component)
 
-        for name, dependency in pathway_network_style.COMPONENTS[component][
+        for name, dependency in reactome_network_style.COMPONENTS[component][
                 "dependency"].items():
             ET.SubElement(
                 component_sub_element,
@@ -401,7 +402,7 @@ def get_reactome_network_style(network: nx.Graph) -> ET.ElementTree:
                 },
             )
 
-        for name, visual_property in pathway_network_style.COMPONENTS[
+        for name, visual_property in reactome_network_style.COMPONENTS[
                 component]["visualProperty"].items():
             visual_property_sub_element = ET.SubElement(
                 component_sub_element,
@@ -434,22 +435,22 @@ def get_reactome_network_style(network: nx.Graph) -> ET.ElementTree:
                             "attrValue":
                                 key.format(max=float(
                                     max(
-                                        pathway_network.get_pathway_sizes(
+                                        reactome_network.get_pathway_sizes(
                                             network).values()))),
                             "equalValue":
                                 values["equalValue"].format(size=35.0 + float(
                                     max(
-                                        pathway_network.get_pathway_sizes(
+                                        reactome_network.get_pathway_sizes(
                                             network).values()))),
                             "greaterValue":
                                 values["greaterValue"].format(size=35.0 + float(
                                     max(
-                                        pathway_network.get_pathway_sizes(
+                                        reactome_network.get_pathway_sizes(
                                             network).values()))),
                             "lesserValue":
                                 values["lesserValue"].format(size=35.0 + float(
                                     max(
-                                        pathway_network.get_pathway_sizes(
+                                        reactome_network.get_pathway_sizes(
                                             network).values())))
                         },
                     )

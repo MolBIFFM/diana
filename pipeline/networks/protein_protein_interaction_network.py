@@ -1310,7 +1310,7 @@ def get_gene_ontology_enrichment(
             respect to the union of the protein-protein interaction networks.
 
     Returns:
-        Corrected p-values for the enrichment of each Gene Ontology term by each
+        Corrected p-value for the enrichment of each Gene Ontology term by each
         network.
     """
     name, go_id = {}, {}
@@ -1389,7 +1389,7 @@ def get_reactome_enrichment(
             union of the protein-protein interaction networks.
 
     Returns:
-        Corrected p-values for the enrichment of each Reactome pathway term by 
+        Corrected p-value for the enrichment of each Reactome pathway by 
         each network.
     """
     name = {}
@@ -1423,11 +1423,11 @@ def get_reactome_enrichment(
     }
 
     p_value = multiple_testing_correction({
-        (network, term): enrichment_test(intersection[network][term],
-                                         len(mapped_proteins),
-                                         len(pathways[term]),
-                                         mapped_network_proteins[network])
-        for term in pathways for network in networks
+        (network, pathway): enrichment_test(intersection[network][pathway],
+                                            len(mapped_proteins),
+                                            len(pathways[pathway]),
+                                            mapped_network_proteins[network])
+        for pathway in pathways for network in networks
     })
 
     return {
