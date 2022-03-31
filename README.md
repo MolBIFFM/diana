@@ -27,9 +27,9 @@ A configuration file specifies a list of workflows executed sequentially. Config
 
 The configuration specifies the assembly of a protein-protein interaction network from a set of input genes or proteins optionally associated with mass spectrometry data, using protein-protein interaction data from BioGRID, IntAct, MINT Reactome or STRING, optionally extended to proteins neighboring the input.
 
-Enrichment of Gene Ontology terms by the protein-protein interaction network or its individual modules can be assessed, as well as the distribution of mass spectrometry measurements. For this, measurements can be interpreted in a binary way measuring modules' enrichment of proteins which exhibit measurements exceeding a specified threshold. Alternatively, the distribution of measurements within separate modules can be compared with the remaining network.
+Enrichment of Gene Ontology terms or Reactome pathways by the protein-protein interaction network or its individual modules can be assessed, as well as the distribution of mass spectrometry measurements. 
 
-Enrichment of proteins in protein-protein interaction network by Gene Ontology terms or Reactome pathways they are associated with can be assessed and exported with the network structure underlying these databases. Along with the networks, specific Cytoscape styles can be generated.
+Enrichment of proteins in the protein-protein interaction network by either Gene Ontology terms or Reactome pathways they are associated with can be assessed and exported with the network structure underlying these databases. Along with the networks, specific Cytoscape styles can be generated.
 
 ---
 
@@ -51,7 +51,7 @@ The specification of input genes or proteins.
     }
 ]
 ```
-The file location of the input file.
+The tabular input file.
 
 ```json
 [
@@ -69,7 +69,7 @@ The file location of the input file.
     }
 ]
 ```
-The column reporting UniProt gene or protein accessions.
+The table column to extract UniProt gene or protein accessions from. These are mapped to primary UniProt accessions present in SwissProt. If they do not occur in SwissProt, they are discarded.
 
 ```json
 [
@@ -87,7 +87,7 @@ The column reporting UniProt gene or protein accessions.
     }
 ]
 ```
-A regular expression used to obtain gene or protein accessions from a cell value in the table. The default setting is `"^(.+?)$"`, corresponding to the entire entry.
+A regular expression used to extract all matching gene or protein accessions from an entry in the table, possibly stripping it of additional information. The default setting is `"^(.+?)$"`, corresponding to the entire entry.
 
 ```json
 [
@@ -105,7 +105,7 @@ A regular expression used to obtain gene or protein accessions from a cell value
     }
 ]
 ```
-The sheet of a file. The default setting is `1` corresponding to the first sheet of the file.
+The sheet of a spreadsheet to extract data from. The default setting is `1` corresponding to the first sheet of the file.
 
 ```json
 [
@@ -123,7 +123,7 @@ The sheet of a file. The default setting is `1` corresponding to the first sheet
     }
 ]
 ```
-The line number of the header, allowing to skip initial lines. The default setting is `1`, corresponding to the first line of the sheet.
+The line number of the header, allowing to skip lines. The default setting is `1`, corresponding to the first line of the sheet.
 
 ```json
 [
@@ -142,7 +142,7 @@ The line number of the header, allowing to skip initial lines. The default setti
 ]
 ```
 
-A list of input gene or protein accessions.
+A list of input gene or protein accessions, alternative to extraction from tabular file.
 
 ```json
 [
@@ -168,20 +168,20 @@ The NCBI taxonomy ID of the organism. The default and currently only fully suppo
     }
 ]
 ```
-The time of measurement to be associated with the changes from the corresponding file. The default setting is `0`.
+The time of measurement to be associated with the measurements from the input file. The default setting is `0`.
 
 ```json
 [
     {
       "proteins": [
         {
-          "post-translational modification": ""
+          "post-translational modification": "M"
         }
       ]
     }
 ]
 ```
-An identifier for the type of post-translational modification associate with changes from the corresponding file. The default setting is `""`.
+An identifier for the type of post-translational modification associate with measurements from the corresponding file. The default setting is `"M"`.
 
 ```json
 [
@@ -194,7 +194,7 @@ An identifier for the type of post-translational modification associate with cha
     }
 ]
 ```
-The table column corresponding to modification sites used, if available, to order the changes.
+The table column reporting modification sites of measurements. If available, measurements are sorted accordingly.
 
 ```json
 [
@@ -207,7 +207,7 @@ The table column corresponding to modification sites used, if available, to orde
     }
 ]
 ```
-A regular expression used to obtain modification sites from a corresponding entry in the table. The default setting is `"^(.+?)$"`, corresponding to the entire entry.
+A regular expression used to extract all matching modification sites from an entry in the table, possibly stripping it of additional information. The default setting is `"^(.+?)$"`, corresponding to the entire entry.
 
 ```json
 [
@@ -220,7 +220,7 @@ A regular expression used to obtain modification sites from a corresponding entr
     }
 ]
 ```
-A list of columns to parse modification changes from. The default setting is `[]`, corresponding to no data.
+A list of columns to extract replicate measurements from. The default setting is `[]`, corresponding to no data.
 
 ```json
 [
@@ -233,7 +233,7 @@ A list of columns to parse modification changes from. The default setting is `[]
     }
 ]
 ```
-A threshold on the number of replicates to accept a measurement. The default setting is `1`.
+A threshold on the number of replicates required to consider a measurement. The default setting is `1`.
 
 ```json
 [
@@ -246,7 +246,7 @@ A threshold on the number of replicates to accept a measurement. The default set
     }
 ]
 ```
-The maximum number of modification sites to associate with each protein prioritized by largest absolute change. The default setting is `5`.
+The maximum number of measurements to associate with each protein prioritized by largest absolute value. The default setting is `5`.
 
 ```json
 [
@@ -259,7 +259,7 @@ The maximum number of modification sites to associate with each protein prioriti
     }
 ]
 ```
-A function to combine individual replicates into a single change. The default setting is `"mean"`. Available settings are `"mean"` and `"median"`.
+A function to combine individual replicates into a single measurement. The default setting is `"mean"`. Available settings are `"mean"` and `"median"`.
 
 ```json
 [
@@ -272,7 +272,7 @@ A function to combine individual replicates into a single change. The default se
     }
 ]
 ```
-The base of the logarithm that changes are expressed as. By default, ratios are assumed. Available settings are `null`, `2` and `10`.
+The base of the logarithm that measured measurements are expressed as. By default, ratios are assumed. Available settings are `null`, `2` and `10`.
 
 ```json
 [
@@ -281,11 +281,62 @@ The base of the logarithm that changes are expressed as. By default, ratios are 
     }
 ]
 ```
-A list of input protein-protein interaction networks.
+A list of input protein-protein interaction networks as output by a workflow. If multiple networks are specified, they are combined.
 
 ---
 
-The specification of sources of protein-protein interactions for the assembly of the protein-protein interaction network.
+The specification of sources of protein-protein interactions for the assembly of the protein-protein interaction network. Database-specific requirements can be defined, where each must be satisfied for an interaction to be incorporated.
+
+```json
+[
+    {
+      "protein-protein interactions": {
+        "BioGRID": {
+          "neighbors": 0
+        },
+        "IntAct": {
+          "neighbors": 0
+        }, 
+        "MINT": {
+          "neighbors": 0
+        },
+        "Reactome": {
+          "neighbors": 0
+        },
+        "STRING": {
+          "neighbors": 0
+        }
+      }
+    }
+]
+```
+An integer k specifying the extension of the network using proteins separated by up to k protein-protein interactions from the input proteins in the corresponding database. The default setting is 0, corresponding to no extension.
+
+```json
+[
+    {
+      "protein-protein interactions": {
+        "BioGRID": {
+          "taxonomy identifier": 9606
+        },
+        "IntAct": {
+          "taxonomy identifier": 9606
+        }, 
+        "MINT": {
+          "taxonomy identifier": 9606
+        },
+        "Reactome": {
+          "taxonomy identifier": 9606
+        },
+        "STRING": {
+          "taxonomy identifier": 9606
+        }
+      }
+    }
+]
+```
+The NCBI taxonomy ID of the organism. The default and currently only fully supported setting is `9606`, corresponding to Homo sapiens.
+
 
 ```json
 [
@@ -350,7 +401,7 @@ If true, restrict query to multi-validated physical protein-protein interactions
     }
 ]
 ```
-The version of the BioGRID database to query, if `null` given, the latest is used. The default setting is `null`.
+The version of the BioGRID database to use. The default setting is `null`, corresponding to the latest version.
 
 ```json
 [
@@ -382,7 +433,7 @@ A list of accepted PSI-MI terms for interaction detection methods. The default s
     }
 ]
 ```
-A list of accepted PSI-MI terms interaction types. The default setting is `[]`, corresponding to accepting any annotation.
+A list of accepted PSI-MI terms for interaction types. The default setting is `[]`, corresponding to accepting any annotation.
 
 ```json
 [
@@ -398,7 +449,7 @@ A list of accepted PSI-MI terms interaction types. The default setting is `[]`, 
     }
 ]
 ```
-The PSI-MI score threshold. The default setting is `0.0`, corresponding to no threshold.
+A PSI-MI score threshold. The default setting is `0.0`.
 
 ```json
 [
@@ -437,7 +488,7 @@ A list of accepted interaction type annotations. The default setting is `[]`, co
     }
 ]
 ```
-The STRING gene neighborhood score threshold. The default setting is `0.0`, corresponding to no threshold.
+The STRING gene neighborhood score threshold. The default setting is `0.0`.
 
 ```json
 [
@@ -450,7 +501,7 @@ The STRING gene neighborhood score threshold. The default setting is `0.0`, corr
     }
 ]
 ```
-The STRING transferred gene neighborhood score threshold. The default setting is `0.0`, corresponding to no threshold.
+The STRING transferred gene neighborhood score threshold. The default setting is `0.0`.
 
 ```json
 [
@@ -463,7 +514,7 @@ The STRING transferred gene neighborhood score threshold. The default setting is
     }
 ]
 ```
-The STRING gene fusion score threshold. The default setting is `0.0`, corresponding to no threshold.
+The STRING gene fusion score threshold. The default setting is `0.0`.
 
 ```json
 [
@@ -476,7 +527,7 @@ The STRING gene fusion score threshold. The default setting is `0.0`, correspond
     }
 ]
 ```
-The STRING gene coooccurrence score threshold. The default setting is `0.0`, corresponding to no threshold.
+The STRING gene coooccurrence score threshold. The default setting is `0.0`.
 
 ```json
 [
@@ -489,7 +540,7 @@ The STRING gene coooccurrence score threshold. The default setting is `0.0`, cor
     }
 ]
 ```
-The STRING gene coexpression score threshold. The default setting is `0.0`, corresponding to no threshold.
+The STRING gene coexpression score threshold. The default setting is `0.0`.
 
 ```json
 [
@@ -502,7 +553,7 @@ The STRING gene coexpression score threshold. The default setting is `0.0`, corr
     }
 ]
 ```
-The STRING transferred gene coexpression score threshold. The default setting is `0.0`, corresponding to no threshold.
+The STRING transferred gene coexpression score threshold. The default setting is `0.0`.
 
 ```json
 [
@@ -515,7 +566,7 @@ The STRING transferred gene coexpression score threshold. The default setting is
     }
 ]
 ```
-The STRING experiments score threshold. The default setting is `0.0`, corresponding to no threshold.
+The STRING experiments score threshold. The default setting is `0.0`.
 
 ```json
 [
@@ -528,7 +579,7 @@ The STRING experiments score threshold. The default setting is `0.0`, correspond
     }
 ]
 ```
-The STRING transferred experiments score threshold. The default setting is `0.0`, corresponding to no threshold.
+The STRING transferred experiments score threshold. The default setting is `0.0`.
 
 ```json
 [
@@ -541,7 +592,7 @@ The STRING transferred experiments score threshold. The default setting is `0.0`
     }
 ]
 ```
-The STRING database score threshold. The default setting is `0.0`, corresponding to no threshold.
+The STRING database score threshold. The default setting is `0.0`.
 
 ```json
 [
@@ -554,7 +605,7 @@ The STRING database score threshold. The default setting is `0.0`, corresponding
     }
 ]
 ```
-The STRING transferred database score threshold. The default setting is `0.0`, corresponding to no threshold.
+The STRING transferred database score threshold. The default setting is `0.0`.
 
 ```json
 [
@@ -567,7 +618,7 @@ The STRING transferred database score threshold. The default setting is `0.0`, c
     }
 ]
 ```
-The STRING  textmining score threshold. The default setting is `0.0`, corresponding to no threshold.
+The STRING  textmining score threshold. The default setting is `0.0`.
 
 ```json
 [
@@ -580,7 +631,7 @@ The STRING  textmining score threshold. The default setting is `0.0`, correspond
     }
 ]
 ```
-The STRING transferred textmining score threshold. The default setting is `0.0`, corresponding to no threshold.
+The STRING transferred textmining score threshold. The default setting is `0.0`.
 
 ```json
 [
@@ -593,7 +644,7 @@ The STRING transferred textmining score threshold. The default setting is `0.0`,
     }
 ]
 ```
-The STRING combined score threshold. The default setting is `0.0`, corresponding to no threshold.
+The STRING combined score threshold. The default setting is `0.0`.
 
 ```json
 [
@@ -620,76 +671,11 @@ If true, restrict query to physical protein-protein interactions. The default se
 ]
 
 ```
-The version of STRING to query. The default setting is `11.5`.
-
-```json
-[
-    {
-      "protein-protein interactions": {
-        "BioGRID": {
-          "neighbors": 0
-        },
-        "IntAct": {
-          "neighbors": 0
-        }, 
-        "MINT": {
-          "neighbors": 0
-        },
-        "Reactome": {
-          "neighbors": 0
-        },
-        "STRING": {
-          "neighbors": 0
-        }
-      }
-    }
-]
-```
-An integer k specifying the extension of the network by proteins separated by up to k protein-protein interactions satisfying the requirements from the input proteins in the corresponding database. The default setting is 0, corresponding to no extension.
-
-
-
-```json
-[
-    {
-      "protein-protein interactions": {
-        "BioGRID": {
-          "taxonomy identifier": 9606
-        },
-        "IntAct": {
-          "taxonomy identifier": 9606
-        }, 
-        "MINT": {
-          "taxonomy identifier": 9606
-        },
-        "Reactome": {
-          "taxonomy identifier": 9606
-        },
-        "STRING": {
-          "taxonomy identifier": 9606
-        }
-      }
-    }
-]
-```
-The NCBI taxonomy ID of the organism. The default and currently only fully supported setting is `9606`, corresponding to Homo sapiens.
+The version of STRING to use. The default setting is `11.5`.
 
 ---
 
-The specification of Cytoscape styles.
-
-```json
-[
-    {
-      "Cytoscape": {
-        "node color": {
-          "change": [-1.0, 1.0]
-        }
-      },
-    }
-]
-```
-The range of combined changes distinguishing proteins by whether the range is exceeded or not. The default setting is `[-1.0, 1.0]` if `"conversion"` is not set, `[-2.0, 2.0]` if `"conversion"` is set to `"standard score"` and `[0.025, 0.975]` if `"conversion"` is set to `"quantile"`.
+The specification of Cytoscape styles. If not present, no Cytoscape styles are exported.
 
 ```json
 [
@@ -705,7 +691,7 @@ The range of combined changes distinguishing proteins by whether the range is ex
     }
 ]
 ```
-The function used to derive a proteins-specific change from a its individual sites. The default setting is `"absmax"`, corresponding to the largest absolute change. Available settings are `"mean"`, `"median"`, `"max"`, `"absmax"`, `"min"`, `"absmin"`, `"sum"`, `"abssum"` and `null`, such that sites are considered individually.
+The function used to derive protein-specific measurements from their individual sites. The default setting is `"absmax"`, corresponding to the largest absolute value. Available settings are `"mean"`, `"median"`, `"max"`, `"absmax"`, `"min"`, `"absmin"`, `"sum"`, `"abssum"` and `null`, such that sites are considered individually.
 
 ```json
 [
@@ -721,7 +707,7 @@ The function used to derive a proteins-specific change from a its individual sit
     }
 ]
 ```
-The conversion of changes that a change range refers to. It defaults to log2-fold change but may be set to `"standard score"` or `"quantile"` with respect to the distribution of a change of a particular modification at a particular time of measurement in the network.
+The conversion of measurements that a range refers to. It defaults to the log2-fold measurement but may be set to `"standard score"` or `"quantile"` with respect to the distribution of a particular modification at a particular time of measurement across the protein-protein interaction network.
 
 ```json
 [
@@ -734,7 +720,20 @@ The conversion of changes that a change range refers to. It defaults to log2-fol
     }
 ]
 ```
-The range of the bar charts. The default setting is `[-1.0, 1.0]` if `"conversion"` is not set, `[-2.0, 2.0]` if `"conversion"` is set to `"standard score"` and `[0.025, 0.975]` if `"conversion"` is set to `"quantile"`.
+The range of the bar charts reporting measurements. The default setting is `[-1.0, 1.0]` if `"conversion"` is not set, `[-2.0, 2.0]` if `"conversion"` is set to `"standard score"` and `[0.025, 0.975]` if `"conversion"` is set to `"quantile"`.
+
+```json
+[
+    {
+      "Cytoscape": {
+        "node color": {
+          "measurement": [-1.0, 1.0]
+        }
+      },
+    }
+]
+```
+The range of combined measurements categorizing proteins by whether the range is exceeded or not. The default setting is `[-1.0, 1.0]` if `"conversion"` is not set, `[-2.0, 2.0]` if `"conversion"` is set to `"standard score"` and `[0.025, 0.975]` if `"conversion"` is set to `"quantile"`.
 
 ```json
 [
@@ -745,16 +744,19 @@ The range of the bar charts. The default setting is `[-1.0, 1.0]` if `"conversio
     }
 ]
 ```
-The function used to derive a combined edge confidence score from scores in IntAct, MINT and STRING as well as 1.0 used for BioGRID and Reactome, respectively for a lack of corresponding score. The combined score is reflected by edge transparency. By default any edge receives a score of 1.0. Available settings are `null`,  `"mean"`, `"median"`, `"max"`, `"min"`, `"sum"`, `"number"`, `"BioGRID"`, `"IntAct"`, `"MINT"`, `"Reactome"`, `"STRING"`.
+The function used to derive a combined edge confidence score from scores in IntAct, MINT and STRING. For lack of corresponding score, 1.0 is used for all interactions from BioGRID and Reactome. The combined score is reflected by edge transparency. By default any edge receives a score of 1.0. Available settings are `null`,  `"mean"`, `"median"`, `"max"`, `"min"`, `"sum"`, `"number"`. Additionally, `"BioGRID"`, `"IntAct"`, `"MINT"`, `"Reactome"` and `"STRING"` refer to the score in only the particular database.
 
 ---
 
-The specification of Gene Ontology enrichment analysis of the protein-protein interaction network.
+The specification of Gene Ontology and Reactome enrichment analysis of the protein-protein interaction network.
 
 ```json
 [
     {
       "Gene Ontology enrichment": {
+        "test": "hypergeometric"
+      },
+      "Reactome enrichment": {
         "test": "hypergeometric"
       }
     }
@@ -768,11 +770,14 @@ Available settings are `"binomial"` and `"hypergeometric"`.
     {
       "Gene Ontology enrichment": {
         "correction": "Benjamini-Hochberg"
+      },
+      "Reactome enrichment": {
+        "correction": "Benjamini-Hochberg"
       }
     }
 ]
 ```
-The procedure to adjust p-values for multiple testing. The default setting is `"Benjamini-Hochberg"`.
+The procedure to correct p-values for multiple testing. The default setting is `"Benjamini-Hochberg"`.
 Available settings are `"Benjamini-Hochberg"` and `"Bonferroni"`.
 
 ```json
@@ -780,11 +785,28 @@ Available settings are `"Benjamini-Hochberg"` and `"Bonferroni"`.
     {
       "Gene Ontology enrichment": {
         "p": 1.0
+      },
+      "Reactome enrichment": {
+        "p": 1.0
       }
     }
 ]
 ```
-The threshold for corrected p-values. The default setting is `1.0`.
+The corrected p-value threshold. The default setting is `1.0`.
+
+```json
+[
+    {
+      "Gene Ontology enrichment": {
+        "taxonomy identifier": 9606
+      },
+       "Reactome enrichment": {
+        "taxonomy identifier": 9606
+      }
+    }
+]
+```
+The NCBI taxonomy ID of the organism. The default and currently only fully supported setting is `9606`, corresponding to Homo sapiens.
 
 ```json
 [
@@ -799,33 +821,22 @@ The threshold for corrected p-values. The default setting is `1.0`.
     }
 ]
 ```
-The Gene Ontology namespaces to consider. The default setting is `["cellular_component", "molecular_function" "biological_process"]`, corresponding to the entire Gene Ontology.
-
-```json
-[
-    {
-      "Gene Ontology enrichment": {
-        "taxonomy identifier": 9606
-      }
-    }
-]
-```
-The NCBI taxonomy ID of the organism. The default and currently only fully supported setting is `9606`, corresponding to Homo sapiens.
+The Gene Ontology namespaces to consider. The default setting is `["cellular_component", "molecular_function" "biological_process"]`.
 
 ---
 
-The specification of modularization of the protein-protein interaction network.
+The specification of a modular decomposition of the protein-protein interaction network using a network topological community detection algorithm.
 
 ```json
 [
     {
       "module detection": {
-        "module size": 0
+        "module size": null
       }
     }
 ]
 ```
-An upper bound on the number of nodes in any module. Modules are iteratively subdivided until this threshold is met. The default setting is the number of proteins in the network, corresponding to a single iteration of the community detection algorithm.
+An upper bound on the number of nodes per module. Modules are iteratively subdivided until this threshold is met. The default setting is the number of proteins in the network, corresponding to a single iteration of the community detection algorithm.
 
 ```json
 [
@@ -836,7 +847,7 @@ An upper bound on the number of nodes in any module. Modules are iteratively sub
     }
 ]
 ```
-The function of the sizes of modules decisive to meeting the module size threshold. The default setting is `"mean"`, the mean of all module sizes. Available settings are `"mean"`, `"median"`, `"max"` and `"min"`.
+The function to cobine sizes of modules into a value decisive to meeting the module size threshold. The default setting is `"mean"`. Available settings are `"mean"`, `"median"`, `"max"` and `"min"`.
 
 ```json
 [
@@ -858,7 +869,7 @@ The community detection algorithm. The default setting is `"Louvain"`. Available
     }
 ]
 ```
-The resolution parameter of modularity optimized by module detection. The default setting is `1.0`, corresponding to non-parameterized modularity.
+The resolution parameter of modularity optimized by module detection. The default setting is `1.0`, corresponding to non-parameterized modularity. Larger values produce smaller modules, placing emphasis on the expected number of edges.
 
 ```json
 [
@@ -869,62 +880,17 @@ The resolution parameter of modularity optimized by module detection. The defaul
     }
 ]
 ```
-The function used to derive a combined edge confidence score from scores in IntAct, MINT and STRING as well as 1.0 used for BioGRID and Reactome, respectively for a lack of corresponding scoring. The combined score is utilized as edge weight in module detection. By default any edge receives a score of 1.0, corresponding to an unweighted network. Available settings are `null`, `"mean"`, `"median"`, `"max"`, `"min"`, `"sum"`, `"number"`, `"BioGRID"`, `"IntAct"`, `"MINT"`, `"Reactome"`, `"STRING"`.
+The function used to derive a combined edge confidence score from scores in IntAct, MINT and STRING as well as 1.0 used for BioGRID and Reactome, respectively for a lack of corresponding scoring. The combined score is utilized as edge weight in module detection. By default any edge receives a score of 1.0, corresponding to an unweighted network. Available settings are `null`, `"mean"`, `"median"`, `"max"`, `"min"`, `"sum"`, `"number"`. Additionally, `"BioGRID"`, `"IntAct"`, `"MINT"`, `"Reactome"` and `"STRING"` refer to the score in only the particular database.
 
 ---
 
-The specification of modularization of statistical tests of individual modules with respect to Gene Ontology enrichment and the distribution of changes in the protein-protein interaction network. The tests act as filter on the exported modules of the protein-protein interaction network.
+The specification of statistical tests on individual modules with respect to either Gene Ontology or Reactome enrichment or the distribution of measurements across the protein-protein interaction network. 
 
-```json
-[
-    {
-      "module detection": {
-        "change enrichment": {
-          "proteins": {
-            "site combination": "absmax"
-          } 
-        }
-      }
-    }
-]
-```
-The function used to derive a proteins-specific change from a its individual sites. The default setting is `"absmax"`, corresponding to the largest absolute change. Available settings are `"mean"`, `"median"`, `"max"`, `"absmax"`, `"min"`, `"absmin"`, `"sum"`, `"abssum"` and `null`, such that sites are considered individually.
+Gene Ontology and Reactome enrichment can be assessed with respect to the entire annotation or pathway map, respectively, or the protein-protein interaction network. 
 
-```json
-[
-    {
-      "module detection": {
-        "change enrichment": {
-          "proteins": {
-            "change": [-1.0, 1.0]
-          },
-          "sites": {
-            "change": [-1.0, 1.0]
-          }
-        }
-      }
-    }
-]
-```
-The range of combined changes distinguishing proteins by whether the range is exceeded or not. The default setting is `[-1.0, 1.0]` if `"conversion"` is not set, `[-2.0, 2.0]` if `"conversion"` is set to `"standard score"` and `[0.025, 0.975]` if `"conversion"` is set to `"quantile"`.
+To assess their distribution, measurements can be interpreted in a binary way measuring modules' enrichment of proteins which exhibit measurements exceeding a specified threshold. Alternatively, the distribution of measurements within separate modules can be compared with the remaining network.
 
-```json
-[
-    {
-      "module detection": {
-        "change enrichment": {
-          "proteins": {
-            "conversion": null
-          },
-          "sites": {
-            "conversion": null
-          }
-        }
-      }
-    }
-]
-```
-The conversion of changes that a change range refers to. It defaults to log2-fold change but may be set to `"standard score"` or `"quantile"` with respect to the distribution of a change of a particular modification at a particular time of measurement in the network.
+The tests act as filter on the exported modules of the protein-protein interaction network. A module is only exported, if it is significant according to any of the specified tests.
 
 ```json
 [
@@ -938,7 +904,15 @@ The conversion of changes that a change range refers to. It defaults to log2-fol
             "test": "hypergeometric"
           }
         },
-        "change enrichment": {
+        "Reactome enrichment": {
+          "map": {
+            "test": "hypergeometric"
+          },
+          "network": {
+            "test": "hypergeometric"
+          }
+        },
+        "measurement enrichment": {
           "proteins": {
             "test": "hypergeometric"
           },
@@ -957,7 +931,7 @@ Available settings are `"binomial"` and `"hypergeometric"`.
 [
     {
       "module detection": {
-        "change location": {
+        "measurement location": {
           "proteins": {
             "test": "Wilcoxon"
           },
@@ -969,7 +943,7 @@ Available settings are `"binomial"` and `"hypergeometric"`.
     }
 ]
 ```
-The statistical test to assess the change location of each module in relation to the entire network. The default and setting is `"Wilcoxon"`, the Wilcoxon rank-sum test. Available settings are `"Welch"` and `"Wilcoxon"`.
+The statistical test to compare modification- and time-specific measurement distributions of each module in with the remaining network. The default and setting is `"Wilcoxon"`. Available settings are `"Welch"` and `"Wilcoxon"`.
 
 ```json
 [
@@ -983,7 +957,15 @@ The statistical test to assess the change location of each module in relation to
             "correction": "Benjamini-Hochberg"
           }
         },
-        "change enrichment": {
+        "Reactome enrichment": {
+          "map": {
+            "correction": "Benjamini-Hochberg"
+          },
+          "network": {
+            "correction": "Benjamini-Hochberg"
+          }
+        },
+        "measurement enrichment": {
           "proteins": {
             "correction": "Benjamini-Hochberg"
           },
@@ -991,7 +973,7 @@ The statistical test to assess the change location of each module in relation to
             "correction": "Benjamini-Hochberg"
           }
         },
-        "change location": {
+        "measurement location": {
           "proteins": {
             "correction": "Benjamini-Hochberg"
           },
@@ -1003,7 +985,7 @@ The statistical test to assess the change location of each module in relation to
     }
 ]
 ```
-The procedure to adjust p-values for multiple testing. The default setting is `"Benjamini-Hochberg"`.
+The procedure to correct p-values for multiple testing. The default setting is `"Benjamini-Hochberg"`.
 Available settings are `"Benjamini-Hochberg"` and `"Bonferroni"`.
 
 ```json
@@ -1018,7 +1000,15 @@ Available settings are `"Benjamini-Hochberg"` and `"Bonferroni"`.
             "p": 1.0
           }
         },
-        "change enrichment": {
+        "Reactome enrichment": {
+          "map": {
+            "p": 1.0
+          },
+          "network": {
+            "p": 1.0
+          }
+        },
+        "measurement enrichment": {
           "proteins": {
             "p": 1.0
           },
@@ -1026,7 +1016,7 @@ Available settings are `"Benjamini-Hochberg"` and `"Bonferroni"`.
             "p": 1.0
           }
         },
-        "change location": {
+        "measurement location": {
           "proteins": {
             "p": 1.0
           },
@@ -1038,7 +1028,7 @@ Available settings are `"Benjamini-Hochberg"` and `"Bonferroni"`.
     }
 ]
 ```
-The threshold for corrected p-values. The default setting is `1.0`.
+The corrected p-value threshold. The default setting is `1.0`.
 
 ```json
 [
@@ -1046,32 +1036,14 @@ The threshold for corrected p-values. The default setting is `1.0`.
       "module detection": {
         "Gene Ontology enrichment": {
           "annotation": {
-            "namespaces": [
-              "cellular_component",
-              "molecular_function",
-              "biological_process"
-            ]
+            "taxonomy identifier": 9606
           },
           "network": {
-            "namespaces": [
-              "cellular_component",
-              "molecular_function",
-              "biological_process"
-            ]
+            "taxonomy identifier": 9606
           }
-        }
-      }
-    }
-]
-```
-The Gene Ontology namespaces to consider. The default setting is `["cellular_component", "molecular_function" "biological_process"]`, corresponding to the entire Gene Ontology.
-
-```json
-[
-    {
-      "module detection": {
-        "Gene Ontology enrichment": {
-          "annotation": {
+        },
+        "Reactome enrichment": {
+          "map": {
             "taxonomy identifier": 9606
           },
           "network": {
@@ -1084,14 +1056,107 @@ The Gene Ontology namespaces to consider. The default setting is `["cellular_com
 ```
 The NCBI taxonomy ID of the organism. The default and currently only fully supported setting is `9606`, corresponding to Homo sapiens.
 
+```json
+[
+    {
+      "module detection": {
+        "Gene Ontology enrichment": {
+          "annotation": {
+            "namespaces": [
+              "cellular_component",
+              "molecular_function",
+              "biological_process"
+            ]
+          },
+          "network": {
+            "namespaces": [
+              "cellular_component",
+              "molecular_function",
+              "biological_process"
+            ]
+          }
+        }
+      }
+    }
+]
+```
+The Gene Ontology namespaces to consider. The default setting is `["cellular_component", "molecular_function" "biological_process"]`.
+
+```json
+[
+    {
+      "module detection": {
+        "measurement enrichment": {
+          "proteins": {
+            "measurement": [-1.0, 1.0]
+          },
+          "sites": {
+            "measurement": [-1.0, 1.0]
+          }
+        }
+      }
+    }
+]
+```
+The range of measurements categorizing proteins by whether the range is exceeded or not. The default setting is `[-1.0, 1.0]` if `"conversion"` is not set, `[-2.0, 2.0]` if `"conversion"` is set to `"standard score"` and `[0.025, 0.975]` if `"conversion"` is set to `"quantile"`.
+
+```json
+[
+    {
+      "module detection": {
+        "measurement enrichment": {
+          "proteins": {
+            "conversion": null
+          },
+          "sites": {
+            "conversion": null
+          }
+        }
+      }
+    }
+]
+```
+The conversion of measurements that a range refers to. It defaults to the log2-fold measurement but may be set to `"standard score"` or `"quantile"` with respect to the distribution of a particular modification at a particular time of measurement across the protein-protein interaction network.
+
+```json
+[
+    {
+      "module detection": {
+        "measurement enrichment": {
+          "proteins": {
+            "site combination": "absmax"
+          } 
+        }
+      }
+    }
+]
+```
+The function used to derive a protein-specific measurement from a its individual sites. The default setting is `"absmax"`, corresponding to the largest absolute value. Available settings are `"mean"`, `"median"`, `"max"`, `"absmax"`, `"min"`, `"absmin"`, `"sum"` and `"abssum"`.
+
 ---
 
-The specification of Gene Ontology network assembly from the protein-protein interaction network. A Gene Ontology network is composed of applicable Gene Ontology terms and their relations. It reflects the representation of Gene Ontology terms by the protein-protein interaction network.
+The specification of Gene Ontology or Reactome network assembly from the protein-protein interaction network. 
+
+A Gene Ontology network is composed of terms, a Reactome network of pathways represented protein-protein interaction network. They contain the enrichment of each respective entity by proteins from the protein-protein interaction network.
+
+Optionally, the proteins considered may be restricted based on their associated measurements, either by a union or intersection of subsets of proteins exceeding the specified ranges.
 
 ```json
 [
     {
       "Gene Ontology network": {
+        "union": [
+          {
+            "time": null
+          }
+        ],
+        "intersection": [
+          {
+            "time": null
+          }
+        ]
+      },
+      "Reactome network": {
         "union": [
           {
             "time": null
@@ -1122,6 +1187,18 @@ The time of measurement considered to determine a subset of proteins.
             "post-translational modification": null
           }
         ]
+      },
+      "Reactome network": {
+        "union": [
+          {
+            "post-translational modification": null
+          }
+        ],
+        "intersection": [
+          {
+            "post-translational modification": null
+          }
+        ]
       }
     }
 ]
@@ -1142,11 +1219,23 @@ The modification considered to determine a subset of proteins.
             "site combination": "absmax",
           }
         ]
+      },
+      "Reactome network": {
+        "union": [
+          {
+            "site combination": "absmax"
+          }
+        ],
+        "intersection": [
+          {
+            "site combination": "absmax",
+          }
+        ]
       }
     }
 ]
 ```
-The function used to derive a proteins-specific change from a its individual sites. The default setting is `"absmax"`, corresponding to the largest absolute change. Available settings are `"mean"`, `"median"`, `"max"`, `"absmax"`, `"min"`, `"absmin"`, `"sum"`, `"abssum"` and `null`, such that sites are considered individually.
+The function used to derive a protein-specific measurement from a its individual sites. The default setting is `"absmax"`, corresponding to the largest absolute value. Available settings are `"mean"`, `"median"`, `"max"`, `"absmax"`, `"min"`, `"absmin"`, `"sum"`, `"abssum"` and `null`, such that sites are considered individually.
 
 ```json
 [
@@ -1162,11 +1251,23 @@ The function used to derive a proteins-specific change from a its individual sit
             "conversion": null
           }
         ]
+      },
+      "Reactome network": {
+        "union": [
+          {
+            "conversion": null
+          }
+        ],
+        "intersection": [
+          {
+            "conversion": null
+          }
+        ]
       }
     }
 ]
 ```
-The conversion of changes that a change range refers to. It defaults to log2-fold change but may be set to `"standard score"` or `"quantile"` with respect to the distribution of a change of a particular modification at a particular time of measurement in the network.
+The conversion of measurements that a range refers to. It defaults to the log2-fold measurement but may be set to `"standard score"` or `"quantile"` with respect to the distribution of a particular modification at a particular time of measurement across the protein-protein interaction network.
 
 ```json
 [
@@ -1174,24 +1275,39 @@ The conversion of changes that a change range refers to. It defaults to log2-fol
       "Gene Ontology network": {
         "union": [
           {
-            "change": [-1.0, 1.0]
+            "measurement": [-1.0, 1.0]
           }
         ],
         "intersection": [
           {
-            "change": [-1.0, 1.0]
+            "measurement": [-1.0, 1.0]
+          }
+        ]
+      },
+      "Reactome network": {
+        "union": [
+          {
+            "measurement": [-1.0, 1.0]
+          }
+        ],
+        "intersection": [
+          {
+            "measurement": [-1.0, 1.0]
           }
         ]
       }
     }
 ]
 ```
-The range of combined changes distinguishing proteins by whether the range is exceeded or not. The default setting is `[-1.0, 1.0]` if `"conversion"` is not set, `[-2.0, 2.0]` if `"conversion"` is set to `"standard score"` and `[0.025, 0.975]` if `"conversion"` is set to `"quantile"`.
+The range of combined measurements categorizing proteins by whether the range is exceeded or not. The default setting is `[-1.0, 1.0]` if `"conversion"` is not set, `[-2.0, 2.0]` if `"conversion"` is set to `"standard score"` and `[0.025, 0.975]` if `"conversion"` is set to `"quantile"`.
 
 ```json
 [
     {
       "Gene Ontology network": {
+        "test": "hypergeometric"
+      },
+      "Reactome network": {
         "test": "hypergeometric"
       }
     }
@@ -1205,12 +1321,30 @@ Available settings are `"binomial"` and `"hypergeometric"`.
     {
       "Gene Ontology network": {
         "correction": "Benjamini-Hochberg"
+      },
+      "Reactome network": {
+        "correction": "Benjamini-Hochberg"
       }
     }
 ]
 ```
-The procedure to adjust p-values for multiple testing. The default setting is `"Benjamini-Hochberg"`.
+The procedure to correct p-values for multiple testing. The default setting is `"Benjamini-Hochberg"`.
 Available settings are `"Benjamini-Hochberg"` and `"Bonferroni"`.
+
+```json
+[
+    {
+      "Gene Ontology network": {
+        "taxonomy identifier": 9606
+      },
+      "Reactome network": {
+        "taxonomy identifier": 9606
+      }
+    }
+]
+```
+
+The NCBI taxonomy ID of the organism. The default and currently only fully supported setting is `9606`, corresponding to Homo sapiens.
 
 ```json
 [
@@ -1225,147 +1359,7 @@ Available settings are `"Benjamini-Hochberg"` and `"Bonferroni"`.
     }
 ]
 ```
-The Gene Ontology namespaces to consider. The default setting is `["cellular_component", "molecular_function" "biological_process"]`, corresponding to the entire Gene Ontology.
-
-```json
-[
-    {
-      "Gene Ontology network": {
-        "taxonomy identifier": 9606
-      }
-    }
-]
-```
-
-The NCBI taxonomy ID of the organism. The default and currently only fully supported setting is `9606`, corresponding to Homo sapiens.
-
----
-
-The specification of Reactome network assembly from the protein-protein interaction network. A Reactome network is composed of applicable Reactome pathways and their relations. It reflects the representation of Reactome pathways by the protein-protein interaction network.
-
-```json
-[
-    {
-      "Reactome network": {
-        "union": [
-          {
-            "time": null
-          }
-        ],
-        "intersection": [
-          {
-            "time": null
-          }
-        ]
-      }
-    }
-]
-```
-The time of measurement considered to determine a subset of proteins.
-
-```json
-[
-    {
-      "Reactome network": {
-        "union": [
-          {
-            "post-translational modification": null
-          }
-        ],
-        "intersection": [
-          {
-            "post-translational modification": null
-          }
-        ]
-      }
-    }
-]
-```
-The modification considered to determine a subset of proteins.
-
-```json
-[
-    {
-      "Reactome network": {
-        "union": [
-          {
-            "site combination": "absmax"
-          }
-        ],
-        "intersection": [
-          {
-            "site combination": "absmax"
-          }
-        ]
-      }
-    }
-]
-```
-The function used to derive a proteins-specific change from a its individual sites. The default setting is `"absmax"`, corresponding to the largest absolute change. Available settings are `"mean"`, `"median"`, `"max"`, `"absmax"`, `"min"`, `"absmin"`, `"sum"`, `"abssum"` and `null`, such that sites are considered individually.
-
-```json
-[
-    {
-      "Reactome network": {
-        "union": [
-          {
-            "conversion": null
-          }
-        ],
-        "intersection": [
-          {
-            "conversion": null
-          }
-        ]
-      }
-    }
-]
-```
-The conversion of changes that a change range refers to. It defaults to log2-fold change but may be set to `"standard score"` or `"quantile"` with respect to the distribution of a change of a particular modification at a particular time of measurement in the network.
-
-```json
-[
-    {
-      "Reactome network": {
-        "union": [
-          {
-            "change": [-1.0, 1.0]
-          }
-        ],
-        "intersection": [
-          {
-            "change": [-1.0, 1.0]
-          }
-        ]
-      }
-    }
-]
-```
-The range of combined changes distinguishing proteins by whether the range is exceeded or not. The default setting is `[-1.0, 1.0]` if `"conversion"` is not set, `[-2.0, 2.0]` if `"conversion"` is set to `"standard score"` and `[0.025, 0.975]` if `"conversion"` is set to `"quantile"`.
-
-```json
-[
-    {
-      "Reactome network": {
-        "test": "hypergeometric"
-      }
-    }
-]
-```
-The statistical test to assess enrichment. The default setting is `"hypergeometric"`.
-Available settings are `"binomial"` and `"hypergeometric"`.
-
-```json
-[
-    {
-      "Reactome network": {
-        "correction": "Benjamini-Hochberg"
-      }
-    }
-]
-```
-The procedure to adjust p-values for multiple testing. The default setting is `"Benjamini-Hochberg"`.
-Available settings are `"Benjamini-Hochberg"` and `"Bonferroni"`.
+The Gene Ontology namespaces to consider. The default setting is `["cellular_component", "molecular_function" "biological_process"]`.
 
 ---
    

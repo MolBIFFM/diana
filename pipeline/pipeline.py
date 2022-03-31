@@ -74,7 +74,7 @@ def process_workflow(configuration: dict,
                 protein_accession_format=re.compile(
                     entry.get("accession format", "^(.+?)$")),
                 time=entry.get("time", 0),
-                modification=entry.get("post-translational modification", ""),
+                modification=entry.get("post-translational modification", "M"),
                 position_column=entry.get("position column", ""),
                 position_format=re.compile(
                     entry.get("position format", "^(.+?)$")),
@@ -361,9 +361,10 @@ def process_workflow(configuration: dict,
     if "Cytoscape" in configuration:
         styles = style.get_protein_protein_interaction_network_styles(
             network,
-            bar_chart_range=default.CHANGE_RANGE[configuration["Cytoscape"].get(
-                "bar chart", {}).get("conversion")],
-            convert_change=conversion.CHANGE_CONVERSION[
+            bar_chart_range=default.MEASUREMENT_RANGE[
+                configuration["Cytoscape"].get("bar chart",
+                                               {}).get("conversion")],
+            convert_measurement=conversion.MEASUREMENT_CONVERSION[
                 configuration["Cytoscape"].get("bar chart",
                                                {}).get("conversion")],
             site_combination=combination.SITE_COMBINATION[
@@ -388,15 +389,16 @@ def process_workflow(configuration: dict,
         protein_protein_interaction_network.set_post_translational_modification(
             network)
 
-        protein_protein_interaction_network.set_changes(
+        protein_protein_interaction_network.set_measurements(
             network,
             site_combination=combination.SITE_COMBINATION[
                 configuration["Cytoscape"].get("node color",
                                                {}).get("site combination",
                                                        "absmax")],
-            changes=default.CHANGE_RANGE[configuration["Cytoscape"].get(
-                "node color", {}).get("conversion")],
-            convert_change=conversion.CHANGE_CONVERSION[
+            measurements=default.MEASUREMENT_RANGE[
+                configuration["Cytoscape"].get("node color",
+                                               {}).get("conversion")],
+            convert_measurement=conversion.MEASUREMENT_CONVERSION[
                 configuration["Cytoscape"].get("node color",
                                                {}).get("conversion")],
         )
@@ -407,25 +409,43 @@ def process_workflow(configuration: dict,
     )
 
     if "Gene Ontology enrichment" in configuration:
-        enrichment = protein_protein_interaction_network.get_gene_ontology_enrichment(
+        gene_ontology_enrichment = protein_protein_interaction_network.get_gene_ontology_enrichment(
             [network],
             enrichment_test=test.ENRICHMENT_TEST[
-                configuration["module detection"]
-                ["Gene Ontology enrichment"].get("test", "hypergeometric")],
+                configuration["Gene Ontology enrichment"].get(
+                    "test", "hypergeometric")],
             multiple_testing_correction=correction.CORRECTION[
-                configuration["module detection"].get("correction",
-                                                      "Benjamini-Hochberg")],
-            taxonomy_identifier=configuration["module detection"]
-            ["Gene Ontology enrichment"].get("taxonomy identifier", 9606),
-            namespaces=configuration["module detection"]
-            ["Gene Ontology enrichment"].get("namespaces", [
-                "cellular_component", "molecular_function", "biological_process"
-            ]))
+                configuration["Gene Ontology enrichment"].get(
+                    "correction", "Benjamini-Hochberg")],
+            taxonomy_identifier=configuration["Gene Ontology enrichment"].get(
+                "taxonomy identifier", 9606),
+            namespaces=configuration["Gene Ontology enrichment"].get(
+                "namespaces", [
+                    "cellular_component", "molecular_function",
+                    "biological_process"
+                ]))
 
-        for (term, name), p in sorted(enrichment[network].items(),
+        for (term, name), p in sorted(gene_ontology_enrichment[network].items(),
                                       key=lambda item: item[1]):
             if p <= configuration["Gene Ontology enrichment"].get("p", 1.0):
                 logger.info(f"{term}\t{p:.2e}\t{name}")
+
+    if "Reactome enrichment" in configuration:
+        reactome_enrichment = protein_protein_interaction_network.get_reactome_enrichment(
+            [network],
+            enrichment_test=test.ENRICHMENT_TEST[
+                configuration["Reactome enrichment"].get(
+                    "test", "hypergeometric")],
+            multiple_testing_correction=correction.CORRECTION[
+                configuration["Reactome enrichment"].get(
+                    "correction", "Benjamini-Hochberg")],
+            taxonomy_identifier=configuration["Reactome enrichment"].get(
+                "taxonomy identifier", 9606))
+
+        for (pathway, name), p in sorted(reactome_enrichment[network].items(),
+                                         key=lambda item: item[1]):
+            if p <= configuration["Reactome enrichment"].get("p", 1.0):
+                logger.info(f"{pathway}\t{p:.2e}\t{name}")
 
     if "module detection" in configuration:
         protein_protein_interaction_network.set_edge_weights(
@@ -495,85 +515,129 @@ def process_workflow(configuration: dict,
                             ]),
                         annotation_as_reference=False)
 
-        if "change enrichment" in configuration["module detection"]:
-            change_enrichment = {}
+        if "Reactome enrichment" in configuration["module detection"]:
+            reactome_enrichment = {}
+            if "map" in configuration["module detection"][
+                    "Reactome enrichment"]:
+                reactome_enrichment[
+                    "map"] = protein_protein_interaction_network.get_reactome_enrichment(
+                        modules,
+                        enrichment_test=test.ENRICHMENT_TEST[
+                            configuration["module detection"]
+                            ["Reactome enrichment"]["map"].get(
+                                "test", "hypergeometric")],
+                        multiple_testing_correction=correction.CORRECTION[
+                            configuration["module detection"]
+                            ["Reactome enrichment"]["map"].get(
+                                "correction", "Benjamini-Hochberg")],
+                        taxonomy_identifier=configuration["module detection"]
+                        ["Reactome enrichment"]["map"].get(
+                            "taxonomy identifier", 9606))
+
+            if "network" in configuration["module detection"][
+                    "Reactome enrichment"]:
+                reactome_enrichment[
+                    "network"] = protein_protein_interaction_network.get_reactome_enrichment(
+                        modules,
+                        enrichment_test=test.ENRICHMENT_TEST[
+                            configuration["module detection"]
+                            ["Reactome enrichment"]["network"].get(
+                                "test", "hypergeometric")],
+                        multiple_testing_correction=correction.CORRECTION[
+                            configuration["module detection"]
+                            ["Reactome enrichment"]["network"].get(
+                                "correction", "Benjamini-Hochberg")],
+                        taxonomy_identifier=configuration["module detection"]
+                        ["Reactome enrichment"]["network"].get(
+                            "taxonomy identifier", 9606),
+                        map_as_reference=False)
+
+        if "measurement enrichment" in configuration["module detection"]:
+            measurement_enrichment = {}
             if "proteins" in configuration["module detection"][
-                    "change enrichment"]:
-                change_enrichment[
-                    "proteins"] = protein_protein_interaction_network.get_change_enrichment(
+                    "measurement enrichment"]:
+                measurement_enrichment[
+                    "proteins"] = protein_protein_interaction_network.get_measurement_enrichment(
                         network,
                         modules,
-                        changes=default.CHANGE_RANGE[
+                        measurements=default.MEASUREMENT_RANGE[
                             configuration["module detection"]
-                            ["change enrichment"]["proteins"].get(
+                            ["measurement enrichment"]["proteins"].get(
                                 "conversion")],
-                        convert_change=conversion.CHANGE_CONVERSION[
+                        convert_measurement=conversion.MEASUREMENT_CONVERSION[
                             configuration["module detection"]
-                            ["change enrichment"]["proteins"].get(
+                            ["measurement enrichment"]["proteins"].get(
                                 "conversion")],
                         site_combination=combination.SITE_COMBINATION[
                             configuration["module detection"]
-                            ["change enrichment"]["proteins"].get(
+                            ["measurement enrichment"]["proteins"].get(
                                 "site combination", "absmax")],
                         enrichment_test=test.ENRICHMENT_TEST[
                             configuration["module detection"]
-                            ["change enrichment"]["proteins"].get(
+                            ["measurement enrichment"]["proteins"].get(
                                 "test", "hypergeometric")],
                         multiple_testing_correction=correction.CORRECTION[
                             configuration["module detection"]
-                            ["change enrichment"]["proteins"].get(
+                            ["measurement enrichment"]["proteins"].get(
                                 "correction", "Benjamini-Hochberg")])
 
             if "sites" in configuration["module detection"][
-                    "change enrichment"]:
-                change_enrichment[
-                    "sites"] = protein_protein_interaction_network.get_change_enrichment(
+                    "measurement enrichment"]:
+                measurement_enrichment[
+                    "sites"] = protein_protein_interaction_network.get_measurement_enrichment(
                         network,
                         modules,
-                        changes=default.CHANGE_RANGE[
+                        measurements=default.MEASUREMENT_RANGE[
                             configuration["module detection"]
-                            ["change enrichment"]["sites"].get("conversion")],
-                        convert_change=conversion.CHANGE_CONVERSION[
+                            ["measurement enrichment"]["sites"].get(
+                                "conversion")],
+                        convert_measurement=conversion.MEASUREMENT_CONVERSION[
                             configuration["module detection"]
-                            ["change enrichment"]["sites"].get("conversion")],
+                            ["measurement enrichment"]["sites"].get(
+                                "conversion")],
                         enrichment_test=test.ENRICHMENT_TEST[
                             configuration["module detection"]
-                            ["change enrichment"]["sites"].get(
+                            ["measurement enrichment"]["sites"].get(
                                 "test", "hypergeometric")],
                         multiple_testing_correction=correction.CORRECTION[
                             configuration["module detection"]
-                            ["change enrichment"]["sites"].get(
+                            ["measurement enrichment"]["sites"].get(
                                 "correction", "Benjamini-Hochberg")])
 
-        if "change location" in configuration["module detection"]:
-            change_location = {}
+        if "measurement location" in configuration["module detection"]:
+            measurement_location = {}
             if "proteins" in configuration["module detection"][
-                    "change location"]:
-                change_location[
-                    "proteins"] = protein_protein_interaction_network.get_change_location(
+                    "measurement location"]:
+                measurement_location[
+                    "proteins"] = protein_protein_interaction_network.get_measurement_location(
                         network,
                         modules,
                         combination.SITE_COMBINATION[
-                            configuration["module detection"]["change location"]
-                            ["proteins"].get("site combination", "absmax")],
+                            configuration["module detection"]
+                            ["measurement location"]["proteins"].get(
+                                "site combination", "absmax")],
                         location_test=test.LOCATION_TEST[
-                            configuration["module detection"]["change location"]
-                            ["proteins"].get("test", "Wilcoxon")],
+                            configuration["module detection"]
+                            ["measurement location"]["proteins"].get(
+                                "test", "Wilcoxon")],
                         multiple_testing_correction=correction.CORRECTION[
-                            configuration["module detection"]["change location"]
-                            ["proteins"].get("correction",
-                                             "Benjamini-Hochberg")])
-            if "sites" in configuration["module detection"]["change location"]:
-                change_location[
-                    "sites"] = protein_protein_interaction_network.get_change_location(
+                            configuration["module detection"]
+                            ["measurement location"]["proteins"].get(
+                                "correction", "Benjamini-Hochberg")])
+            if "sites" in configuration["module detection"][
+                    "measurement location"]:
+                measurement_location[
+                    "sites"] = protein_protein_interaction_network.get_measurement_location(
                         network,
                         modules,
                         location_test=test.LOCATION_TEST[
-                            configuration["module detection"]["change location"]
-                            ["sites"].get("test", "Wilcoxon")],
+                            configuration["module detection"]
+                            ["measurement location"]["sites"].get(
+                                "test", "Wilcoxon")],
                         multiple_testing_correction=correction.CORRECTION[
-                            configuration["module detection"]["change location"]
-                            ["sites"].get("correction", "Benjamini-Hochberg")])
+                            configuration["module detection"]
+                            ["measurement location"]["sites"].get(
+                                "correction", "Benjamini-Hochberg")])
 
         for k, module in enumerate(
                 sorted(modules,
@@ -607,62 +671,88 @@ def process_workflow(configuration: dict,
                             logger.info(
                                 f"{k}\tnetwork\t{term}\t{p:.2e}\t{name}")
 
-            if "change enrichment" in configuration["module detection"]:
+            if "Reactome enrichment" in configuration["module detection"]:
+                if "map" in configuration["module detection"][
+                        "Reactome enrichment"]:
+                    for (pathway, name), p in sorted(
+                            reactome_enrichment["map"][module].items(),
+                            key=lambda item: item[1]):
+                        if p <= configuration["module detection"][
+                                "Reactome enrichment"]["map"].get("p", 1.0):
+                            export = True
+                            logger.info(f"{k}\map\t{pathway}\t{p:.2e}\t{name}")
+
+                if "network" in configuration["module detection"][
+                        "Reactome enrichment"]:
+                    for (pathway, name), p in sorted(
+                            reactome_enrichment["network"][module].items(),
+                            key=lambda item: item[1]):
+                        if p <= configuration["module detection"][
+                                "Reactome enrichment"]["network"].get("p", 1.0):
+                            export = True
+                            logger.info(
+                                f"{k}\tnetwork\t{pathway}\t{p:.2e}\t{name}")
+
+            if "measurement enrichment" in configuration["module detection"]:
                 if "proteins" in configuration["module detection"][
-                        "change enrichment"]:
-                    for time in change_enrichment["proteins"][module]:
+                        "measurement enrichment"]:
+                    for time in measurement_enrichment["proteins"][module]:
                         for modification, p in sorted(
-                                change_enrichment["proteins"][module]
+                                measurement_enrichment["proteins"][module]
                             [time].items(),
                                 key=lambda item: item[1]):
                             if p <= configuration["module detection"][
-                                    "change enrichment"]["proteins"].get(
+                                    "measurement enrichment"]["proteins"].get(
                                         "p", 1.0):
                                 export = True
                                 logger.info(
-                                    f"{k}\tprotein change enrichment\t{time} {modification}\t{p:.2e}"
+                                    f"{k}\tprotein measurement enrichment\t{time} {modification}\t{p:.2e}"
                                 )
 
                 if "sites" in configuration["module detection"][
-                        "change enrichment"]:
-                    for time in change_enrichment["sites"][module]:
-                        for modification, p in sorted(change_enrichment["sites"]
-                                                      [module][time].items(),
-                                                      key=lambda item: item[1]):
-                            if p <= configuration["module detection"][
-                                    "change enrichment"]["sites"].get("p", 1.0):
-                                export = True
-                                logger.info(
-                                    f"{k}\tsite change enrichment\t{time} {modification}\t{p:.2e}"
-                                )
-
-            if "change location" in configuration["module detection"]:
-                if "proteins" in configuration["module detection"][
-                        "change location"]:
-                    for time in change_location["proteins"][module]:
+                        "measurement enrichment"]:
+                    for time in measurement_enrichment["sites"][module]:
                         for modification, p in sorted(
-                                change_location["proteins"][module]
+                                measurement_enrichment["sites"][module]
                             [time].items(),
                                 key=lambda item: item[1]):
                             if p <= configuration["module detection"][
-                                    "change location"]["proteins"].get(
+                                    "measurement enrichment"]["sites"].get(
                                         "p", 1.0):
                                 export = True
                                 logger.info(
-                                    f"{k}\tprotein change location\t{time} {modification}\t{p:.2e}"
+                                    f"{k}\tsite measurement enrichment\t{time} {modification}\t{p:.2e}"
+                                )
+
+            if "measurement location" in configuration["module detection"]:
+                if "proteins" in configuration["module detection"][
+                        "measurement location"]:
+                    for time in measurement_location["proteins"][module]:
+                        for modification, p in sorted(
+                                measurement_location["proteins"][module]
+                            [time].items(),
+                                key=lambda item: item[1]):
+                            if p <= configuration["module detection"][
+                                    "measurement location"]["proteins"].get(
+                                        "p", 1.0):
+                                export = True
+                                logger.info(
+                                    f"{k}\tprotein measurement location\t{time} {modification}\t{p:.2e}"
                                 )
 
                 if "sites" in configuration["module detection"][
-                        "change location"]:
-                    for time in change_location["sites"][module]:
+                        "measurement location"]:
+                    for time in measurement_location["sites"][module]:
                         for modification, p in sorted(
-                                change_location["sites"][module][time].items(),
+                                measurement_location["sites"][module]
+                            [time].items(),
                                 key=lambda item: item[1]):
                             if p <= configuration["module detection"][
-                                    "change location"]["sites"].get("p", 1.0):
+                                    "measurement location"]["sites"].get(
+                                        "p", 1.0):
                                 export = True
                                 logger.info(
-                                    f"{k}\tsite change location\t{time} {modification}\t{p:.2e}"
+                                    f"{k}\tsite measurement location\t{time} {modification}\t{p:.2e}"
                                 )
 
             if export:
@@ -684,21 +774,23 @@ def process_workflow(configuration: dict,
                         "post-translational modification"
                 ) in protein_protein_interaction_network.get_post_translational_modifications(
                         network, subset["time"]):
-                    change_range = (
-                        conversion.CHANGE_CONVERSION[subset.get("conversion")]
+                    measurement_range = (
+                        conversion.MEASUREMENT_CONVERSION[subset.get(
+                            "conversion")]
                         (subset.get(
-                            "change",
-                            default.CHANGE_RANGE[subset.get("conversion")])[0],
-                         protein_protein_interaction_network.get_changes(
+                            "measurement", default.MEASUREMENT_RANGE[subset.get(
+                                "conversion")])[0],
+                         protein_protein_interaction_network.get_measurements(
                              network, subset["time"],
                              subset["post-translational modification"],
                              combination.SITE_COMBINATION[subset.get(
                                  "site combination", "absmax")])),
-                        conversion.CHANGE_CONVERSION[subset.get("conversion")]
+                        conversion.MEASUREMENT_CONVERSION[subset.get(
+                            "conversion")]
                         (subset.get(
-                            "change",
-                            default.CHANGE_RANGE[subset.get("conversion")])[1],
-                         protein_protein_interaction_network.get_changes(
+                            "measurement", default.MEASUREMENT_RANGE[subset.get(
+                                "conversion")])[1],
+                         protein_protein_interaction_network.get_measurements(
                              network, subset["time"],
                              subset["post-translational modification"],
                              combination.SITE_COMBINATION[subset.get(
@@ -709,9 +801,9 @@ def process_workflow(configuration: dict,
                             network, subset["time"],
                             subset["post-translational modification"],
                             combination.SITE_COMBINATION[subset.get(
-                                "site combination", "absmax")],
-                            lambda change: change <= change_range[
-                                0] or change >= change_range[1]))
+                                "site combination", "absmax")], lambda
+                            measurement: measurement <= measurement_range[
+                                0] or measurement >= measurement_range[1]))
 
             gene_ontology_network = ontology_network.get_gene_ontology_network(
                 nx.induced_subgraph(network, proteins),
@@ -741,21 +833,23 @@ def process_workflow(configuration: dict,
                         "post-translational modification"
                 ) in protein_protein_interaction_network.get_post_translational_modifications(
                         network, subset["time"]):
-                    change_range = (
-                        conversion.CHANGE_CONVERSION[subset.get("conversion")]
+                    measurement_range = (
+                        conversion.MEASUREMENT_CONVERSION[subset.get(
+                            "conversion")]
                         (subset.get(
-                            "change",
-                            default.CHANGE_RANGE[subset.get("conversion")])[0],
-                         protein_protein_interaction_network.get_changes(
+                            "measurement", default.MEASUREMENT_RANGE[subset.get(
+                                "conversion")])[0],
+                         protein_protein_interaction_network.get_measurements(
                              network, subset["time"],
                              subset["post-translational modification"],
                              combination.SITE_COMBINATION[subset.get(
                                  "site combination", "absmax")])),
-                        conversion.CHANGE_CONVERSION[subset.get("conversion")]
+                        conversion.MEASUREMENT_CONVERSION[subset.get(
+                            "conversion")]
                         (subset.get(
-                            "change",
-                            default.CHANGE_RANGE[subset.get("conversion")])[1],
-                         protein_protein_interaction_network.get_changes(
+                            "measurement", default.MEASUREMENT_RANGE[subset.get(
+                                "conversion")])[1],
+                         protein_protein_interaction_network.get_measurements(
                              network, subset["time"],
                              subset["post-translational modification"],
                              combination.SITE_COMBINATION[subset.get(
@@ -766,9 +860,9 @@ def process_workflow(configuration: dict,
                             network, subset["time"],
                             subset["post-translational modification"],
                             combination.SITE_COMBINATION[subset.get(
-                                "site combination", "absmax")],
-                            lambda change: change <= change_range[
-                                0] or change >= change_range[1]))
+                                "site combination", "absmax")], lambda
+                            measurement: measurement <= measurement_range[
+                                0] or measurement >= measurement_range[1]))
 
             gene_ontology_network = ontology_network.get_gene_ontology_network(
                 nx.induced_subgraph(network, proteins),
@@ -826,21 +920,23 @@ def process_workflow(configuration: dict,
                         "post-translational modification"
                 ) in protein_protein_interaction_network.get_post_translational_modifications(
                         network, subset["time"]):
-                    change_range = (
-                        conversion.CHANGE_CONVERSION[subset.get("conversion")]
+                    measurement_range = (
+                        conversion.MEASUREMENT_CONVERSION[subset.get(
+                            "conversion")]
                         (subset.get(
-                            "change",
-                            default.CHANGE_RANGE[subset.get("conversion")])[0],
-                         protein_protein_interaction_network.get_changes(
+                            "measurement", default.MEASUREMENT_RANGE[subset.get(
+                                "conversion")])[0],
+                         protein_protein_interaction_network.get_measurements(
                              network, subset["time"],
                              subset["post-translational modification"],
                              combination.SITE_COMBINATION[subset.get(
                                  "site combination", "absmax")])),
-                        conversion.CHANGE_CONVERSION[subset.get("conversion")]
+                        conversion.MEASUREMENT_CONVERSION[subset.get(
+                            "conversion")]
                         (subset.get(
-                            "change",
-                            default.CHANGE_RANGE[subset.get("conversion")])[1],
-                         protein_protein_interaction_network.get_changes(
+                            "measurement", default.MEASUREMENT_RANGE[subset.get(
+                                "conversion")])[1],
+                         protein_protein_interaction_network.get_measurements(
                              network, subset["time"],
                              subset["post-translational modification"],
                              combination.SITE_COMBINATION[subset.get(
@@ -851,9 +947,9 @@ def process_workflow(configuration: dict,
                             network, subset["time"],
                             subset["post-translational modification"],
                             combination.SITE_COMBINATION[subset.get(
-                                "site combination", "absmax")],
-                            lambda change: change <= change_range[
-                                0] or change >= change_range[1]))
+                                "site combination", "absmax")], lambda
+                            measurement: measurement <= measurement_range[
+                                0] or measurement >= measurement_range[1]))
 
             reactome_network = pathway_network.get_reactome_network(
                 nx.induced_subgraph(network, proteins),
@@ -877,21 +973,23 @@ def process_workflow(configuration: dict,
                         "post-translational modification"
                 ) in protein_protein_interaction_network.get_post_translational_modifications(
                         network, subset["time"]):
-                    change_range = (
-                        conversion.CHANGE_CONVERSION[subset.get("conversion")]
+                    measurement_range = (
+                        conversion.MEASUREMENT_CONVERSION[subset.get(
+                            "conversion")]
                         (subset.get(
-                            "change",
-                            default.CHANGE_RANGE[subset.get("conversion")])[0],
-                         protein_protein_interaction_network.get_changes(
+                            "measurement", default.MEASUREMENT_RANGE[subset.get(
+                                "conversion")])[0],
+                         protein_protein_interaction_network.get_measurements(
                              network, subset["time"],
                              subset["post-translational modification"],
                              combination.SITE_COMBINATION[subset.get(
                                  "site combination", "absmax")])),
-                        conversion.CHANGE_CONVERSION[subset.get("conversion")]
+                        conversion.MEASUREMENT_CONVERSION[subset.get(
+                            "conversion")]
                         (subset.get(
-                            "change",
-                            default.CHANGE_RANGE[subset.get("conversion")])[1],
-                         protein_protein_interaction_network.get_changes(
+                            "measurement", default.MEASUREMENT_RANGE[subset.get(
+                                "conversion")])[1],
+                         protein_protein_interaction_network.get_measurements(
                              network, subset["time"],
                              subset["post-translational modification"],
                              combination.SITE_COMBINATION[subset.get(
@@ -902,9 +1000,9 @@ def process_workflow(configuration: dict,
                             network, subset["time"],
                             subset["post-translational modification"],
                             combination.SITE_COMBINATION[subset.get(
-                                "site combination", "absmax")],
-                            lambda change: change <= change_range[
-                                0] or change >= change_range[1]))
+                                "site combination", "absmax")], lambda
+                            measurement: measurement <= measurement_range[
+                                0] or measurement >= measurement_range[1]))
 
             reactome_network = pathway_network.get_reactome_network(
                 nx.induced_subgraph(network, proteins),

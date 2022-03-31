@@ -23,9 +23,9 @@ def get_bar_chart(
     Returns a bar chart specification for Cytoscape styles.
 
     Args:
-        time: time of measurement associated with the change
-        modification: modification associated with the change
-        cy_range: range of log2-fold changes covered by the bar chart.
+        time: time of measurement associated with the measurement
+        modification: modification associated with the measurement
+        cy_range: range of log2-fold measurements covered by the bar chart.
 
     Returns:
        bar chart specification
@@ -54,8 +54,9 @@ def get_bar_chart(
 def get_protein_protein_interaction_network_styles(
     network: nx.Graph,
     bar_chart_range: tuple[float, float] = (-1.0, 1.0),
-    convert_change: Callable[[float, Collection[float]],
-                             float] = lambda change, changes: change,
+    convert_measurement: Callable[
+        [float, Collection[float]],
+        float] = lambda measurement, measurements: measurement,
     site_combination: Callable[[Collection[float]],
                                float] = lambda sites: max(sites, key=abs),
     confidence_score_combination: Callable[[dict[str, float]], float] = lambda
@@ -66,11 +67,11 @@ def get_protein_protein_interaction_network_styles(
 
     Args:
         network: The protein-protein interaction network.
-        bar_chart_range: The range of log2-fold changes covered by the bar
+        bar_chart_range: The range of log2-fold measurements covered by the bar
             chart.
-        get_change: The function to transform a proteins' log2-fold change.
+        convert_measurement: The function to transform log2-fold measurements.
         site_combination: The function to derive a proteins' representative
-            log2-fold change from its site-specific changes.
+            log2-fold measurement from its site-specific measurements.
         confidence_score_combination: The function to derive an edges'
             representative confidence from its confidence scores.
 
@@ -210,16 +211,18 @@ def get_protein_protein_interaction_network_styles(
                                 protein_protein_interaction_network.get_sites(
                                     network, time, modification),
                                 cy_range=(
-                                    convert_change(
+                                    convert_measurement(
                                         bar_chart_range[0],
                                         protein_protein_interaction_network.
-                                        get_changes(network, time, modification,
-                                                    site_combination)),
-                                    convert_change(
+                                        get_measurements(
+                                            network, time, modification,
+                                            site_combination)),
+                                    convert_measurement(
                                         bar_chart_range[1],
                                         protein_protein_interaction_network.
-                                        get_changes(network, time, modification,
-                                                    site_combination)))))
+                                        get_measurements(
+                                            network, time, modification,
+                                            site_combination)))))
 
                     elif visual_property_sub_element.get(
                             "name") == f"NODE_CUSTOMGRAPHICS_POSITION_{i + 1}":

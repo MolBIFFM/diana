@@ -299,7 +299,7 @@ COMPONENTS = [
                 "NODE_FILL_COLOR": {
                     "default": f"#{128:02X}{128:02X}{128:02X}",
                     "discreteMapping": {
-                        "attributeName": "change {time}",
+                        "attributeName": "measurement {time}",
                         "attributeType": "string",
                         "discreteMappingEntry": {
                             "up": f"#{255:02X}{0:02X}{0:02X}",
@@ -689,7 +689,7 @@ COMPONENTS = [
                 "NODE_FILL_COLOR": {
                     "default": f"#{128:02X}{128:02X}{128:02X}",
                     "discreteMapping": {
-                        "attributeName": "change {time}",
+                        "attributeName": "measurement {time}",
                         "attributeType": "string",
                         "discreteMappingEntry": {
                             "up":

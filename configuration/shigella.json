@@ -93,9 +93,20 @@
       "Gene Ontology enrichment": {
         "p": 0.05
       },
+      "Reactome enrichment": {
+        "p": 0.05
+      },
       "module detection": {
         "Gene Ontology enrichment": {
           "annotation": {
+            "p": 0.05
+          }, 
+          "network": {
+            "p": 0.05
+          }
+        },
+        "Reactome enrichment": {
+          "map": {
             "p": 0.05
           }, 
           "network": {

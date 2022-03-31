@@ -203,12 +203,13 @@ def add_proteins_from_table(
                                     float] = statistics.mean,
     measurement_conversion: Callable[
         [Container[float], Callable[[Container[float]], float]],
-        float] = lambda changes, combination: math.log2(combination(changes))
+        float] = lambda measurements, combination: math.log2(
+            combination(measurements))
 ) -> None:
     """
-    Parse UniProt protein accessions and measurements of changes from a tabular
-    file and add the corresponding primary Uniprot protein accessions to a
-    protein-protein interaction network.
+    Parse UniProt protein accessions and measurements of measurements from a 
+    tabular file and add the corresponding primary Uniprot protein accessions to 
+    a protein-protein interaction network.
 
     Args:
         network: The protein-protein interaction network.
@@ -217,9 +218,9 @@ def add_proteins_from_table(
             accessions.
         protein_accession_format: A regular expression to extract protein
             accessions from a corresponding entry.
-        time: The time of measurement to associate with changes.
+        time: The time of measurement to associate with measurements.
         modification: An identifier for the type of post-translational
-            modification to associate with changes.
+            modification to associate with measurements.
         position_column: The column containing sites corresponding to
             measurements.
         replicates: The columns containing replicates of measurements.
@@ -230,7 +231,7 @@ def add_proteins_from_table(
         num_replicates: The minimum number of replicates to accept a
             measurement.
         replicate_combination: A function to combine replicates into a single
-            change.
+            measurement.
         measurement_conversion: A function to convert the measurements reported
             to log2-scale.
     """
@@ -348,34 +349,36 @@ def get_proteins(
         time: int,
         modification: str,
         site_combination: Optional[Callable[[Collection[float]], float]] = None,
-        combined_change_filter: Callable[[float], bool] = bool) -> set[str]:
+        combined_measurement_filter: Callable[[float],
+                                              bool] = bool) -> set[str]:
     """
     Returns proteins of a protein-protein interaction network with specified
-    changes.
+    measurements.
 
     Args:
         network: The protein-protein interaction network.
         time: The time of measurement.
         modification: The type of post-translational modification.
         site_combination: An optional function to derive protein-specific
-            changes from site-specific changes.
-        combined_change_filter: The predicate to filter combined changes.
+            measurements from site-specific measurements.
+        combined_measurement_filter: The predicate to filter combined 
+            measurements.
 
     Returns:
-        Proteins whose combined change of a particular type of
+        Proteins whose combined measurement of a particular type of
         post-translational modification at a particular time of measurement
         fulfil the predicate.
     """
     proteins = []
     for protein in network:
         sites = [
-            network.nodes[protein][change]
-            for change in network.nodes[protein]
-            if len(change.split(" ")) == 3 and change.split(" ")[0] == str(time)
-            and change.split(" ")[1] == modification
+            network.nodes[protein][measurement]
+            for measurement in network.nodes[protein]
+            if len(measurement.split(" ")) == 3 and measurement.split(" ")[0] ==
+            str(time) and measurement.split(" ")[1] == modification
         ]
 
-        if sites and combined_change_filter(site_combination(sites)):
+        if sites and combined_measurement_filter(site_combination(sites)):
             proteins.append(protein)
 
     return set(proteins)
@@ -390,17 +393,17 @@ def get_times(network: nx.Graph) -> tuple[int, ...]:
         network: The protein-protein interaction network.
 
     Returns:
-        The times of measurement associated with any changes of any protein in
-        the protein-protein interaction network.
+        The times of measurement associated with any measurements of any protein 
+        in the protein-protein interaction network.
     """
     return tuple(
         sorted(
             set(
-                int(change.split(" ")[0])
+                int(measurement.split(" ")[0])
                 for protein in network
-                for change in network.nodes[protein]
-                if len(change.split(" ")) == 3 and
-                change.split(" ")[0].isnumeric())))
+                for measurement in network.nodes[protein]
+                if len(measurement.split(" ")) == 3 and
+                measurement.split(" ")[0].isnumeric())))
 
 
 def get_post_translational_modifications(network: nx.Graph,
@@ -414,18 +417,18 @@ def get_post_translational_modifications(network: nx.Graph,
         time: The time of measurement.
 
     Returns:
-        The types of post-translational modification associated with any changes
-        of any protein in the protein-protein interaction network at a
-        particular time of measurement.
+        The types of post-translational modification associated with any 
+        measurements of any protein in the protein-protein interaction network 
+        at a particular time of measurement.
     """
     return tuple(
         sorted(
             set(
-                change.split(" ")[1]
+                measurement.split(" ")[1]
                 for protein in network
-                for change in network.nodes[protein]
-                if len(change.split(" ")) == 3 and
-                change.split(" ")[0] == str(time))))
+                for measurement in network.nodes[protein]
+                if len(measurement.split(" ")) == 3 and
+                measurement.split(" ")[0] == str(time))))
 
 
 def get_sites(network: nx.Graph, time: int, modification: str) -> int:
@@ -445,11 +448,11 @@ def get_sites(network: nx.Graph, time: int, modification: str) -> int:
         modification at a particular time of measurement.
     """
     return max(
-        int(change.split(" ")[2])
+        int(measurement.split(" ")[2])
         for protein in network
-        for change in network.nodes[protein]
-        if len(change.split(" ")) == 3 and change.split(" ")[0] == str(time) and
-        change.split(" ")[1] == modification)
+        for measurement in network.nodes[protein]
+        if len(measurement.split(" ")) == 3 and measurement.split(" ")[0] ==
+        str(time) and measurement.split(" ")[1] == modification)
 
 
 def set_post_translational_modification(network: nx.Graph) -> None:
@@ -465,30 +468,32 @@ def set_post_translational_modification(network: nx.Graph) -> None:
                 f"post-translational modification {time}"] = "".join(
                     sorted(
                         set(
-                            change.split(" ")[1]
-                            for change in network.nodes[protein]
-                            if len(change.split(" ")) == 3 and
-                            change.split(" ")[0] == str(time))))
+                            measurement.split(" ")[1]
+                            for measurement in network.nodes[protein]
+                            if len(measurement.split(" ")) == 3 and
+                            measurement.split(" ")[0] == str(time))))
 
 
-def set_changes(
+def set_measurements(
     network: nx.Graph,
     site_combination: Optional[Callable[[Collection[float]], float]] = None,
-    changes: tuple[float, float] = (-1.0, 1.0),
-    convert_change: Callable[[float, Collection[float]],
-                             float] = lambda change, changes: change
+    measurements: tuple[float, float] = (-1.0, 1.0),
+    convert_measurement: Callable[
+        [float, Collection[float]],
+        float] = lambda measurement, measurements: measurement
 ) -> None:
     """
-    Annotate nodes with summary of change trend.
+    Annotate nodes with summary of measurement trend.
 
     Args:
         network: The protein-protein interaction network.
-        site_combination: An optional function to derive protein-specific changes from
-            site-specific changes.
-        changes: Proteins are classified by whether their representative exceed
-            either this range, the range defined by half the bounds or none.
-        convert_change: The function used convert the bounds to log2-fold
-            changes.
+        site_combination: An optional function to derive protein-specific 
+            measurements from site-specific measurements.
+        measurements: Proteins are categorized by whether their representative 
+            exceed either this range, the range defined by half the bounds or 
+            none.
+        convert_measurement: The function used convert the bounds to log2-fold
+            measurements.
     """
     times = get_times(network)
     modifications = {
@@ -496,16 +501,16 @@ def set_changes(
         for time in times
     }
 
-    change_range = {
+    measurement_range = {
         time: {
-            modification: (convert_change(
-                changes[0],
-                get_changes(network, time, modification, site_combination),
+            modification: (convert_measurement(
+                measurements[0],
+                get_measurements(network, time, modification, site_combination),
             ),
-                           convert_change(
-                               changes[1],
-                               get_changes(network, time, modification,
-                                           site_combination)))
+                           convert_measurement(
+                               measurements[1],
+                               get_measurements(network, time, modification,
+                                                site_combination)))
             for modification in modifications[time]
         } for time in times
     }
@@ -515,68 +520,69 @@ def set_changes(
             classification = {}
             for modification in modifications[time]:
                 sites = [
-                    network.nodes[protein][change]
-                    for change in network.nodes[protein]
-                    if len(change.split(" ")) == 3 and change.split(" ")[0] ==
-                    str(time) and change.split(" ")[1] == modification
+                    network.nodes[protein][measurement]
+                    for measurement in network.nodes[protein]
+                    if len(measurement.split(" ")) == 3 and
+                    measurement.split(" ")[0] == str(time) and
+                    measurement.split(" ")[1] == modification
                 ]
 
                 if sites:
-                    combined_change = site_combination(sites)
+                    combined_measurement = site_combination(sites)
 
-                    if combined_change >= 1.0 * change_range[time][
+                    if combined_measurement >= 1.0 * measurement_range[time][
                             modification][1]:
                         classification[modification] = "up"
-                    elif 1.0 * change_range[time][modification][
-                            1] > combined_change >= 0.5 * change_range[time][
-                                modification][1]:
+                    elif 1.0 * measurement_range[time][modification][
+                            1] > combined_measurement >= 0.5 * measurement_range[
+                                time][modification][1]:
                         classification[modification] = "mid up"
-                    elif 0.5 * change_range[time][modification][
-                            1] > combined_change > 0.5 * change_range[time][
-                                modification][0]:
+                    elif 0.5 * measurement_range[time][modification][
+                            1] > combined_measurement > 0.5 * measurement_range[
+                                time][modification][0]:
                         classification[modification] = "mid"
-                    elif 0.5 * change_range[time][modification][
-                            0] >= combined_change > 1.0 * change_range[time][
-                                modification][0]:
+                    elif 0.5 * measurement_range[time][modification][
+                            0] >= combined_measurement > 1.0 * measurement_range[
+                                time][modification][0]:
                         classification[modification] = "mid down"
                     else:
                         classification[modification] = "down"
 
             if classification:
                 if set(classification.values()) == {"up"}:
-                    network.nodes[protein][f"change {time}"] = "up"
+                    network.nodes[protein][f"measurement {time}"] = "up"
                 elif set(classification.values()) == {"mid up", "up"}:
-                    network.nodes[protein][f"change {time}"] = "up"
+                    network.nodes[protein][f"measurement {time}"] = "up"
                 elif set(classification.values()) == {"mid", "mid up", "up"}:
-                    network.nodes[protein][f"change {time}"] = "up"
+                    network.nodes[protein][f"measurement {time}"] = "up"
 
                 elif set(classification.values()) == {"mid up"}:
-                    network.nodes[protein][f"change {time}"] = "mid up"
+                    network.nodes[protein][f"measurement {time}"] = "mid up"
                 elif set(classification.values()) == {"mid", "mid up"}:
-                    network.nodes[protein][f"change {time}"] = "mid up"
+                    network.nodes[protein][f"measurement {time}"] = "mid up"
 
                 elif set(classification.values()) == {"mid"}:
-                    network.nodes[protein][f"change {time}"] = "mid"
+                    network.nodes[protein][f"measurement {time}"] = "mid"
 
                 elif set(classification.values()) == {"mid", "mid down"}:
-                    network.nodes[protein][f"change {time}"] = "mid down"
+                    network.nodes[protein][f"measurement {time}"] = "mid down"
                 elif set(classification.values()) == {"mid down"}:
-                    network.nodes[protein][f"change {time}"] = "mid down"
+                    network.nodes[protein][f"measurement {time}"] = "mid down"
 
                 elif set(
                         classification.values()) == {"mid", "mid down", "down"}:
-                    network.nodes[protein][f"change {time}"] = "down"
+                    network.nodes[protein][f"measurement {time}"] = "down"
                 elif set(classification.values()) == {"mid down", "down"}:
-                    network.nodes[protein][f"change {time}"] = "down"
+                    network.nodes[protein][f"measurement {time}"] = "down"
                 elif set(classification.values()) == {"down"}:
-                    network.nodes[protein][f"change {time}"] = "down"
+                    network.nodes[protein][f"measurement {time}"] = "down"
                 else:
-                    network.nodes[protein][f"change {time}"] = " ".join(
+                    network.nodes[protein][f"measurement {time}"] = " ".join(
                         f"{modification}_{classification[modification]}"
                         for modification in sorted(classification))
 
             else:
-                network.nodes[protein][f"change {time}"] = "mid"
+                network.nodes[protein][f"measurement {time}"] = "mid"
 
 
 def add_proteins_from_biogrid(
@@ -1065,54 +1071,55 @@ def get_modules(network: nx.Graph,
     return [network.subgraph(community) for community in communities]
 
 
-def get_changes(
+def get_measurements(
     network: nx.Graph,
     time: int,
     modification: str,
     site_combination: Optional[Callable[[Collection[float]], float]] = None
 ) -> tuple[float, ...]:
     """
-    Returns the change distribution for a particular type of post-translational
-    modification at a particular time of measurement.
+    Returns the measurement distribution for a particular type of 
+    post-translational modification at a particular time of measurement.
 
     Args:
         network: The protein-protein interaction network.
         time: The time of measurement.
         modification: The type of post-translational modification.
         site_combination: An optional function to derive protein-specific
-            changes from site-specific changes.
+            measurements from site-specific measurements.
 
     Returns:
-        Changes for a particular type of post-translational
+        Measurements for a particular type of post-translational
         modification at a particular time of measurement.
     """
-    changes = []
+    measurements = []
     for protein in network:
         sites = [
-            network.nodes[protein][change]
-            for change in network.nodes[protein]
-            if len(change.split(" ")) == 3 and change.split(" ")[0] == str(time)
-            and change.split(" ")[1] == modification
+            network.nodes[protein][measurement]
+            for measurement in network.nodes[protein]
+            if len(measurement.split(" ")) == 3 and measurement.split(" ")[0] ==
+            str(time) and measurement.split(" ")[1] == modification
         ]
 
         if sites:
             if site_combination:
-                changes.append(
+                measurements.append(
                     math.log2(
                         site_combination(
                             math.pow(2.0, site) for site in sites)))
             else:
-                changes.extend(sites)
+                measurements.extend(sites)
 
-    return tuple(changes)
+    return tuple(measurements)
 
 
-def get_change_enrichment(
+def get_measurement_enrichment(
     network: nx.Graph,
     modules: list[nx.Graph],
-    changes: tuple[float, float] = (-1.0, 1.0),
-    convert_change: Callable[[float, Collection[float]],
-                             float] = lambda change, changes: change,
+    measurements: tuple[float, float] = (-1.0, 1.0),
+    convert_measurement: Callable[
+        [float, Collection[float]],
+        float] = lambda measurement, measurements: measurement,
     site_combination: Optional[Callable[[Collection[float]], float]] = None,
     enrichment_test: Callable[[int, int, int, int],
                               float] = test.hypergeometric,
@@ -1121,65 +1128,73 @@ def get_change_enrichment(
         dict[tuple[nx.Graph, int, str], float]] = correction.benjamini_hochberg,
 ) -> dict[nx.Graph, dict[int, dict[str, float]]]:
     """
-    Test modules for enrichment of large protein-specific changes for each time
-    of measurement and type of post-translational modification with respect to
-    the protein-protein interaction network.
+    Test modules for enrichment of large protein-specific measurements for each
+    time of measurement and type of post-translational modification with respect 
+    to the protein-protein interaction network.
 
     Args:
         network: The protein-protein interaction network.
         modules: The modules of the protein-protein interaction network.
-        changes: Proteins are classified by whether their representative change
-            exceeds this range.
-        convert_change: The function used convert the bounds to log2-fold
-            changes.
+        measurements: Proteins are classified by whether their representative 
+            measurement exceeds this range.
+        convert_measurement: The function used convert the bounds to log2-fold
+            measurements.
         site_combination: An optional function to derive protein-specific
-            changes from site-specific changes.
+            measurements from site-specific measurements.
         enrichment_test: The statistical test used to assess enrichment of
-            proteins with large changes by a module.
+            proteins with large measurements by a module.
         multiple_testing_correction: The procedure to correct for multiple
             testing of multiple modules, times of measurement and types of
             post-translational modification.
 
     Returns:
-        Adjusted p-values for the enrichment of large protein-specific changes
-        by each module for each time of measurement and type of
+        Corrected p-values for the enrichment of large protein-specific 
+        measurements by each module for each time of measurement and type of
         post-translational modification.
     """
     p_values = {}
     for time in get_times(network):
         for modification in get_post_translational_modifications(network, time):
-            change_range = (convert_change(
-                changes[0],
-                get_changes(network, time, modification, site_combination)),
-                            convert_change(
-                                changes[1],
-                                get_changes(network, time, modification,
-                                            site_combination)))
+            measurement_range = (convert_measurement(
+                measurements[0],
+                get_measurements(network, time, modification,
+                                 site_combination)),
+                                 convert_measurement(
+                                     measurements[1],
+                                     get_measurements(network, time,
+                                                      modification,
+                                                      site_combination)))
 
             modified_proteins = len([
-                change for change in get_changes(network, time, modification,
-                                                 site_combination) if change
+                measurement for measurement in get_measurements(
+                    network, time, modification, site_combination)
+                if measurement
             ])
 
             modified_module_proteins = [
                 len([
-                    change for change in get_changes(module, time, modification,
-                                                     site_combination) if change
-                ]) for module in modules
+                    measurement
+                    for measurement in get_measurements(
+                        module, time, modification, site_combination)
+                    if measurement
+                ])
+                for module in modules
             ]
 
             target_proteins = len([
-                change for change in get_changes(network, time, modification,
-                                                 site_combination)
-                if change <= change_range[0] or change >= change_range[1]
+                measurement for measurement in get_measurements(
+                    network, time, modification, site_combination)
+                if measurement <= measurement_range[0] or
+                measurement >= measurement_range[1]
             ])
 
             target_module_proteins = [
                 len([
-                    change
-                    for change in get_changes(module, time, modification,
-                                              site_combination)
-                    if change <= change_range[0] or change >= change_range[1]
+                    measurement
+                    for measurement in get_measurements(
+                        module, time, modification, site_combination)
+                    if measurement <= measurement_range[0] or
+                    measurement >= measurement_range[1]
                 ])
                 for module in modules
             ]
@@ -1203,7 +1218,7 @@ def get_change_enrichment(
     }
 
 
-def get_change_location(
+def get_measurement_location(
     network: nx.Graph,
     modules: list[nx.Graph],
     site_combination: Optional[Callable[[Collection[float]], float]] = None,
@@ -1214,45 +1229,43 @@ def get_change_location(
         dict[tuple[nx.Graph, int, str], float]] = correction.benjamini_hochberg,
 ) -> dict[nx.Graph, dict[int, dict[str, float]]]:
     """
-    Test modules for difference tendencies in protein-specific changes for each
-    time of measurement and type of post-translational modification with respect
-    to the remaining protein-protein interaction network.
+    Test modules for difference tendencies in protein-specific measurements for 
+    each time of measurement and type of post-translational modification with 
+    respect to the remaining protein-protein interaction network.
 
     Args:
         network: The protein-protein interaction network.
         modules: The modules of the protein-protein interaction network.
         site_combination: An optional function to derive protein-specific
-            changes from site-specific changes.
+            measurements from site-specific measurements.
         location_test: The statistical test used to assess location of
-            proteins with large changes by a module.
+            proteins with large measurements by a module.
         multiple_testing_correction: The procedure to correct for multiple
             testing of multiple modules, times of measurement and types of
             post-translational modification.
 
     Returns:
-        Adjusted p-values for the difference in central tendencies in
-        protein-specific changes of modules for each time of measurement and
-        type of post-translational modification.
+        Corrected p-values for the difference in central tendencies in
+        protein-specific measurements of modules for each time of measurement 
+        and type of post-translational modification.
     """
     p_values = {}
     for time in get_times(network):
         for modification in get_post_translational_modifications(network, time):
-            network_changes = [
-                get_changes(nx.union_all([m
-                                          for m in modules
-                                          if m != module]), time, modification,
-                            site_combination)
-                for module in modules
+            network_measurements = [
+                get_measurements(
+                    nx.union_all([m for m in modules if m != module]), time,
+                    modification, site_combination) for module in modules
             ]
 
-            module_changes = [
-                get_changes(module, time, modification, site_combination)
+            module_measurements = [
+                get_measurements(module, time, modification, site_combination)
                 for module in modules
             ]
 
             p_values.update({(module, time, modification):
-                             location_test(module_changes[i],
-                                           network_changes[i])
+                             location_test(module_measurements[i],
+                                           network_measurements[i])
                              for i, module in enumerate(modules)})
 
     p_values = multiple_testing_correction(p_values)
@@ -1286,19 +1299,18 @@ def get_gene_ontology_enrichment(
 
     Args:
         networks: The protein-protein interaction networks.
-        enrichment_test: The statistical test used to assess enrichment of a
-            Gene Ontology term.
+        enrichment_test: The statistical test used to assess enrichment of Gene
+            Ontology terms.
         multiple_testing_correction: The procedure to correct for multiple
             testing of multiple terms and networks.
         taxonomy_identifier: The taxonomy identifier.
         namespaces: The Gene Ontology namespaces.
         annotation_as_reference: If True, compute enrichment with respect to the
-            entire species-specific Gene Ontology annotation in namespaces, else
-            with respect to the union of the protein-protein interaction
-            networks.
+            species-specific Gene Ontology annotation in namespaces, else with 
+            respect to the union of the protein-protein interaction networks.
 
     Returns:
-        Adjusted p-values for the enrichment of each Gene Ontology term by each
+        Corrected p-values for the enrichment of each Gene Ontology term by each
         network.
     """
     name, go_id = {}, {}
@@ -1348,6 +1360,79 @@ def get_gene_ontology_enrichment(
     return {
         network: {(term, name[term]): p_value[(network, term)]
                   for term in annotation} for network in networks
+    }
+
+
+def get_reactome_enrichment(
+    networks: list[nx.Graph],
+    enrichment_test: Callable[[int, int, int, int],
+                              float] = test.hypergeometric,
+    multiple_testing_correction: Callable[[dict[tuple[
+        nx.Graph, str], float]], dict[tuple[nx.Graph, str],
+                                      float]] = correction.benjamini_hochberg,
+    taxonomy_identifier: int = 9606,
+    map_as_reference: bool = True
+) -> dict[nx.Graph, dict[tuple[str, str], float]]:
+    """
+    Test the protein-protein interaction networks for enrichment of Reactome
+    pathways.
+
+    Args:
+        networks: The protein-protein interaction networks.
+        enrichment_test: The statistical test used to assess enrichment of
+            Reactome pathways.
+        multiple_testing_correction: The procedure to correct for multiple
+            testing of multiple pathways and networks.
+        taxonomy_identifier: The taxonomy identifier.
+        map_as_reference: If True, compute enrichment with respect to the
+            species-specific Reactome pathway map, else with respect to the 
+            union of the protein-protein interaction networks.
+
+    Returns:
+        Corrected p-values for the enrichment of each Reactome pathway term by 
+        each network.
+    """
+    name = {}
+    for pathway, pathway_name in reactome.get_pathways(taxonomy_identifier):
+        name[pathway] = pathway_name
+
+    pathways = {}
+    for protein, pathway in reactome.get_pathway_map(taxonomy_identifier):
+        if map_as_reference or any(
+                protein in network.nodes() for network in networks):
+            if pathway not in pathways:
+                pathways[pathway] = set()
+            pathways[pathway].add(protein)
+
+    pathways = {
+        pathway: proteins for pathway, proteins in pathways.items() if proteins
+    }
+
+    mapped_proteins = set.union(*pathways.values())
+
+    mapped_network_proteins = {
+        network: len(mapped_proteins.intersection(network.nodes()))
+        for network in networks
+    }
+
+    intersection = {
+        network: {
+            pathway: len(pathways[pathway].intersection(network.nodes()))
+            for pathway in pathways
+        } for network in networks
+    }
+
+    p_value = multiple_testing_correction({
+        (network, term): enrichment_test(intersection[network][term],
+                                         len(mapped_proteins),
+                                         len(pathways[term]),
+                                         mapped_network_proteins[network])
+        for term in pathways for network in networks
+    })
+
+    return {
+        network: {(pathway, name[pathway]): p_value[(network, pathway)]
+                  for pathway in pathways} for network in networks
     }
 
 

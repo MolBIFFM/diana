@@ -6,22 +6,24 @@ from typing import Callable, Collection
 
 LOGARITHM: Callable[[Collection[float]], float] = {
     None:
-        lambda changes, combination: math.log2(combination(changes)),
+        lambda measurements, combination: math.log2(combination(measurements)),
     2:
-        lambda changes, combination: math.log2(
-            combination([math.pow(2.0, change) for change in changes])),
+        lambda measurements, combination: math.log2(
+            combination(
+                [math.pow(2.0, measurement) for measurement in measurements])),
     10:
-        lambda changes, combination: math.log2(
-            combination([math.pow(10.0, change) for change in changes])),
+        lambda measurements, combination: math.log2(
+            combination(
+                [math.pow(10.0, measurement) for measurement in measurements])),
 }
 
-CHANGE_CONVERSION: Callable[[Collection[float]], float] = {
+MEASUREMENT_CONVERSION: Callable[[Collection[float]], float] = {
     None:
-        lambda change, changes: change,
+        lambda measurement, measurements: measurement,
     "quantile":
-        lambda quantile, changes: sorted(changes)[math.floor(quantile * (len(
-            changes) - 1))],
+        lambda quantile, measurements: sorted(measurements)[math.floor(
+            quantile * (len(measurements) - 1))],
     "standard score":
-        lambda standard_score, changes: standard_score * statistics.stdev(
-            changes) + statistics.mean(changes)
+        lambda standard_score, measurements: standard_score * statistics.stdev(
+            measurements) + statistics.mean(measurements)
 }

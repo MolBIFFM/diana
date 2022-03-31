@@ -11,15 +11,16 @@ SITE_COMBINATION: dict[str, Callable[[Collection[float]], float]] = {
     "max":
         max,
     "absmax":
-        lambda changes: max(changes, key=math.fabs),
+        lambda measurements: max(measurements, key=math.fabs),
     "min":
         min,
     "absmin":
-        lambda changes: min(changes, key=math.fabs),
+        lambda measurements: min(measurements, key=math.fabs),
     "sum":
         math.fsum,
     "abssum":
-        lambda changes: math.fsum(math.fabs(change) for change in changes),
+        lambda measurements: math.fsum(
+            math.fabs(measurement) for measurement in measurements),
 }
 
 REPLICATE_COMBINATION: dict[str, Callable[[Collection[float]], float]] = {
