@@ -21,15 +21,15 @@ optional arguments:
   -p PROCESSES, --processes PROCESSES
                         maximum number of concurrent processes (default: 4)
 ```
-A configuration file specifies a list of workflows sequentially executed. Configuration files are processed concurrently.
+A configuration file specifies a list of workflows executed sequentially. Configuration files are processed concurrently.
 
 ## configuration
 
-The configuration specifies the assembly of a protein-protein interaction network from a set of input genes or proteins, optionally associated with mass spectrometry data using protein-protein interaction data from BioGRID, IntAct, MINT, Reactome or STRING, optionally extended to neighborhoods of the input, based on UniProt identifiers.
+The configuration specifies the assembly of a protein-protein interaction network from a set of input genes or proteins optionally associated with mass spectrometry data, using protein-protein interaction data from BioGRID, IntAct, MINT Reactome or STRING, optionally extended to proteins neighboring the input.
 
-Enrichment of Gene Ontology terms by the protein-protein interaction network or its individual modules can be assessed, as well as the distribution of mass spectrometry measurements. For this, measurements can either be interpreted in a binary fashion, measuring enrichment of proteins exhibiting changes exceeding a specified threshold by separate modules or comparing the distribution of changes within them with the remaining network.
+Enrichment of Gene Ontology terms by the protein-protein interaction network or its individual modules can be assessed, as well as the distribution of mass spectrometry measurements. For this, measurements can be interpreted in a binary way measuring modules' enrichment of proteins which exhibit measurements exceeding a specified threshold. Alternatively, the distribution of measurements within separate modules can be compared with the remaining network.
 
-Enrichment of Gene Ontology terms as well as Reactome pathways can be assessed and exported with the underlying network structure represented in these databases. Along with the networks, specific Cytoscape styles can be generated.
+Enrichment of proteins in protein-protein interaction network by Gene Ontology terms or Reactome pathways they are associated with can be assessed and exported with the network structure underlying these databases. Along with the networks, specific Cytoscape styles can be generated.
 
 ---
 
@@ -1368,14 +1368,17 @@ The procedure to adjust p-values for multiple testing. The default setting is `"
 Available settings are `"Benjamini-Hochberg"` and `"Bonferroni"`.
 
 ---
-
-The following external libraries are utilized.
-
-1. A. A. Hagberg, D. A. Schult and P. J. Swart, **Exploring network structure, dynamics, and function using NetworkX**, Proceedings of the 7th Python in Science Conference, pp. 11-15, Aug. 2008
    
-2. W. McKinney, **Data Structures for Statistical Computing in Python**, Proceedings of the 9th Python in Science Conference, pp. 56-61, Jun. 2010.
+The configuration files provided refer to data sets supplemented with the following publications.
 
-3. P. Virtanen, R. Gommers, T. E. Oliphant, M. Haberland, T. Reddy, D. Cournapeau, E. Burovski, P. Peterson, W. Weckesser, J. Bright, S. J. van der Walt, M. Brett, J. Wilson, K. J. Millman, N. Mayorov, A. R. J. Nelson, E. Jones, R. Kern, Eric L., C. J. Carey, İ. Polat, Y. Feng, E. W. Moore, J. VanderPlas, D. Laxalde, J. Perktold, R. Cimrman, I. Henriksen, E. A. Quintero, C. R. Harris, A. M. Archibald, A. H. Ribeiro, F. Pedregosa, P. van Mulbregt, SciPy 1.0 Contributors,  **SciPy 1.0: Fundamental Algorithms for Scientific Computing in Python**, Nature Methods, vol. 17 no.3, pp.261-272, Feb. 2020
+1. M. Hahn, A. Covarrubias-Pinto, L. Herhaus, S. Satpathy, K. Klann, K. B.
+Boyle, C. Münch, K. Rajalingam, F. Randow, C. Choudhary, and I. Dikic, **SIK2 orchestrates actin-dependent host response upon *Salmonella* infection**, Proceedings of the National Academy of Sciences, vol. 118, no. 19, May 2021.
+
+1. E. Fiskin, T. Bionda, I. Dikic, and C. Behrends, **Global Analysis of Host and Bacterial Ubiquitinome in Response to *Salmonella Typhimurium* Infection**, Molecular Cell, vol. 62, no. 6, pp. 967-981, Jun. 2016.
+
+2. K. Klann, D. Bojkova, G. Tascher, S. Ciesek, C. Münch, and J. Cinatl, **Growth Factor Receptor Signaling Inhibition Prevents SARS-CoV-2 Replication**, Molecular Cell, vol. 80, no. 1, 164-174.e4, Oct. 2020.
+
+3. C. Schmutz, E. Ahrné, C. A. Kasper, T. Tschon, I. Sorg, R. F. Dreier, A. Schmidt, and C. Arrieumerlou, **Systems-Level Overview of Host Protein Phosphorylation During *Shigella flexneri* Infection Revealed by Phosphoproteomics**, Molecular & Cellular Proteomics, vol. 12, no. 10, pp. 2952-2968, Oct. 2013.
 
 ---
 
@@ -1398,14 +1401,11 @@ The following resources can be accessed.
 8. The UniProt Consortium, **UniProt: the universal protein knowledgebase in 2021**, Nucleic Acids Research, vol. 49, no. D1, pp. D480-D489, Jan 2021
 
 ---
+
+The following external libraries are utilized.
+
+1. A. A. Hagberg, D. A. Schult and P. J. Swart, **Exploring network structure, dynamics, and function using NetworkX**, Proceedings of the 7th Python in Science Conference, pp. 11-15, Aug. 2008
    
-The configuration files provided refer to data sets supplemented with the following publications.
+2. W. McKinney, **Data Structures for Statistical Computing in Python**, Proceedings of the 9th Python in Science Conference, pp. 56-61, Jun. 2010.
 
-1. M. Hahn, A. Covarrubias-Pinto, L. Herhaus, S. Satpathy, K. Klann, K. B.
-Boyle, C. Münch, K. Rajalingam, F. Randow, C. Choudhary, and I. Dikic, **SIK2 orchestrates actin-dependent host response upon *Salmonella* infection**, Proceedings of the National Academy of Sciences, vol. 118, no. 19, May 2021.
-
-1. E. Fiskin, T. Bionda, I. Dikic, and C. Behrends, **Global Analysis of Host and Bacterial Ubiquitinome in Response to *Salmonella Typhimurium* Infection**, Molecular Cell, vol. 62, no. 6, pp. 967-981, Jun. 2016.
-
-2. K. Klann, D. Bojkova, G. Tascher, S. Ciesek, C. Münch, and J. Cinatl, **Growth Factor Receptor Signaling Inhibition Prevents SARS-CoV-2 Replication**, Molecular Cell, vol. 80, no. 1, 164-174.e4, Oct. 2020.
-
-3. C. Schmutz, E. Ahrné, C. A. Kasper, T. Tschon, I. Sorg, R. F. Dreier, A. Schmidt, and C. Arrieumerlou, **Systems-Level Overview of Host Protein Phosphorylation During *Shigella flexneri* Infection Revealed by Phosphoproteomics**, Molecular & Cellular Proteomics, vol. 12, no. 10, pp. 2952-2968, Oct. 2013.
+3. P. Virtanen, R. Gommers, T. E. Oliphant, M. Haberland, T. Reddy, D. Cournapeau, E. Burovski, P. Peterson, W. Weckesser, J. Bright, S. J. van der Walt, M. Brett, J. Wilson, K. J. Millman, N. Mayorov, A. R. J. Nelson, E. Jones, R. Kern, Eric L., C. J. Carey, İ. Polat, Y. Feng, E. W. Moore, J. VanderPlas, D. Laxalde, J. Perktold, R. Cimrman, I. Henriksen, E. A. Quintero, C. R. Harris, A. M. Archibald, A. H. Ribeiro, F. Pedregosa, P. van Mulbregt, SciPy 1.0 Contributors,  **SciPy 1.0: Fundamental Algorithms for Scientific Computing in Python**, Nature Methods, vol. 17 no.3, pp.261-272, Feb. 2020
