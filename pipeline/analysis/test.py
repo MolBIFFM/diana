@@ -20,15 +20,15 @@ def hypergeometric(k: int, M: int, n: int, N: int) -> float:
     return scipy.stats.hypergeom.sf(k - 1, M, n, N)
 
 
+def welch(x: Collection[float], y: Collection[float]) -> float:
+    """
+    Returns the two-tail p-value of Welch's t-test of x and y.
+    """
+    return scipy.stats.ttest_ind(x, y, equal_var=False).pvalue
+
+
 def wilcoxon(x: Collection[float], y: Collection[float]) -> float:
     """
     Returns the two-tail p-value of the Wilcoxon rank-sum test of x and y.
     """
     return scipy.stats.ranksums(x, y).pvalue
-
-
-def welch(a: Collection[float], b: Collection[float]) -> float:
-    """
-    Returns the two-tail p-value of Welch's t-test of a and b.
-    """
-    return scipy.stats.ttest_ind(a, b, equal_var=False).pvalue

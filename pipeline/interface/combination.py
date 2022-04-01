@@ -4,23 +4,14 @@ import statistics
 from typing import Callable, Collection
 
 SITE_COMBINATION: dict[str, Callable[[Collection[float]], float]] = {
-    "mean":
-        statistics.mean,
-    "median":
-        statistics.median,
-    "max":
-        max,
-    "absmax":
-        lambda measurements: max(measurements, key=math.fabs),
-    "min":
-        min,
-    "absmin":
-        lambda measurements: min(measurements, key=math.fabs),
-    "sum":
-        math.fsum,
-    "abssum":
-        lambda measurements: math.fsum(
-            math.fabs(measurement) for measurement in measurements),
+    "mean": statistics.mean,
+    "median": statistics.median,
+    "max": max,
+    "absmax": lambda sites: max(sites, key=math.fabs),
+    "min": min,
+    "absmin": lambda sites: min(sites, key=math.fabs),
+    "sum": math.fsum,
+    "abssum": lambda sites: math.fsum(math.fabs(site) for site in sites),
 }
 
 REPLICATE_COMBINATION: dict[str, Callable[[Collection[float]], float]] = {
@@ -35,24 +26,18 @@ MODULE_SIZE_COMBINATION: dict[str, Callable[[Collection[int]], float]] = {
     "min": min,
 }
 
-CONFIDENCE_SCORE_COMBINATION: dict[str, Callable[[Collection[float]], float]] = {
-    "mean":
-        lambda confidence_scores: statistics.mean(confidence_scores.values()),
-    "median":
-        lambda confidence_scores: statistics.median(confidence_scores.values()),
-    "max":
-        lambda confidence_scores: max(confidence_scores.values()),
-    "min":
-        lambda confidence_scores: min(confidence_scores.values()),
-    "number":
-        len,
-    "sum":
-        lambda confidence_scores: math.fsum(confidence_scores.values()),
-    **{
-        database: lambda confidence_scores, database=database: confidence_scores.get(
-            database, 0.0) for database in {
-            "BioGRID", "IntAct", "MINT", "Reactome", "STRING"
-        }
-    }, None:
-        lambda confidence_scores: float(bool(confidence_scores.values()))
-}
+CONFIDENCE_SCORE_COMBINATION: dict[str, Callable[
+    [Collection[float]], float]] = {
+        "mean": lambda scores: statistics.mean(scores.values()),
+        "median": lambda scores: statistics.median(scores.values()),
+        "max": lambda scores: max(scores.values()),
+        "min": lambda scores: min(scores.values()),
+        "number": len,
+        "sum": lambda scores: math.fsum(scores.values()),
+        **{
+            database: lambda scores, database=database: scores.get(
+                database, 0.0) for database in {
+                "BioGRID", "IntAct", "MINT", "Reactome", "STRING"
+            }
+        }, None: lambda scores: float(bool(scores.values()))
+    }
