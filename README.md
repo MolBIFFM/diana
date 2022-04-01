@@ -25,11 +25,9 @@ A configuration file specifies a list of workflows executed sequentially. Config
 
 ## configuration
 
-The configuration specifies the assembly of a protein-protein interaction network from a set of input genes or proteins optionally associated with mass spectrometry data, using protein-protein interaction data from BioGRID, IntAct, MINT Reactome or STRING, optionally extended to proteins neighboring the input.
+The configuration defines the assembly of a protein-protein interaction network from a set of input genes or proteins optionally associated with mass spectrometry data, using protein-protein interaction data from BioGRID, IntAct, MINT Reactome or STRING, optionally extended to proteins neighboring the input.
 
-Enrichment of Gene Ontology terms or Reactome pathways by the protein-protein interaction network or its individual modules can be assessed, as well as the distribution of mass spectrometry measurements. 
-
-Enrichment of proteins in the protein-protein interaction network by either Gene Ontology terms or Reactome pathways they are associated with can be assessed and exported with the network structure underlying these databases. Along with the networks, specific Cytoscape styles can be generated.
+The distribution of mass spectrometry measurements as well as enrichment of Gene Ontology terms or Reactome pathways by the protein-protein interaction network or its individual modules can be assessed. The protein-protein interaction network as well as networks of represented Gene Ontology terms and Reactome pathways can be exported with a corresponding Cytoscape style specification.
 
 ---
 
@@ -886,11 +884,11 @@ The function used to derive a combined edge confidence score from scores in IntA
 
 The specification of statistical tests on individual modules with respect to either Gene Ontology or Reactome enrichment or the distribution of measurements across the protein-protein interaction network. 
 
-Gene Ontology and Reactome enrichment can be assessed with respect to the respective entire annotation or the protein-protein interaction network. 
+Gene Ontology and Reactome enrichment can be assessed with respect to the respective annotation or the protein-protein interaction network. 
 
-To assess their distribution, measurements can be interpreted in a binary way measuring modules' enrichment of proteins which exhibit measurements exceeding a specified threshold. Alternatively, the distribution of measurements within separate modules can be compared with the remaining network.
+To assess the distribution of measurements, these can be classified in a binary way to measure the modules' enrichment of proteins which exhibit measurements exceeding a specified threshold. Alternatively, the distribution of measurements within separate modules can be compared with the remaining network.
 
-The tests act as filter on the exported modules of the protein-protein interaction network. A module is only exported, if it is significant according to any of the specified tests.
+These tests act as filter on the exported modules of the protein-protein interaction network. A module is exported if it is significant according to any of the specified tests.
 
 ```json
 [
@@ -1135,11 +1133,9 @@ The function used to derive a protein-specific measurement from a its individual
 
 ---
 
-The specification of Gene Ontology or Reactome network assembly from the protein-protein interaction network. 
+The specification of the assembly of a Gene Ontology or Reactome network. A Gene Ontology network is composed of terms, a Reactome network of pathways represented in the protein-protein interaction network. Both report the enrichment of each respective entity by proteins in the protein-protein interaction network along with their relations in these databases.
 
-A Gene Ontology network is composed of terms, a Reactome network of pathways represented protein-protein interaction network. They contain the enrichment of each respective entity by proteins from the protein-protein interaction network.
-
-Optionally, the proteins considered may be restricted based on their associated measurements, either by a union or intersection of subsets of proteins exceeding the specified ranges.
+The proteins considered can be restricted based on their associated measurements, either by a union or intersection of subsets of proteins exceeding the specified ranges.
 
 ```json
 [

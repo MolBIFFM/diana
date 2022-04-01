@@ -1342,7 +1342,7 @@ def get_gene_ontology_enrichment(
         for network in networks
     }
 
-    intersection = {
+    network_intersection = {
         network: {
             term: len(annotation[term].intersection(network.nodes()))
             for term in annotation
@@ -1350,7 +1350,7 @@ def get_gene_ontology_enrichment(
     }
 
     p_value = multiple_testing_correction({
-        (network, term): enrichment_test(intersection[network][term],
+        (network, term): enrichment_test(network_intersection[network][term],
                                          len(annotated_proteins),
                                          len(annotation[term]),
                                          annotated_network_proteins[network])
@@ -1396,44 +1396,46 @@ def get_reactome_enrichment(
     for pathway, pathway_name in reactome.get_pathways(taxonomy_identifier):
         name[pathway] = pathway_name
 
-    pathways = {}
+    annotation = {}
     for protein, pathway in reactome.get_pathway_annotation(
             taxonomy_identifier):
         if annotation_as_reference or any(
                 protein in network.nodes() for network in networks):
-            if pathway not in pathways:
-                pathways[pathway] = set()
-            pathways[pathway].add(protein)
+            if pathway not in annotation:
+                annotation[pathway] = set()
+            annotation[pathway].add(protein)
 
-    pathways = {
-        pathway: proteins for pathway, proteins in pathways.items() if proteins
+    annotation = {
+        pathway: proteins
+        for pathway, proteins in annotation.items()
+        if proteins
     }
 
-    annotated_proteins = set.union(*pathways.values())
+    annotated_proteins = set.union(*annotation.values())
 
     annotated_network_proteins = {
         network: len(annotated_proteins.intersection(network.nodes()))
         for network in networks
     }
 
-    intersection = {
+    network_intersection = {
         network: {
-            pathway: len(pathways[pathway].intersection(network.nodes()))
-            for pathway in pathways
+            pathway: len(annotation[pathway].intersection(network.nodes()))
+            for pathway in annotation
         } for network in networks
     }
 
     p_value = multiple_testing_correction({
-        (network, pathway): enrichment_test(intersection[network][pathway],
-                                            len(annotated_proteins),
-                                            len(pathways[pathway]),
-                                            annotated_network_proteins[network])
-        for pathway in pathways for network in networks
+        (network, pathway):
+        enrichment_test(network_intersection[network][pathway],
+                        len(annotated_proteins), len(annotation[pathway]),
+                        annotated_network_proteins[network])
+        for pathway in annotation for network in networks
     })
 
     return {
         network: {(pathway, name[pathway]): p_value[(network, pathway)]
-                  for pathway in pathways} for network in networks
+                  for pathway in annotation} for network in networks
     }
 
 

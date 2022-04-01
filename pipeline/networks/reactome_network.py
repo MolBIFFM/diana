@@ -44,28 +44,28 @@ def get_reactome_network(protein_protein_interaction_network: nx.Graph,
         if child in network and parent in network:
             network.add_edge(child, parent)
 
-    pathways = {}
+    annotation = {}
     for protein, pathway in reactome.get_pathway_annotation(
             taxonomy_identifier):
-        if pathway not in pathways:
-            pathways[pathway] = set()
-        pathways[pathway].add(protein)
+        if pathway not in annotation:
+            annotation[pathway] = set()
+        annotation[pathway].add(protein)
 
     network.remove_nodes_from(
-        [pathway for pathway in network if pathway not in pathways])
+        [pathway for pathway in network if pathway not in annotation])
 
-    annotated_proteins = set.union(*pathways.values())
+    annotated_proteins = set.union(*annotation.values())
 
-    annotated_network_proteins = {
-        pathway: len(pathways[pathway].intersection(
+    network_intersection = {
+        pathway: len(annotation[pathway].intersection(
             protein_protein_interaction_network.nodes()))
-        for pathway in pathways
+        for pathway in annotation
     }
 
     p_value = multiple_testing_correction({
         pathway: enrichment_test(
-            annotated_network_proteins[pathway], len(annotated_proteins),
-            len(pathways[pathway]),
+            network_intersection[pathway], len(annotated_proteins),
+            len(annotation[pathway]),
             len(
                 annotated_proteins.intersection(
                     protein_protein_interaction_network.nodes())))
@@ -73,12 +73,11 @@ def get_reactome_network(protein_protein_interaction_network: nx.Graph,
     })
 
     network.remove_nodes_from([
-        pathway for pathway in pathways
-        if not annotated_network_proteins[pathway]
+        pathway for pathway in annotation if not network_intersection[pathway]
     ])
 
     for pathway in network:
-        network.nodes[pathway]["proteins"] = annotated_network_proteins[pathway]
+        network.nodes[pathway]["proteins"] = network_intersection[pathway]
         network.nodes[pathway]["p-value"] = p_value[pathway]
 
     return network
