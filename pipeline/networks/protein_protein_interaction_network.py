@@ -207,8 +207,8 @@ def add_proteins_from_table(
             combination(measurements))
 ) -> None:
     """
-    Parse UniProt protein accessions and measurements of measurements from a 
-    tabular file and add the corresponding primary Uniprot protein accessions to 
+    Parse UniProt protein accessions and measurements of measurements from a
+    tabular file and add the corresponding primary Uniprot protein accessions to
     a protein-protein interaction network.
 
     Args:
@@ -361,7 +361,7 @@ def get_proteins(
         modification: The type of post-translational modification.
         site_combination: An optional function to derive protein-specific
             measurements from site-specific measurements.
-        combined_measurement_filter: The predicate to filter combined 
+        combined_measurement_filter: The predicate to filter combined
             measurements.
 
     Returns:
@@ -393,7 +393,7 @@ def get_times(network: nx.Graph) -> tuple[int, ...]:
         network: The protein-protein interaction network.
 
     Returns:
-        The times of measurement associated with any measurements of any protein 
+        The times of measurement associated with any measurements of any protein
         in the protein-protein interaction network.
     """
     return tuple(
@@ -417,8 +417,8 @@ def get_post_translational_modifications(network: nx.Graph,
         time: The time of measurement.
 
     Returns:
-        The types of post-translational modification associated with any 
-        measurements of any protein in the protein-protein interaction network 
+        The types of post-translational modification associated with any
+        measurements of any protein in the protein-protein interaction network
         at a particular time of measurement.
     """
     return tuple(
@@ -487,10 +487,10 @@ def set_measurements(
 
     Args:
         network: The protein-protein interaction network.
-        site_combination: An optional function to derive protein-specific 
+        site_combination: An optional function to derive protein-specific
             measurements from site-specific measurements.
-        measurements: Proteins are categorized by whether their representative 
-            exceed either this range, the range defined by half the bounds or 
+        measurements: Proteins are categorized by whether their representative
+            exceed either this range, the range defined by half the bounds or
             none.
         convert_measurement: The function used convert the bounds to log2-fold
             measurements.
@@ -1078,7 +1078,7 @@ def get_measurements(
     site_combination: Optional[Callable[[Collection[float]], float]] = None
 ) -> tuple[float, ...]:
     """
-    Returns the measurement distribution for a particular type of 
+    Returns the measurement distribution for a particular type of
     post-translational modification at a particular time of measurement.
 
     Args:
@@ -1129,13 +1129,13 @@ def get_measurement_enrichment(
 ) -> dict[nx.Graph, dict[int, dict[str, float]]]:
     """
     Test modules for enrichment of large protein-specific measurements for each
-    time of measurement and type of post-translational modification with respect 
+    time of measurement and type of post-translational modification with respect
     to the protein-protein interaction network.
 
     Args:
         network: The protein-protein interaction network.
         modules: The modules of the protein-protein interaction network.
-        measurements: Proteins are classified by whether their representative 
+        measurements: Proteins are classified by whether their representative
             measurement exceeds this range.
         convert_measurement: The function used convert the bounds to log2-fold
             measurements.
@@ -1148,7 +1148,7 @@ def get_measurement_enrichment(
             post-translational modification.
 
     Returns:
-        Corrected p-values for the enrichment of large protein-specific 
+        Corrected p-values for the enrichment of large protein-specific
         measurements by each module for each time of measurement and type of
         post-translational modification.
     """
@@ -1229,8 +1229,8 @@ def get_measurement_location(
         dict[tuple[nx.Graph, int, str], float]] = correction.benjamini_hochberg,
 ) -> dict[nx.Graph, dict[int, dict[str, float]]]:
     """
-    Test modules for difference tendencies in protein-specific measurements for 
-    each time of measurement and type of post-translational modification with 
+    Test modules for difference tendencies in protein-specific measurements for
+    each time of measurement and type of post-translational modification with
     respect to the remaining protein-protein interaction network.
 
     Args:
@@ -1246,7 +1246,7 @@ def get_measurement_location(
 
     Returns:
         Corrected p-values for the difference in central tendencies in
-        protein-specific measurements of modules for each time of measurement 
+        protein-specific measurements of modules for each time of measurement
         and type of post-translational modification.
     """
     p_values = {}
@@ -1306,7 +1306,7 @@ def get_gene_ontology_enrichment(
         taxonomy_identifier: The taxonomy identifier.
         namespaces: The Gene Ontology namespaces.
         annotation_as_reference: If True, compute enrichment with respect to the
-            species-specific Gene Ontology annotation in namespaces, else with 
+            species-specific Gene Ontology annotation in namespaces, else with
             respect to the union of the protein-protein interaction networks.
 
     Returns:
@@ -1385,11 +1385,11 @@ def get_reactome_enrichment(
             testing of multiple pathways and networks.
         taxonomy_identifier: The taxonomy identifier.
         annotation_as_reference: If True, compute enrichment with respect to the
-            species-specific Reactome pathway annotation, else with respect to 
+            species-specific Reactome pathway annotation, else with respect to
             the union of the protein-protein interaction networks.
 
     Returns:
-        Corrected p-value for the enrichment of each Reactome pathway by 
+        Corrected p-value for the enrichment of each Reactome pathway by
         each network.
     """
     name = {}
