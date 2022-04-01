@@ -106,7 +106,7 @@
           }
         },
         "Reactome enrichment": {
-          "map": {
+          "annotation": {
             "p": 0.05
           }, 
           "network": {

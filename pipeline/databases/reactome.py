@@ -91,7 +91,7 @@ def get_pathway_relations() -> Generator[tuple[str, str], None, None]:
         yield (row[0], row[1])
 
 
-def get_pathway_map(
+def get_pathway_annotation(
         taxonomy_identifier: int = 9606
 ) -> Generator[tuple[str, str], None, None]:
     """

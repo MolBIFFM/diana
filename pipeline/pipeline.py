@@ -517,21 +517,21 @@ def process_workflow(configuration: dict,
 
         if "Reactome enrichment" in configuration["module detection"]:
             reactome_enrichment = {}
-            if "map" in configuration["module detection"][
+            if "annotation" in configuration["module detection"][
                     "Reactome enrichment"]:
                 reactome_enrichment[
-                    "map"] = protein_protein_interaction_network.get_reactome_enrichment(
+                    "annotation"] = protein_protein_interaction_network.get_reactome_enrichment(
                         modules,
                         enrichment_test=test.ENRICHMENT_TEST[
                             configuration["module detection"]
-                            ["Reactome enrichment"]["map"].get(
+                            ["Reactome enrichment"]["annotation"].get(
                                 "test", "hypergeometric")],
                         multiple_testing_correction=correction.CORRECTION[
                             configuration["module detection"]
-                            ["Reactome enrichment"]["map"].get(
+                            ["Reactome enrichment"]["annotation"].get(
                                 "correction", "Benjamini-Hochberg")],
                         taxonomy_identifier=configuration["module detection"]
-                        ["Reactome enrichment"]["map"].get(
+                        ["Reactome enrichment"]["annotation"].get(
                             "taxonomy identifier", 9606))
 
             if "network" in configuration["module detection"][
@@ -550,7 +550,7 @@ def process_workflow(configuration: dict,
                         taxonomy_identifier=configuration["module detection"]
                         ["Reactome enrichment"]["network"].get(
                             "taxonomy identifier", 9606),
-                        map_as_reference=False)
+                        annotation_as_reference=False)
 
         if "measurement enrichment" in configuration["module detection"]:
             measurement_enrichment = {}
@@ -672,15 +672,17 @@ def process_workflow(configuration: dict,
                                 f"{k}\tnetwork\t{term}\t{p:.2e}\t{name}")
 
             if "Reactome enrichment" in configuration["module detection"]:
-                if "map" in configuration["module detection"][
+                if "annotation" in configuration["module detection"][
                         "Reactome enrichment"]:
                     for (pathway, name), p in sorted(
-                            reactome_enrichment["map"][module].items(),
+                            reactome_enrichment["annotation"][module].items(),
                             key=lambda item: item[1]):
                         if p <= configuration["module detection"][
-                                "Reactome enrichment"]["map"].get("p", 1.0):
+                                "Reactome enrichment"]["annotation"].get(
+                                    "p", 1.0):
                             export = True
-                            logger.info(f"{k}\map\t{pathway}\t{p:.2e}\t{name}")
+                            logger.info(
+                                f"{k}\tannotation\t{pathway}\t{p:.2e}\t{name}")
 
                 if "network" in configuration["module detection"][
                         "Reactome enrichment"]:

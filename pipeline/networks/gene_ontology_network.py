@@ -67,14 +67,15 @@ def get_gene_ontology_network(
 
     annotated_proteins = set.union(*annotation.values())
 
-    intersection = {
+    annotated_network_proteins = {
         term: len(annotation[term].intersection(
             protein_protein_interaction_network.nodes())) for term in annotation
     }
 
     p_value = multiple_testing_correction({
         term: enrichment_test(
-            intersection[term], len(annotated_proteins), len(annotation[term]),
+            annotated_network_proteins[term], len(annotated_proteins),
+            len(annotation[term]),
             len(
                 annotated_proteins.intersection(
                     protein_protein_interaction_network.nodes())))
@@ -82,10 +83,10 @@ def get_gene_ontology_network(
     })
 
     network.remove_nodes_from(
-        [term for term in annotation if not intersection[term]])
+        [term for term in annotation if not annotated_network_proteins[term]])
 
     for term in network:
-        network.nodes[term]["proteins"] = intersection[term]
+        network.nodes[term]["proteins"] = annotated_network_proteins[term]
         network.nodes[term]["p-value"] = p_value[term]
 
     return network

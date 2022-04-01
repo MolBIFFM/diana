@@ -45,7 +45,8 @@ def get_reactome_network(protein_protein_interaction_network: nx.Graph,
             network.add_edge(child, parent)
 
     pathways = {}
-    for protein, pathway in reactome.get_pathway_map(taxonomy_identifier):
+    for protein, pathway in reactome.get_pathway_annotation(
+            taxonomy_identifier):
         if pathway not in pathways:
             pathways[pathway] = set()
         pathways[pathway].add(protein)
@@ -53,9 +54,9 @@ def get_reactome_network(protein_protein_interaction_network: nx.Graph,
     network.remove_nodes_from(
         [pathway for pathway in network if pathway not in pathways])
 
-    mapped_proteins = set.union(*pathways.values())
+    annotated_proteins = set.union(*pathways.values())
 
-    intersection = {
+    annotated_network_proteins = {
         pathway: len(pathways[pathway].intersection(
             protein_protein_interaction_network.nodes()))
         for pathway in pathways
@@ -63,18 +64,21 @@ def get_reactome_network(protein_protein_interaction_network: nx.Graph,
 
     p_value = multiple_testing_correction({
         pathway: enrichment_test(
-            intersection[pathway], len(mapped_proteins), len(pathways[pathway]),
+            annotated_network_proteins[pathway], len(annotated_proteins),
+            len(pathways[pathway]),
             len(
-                mapped_proteins.intersection(
+                annotated_proteins.intersection(
                     protein_protein_interaction_network.nodes())))
         for pathway in network
     })
 
-    network.remove_nodes_from(
-        [pathway for pathway in pathways if not intersection[pathway]])
+    network.remove_nodes_from([
+        pathway for pathway in pathways
+        if not annotated_network_proteins[pathway]
+    ])
 
     for pathway in network:
-        network.nodes[pathway]["proteins"] = intersection[pathway]
+        network.nodes[pathway]["proteins"] = annotated_network_proteins[pathway]
         network.nodes[pathway]["p-value"] = p_value[pathway]
 
     return network

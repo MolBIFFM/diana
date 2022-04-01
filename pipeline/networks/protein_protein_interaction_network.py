@@ -1371,7 +1371,7 @@ def get_reactome_enrichment(
         nx.Graph, str], float]], dict[tuple[nx.Graph, str],
                                       float]] = correction.benjamini_hochberg,
     taxonomy_identifier: int = 9606,
-    map_as_reference: bool = True
+    annotation_as_reference: bool = True
 ) -> dict[nx.Graph, dict[tuple[str, str], float]]:
     """
     Test the protein-protein interaction networks for enrichment of Reactome
@@ -1384,9 +1384,9 @@ def get_reactome_enrichment(
         multiple_testing_correction: The procedure to correct for multiple
             testing of multiple pathways and networks.
         taxonomy_identifier: The taxonomy identifier.
-        map_as_reference: If True, compute enrichment with respect to the
-            species-specific Reactome pathway map, else with respect to the 
-            union of the protein-protein interaction networks.
+        annotation_as_reference: If True, compute enrichment with respect to the
+            species-specific Reactome pathway annotation, else with respect to 
+            the union of the protein-protein interaction networks.
 
     Returns:
         Corrected p-value for the enrichment of each Reactome pathway by 
@@ -1397,8 +1397,9 @@ def get_reactome_enrichment(
         name[pathway] = pathway_name
 
     pathways = {}
-    for protein, pathway in reactome.get_pathway_map(taxonomy_identifier):
-        if map_as_reference or any(
+    for protein, pathway in reactome.get_pathway_annotation(
+            taxonomy_identifier):
+        if annotation_as_reference or any(
                 protein in network.nodes() for network in networks):
             if pathway not in pathways:
                 pathways[pathway] = set()
@@ -1408,10 +1409,10 @@ def get_reactome_enrichment(
         pathway: proteins for pathway, proteins in pathways.items() if proteins
     }
 
-    mapped_proteins = set.union(*pathways.values())
+    annotated_proteins = set.union(*pathways.values())
 
-    mapped_network_proteins = {
-        network: len(mapped_proteins.intersection(network.nodes()))
+    annotated_network_proteins = {
+        network: len(annotated_proteins.intersection(network.nodes()))
         for network in networks
     }
 
@@ -1424,9 +1425,9 @@ def get_reactome_enrichment(
 
     p_value = multiple_testing_correction({
         (network, pathway): enrichment_test(intersection[network][pathway],
-                                            len(mapped_proteins),
+                                            len(annotated_proteins),
                                             len(pathways[pathway]),
-                                            mapped_network_proteins[network])
+                                            annotated_network_proteins[network])
         for pathway in pathways for network in networks
     })
 

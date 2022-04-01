@@ -886,7 +886,7 @@ The function used to derive a combined edge confidence score from scores in IntA
 
 The specification of statistical tests on individual modules with respect to either Gene Ontology or Reactome enrichment or the distribution of measurements across the protein-protein interaction network. 
 
-Gene Ontology and Reactome enrichment can be assessed with respect to the entire annotation or pathway map, respectively, or the protein-protein interaction network. 
+Gene Ontology and Reactome enrichment can be assessed with respect to the respective entire annotation or the protein-protein interaction network. 
 
 To assess their distribution, measurements can be interpreted in a binary way measuring modules' enrichment of proteins which exhibit measurements exceeding a specified threshold. Alternatively, the distribution of measurements within separate modules can be compared with the remaining network.
 
@@ -905,7 +905,7 @@ The tests act as filter on the exported modules of the protein-protein interacti
           }
         },
         "Reactome enrichment": {
-          "map": {
+          "annotation": {
             "test": "hypergeometric"
           },
           "network": {
@@ -958,7 +958,7 @@ The statistical test to compare modification- and time-specific measurement dist
           }
         },
         "Reactome enrichment": {
-          "map": {
+          "annotation": {
             "correction": "Benjamini-Hochberg"
           },
           "network": {
@@ -1001,7 +1001,7 @@ Available settings are `"Benjamini-Hochberg"` and `"Bonferroni"`.
           }
         },
         "Reactome enrichment": {
-          "map": {
+          "annotation": {
             "p": 1.0
           },
           "network": {
@@ -1043,7 +1043,7 @@ The corrected p-value threshold. The default setting is `1.0`.
           }
         },
         "Reactome enrichment": {
-          "map": {
+          "annotation": {
             "taxonomy identifier": 9606
           },
           "network": {
