@@ -1,11 +1,12 @@
 """The interface for UniProt."""
-from typing import Generator
+from optparse import Option
+from typing import Generator, Optional
 
 from access import iterate
 
 
 def get_swissprot_entries(
-    taxonomy_identifier: int = 9606
+    taxonomy_identifier: Optional[int] = None
 ) -> Generator[tuple[tuple[str], str, str], None, None]:
     """
     Yields SwissProt entries.
@@ -92,7 +93,7 @@ def get_swissprot_entries(
 
 
 def get_primary_accession(
-        taxonomy_identifier: int = 9606) -> dict[str, set[str]]:
+        taxonomy_identifier: Optional[int] = None) -> dict[str, set[str]]:
     """
     Returns a map of primary UniProt accessions.
 

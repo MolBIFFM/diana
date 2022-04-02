@@ -40,8 +40,6 @@ def get_protein_protein_interactions(
                 "ID(s) interactor B",
                 "Alt. ID(s) interactor A",
                 "Alt. ID(s) interactor B",
-                "Taxid interactor A",
-                "Taxid interactor B",
                 "Interaction type(s)",
                 "Interaction detection method(s)",
                 "Confidence value(s)",

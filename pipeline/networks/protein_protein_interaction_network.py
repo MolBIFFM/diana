@@ -24,55 +24,15 @@ def get_protein_protein_interaction_network() -> nx.Graph():
     return nx.Graph()
 
 
-def annotate_proteins(network: nx.Graph,
-                      taxonomy_identifier: int = 9606) -> None:
+def add_genes_from(network: nx.Graph, genes: Container) -> None:
     """
-    Associate nodes with gene and protein names from SwissProt.
+    Add genes to a protein-protein interaction network.
 
     Args:
         network: The protein-protein interaction network.
-        taxonomy_identifier: The taxonomy identifier.
+        genes: The Uniprot gene accessions to be added.
     """
-    for accessions, gene_name, protein_name in uniprot.get_swissprot_entries(
-            taxonomy_identifier):
-        for protein in network:
-            if protein.split("-")[0] == accessions[0]:
-                network.nodes[protein]["gene"] = gene_name
-                network.nodes[protein]["protein"] = protein_name
-
-
-def remove_unannotated_proteins(network: nx.Graph) -> None:
-    """
-    Remove proteins not associated with a gene or protein name.
-
-    Args:
-        network: The protein-protein interaction network.
-    """
-    network.remove_nodes_from([
-        node for node in network if not (network.nodes[node].get("gene") or
-                                         network.nodes[node].get("protein"))
-    ])
-
-
-def add_genes_from(network: nx.Graph,
-                   genes: Container,
-                   taxonomy_identifier: int = 9606) -> None:
-    """
-    Add primary Uniprot protein accessions corresponding to genes to a
-    protein-protein interaction network.
-
-    Args:
-        network: The protein-protein interaction network.
-        genes: The Uniprot gene accessions whose corresponding primary Uniprot
-            protein accessions are added.
-        taxonomy_identifier: The taxonomy identifier.
-    """
-    for accessions, gene_name, protein_name in uniprot.get_swissprot_entries(
-            taxonomy_identifier):
-        if gene_name in genes:
-            network.add_node(accessions[0])
-            network.nodes[accessions[0]]["gene"] = gene_name
-            network.nodes[accessions[0]]["protein"] = protein_name
+    network.add_nodes_from(genes)
 
 
 def add_genes_from_table(
@@ -132,61 +92,43 @@ def add_genes_from_table(
             gene_accession_format.findall(row[gene_accession_column])
         ])
 
-    add_genes_from(network, genes, taxonomy_identifier)
+    network.add_nodes_from(genes)
+
+
+def relabel_genes(network: nx.Graph, taxonomy_identifier: int = 9606):
+    """
+    Relabel genes in a protein-protein interaction network to their primary
+    UniProt identifiers and remove genes not present in SwissProt.
+
+    Args:
+        network: The protein-protein interaction network to relabel genes from.
+        taxonomy_identifier: The taxonomy identifier.
+    """
+    mapping, gene_name, protein_name = {}, {}, {}
+    for accessions, gene, protein in uniprot.get_swissprot_entries(
+            taxonomy_identifier):
+        if gene in network.nodes():
+            mapping[gene] = accessions[0]
+            gene_name[accessions[0]] = gene
+            protein_name[accessions[0]] = protein
+
+    network.remove_nodes_from(set(network.nodes()).difference(mapping))
+    nx.relabel_nodes(network, mapping, copy=False)
+
+    for protein in network.nodes():
+        network.nodes[protein]["gene"] = gene_name[protein]
+        network.nodes[protein]["protein"] = protein_name[protein]
 
 
 def add_proteins_from(network: nx.Graph, proteins: Container) -> None:
     """
-    Add primary Uniprot protein accessions corresponding to proteins to a
-    protein-protein interaction network.
+    Add proteins to a protein-protein interaction network.
 
     Args:
         network: The protein-protein interaction network.
-        proteins: The protein accessions whose corresponding primary Uniprot
-            protein accessions are added.
-    
-    Returns:
-        A map from secondary to primary UniProt accessions for the added 
-        proteins.     
+        genes: The Uniprot proteins accessions to be added.
     """
-    proteins_isoform = {}
-
-    for protein_accession in proteins:
-        if "-" in protein_accession and protein_accession.split(
-                "-")[1].isnumeric():
-            protein, isoform = protein_accession.split("-")
-        else:
-            protein, isoform = protein_accession, "0"
-
-        if protein not in proteins_isoform:
-            proteins_isoform[protein] = set()
-
-        proteins_isoform[protein].add(isoform)
-
-    primary_accession = {}
-    for accessions, gene_name, protein_name in uniprot.get_swissprot_entries():
-        for i, accession in enumerate(accessions):
-            if accession in proteins_isoform:
-                for isoform in proteins_isoform[accession]:
-                    if isoform == "0":
-                        network.add_node(accessions[0])
-                        network.nodes[accessions[0]]["gene"] = gene_name
-                        network.nodes[accessions[0]]["protein"] = protein_name
-
-                    elif i == 0:
-                        network.add_node(f"{accession}-{isoform}")
-                        network.nodes[f"{accession}-{isoform}"][
-                            "gene"] = gene_name
-                        network.nodes[f"{accession}-{isoform}"][
-                            "protein"] = protein_name
-
-                if i > 0:
-                    if accession not in primary_accession:
-                        primary_accession[accession] = set()
-
-                    primary_accession[accession].add(accessions[0])
-
-    return primary_accession
+    network.add_nodes_from(proteins)
 
 
 def add_proteins_from_table(
@@ -324,19 +266,8 @@ def add_proteins_from_table(
                 if protein_accession not in proteins:
                     proteins[protein_accession] = []
 
-    primary_accession = add_proteins_from(network, proteins)
-
-    for protein in list(proteins):
-        if protein in primary_accession:
-            for accession in sorted(primary_accession[protein]):
-                if accession not in proteins:
-                    proteins[accession] = proteins[protein]
-            del proteins[protein]
-
-    for protein in proteins:
-        if protein not in network:
-            continue
-
+    network.add_nodes_from(proteins)
+    for protein in network.nodes():
         proteins[protein] = sorted(
             sorted(
                 proteins[protein],
@@ -346,6 +277,43 @@ def add_proteins_from_table(
         for i in range(len(proteins[protein])):
             network.nodes[protein][f"{time} {modification} {i + 1}"] = proteins[
                 protein][i][1]
+
+
+def relabel_proteins(network: nx.Graph):
+    """
+    Relabel proteins in a protein-protein interaction network to their primary
+    UniProt identifiers and remove proteins not present in SwissProt. Isoform
+    identifiers are maintained but not transferred.
+
+    Args:
+        network: The protein-protein interaction network to relabel proteins
+            from.
+    """
+    mapping, gene_name, protein_name = {}, {}, {}
+    for accessions, gene, protein in uniprot.get_swissprot_entries():
+        if gene in network.nodes():
+            mapping[gene] = accessions[0]
+            gene_name[accessions[0]] = gene
+            protein_name[accessions[0]] = protein
+
+        for node in network.nodes():
+            if node.split("-")[0] in accessions:
+                if "-" in node and node.split("-")[1].isnumeric(
+                ) and accessions.index(node.split("-")[0]) == 0:
+                    mapping[node] = node
+                    gene_name[node] = gene
+                    protein_name[node] = protein
+                else:
+                    mapping[node] = accessions[0]
+                    gene_name[accessions[0]] = gene
+                    protein_name[accessions[0]] = protein
+
+    network.remove_nodes_from(set(network.nodes()).difference(mapping))
+    nx.relabel_nodes(network, mapping, copy=False)
+
+    for protein in network.nodes():
+        network.nodes[protein]["gene"] = gene_name[protein]
+        network.nodes[protein]["protein"] = protein_name[protein]
 
 
 def get_proteins(
@@ -589,7 +557,7 @@ def set_measurements(
                 network.nodes[protein][f"measurement {time}"] = "mid"
 
 
-def add_proteins_from_biogrid(
+def get_neighbors_from_biogrid(
         network: nx.Graph,
         experimental_system: Optional[Container[str]] = None,
         experimental_system_type: Optional[Container[str]] = None,
@@ -598,8 +566,8 @@ def add_proteins_from_biogrid(
         taxonomy_identifier: int = 9606,
         version: Optional[tuple[int, int, int]] = None) -> None:
     """
-    Add proteins interacting with proteins in a protein-protein interaction
-    network from BioGRID to the network.
+    Returns proteins interacting with proteins in a protein-protein interaction
+    network from BioGRID.
 
     Args:
         network: The protein-protein interaction network.
@@ -613,6 +581,9 @@ def add_proteins_from_biogrid(
             physical interactions.
         taxonomy_identifier: The taxonomy identifier.
         version: The version of the BioGRID database, if not passed, the latest.
+
+    Returns:
+        Neighbors of the protein-protein interaction network in BioGRID.
     """
     nodes_to_add = set()
     for interactor_a, interactor_b in biogrid.get_protein_protein_interactions(
@@ -625,7 +596,7 @@ def add_proteins_from_biogrid(
         elif (interactor_a not in network and interactor_b in network):
             nodes_to_add.add(interactor_a)
 
-    network.add_nodes_from(nodes_to_add)
+    return nodes_to_add
 
 
 def add_protein_protein_interactions_from_biogrid(
@@ -663,14 +634,14 @@ def add_protein_protein_interactions_from_biogrid(
             network.edges[interactor_a, interactor_b]["BioGRID"] = 1.0
 
 
-def add_proteins_from_intact(network: nx.Graph,
-                             interaction_detection_methods: Optional[
-                                 Container[str]] = None,
-                             interaction_types: Optional[Container[str]] = None,
-                             psi_mi_score: float = 0.0,
-                             taxonomy_identifier: int = 9606) -> None:
+def get_neighbors_from_intact(
+        network: nx.Graph,
+        interaction_detection_methods: Optional[Container[str]] = None,
+        interaction_types: Optional[Container[str]] = None,
+        psi_mi_score: float = 0.0,
+        taxonomy_identifier: int = 9606) -> None:
     """
-    Add proteins interacting with proteins in a protein-protein interaction
+    Returns proteins interacting with proteins in a protein-protein interaction
     network from IntAct to the network.
 
     Args:
@@ -681,6 +652,9 @@ def add_proteins_from_intact(network: nx.Graph,
             none are specified, any is accepted.
         psi_mi_score: The PSI-MI score threshold.
         taxonomy_identifier: The taxonomy identifier.
+
+    Returns:
+        Neighbors of the protein-protein interaction network in IntAct.
     """
     nodes_to_add = set()
     for interactor_a, interactor_b, _ in intact.get_protein_protein_interactions(
@@ -692,7 +666,7 @@ def add_proteins_from_intact(network: nx.Graph,
         elif (interactor_a not in network and interactor_b in network):
             nodes_to_add.add(interactor_a)
 
-    network.add_nodes_from(nodes_to_add)
+    return nodes_to_add
 
 
 def add_protein_protein_interactions_from_intact(
@@ -728,15 +702,15 @@ def add_protein_protein_interactions_from_intact(
                 network.edges[interactor_a, interactor_b]["IntAct"] = score
 
 
-def add_proteins_from_mint(network: nx.Graph,
-                           interaction_detection_methods: Optional[
-                               Container[str]] = None,
-                           interaction_types: Optional[Container[str]] = None,
-                           psi_mi_score: float = 0.0,
-                           taxonomy_identifier: int = 9606) -> None:
+def get_neighbors_from_mint(network: nx.Graph,
+                            interaction_detection_methods: Optional[
+                                Container[str]] = None,
+                            interaction_types: Optional[Container[str]] = None,
+                            psi_mi_score: float = 0.0,
+                            taxonomy_identifier: int = 9606) -> None:
     """
-    Add proteins interacting with proteins in a protein-protein interaction
-    network from MINT to the network.
+    Returns proteins interacting with proteins in a protein-protein interaction
+    network from MINT.
 
     Args:
         network: The protein-protein interaction network.
@@ -746,6 +720,9 @@ def add_proteins_from_mint(network: nx.Graph,
             If none are specified, any is accepted.
         psi_mi_score: The PSI-MI score threshold.
         taxonomy_identifier: The taxonomy identifier.
+
+    Returns:
+        Neighbors of the protein-protein interaction network in MINT.
     """
     nodes_to_add = set()
     for interactor_a, interactor_b, _ in mint.get_protein_protein_interactions(
@@ -757,7 +734,7 @@ def add_proteins_from_mint(network: nx.Graph,
         elif (interactor_a not in network and interactor_b in network):
             nodes_to_add.add(interactor_a)
 
-    network.add_nodes_from(nodes_to_add)
+    return nodes_to_add
 
 
 def add_protein_protein_interactions_from_mint(
@@ -793,14 +770,14 @@ def add_protein_protein_interactions_from_mint(
                 network.edges[interactor_a, interactor_b]["MINT"] = score
 
 
-def add_proteins_from_reactome(
+def get_neighbors_from_reactome(
         network: nx.Graph,
         interaction_type: Optional[Container[str]] = None,
         interaction_context: Optional[Container[str]] = None,
         taxonomy_identifier: int = 9606) -> None:
     """
-    Add proteins interacting with proteins in a protein-protein interaction
-    network from Reactome to the network.
+    Returns proteins interacting with proteins in a protein-protein interaction
+    network from Reactome.
 
     Args:
         network: The protein-protein interaction network.
@@ -809,6 +786,9 @@ def add_proteins_from_reactome(
         interaction_context: The accepted interaction context annotation.
             If none are specified, any is accepted.
         taxonomy_identifier: The taxonomy identifier.
+
+    Returns:
+        Neighbors of the protein-protein interaction network in Reactome.
     """
     nodes_to_add = set()
 
@@ -820,7 +800,7 @@ def add_proteins_from_reactome(
         elif (interactor_a not in network and interactor_b in network):
             nodes_to_add.add(interactor_a)
 
-    network.add_nodes_from(nodes_to_add)
+    return nodes_to_add
 
 
 def add_protein_protein_interactions_from_reactome(
@@ -849,27 +829,27 @@ def add_protein_protein_interactions_from_reactome(
             network.edges[interactor_a, interactor_b]["Reactome"] = 1.0
 
 
-def add_proteins_from_string(network: nx.Graph,
-                             neighborhood: float = 0.0,
-                             neighborhood_transferred: float = 0.0,
-                             fusion: float = 0.0,
-                             cooccurence: float = 0.0,
-                             homology: float = 0.0,
-                             coexpression: float = 0.0,
-                             coexpression_transferred: float = 0.0,
-                             experiments: float = 0.0,
-                             experiments_transferred: float = 0.0,
-                             database: float = 0.0,
-                             database_transferred: float = 0.0,
-                             textmining: float = 0.0,
-                             textmining_transferred: float = 0.0,
-                             combined_score: float = 0.0,
-                             physical: bool = False,
-                             taxonomy_identifier: int = 9606,
-                             version: float = 11.5):
+def get_neighbors_from_string(network: nx.Graph,
+                              neighborhood: float = 0.0,
+                              neighborhood_transferred: float = 0.0,
+                              fusion: float = 0.0,
+                              cooccurence: float = 0.0,
+                              homology: float = 0.0,
+                              coexpression: float = 0.0,
+                              coexpression_transferred: float = 0.0,
+                              experiments: float = 0.0,
+                              experiments_transferred: float = 0.0,
+                              database: float = 0.0,
+                              database_transferred: float = 0.0,
+                              textmining: float = 0.0,
+                              textmining_transferred: float = 0.0,
+                              combined_score: float = 0.0,
+                              physical: bool = False,
+                              taxonomy_identifier: int = 9606,
+                              version: float = 11.5):
     """
     Add proteins interacting with proteins in a protein-protein interaction
-    network from MINT to the network.
+    network from STRING to the network.
 
     Args:
         network: The protein-protein interaction network.
@@ -891,6 +871,9 @@ def add_proteins_from_string(network: nx.Graph,
         physical: If True, consider only physical interactions.
         taxonomy_identifier: The taxonomy identifier.
         version: The version of the STRING database.
+   
+    Returns:
+        Neighbors of the protein-protein interaction network in STRING.
     """
     nodes_to_add = set()
 
@@ -906,7 +889,7 @@ def add_proteins_from_string(network: nx.Graph,
         elif (interactor_a not in network and interactor_b in network):
             nodes_to_add.add(interactor_a)
 
-    network.add_nodes_from(nodes_to_add)
+    return nodes_to_add
 
 
 def add_protein_protein_interactions_from_string(

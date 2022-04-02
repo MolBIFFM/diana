@@ -65,6 +65,9 @@ def process_workflow(configuration: dict,
                 taxonomy_identifier=entry.get("taxonomy identifier", 9606),
             )
 
+        protein_protein_interaction_network.relabel_genes(
+            network, entry.get("taxonomy identifier", 9606))
+
     for entry in configuration.get("proteins", {}):
         if "file" in entry and "accession column" in entry:
             protein_protein_interaction_network.add_proteins_from_table(
@@ -93,182 +96,171 @@ def process_workflow(configuration: dict,
             protein_protein_interaction_network.add_proteins_from(
                 network, proteins=entry["accessions"])
 
+    if configuration.get("proteins", {}):
+        protein_protein_interaction_network.relabel_proteins(network)
+
     for entry in configuration.get("networks", []):
         network = nx.compose(network, nx.readwrite.graphml.read_graphml(entry))
+
+    if configuration.get("networks", {}):
+        protein_protein_interaction_network.relabel_proteins(network)
 
     if "protein-protein interactions" in configuration:
         for neighbors in range(
                 max(configuration["protein-protein interactions"].get(
                     database, {}).get("neighbors", 0) for database in
                     {"BioGRID", "IntAct", "MINT", "Reactome", "STRING"})):
+            proteins = set()
             if "BioGRID" in configuration[
                     "protein-protein interactions"] and configuration[
                         "protein-protein interactions"]["BioGRID"].get(
                             "neighbors", 0) > neighbors:
-                protein_protein_interaction_network.add_proteins_from_biogrid(
-                    network,
-                    interaction_throughput=configuration[
-                        "protein-protein interactions"]["BioGRID"].get(
-                            "interaction throughput", []),
-                    experimental_system=configuration[
-                        "protein-protein interactions"]["BioGRID"].get(
-                            "experimental system", []),
-                    experimental_system_type=configuration[
-                        "protein-protein interactions"]["BioGRID"].get(
-                            "experimental system type", []),
-                    multi_validated_physical=configuration[
-                        "protein-protein interactions"]["BioGRID"].get(
-                            "multi-validated physical", False),
-                    taxonomy_identifier=configuration[
-                        "protein-protein interactions"]["BioGRID"].get(
-                            "taxonomy identifier", 9606),
-                    version=tuple(
-                        int(v)
-                        for v in configuration["protein-protein interactions"]
-                        ["BioGRID"].get("version").split(".")) if "version"
-                    in configuration["protein-protein interactions"]["BioGRID"]
-                    else None)
-
-                protein_protein_interaction_network.annotate_proteins(
-                    network, configuration["protein-protein interactions"]
-                    ["BioGRID"].get("taxonomy identifier", 9606))
-
-                protein_protein_interaction_network.remove_unannotated_proteins(
-                    network)
+                proteins.update(
+                    protein_protein_interaction_network.
+                    get_neighbors_from_biogrid(
+                        network,
+                        interaction_throughput=configuration[
+                            "protein-protein interactions"]["BioGRID"].get(
+                                "interaction throughput", []),
+                        experimental_system=configuration[
+                            "protein-protein interactions"]["BioGRID"].get(
+                                "experimental system", []),
+                        experimental_system_type=configuration[
+                            "protein-protein interactions"]["BioGRID"].get(
+                                "experimental system type", []),
+                        multi_validated_physical=configuration[
+                            "protein-protein interactions"]["BioGRID"].get(
+                                "multi-validated physical", False),
+                        taxonomy_identifier=configuration[
+                            "protein-protein interactions"]["BioGRID"].get(
+                                "taxonomy identifier", 9606),
+                        version=tuple(
+                            int(v) for v in
+                            configuration["protein-protein interactions"]
+                            ["BioGRID"].get("version").split(".")) if "version"
+                        in configuration["protein-protein interactions"]
+                        ["BioGRID"] else None))
 
             if "IntAct" in configuration[
                     "protein-protein interactions"] and configuration[
                         "protein-protein interactions"]["IntAct"].get(
                             "neighbors", 0) > neighbors:
-                protein_protein_interaction_network.add_proteins_from_intact(
-                    network,
-                    interaction_detection_methods=configuration[
-                        "protein-protein interactions"]["IntAct"].get(
-                            "interaction detection methods", []),
-                    interaction_types=configuration[
-                        "protein-protein interactions"]["IntAct"].get(
-                            "interaction types", []),
-                    psi_mi_score=configuration["protein-protein interactions"]
-                    ["IntAct"].get("score", 0.0),
-                    taxonomy_identifier=configuration[
-                        "protein-protein interactions"]["IntAct"].get(
-                            "taxonomy identifier", 9606),
-                )
-
-                protein_protein_interaction_network.annotate_proteins(
-                    network,
-                    configuration["protein-protein interactions"]["IntAct"].get(
-                        "taxonomy identifier", 9606))
-
-                protein_protein_interaction_network.remove_unannotated_proteins(
-                    network)
+                proteins.update(
+                    protein_protein_interaction_network.
+                    add_proteins_from_intact(
+                        network,
+                        interaction_detection_methods=configuration[
+                            "protein-protein interactions"]["IntAct"].get(
+                                "interaction detection methods", []),
+                        interaction_types=configuration[
+                            "protein-protein interactions"]["IntAct"].get(
+                                "interaction types", []),
+                        psi_mi_score=configuration[
+                            "protein-protein interactions"]["IntAct"].get(
+                                "score", 0.0),
+                        taxonomy_identifier=configuration[
+                            "protein-protein interactions"]["IntAct"].get(
+                                "taxonomy identifier", 9606),
+                    ))
 
             if "MINT" in configuration[
                     "protein-protein interactions"] and configuration[
                         "protein-protein interactions"]["MINT"].get(
                             "neighbors", 0) > neighbors:
-                protein_protein_interaction_network.add_proteins_from_mint(
-                    network,
-                    interaction_detection_methods=configuration[
-                        "protein-protein interactions"]["MINT"].get(
-                            "interaction detection methods", []),
-                    interaction_types=configuration[
-                        "protein-protein interactions"]["MINT"].get(
-                            "interaction types", []),
-                    psi_mi_score=configuration["protein-protein interactions"]
-                    ["MINT"].get("score", 0.0),
-                    taxonomy_identifier=configuration[
-                        "protein-protein interactions"]["MINT"].get(
-                            "taxonomy identifier", 9606),
-                )
-
-                protein_protein_interaction_network.annotate_proteins(
-                    network,
-                    configuration["protein-protein interactions"]["MINT"].get(
-                        "taxonomy identifier", 9606))
-
-                protein_protein_interaction_network.remove_unannotated_proteins(
-                    network)
+                proteins.update(
+                    protein_protein_interaction_network.add_proteins_from_mint(
+                        network,
+                        interaction_detection_methods=configuration[
+                            "protein-protein interactions"]["MINT"].get(
+                                "interaction detection methods", []),
+                        interaction_types=configuration[
+                            "protein-protein interactions"]["MINT"].get(
+                                "interaction types", []),
+                        psi_mi_score=configuration[
+                            "protein-protein interactions"]["MINT"].get(
+                                "score", 0.0),
+                        taxonomy_identifier=configuration[
+                            "protein-protein interactions"]["MINT"].get(
+                                "taxonomy identifier", 9606),
+                    ))
 
             if "Reactome" in configuration[
                     "protein-protein interactions"] and configuration[
                         "protein-protein interactions"]["Reactome"].get(
                             "neighbors", 0) > neighbors:
-                protein_protein_interaction_network.add_proteins_from_reactome(
-                    network,
-                    interaction_context=configuration[
-                        "protein-protein interactions"]["Reactome"].get(
-                            "interaction context", []),
-                    interaction_type=configuration[
-                        "protein-protein interactions"]["Reactome"].get(
-                            "interaction type", []),
-                    taxonomy_identifier=configuration[
-                        "protein-protein interactions"]["Reactome"].get(
-                            "taxonomy identifier", 9606),
-                )
-
-                protein_protein_interaction_network.annotate_proteins(
-                    network, configuration["protein-protein interactions"]
-                    ["Reactome"].get("taxonomy identifier", 9606))
-
-                protein_protein_interaction_network.remove_unannotated_proteins(
-                    network)
+                proteins.update(
+                    protein_protein_interaction_network.
+                    add_proteins_from_reactome(
+                        network,
+                        interaction_context=configuration[
+                            "protein-protein interactions"]["Reactome"].get(
+                                "interaction context", []),
+                        interaction_type=configuration[
+                            "protein-protein interactions"]["Reactome"].get(
+                                "interaction type", []),
+                        taxonomy_identifier=configuration[
+                            "protein-protein interactions"]["Reactome"].get(
+                                "taxonomy identifier", 9606),
+                    ))
 
             if "STRING" in configuration[
                     "protein-protein interactions"] and configuration[
                         "protein-protein interactions"]["STRING"].get(
                             "neighbors", 0) > neighbors:
-                protein_protein_interaction_network.add_proteins_from_string(
-                    network,
-                    neighborhood=configuration["protein-protein interactions"]
-                    ["STRING"].get("neighborhood score", 0.0),
-                    neighborhood_transferred=configuration[
-                        "protein-protein interactions"]["STRING"].get(
-                            "neighborhood transferred score", 0.0),
-                    fusion=configuration["protein-protein interactions"]
-                    ["STRING"].get("fusion score", 0.0),
-                    cooccurence=configuration["protein-protein interactions"]
-                    ["STRING"].get("cooccurence score", 0.0),
-                    homology=configuration["protein-protein interactions"]
-                    ["STRING"].get("homology score", 0.0),
-                    coexpression=configuration["protein-protein interactions"]
-                    ["STRING"].get("coexpression score", 0.0),
-                    coexpression_transferred=configuration[
-                        "protein-protein interactions"]["STRING"].get(
-                            "coexpression transferred score", 0.0),
-                    experiments=configuration["protein-protein interactions"]
-                    ["STRING"].get("experiments score", 0.0),
-                    experiments_transferred=configuration[
-                        "protein-protein interactions"]["STRING"].get(
-                            "experiments transferred score", 0.0),
-                    database=configuration["protein-protein interactions"]
-                    ["STRING"].get("database score", 0.0),
-                    database_transferred=configuration[
-                        "protein-protein interactions"]["STRING"].get(
-                            "database transferred score", 0.0),
-                    textmining=configuration["protein-protein interactions"]
-                    ["STRING"].get("textmining score", 0.0),
-                    textmining_transferred=configuration[
-                        "protein-protein interactions"]["STRING"].get(
-                            "textmining transferred score", 0.0),
-                    combined_score=configuration["protein-protein interactions"]
-                    ["STRING"].get("combined score", 0.0),
-                    physical=configuration["protein-protein interactions"]
-                    ["STRING"].get("physical", False),
-                    taxonomy_identifier=configuration[
-                        "protein-protein interactions"]["STRING"].get(
-                            "taxonomy identifier", 9606),
-                    version=configuration["protein-protein interactions"]
-                    ["STRING"].get("version", 11.5),
-                )
+                proteins.update(
+                    protein_protein_interaction_network.
+                    add_proteins_from_string(
+                        network,
+                        neighborhood=configuration[
+                            "protein-protein interactions"]["STRING"].get(
+                                "neighborhood score", 0.0),
+                        neighborhood_transferred=configuration[
+                            "protein-protein interactions"]["STRING"].get(
+                                "neighborhood transferred score", 0.0),
+                        fusion=configuration["protein-protein interactions"]
+                        ["STRING"].get("fusion score", 0.0),
+                        cooccurence=configuration[
+                            "protein-protein interactions"]["STRING"].get(
+                                "cooccurence score", 0.0),
+                        homology=configuration["protein-protein interactions"]
+                        ["STRING"].get("homology score", 0.0),
+                        coexpression=configuration[
+                            "protein-protein interactions"]["STRING"].get(
+                                "coexpression score", 0.0),
+                        coexpression_transferred=configuration[
+                            "protein-protein interactions"]["STRING"].get(
+                                "coexpression transferred score", 0.0),
+                        experiments=configuration[
+                            "protein-protein interactions"]["STRING"].get(
+                                "experiments score", 0.0),
+                        experiments_transferred=configuration[
+                            "protein-protein interactions"]["STRING"].get(
+                                "experiments transferred score", 0.0),
+                        database=configuration["protein-protein interactions"]
+                        ["STRING"].get("database score", 0.0),
+                        database_transferred=configuration[
+                            "protein-protein interactions"]["STRING"].get(
+                                "database transferred score", 0.0),
+                        textmining=configuration["protein-protein interactions"]
+                        ["STRING"].get("textmining score", 0.0),
+                        textmining_transferred=configuration[
+                            "protein-protein interactions"]["STRING"].get(
+                                "textmining transferred score", 0.0),
+                        combined_score=configuration[
+                            "protein-protein interactions"]["STRING"].get(
+                                "combined score", 0.0),
+                        physical=configuration["protein-protein interactions"]
+                        ["STRING"].get("physical", False),
+                        taxonomy_identifier=configuration[
+                            "protein-protein interactions"]["STRING"].get(
+                                "taxonomy identifier", 9606),
+                        version=configuration["protein-protein interactions"]
+                        ["STRING"].get("version", 11.5),
+                    ))
 
-                protein_protein_interaction_network.annotate_proteins(
-                    network,
-                    configuration["protein-protein interactions"]["STRING"].get(
-                        "taxonomy identifier", 9606))
-
-                protein_protein_interaction_network.remove_unannotated_proteins(
-                    network)
+            protein_protein_interaction_network.add_proteins_from(
+                network, proteins)
+            protein_protein_interaction_network.relabel_proteins(network)
 
         if "BioGRID" in configuration["protein-protein interactions"]:
             protein_protein_interaction_network.add_protein_protein_interactions_from_biogrid(
