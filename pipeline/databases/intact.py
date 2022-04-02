@@ -11,7 +11,7 @@ def get_protein_protein_interactions(
     interaction_detection_methods: Optional[Container[str]] = None,
     interaction_types: Optional[Container[str]] = None,
     psi_mi_score: float = 0.0,
-    taxonomy_identifier: int = 9606
+    taxonomy_identifier: Optional[int] = None
 ) -> Generator[tuple[str, str, float], None, None]:
     """
     Yields protein-protein interactions from IntAct.
