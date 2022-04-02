@@ -29,7 +29,7 @@ def get_protein_protein_interactions(
     primary_accession = uniprot.get_primary_accession(taxonomy_identifier)
 
     for row in iterate.tabular_txt(
-            f"https://reactome.org/download/current/interactors/reactome.{ORGANISM['file'].get(taxonomy_identifier, 'all_species')}.interactions.tab-delimited.txt",
+            f"https://reactome.org/download/current/interactors/reactome.{ORGANISM['file'][taxonomy_identifier]}.interactions.tab-delimited.txt",
             delimiter="\t",
             header=0,
             usecols=[

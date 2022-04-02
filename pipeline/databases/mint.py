@@ -33,7 +33,7 @@ def get_protein_protein_interactions(
     primary_accession = uniprot.get_primary_accession(taxonomy_identifier)
 
     for row in iterate.tabular_txt(
-            f"https://www.ebi.ac.uk/Tools/webservices/psicquic/mint/webservices/current/search/query/{ORGANISM['file'].get(taxonomy_identifier, '*')}",
+            f"https://www.ebi.ac.uk/Tools/webservices/psicquic/mint/webservices/current/search/query/{ORGANISM['file'][taxonomy_identifier]}",
             delimiter="\t",
             header=0,
             usecols=[
@@ -48,7 +48,11 @@ def get_protein_protein_interactions(
                 14,
             ],
     ):
-        if ((not interaction_detection_methods or
+        if ((mitab.namespace_has_identifier(row["Taxid interactor A"], "taxid",
+                                            taxonomy_identifier) and
+             mitab.namespace_has_identifier(row["Taxid interactor B"], "taxid",
+                                            taxonomy_identifier)) and
+            (not interaction_detection_methods or
              mitab.namespace_has_any_term_from(
                  row[4],
                  "psi-mi",

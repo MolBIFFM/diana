@@ -40,12 +40,19 @@ def get_protein_protein_interactions(
                 "ID(s) interactor B",
                 "Alt. ID(s) interactor A",
                 "Alt. ID(s) interactor B",
+                "Taxid interactor A",
+                "Taxid interactor B",
                 "Interaction type(s)",
                 "Interaction detection method(s)",
                 "Confidence value(s)",
             ],
     ):
-        if ((not interaction_detection_methods or
+        if ((not taxonomy_identifier or
+             (mitab.namespace_has_identifier(row["Taxid interactor A"], "taxid",
+                                             taxonomy_identifier) and
+              mitab.namespace_has_identifier(row["Taxid interactor B"], "taxid",
+                                             taxonomy_identifier))) and
+            (not interaction_detection_methods or
              mitab.namespace_has_any_term_from(
                  row["Interaction detection method(s)"],
                  "psi-mi",

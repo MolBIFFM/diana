@@ -98,7 +98,7 @@ def add_genes_from_table(
 def relabel_genes(network: nx.Graph, taxonomy_identifier: int = 9606):
     """
     Relabel genes in a protein-protein interaction network to their primary
-    UniProt identifiers and remove genes not present in SwissProt.
+    UniProt protein identifiers and remove genes not present in SwissProt.
 
     Args:
         network: The protein-protein interaction network to relabel genes from.
@@ -291,11 +291,6 @@ def relabel_proteins(network: nx.Graph):
     """
     mapping, gene_name, protein_name = {}, {}, {}
     for accessions, gene, protein in uniprot.get_swissprot_entries():
-        if gene in network.nodes():
-            mapping[gene] = accessions[0]
-            gene_name[accessions[0]] = gene
-            protein_name[accessions[0]] = protein
-
         for node in network.nodes():
             if node.split("-")[0] in accessions:
                 if "-" in node and node.split("-")[1].isnumeric(
@@ -674,7 +669,7 @@ def add_protein_protein_interactions_from_intact(
         interaction_detection_methods: Optional[Container[str]] = None,
         interaction_types: Optional[Container[str]] = None,
         psi_mi_score: float = 0.0,
-        taxonomy_identifier: Optional[int] = 9606) -> None:
+        taxonomy_identifier: Optional[int] = None) -> None:
     """
     Adds protein-protein interactions from IntAct to a protein-protein
     interaction network.
@@ -871,7 +866,7 @@ def get_neighbors_from_string(network: nx.Graph,
         physical: If True, consider only physical interactions.
         taxonomy_identifier: The taxonomy identifier.
         version: The version of the STRING database.
-   
+  
     Returns:
         Neighbors of the protein-protein interaction network in STRING.
     """

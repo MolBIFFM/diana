@@ -52,8 +52,9 @@ def get_protein_protein_interactions(
             delimiter="\t",
             header=0,
             usecols=[
-                "Experimental System", "Experimental System Type", "Throughput",
-                "SWISS-PROT Accessions Interactor A",
+                "Experimental System", "Experimental System Type",
+                "Organism ID Interactor A", "Organism ID Interactor B",
+                "Throughput", "SWISS-PROT Accessions Interactor A",
                 "SWISS-PROT Accessions Interactor B"
             ],
     ):
@@ -65,6 +66,8 @@ def get_protein_protein_interactions(
              row["Experimental System"] in experimental_system) and
             (not experimental_system_type or
              row["Experimental System Type"] in experimental_system_type) and
+            (row["Organism ID Interactor A"] == taxonomy_identifier and
+             row["Organism ID Interactor B"] == taxonomy_identifier) and
             (not interaction_throughput or
              any(it in interaction_throughput
                  for it in row["Throughput"].split("|")))):
