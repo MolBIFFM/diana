@@ -96,13 +96,10 @@ def process_workflow(configuration: dict,
             protein_protein_interaction_network.add_proteins_from(
                 network, proteins=entry["accessions"])
 
-    if configuration.get("proteins", {}):
-        protein_protein_interaction_network.relabel_proteins(network)
-
     for entry in configuration.get("networks", []):
         network = nx.compose(network, nx.readwrite.graphml.read_graphml(entry))
 
-    if configuration.get("networks", {}):
+    if configuration.get("proteins", {}) or configuration.get("networks", {}):
         protein_protein_interaction_network.relabel_proteins(network)
 
     if "protein-protein interactions" in configuration:
