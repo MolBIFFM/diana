@@ -143,8 +143,8 @@ def add_proteins_from_table(
     replicates: Optional[Container[Union[int, str]]] = None,
     sheet_name: Union[int, str] = 0,
     header: int = 0,
-    num_sites: int = 100,
-    num_replicates: int = 1,
+    number_sites: int = 100,
+    number_replicates: int = 1,
     replicate_combination: Callable[[Container[float]],
                                     float] = statistics.mean,
     measurement_conversion: Callable[
@@ -172,9 +172,9 @@ def add_proteins_from_table(
         replicates: The columns containing replicates of measurements.
         sheet_name: The sheet to parse protein accessions from.
         header: The index of the header row.
-        num_sites: The maximum number of measurements to associate with a
+        number_sites: The maximum number of measurements to associate with a
             protein-accession, prioritized by largest absolute value.
-        num_replicates: The minimum number of replicates to accept a
+        number_replicates: The minimum number of replicates to accept a
             measurement.
         replicate_combination: A function to combine replicates into a single
             measurement.
@@ -249,7 +249,7 @@ def add_proteins_from_table(
                 if not pd.isna(row[replicate])
             ]
 
-            if len(measurements) >= min(num_replicates, len(replicates)):
+            if len(measurements) >= min(number_replicates, len(replicates)):
                 for protein_accession, position in zip(protein_accessions,
                                                        positions):
                     if protein_accession not in proteins:
@@ -267,16 +267,16 @@ def add_proteins_from_table(
                     proteins[protein_accession] = []
 
     network.add_nodes_from(proteins)
-    for protein in network.nodes():
-        proteins[protein] = sorted(
+    for protein in proteins:
+        measurements = sorted(
             sorted(
                 proteins[protein],
                 key=lambda item: abs(item[1]),
-            )[-num_sites:])
+            )[-number_sites:])
 
-        for i in range(len(proteins[protein])):
-            network.nodes[protein][f"{time} {modification} {i + 1}"] = proteins[
-                protein][i][1]
+        for i, (_, measurement) in enumerate(measurements):
+            network.nodes[protein][
+                f"{time} {modification} {i + 1}"] = measurement
 
 
 def relabel_proteins(network: nx.Graph):

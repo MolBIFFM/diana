@@ -85,8 +85,8 @@ def process_workflow(configuration: dict,
                 sheet_name=entry.get("sheet", 1) -
                 1 if isinstance(entry.get("sheet", 1), int) else entry["sheet"],
                 header=entry.get("header", 1) - 1,
-                num_sites=entry.get("sites", 5),
-                num_replicates=entry.get("replicates", 1),
+                number_sites=entry.get("sites", 5),
+                number_replicates=entry.get("replicates", 1),
                 replicate_combination=combination.REPLICATE_COMBINATION[
                     entry.get("combine replicates", "mean")],
                 measurement_conversion=conversion.LOGARITHM[entry.get(
