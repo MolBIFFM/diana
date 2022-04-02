@@ -129,6 +129,13 @@ def process_workflow(configuration: dict,
                     in configuration["protein-protein interactions"]["BioGRID"]
                     else None)
 
+                protein_protein_interaction_network.annotate_proteins(
+                    network, configuration["protein-protein interactions"]
+                    ["BioGRID"].get("taxonomy identifier", 9606))
+
+                protein_protein_interaction_network.remove_unannotated_proteins(
+                    network)
+
             if "IntAct" in configuration[
                     "protein-protein interactions"] and configuration[
                         "protein-protein interactions"]["IntAct"].get(
@@ -147,6 +154,14 @@ def process_workflow(configuration: dict,
                         "protein-protein interactions"]["IntAct"].get(
                             "taxonomy identifier", 9606),
                 )
+
+                protein_protein_interaction_network.annotate_proteins(
+                    network,
+                    configuration["protein-protein interactions"]["IntAct"].get(
+                        "taxonomy identifier", 9606))
+
+                protein_protein_interaction_network.remove_unannotated_proteins(
+                    network)
 
             if "MINT" in configuration[
                     "protein-protein interactions"] and configuration[
@@ -167,6 +182,14 @@ def process_workflow(configuration: dict,
                             "taxonomy identifier", 9606),
                 )
 
+                protein_protein_interaction_network.annotate_proteins(
+                    network,
+                    configuration["protein-protein interactions"]["MINT"].get(
+                        "taxonomy identifier", 9606))
+
+                protein_protein_interaction_network.remove_unannotated_proteins(
+                    network)
+
             if "Reactome" in configuration[
                     "protein-protein interactions"] and configuration[
                         "protein-protein interactions"]["Reactome"].get(
@@ -183,6 +206,13 @@ def process_workflow(configuration: dict,
                         "protein-protein interactions"]["Reactome"].get(
                             "taxonomy identifier", 9606),
                 )
+
+                protein_protein_interaction_network.annotate_proteins(
+                    network, configuration["protein-protein interactions"]
+                    ["Reactome"].get("taxonomy identifier", 9606))
+
+                protein_protein_interaction_network.remove_unannotated_proteins(
+                    network)
 
             if "STRING" in configuration[
                     "protein-protein interactions"] and configuration[
@@ -232,12 +262,10 @@ def process_workflow(configuration: dict,
                     ["STRING"].get("version", 11.5),
                 )
 
-                for taxonomy_identifier in (
-                        configuration["protein-protein interactions"]
-                    [database].get("taxonomy_identifier", 9606) for database in
-                    {"BioGRID", "IntAct", "MINT", "Reactome", "STRING"}):
-                    protein_protein_interaction_network.annotate_proteins(
-                        network, taxonomy_identifier)
+                protein_protein_interaction_network.annotate_proteins(
+                    network,
+                    configuration["protein-protein interactions"]["STRING"].get(
+                        "taxonomy identifier", 9606))
 
                 protein_protein_interaction_network.remove_unannotated_proteins(
                     network)
