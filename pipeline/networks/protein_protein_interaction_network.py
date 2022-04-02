@@ -144,6 +144,10 @@ def add_proteins_from(network: nx.Graph, proteins: Container) -> None:
         network: The protein-protein interaction network.
         proteins: The protein accessions whose corresponding primary Uniprot
             protein accessions are added.
+    
+    Returns:
+        A map from secondary to primary UniProt accessions for the added 
+        proteins.     
     """
     proteins_isoform = {}
 

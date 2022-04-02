@@ -97,10 +97,10 @@ def process_workflow(configuration: dict,
         network = nx.compose(network, nx.readwrite.graphml.read_graphml(entry))
 
     if "protein-protein interactions" in configuration:
-        neighbors = 0
-        while any(configuration["protein-protein interactions"].get(
-                database, {}).get("neighbors", 0) > neighbors for database in
-                  {"BioGRID", "IntAct", "MINT", "Reactome", "STRING"}):
+        for neighbors in range(
+                max(configuration["protein-protein interactions"].get(
+                    database, {}).get("neighbors", 0) for database in
+                    {"BioGRID", "IntAct", "MINT", "Reactome", "STRING"})):
             if "BioGRID" in configuration[
                     "protein-protein interactions"] and configuration[
                         "protein-protein interactions"]["BioGRID"].get(
@@ -232,18 +232,15 @@ def process_workflow(configuration: dict,
                     ["STRING"].get("version", 11.5),
                 )
 
-            neighbors += 1
+                for taxonomy_identifier in (
+                        configuration["protein-protein interactions"]
+                    [database].get("taxonomy_identifier", 9606) for database in
+                    {"BioGRID", "IntAct", "MINT", "Reactome", "STRING"}):
+                    protein_protein_interaction_network.annotate_proteins(
+                        network, taxonomy_identifier)
 
-        if neighbors:
-            for taxonomy_identifier in (
-                    configuration["protein-protein interactions"][database].get(
-                        "taxonomy_identifier", 9606) for database in
-                {"BioGRID", "IntAct", "MINT", "Reactome", "STRING"}):
-                protein_protein_interaction_network.annotate_proteins(
-                    network, taxonomy_identifier)
-
-            protein_protein_interaction_network.remove_unannotated_proteins(
-                network)
+                protein_protein_interaction_network.remove_unannotated_proteins(
+                    network)
 
         if "BioGRID" in configuration["protein-protein interactions"]:
             protein_protein_interaction_network.add_protein_protein_interactions_from_biogrid(
