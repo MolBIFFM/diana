@@ -634,7 +634,7 @@ def get_neighbors_from_intact(
         interaction_detection_methods: Optional[Container[str]] = None,
         interaction_types: Optional[Container[str]] = None,
         psi_mi_score: float = 0.0,
-        taxonomy_identifier: Optional[int] = None) -> None:
+        taxonomy_identifier: int = 9606) -> None:
     """
     Returns proteins interacting with proteins in a protein-protein interaction
     network from IntAct to the network.
@@ -669,7 +669,7 @@ def add_protein_protein_interactions_from_intact(
         interaction_detection_methods: Optional[Container[str]] = None,
         interaction_types: Optional[Container[str]] = None,
         psi_mi_score: float = 0.0,
-        taxonomy_identifier: Optional[int] = None) -> None:
+        taxonomy_identifier: int = 9606) -> None:
     """
     Adds protein-protein interactions from IntAct to a protein-protein
     interaction network.
