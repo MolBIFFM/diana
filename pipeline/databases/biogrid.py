@@ -78,12 +78,11 @@ def get_protein_protein_interactions(
                     interactor_a = interactor_a.split("-")[0]
                 for interactor_b in row[
                         "SWISS-PROT Accessions Interactor B"].split("|"):
-
                     if "-" in interactor_b and not interactor_b.split(
                             "-")[1].isnumeric():
                         interactor_b = interactor_b.split("-")[0]
                     for primary_interactor_a in primary_accession.get(
-                            interactor_a, {interactor_a}):
+                            interactor_a.split("-")[0], {interactor_a}):
                         for primary_interactor_b in primary_accession.get(
-                                interactor_b, {interactor_b}):
+                                interactor_b.split("-")[0], {interactor_b}):
                             yield (primary_interactor_a, primary_interactor_b)

@@ -67,7 +67,7 @@ The tabular input file.
     }
 ]
 ```
-The table column to extract UniProt gene or protein accessions from. These are mapped to primary UniProt accessions present in SwissProt. If they do not occur in SwissProt, they are discarded.
+The table column to extract UniProt gene or protein accessions from. These are mapped to primary UniProt accessions or discarded if not present in SwissProt. Isoform identifiers are maintained on primary but not transferred from secondary accessions.
 
 ```json
 [
