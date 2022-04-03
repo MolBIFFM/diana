@@ -11,8 +11,8 @@ def clauset_newman_moore(network: nx.Graph,
     Clauset-Newman-Moore community detection algorithm for undirected, weighted
     networks with parameterized modularity.
 
-    A. Clauset, M. E. J. Newman and C. Moore, "Finding community structure
-    in very large networks", Physical Review E, 2004.
+    A. Clauset, M. E. J. Newman and C. Moore, "Finding community structure in
+    very large networks", Physical Review E, 2004.
 
     M. E. J. Newman, "Analysis of weighted networks", Physical Review E, 2004.
 
@@ -133,6 +133,9 @@ def louvain(network: nx.Graph,
     Louvain community detection algorithm for undirected, weighted networks with
     parameterized modularity.
 
+    A. Clauset, M. E. J. Newman and C. Moore, "Finding community structure in
+    very large networks", Physical Review E, 2004.
+   
     V. D. Blondel, J.-L. networkuillaume, R. Lambiotte and E. Lefebvre, "Fast
     unfolding of communities in large networks", Journal of Statistical
     Mechanics: Theory and Experiment, 2008.
