@@ -48,17 +48,17 @@ def get_protein_protein_interactions(
                 14,
             ],
     ):
-        if ((mitab.namespace_has_identifier(row["Taxid interactor A"], "taxid",
-                                            taxonomy_identifier) and
-             mitab.namespace_has_identifier(row["Taxid interactor B"], "taxid",
-                                            taxonomy_identifier)) and
-            (not interaction_detection_methods or
+        if ((not interaction_detection_methods or
              mitab.namespace_has_any_term_from(
                  row[4],
                  "psi-mi",
                  interaction_detection_methods,
-             )) and (not interaction_types or mitab.namespace_has_any_term_from(
-                 row[7], "psi-mi", interaction_types)) and
+             )) and (mitab.namespace_has_identifier(row[5], "taxid",
+                                                    taxonomy_identifier) and
+                     mitab.namespace_has_identifier(row[6], "taxid",
+                                                    taxonomy_identifier)) and
+            (not interaction_types or mitab.namespace_has_any_term_from(
+                row[7], "psi-mi", interaction_types)) and
             (score := mitab.get_identifiers_from_namespace(
                 row[8], "intact-miscore")) and float(score[0]) >= psi_mi_score):
             for interactor_a in mitab.get_identifiers_from_namespace(
