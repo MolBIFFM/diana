@@ -59,11 +59,7 @@ def process_workflow(configuration: dict,
             )
 
         elif "accessions" in entry:
-            protein_protein_interaction_network.add_genes_from(
-                network,
-                genes=entry["accessions"],
-                taxonomy_identifier=entry.get("taxonomy identifier", 9606),
-            )
+            network.add_nodes_from(entry["accessions"])
 
         protein_protein_interaction_network.relabel_genes(
             network, entry.get("taxonomy identifier", 9606))
@@ -93,8 +89,7 @@ def process_workflow(configuration: dict,
                     "logarithm")])
 
         elif "accessions" in entry:
-            protein_protein_interaction_network.add_proteins_from(
-                network, proteins=entry["accessions"])
+            network.add_nodes_from(entry["accessions"])
 
     for entry in configuration.get("networks", []):
         network = nx.compose(network, nx.readwrite.graphml.read_graphml(entry))

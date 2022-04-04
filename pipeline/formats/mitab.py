@@ -83,7 +83,7 @@ def namespace_has_identifier(entry: str, namespace: str,
     Returns:
         True, if identifier is in namespace, else False.
     """
-    return identifier in get_identifiers_from_namespace(entry, namespace)
+    return str(identifier) in get_identifiers_from_namespace(entry, namespace)
 
 
 def namespace_has_term(entry: str, namespace: str, term: str) -> bool:
@@ -98,7 +98,7 @@ def namespace_has_term(entry: str, namespace: str, term: str) -> bool:
     Returns:
         True, if term is in namespace, else False.
     """
-    return term in get_terms_from_namespace(entry, namespace)
+    return str(term) in get_terms_from_namespace(entry, namespace)
 
 
 def namespace_has_any_identifier_from(entry: str, namespace: str,
@@ -115,7 +115,7 @@ def namespace_has_any_identifier_from(entry: str, namespace: str,
         True, if any identifier is in namespace, else False.
     """
     return any(
-        namespace_has_identifier(entry, namespace, identifier)
+        namespace_has_identifier(entry, namespace, str(identifier))
         for identifier in identifiers)
 
 
@@ -132,4 +132,5 @@ def namespace_has_any_term_from(entry: str, namespace: str,
     Returns:
         True, if any term is in namespace, else False.
     """
-    return any(namespace_has_term(entry, namespace, term) for term in terms)
+    return any(
+        namespace_has_term(entry, namespace, str(term)) for term in terms)

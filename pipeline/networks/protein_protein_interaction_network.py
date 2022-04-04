@@ -24,17 +24,6 @@ def get_protein_protein_interaction_network() -> nx.Graph():
     return nx.Graph()
 
 
-def add_genes_from(network: nx.Graph, genes: Container) -> None:
-    """
-    Add genes to a protein-protein interaction network.
-
-    Args:
-        network: The protein-protein interaction network.
-        genes: The Uniprot gene accessions to be added.
-    """
-    network.add_nodes_from(genes)
-
-
 def add_genes_from_table(
     network: nx.Graph,
     file_name: str,
@@ -118,17 +107,6 @@ def relabel_genes(network: nx.Graph, taxonomy_identifier: int = 9606):
     for protein in network.nodes():
         network.nodes[protein]["gene"] = gene_name[protein]
         network.nodes[protein]["protein"] = protein_name[protein]
-
-
-def add_proteins_from(network: nx.Graph, proteins: Container) -> None:
-    """
-    Add proteins to a protein-protein interaction network.
-
-    Args:
-        network: The protein-protein interaction network.
-        genes: The Uniprot proteins accessions to be added.
-    """
-    network.add_nodes_from(proteins)
 
 
 def add_proteins_from_table(
