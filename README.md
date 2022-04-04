@@ -179,7 +179,7 @@ The time of measurement to be associated with the measurements from the input fi
     }
 ]
 ```
-An identifier for the type of post-translational modification associate with measurements from the corresponding file. The default setting is `"M"`.
+An identifier for the type of post-translational modification associate with measurements from the corresponding file. The default setting is `"M"`. Up to two types of post-translational modification per time of measurement are supported in Cytoscape styles.
 
 ```json
 [
@@ -823,6 +823,232 @@ The Gene Ontology namespaces to consider. The default setting is `["cellular_com
 
 ---
 
+The specification of the assembly of a Gene Ontology or Reactome network. A Gene Ontology network is composed of terms, a Reactome network of pathways represented in the protein-protein interaction network. Both report the enrichment of each respective entity by proteins in the protein-protein interaction network along with their relations in these databases.
+
+The proteins considered can be restricted based on their associated measurements, either by a union or intersection of subsets of proteins exceeding the specified ranges.
+
+```json
+[
+    {
+      "Gene Ontology network": {
+        "union": [
+          {
+            "time": null
+          }
+        ],
+        "intersection": [
+          {
+            "time": null
+          }
+        ]
+      },
+      "Reactome network": {
+        "union": [
+          {
+            "time": null
+          }
+        ],
+        "intersection": [
+          {
+            "time": null
+          }
+        ]
+      }
+    }
+]
+```
+The time of measurement considered to determine a subset of proteins.
+
+```json
+[
+    {   
+      "Gene Ontology network": {
+        "union": [
+          {
+            "post-translational modification": null
+          }
+        ],
+        "intersection": [
+          {
+            "post-translational modification": null
+          }
+        ]
+      },
+      "Reactome network": {
+        "union": [
+          {
+            "post-translational modification": null
+          }
+        ],
+        "intersection": [
+          {
+            "post-translational modification": null
+          }
+        ]
+      }
+    }
+]
+```
+The modification considered to determine a subset of proteins.
+
+```json
+[
+    {
+      "Gene Ontology network": {
+        "union": [
+          {
+            "site combination": "absmax"
+          }
+        ],
+        "intersection": [
+          {
+            "site combination": "absmax",
+          }
+        ]
+      },
+      "Reactome network": {
+        "union": [
+          {
+            "site combination": "absmax"
+          }
+        ],
+        "intersection": [
+          {
+            "site combination": "absmax",
+          }
+        ]
+      }
+    }
+]
+```
+The function used to derive a protein-specific measurement from a its individual sites. The default setting is `"absmax"`, corresponding to the largest absolute value. Available settings are `"mean"`, `"median"`, `"max"`, `"absmax"`, `"min"`, `"absmin"`, `"sum"`, `"abssum"` and `null`, such that sites are considered individually.
+
+```json
+[
+    {
+      "Gene Ontology network": {
+        "union": [
+          {
+            "conversion": null
+          }
+        ],
+        "intersection": [
+          {
+            "conversion": null
+          }
+        ]
+      },
+      "Reactome network": {
+        "union": [
+          {
+            "conversion": null
+          }
+        ],
+        "intersection": [
+          {
+            "conversion": null
+          }
+        ]
+      }
+    }
+]
+```
+The conversion of measurements that a range refers to. It defaults to the log2-fold measurement but may be set to `"standard score"` or `"quantile"` with respect to the distribution of a particular modification at a particular time of measurement across the protein-protein interaction network.
+
+```json
+[
+    {
+      "Gene Ontology network": {
+        "union": [
+          {
+            "measurement": [-1.0, 1.0]
+          }
+        ],
+        "intersection": [
+          {
+            "measurement": [-1.0, 1.0]
+          }
+        ]
+      },
+      "Reactome network": {
+        "union": [
+          {
+            "measurement": [-1.0, 1.0]
+          }
+        ],
+        "intersection": [
+          {
+            "measurement": [-1.0, 1.0]
+          }
+        ]
+      }
+    }
+]
+```
+The range of combined measurements categorizing proteins by whether the range is exceeded or not. The default setting is `[-1.0, 1.0]` if `"conversion"` is not set, `[-2.0, 2.0]` if `"conversion"` is set to `"standard score"` and `[0.025, 0.975]` if `"conversion"` is set to `"quantile"`.
+
+```json
+[
+    {
+      "Gene Ontology network": {
+        "test": "hypergeometric"
+      },
+      "Reactome network": {
+        "test": "hypergeometric"
+      }
+    }
+]
+```
+The statistical test to assess enrichment. The default setting is `"hypergeometric"`.
+Available settings are `"binomial"` and `"hypergeometric"`.
+
+```json
+[
+    {
+      "Gene Ontology network": {
+        "correction": "Benjamini-Hochberg"
+      },
+      "Reactome network": {
+        "correction": "Benjamini-Hochberg"
+      }
+    }
+]
+```
+The procedure to correct p-values for multiple testing. The default setting is `"Benjamini-Hochberg"`.
+Available settings are `"Benjamini-Hochberg"` and `"Bonferroni"`.
+
+```json
+[
+    {
+      "Gene Ontology network": {
+        "taxonomy identifier": 9606
+      },
+      "Reactome network": {
+        "taxonomy identifier": 9606
+      }
+    }
+]
+```
+
+The NCBI taxonomy ID of the organism. The default and currently only fully supported setting is `9606`, corresponding to Homo sapiens.
+
+```json
+[
+    {
+      "Gene Ontology network": {
+        "namespaces": [
+          "cellular_component",
+          "molecular_function",
+          "biological_process"
+        ]
+      }
+    }
+]
+```
+The Gene Ontology namespaces to consider. The default setting is `["cellular_component", "molecular_function" "biological_process"]`.
+
+---
+
 The specification of a modular decomposition of the protein-protein interaction network using a network topological community detection algorithm.
 
 ```json
@@ -1130,233 +1356,6 @@ The conversion of measurements that a range refers to. It defaults to the log2-f
 ]
 ```
 The function used to derive a protein-specific measurement from a its individual sites. The default setting is `"absmax"`, corresponding to the largest absolute value. Available settings are `"mean"`, `"median"`, `"max"`, `"absmax"`, `"min"`, `"absmin"`, `"sum"` and `"abssum"`.
-
----
-
-The specification of the assembly of a Gene Ontology or Reactome network. A Gene Ontology network is composed of terms, a Reactome network of pathways represented in the protein-protein interaction network. Both report the enrichment of each respective entity by proteins in the protein-protein interaction network along with their relations in these databases.
-
-The proteins considered can be restricted based on their associated measurements, either by a union or intersection of subsets of proteins exceeding the specified ranges.
-
-```json
-[
-    {
-      "Gene Ontology network": {
-        "union": [
-          {
-            "time": null
-          }
-        ],
-        "intersection": [
-          {
-            "time": null
-          }
-        ]
-      },
-      "Reactome network": {
-        "union": [
-          {
-            "time": null
-          }
-        ],
-        "intersection": [
-          {
-            "time": null
-          }
-        ]
-      }
-    }
-]
-```
-The time of measurement considered to determine a subset of proteins.
-
-```json
-[
-    {   
-      "Gene Ontology network": {
-        "union": [
-          {
-            "post-translational modification": null
-          }
-        ],
-        "intersection": [
-          {
-            "post-translational modification": null
-          }
-        ]
-      },
-      "Reactome network": {
-        "union": [
-          {
-            "post-translational modification": null
-          }
-        ],
-        "intersection": [
-          {
-            "post-translational modification": null
-          }
-        ]
-      }
-    }
-]
-```
-The modification considered to determine a subset of proteins.
-
-```json
-[
-    {
-      "Gene Ontology network": {
-        "union": [
-          {
-            "site combination": "absmax"
-          }
-        ],
-        "intersection": [
-          {
-            "site combination": "absmax",
-          }
-        ]
-      },
-      "Reactome network": {
-        "union": [
-          {
-            "site combination": "absmax"
-          }
-        ],
-        "intersection": [
-          {
-            "site combination": "absmax",
-          }
-        ]
-      }
-    }
-]
-```
-The function used to derive a protein-specific measurement from a its individual sites. The default setting is `"absmax"`, corresponding to the largest absolute value. Available settings are `"mean"`, `"median"`, `"max"`, `"absmax"`, `"min"`, `"absmin"`, `"sum"`, `"abssum"` and `null`, such that sites are considered individually.
-
-```json
-[
-    {
-      "Gene Ontology network": {
-        "union": [
-          {
-            "conversion": null
-          }
-        ],
-        "intersection": [
-          {
-            "conversion": null
-          }
-        ]
-      },
-      "Reactome network": {
-        "union": [
-          {
-            "conversion": null
-          }
-        ],
-        "intersection": [
-          {
-            "conversion": null
-          }
-        ]
-      }
-    }
-]
-```
-The conversion of measurements that a range refers to. It defaults to the log2-fold measurement but may be set to `"standard score"` or `"quantile"` with respect to the distribution of a particular modification at a particular time of measurement across the protein-protein interaction network.
-
-```json
-[
-    {
-      "Gene Ontology network": {
-        "union": [
-          {
-            "measurement": [-1.0, 1.0]
-          }
-        ],
-        "intersection": [
-          {
-            "measurement": [-1.0, 1.0]
-          }
-        ]
-      },
-      "Reactome network": {
-        "union": [
-          {
-            "measurement": [-1.0, 1.0]
-          }
-        ],
-        "intersection": [
-          {
-            "measurement": [-1.0, 1.0]
-          }
-        ]
-      }
-    }
-]
-```
-The range of combined measurements categorizing proteins by whether the range is exceeded or not. The default setting is `[-1.0, 1.0]` if `"conversion"` is not set, `[-2.0, 2.0]` if `"conversion"` is set to `"standard score"` and `[0.025, 0.975]` if `"conversion"` is set to `"quantile"`.
-
-```json
-[
-    {
-      "Gene Ontology network": {
-        "test": "hypergeometric"
-      },
-      "Reactome network": {
-        "test": "hypergeometric"
-      }
-    }
-]
-```
-The statistical test to assess enrichment. The default setting is `"hypergeometric"`.
-Available settings are `"binomial"` and `"hypergeometric"`.
-
-```json
-[
-    {
-      "Gene Ontology network": {
-        "correction": "Benjamini-Hochberg"
-      },
-      "Reactome network": {
-        "correction": "Benjamini-Hochberg"
-      }
-    }
-]
-```
-The procedure to correct p-values for multiple testing. The default setting is `"Benjamini-Hochberg"`.
-Available settings are `"Benjamini-Hochberg"` and `"Bonferroni"`.
-
-```json
-[
-    {
-      "Gene Ontology network": {
-        "taxonomy identifier": 9606
-      },
-      "Reactome network": {
-        "taxonomy identifier": 9606
-      }
-    }
-]
-```
-
-The NCBI taxonomy ID of the organism. The default and currently only fully supported setting is `9606`, corresponding to Homo sapiens.
-
-```json
-[
-    {
-      "Gene Ontology network": {
-        "namespaces": [
-          "cellular_component",
-          "molecular_function",
-          "biological_process"
-        ]
-      }
-    }
-]
-```
-The Gene Ontology namespaces to consider. The default setting is `["cellular_component", "molecular_function" "biological_process"]`.
-
 ---
    
 The configuration files provided refer to data sets supplemented with the following publications.

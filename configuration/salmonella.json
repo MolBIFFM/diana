@@ -110,42 +110,6 @@
       "Reactome enrichment": {
         "p": 0.05
       },
-      "module detection": {
-        "Gene Ontology enrichment": {
-          "annotation": {
-            "p": 0.05
-          }, 
-          "network": {
-            "p": 0.05
-          }
-        },
-        "Reactome enrichment": {
-          "annotation": {
-            "p": 0.05
-          }, 
-          "network": {
-            "p": 0.05
-          }
-        },
-        "change enrichment": {
-          "proteins": {
-            "p": 0.05,
-            "change": [-1.0, 1.0]
-          },
-          "sites": {
-            "p": 0.05,
-            "change": [-1.0, 1.0]
-          }       
-        },
-        "change location": {
-          "proteins": {
-            "p": 0.05
-          },
-          "sites": {
-            "p": 0.05
-          }
-        }
-      },
       "Gene Ontology network": {
         "union": [
           {
@@ -193,6 +157,42 @@
             "change": [-1.0, 1.0]
           }
         ]
+      },
+      "module detection": {
+        "Gene Ontology enrichment": {
+          "annotation": {
+            "p": 0.05
+          }, 
+          "network": {
+            "p": 0.05
+          }
+        },
+        "Reactome enrichment": {
+          "annotation": {
+            "p": 0.05
+          }, 
+          "network": {
+            "p": 0.05
+          }
+        },
+        "change enrichment": {
+          "proteins": {
+            "p": 0.05,
+            "change": [-1.0, 1.0]
+          },
+          "sites": {
+            "p": 0.05,
+            "change": [-1.0, 1.0]
+          }       
+        },
+        "change location": {
+          "proteins": {
+            "p": 0.05
+          },
+          "sites": {
+            "p": 0.05
+          }
+        }
       }
     }
   ]

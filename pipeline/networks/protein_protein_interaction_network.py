@@ -84,13 +84,13 @@ def add_genes_from_table(
     network.add_nodes_from(genes)
 
 
-def relabel_genes(network: nx.Graph, taxonomy_identifier: int = 9606):
+def map_genes(network: nx.Graph, taxonomy_identifier: int = 9606):
     """
-    Relabel genes in a protein-protein interaction network to their primary
+    Map genes in a protein-protein interaction network to their primary
     UniProt protein identifiers and remove genes not present in SwissProt.
 
     Args:
-        network: The protein-protein interaction network to relabel genes from.
+        network: The protein-protein interaction network to map genes from.
         taxonomy_identifier: The taxonomy identifier.
     """
     mapping, gene_name, protein_name = {}, {}, {}
@@ -257,14 +257,14 @@ def add_proteins_from_table(
                 f"{time} {modification} {i + 1}"] = measurement
 
 
-def relabel_proteins(network: nx.Graph):
+def map_proteins(network: nx.Graph):
     """
-    Relabel proteins in a protein-protein interaction network to their primary
+    Map proteins in a protein-protein interaction network to their primary
     UniProt identifiers and remove proteins not present in SwissProt. Isoform
     identifiers are maintained but not transferred.
 
     Args:
-        network: The protein-protein interaction network to relabel proteins
+        network: The protein-protein interaction network to map proteins
             from.
     """
     mapping, gene_name, protein_name = {}, {}, {}
@@ -428,7 +428,7 @@ def set_measurements(
         float] = lambda measurement, measurements: measurement
 ) -> None:
     """
-    Annotate nodes with summary of measurement trend.
+    Annotate nodes with summary of measurements.
 
     Args:
         network: The protein-protein interaction network.

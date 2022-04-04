@@ -57,6 +57,24 @@
       "Reactome enrichment": {
         "p": 0.05
       },
+      "Gene Ontology network": {
+        "union": [
+          {
+            "time": 60,
+            "post-translational modification": "P",
+            "change": [-1.0, 1.0]
+          }
+        ] 
+      },
+      "Reactome network": {
+        "union": [
+          {
+            "time": 60,
+            "post-translational modification": "P",
+            "change": [-1.0, 1.0]
+          }
+        ]
+      },
       "module detection": {
         "Gene Ontology enrichment": {
           "annotation": {
@@ -92,24 +110,6 @@
             "p": 0.05
           }
         }
-      },
-      "Gene Ontology network": {
-        "union": [
-          {
-            "time": 60,
-            "post-translational modification": "P",
-            "change": [-1.0, 1.0]
-          }
-        ] 
-      },
-      "Reactome network": {
-        "union": [
-          {
-            "time": 60,
-            "post-translational modification": "P",
-            "change": [-1.0, 1.0]
-          }
-        ]
       }
     }
   ]
