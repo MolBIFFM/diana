@@ -1381,7 +1381,7 @@ The following resources can be accessed.
 
 - Licata, L. et al. (2012) **MINT, the molecular interaction database: 2012 update**, Nucleic Acids Res., 40, D857-D861.
 
-- Orchard, S. et al. (2014) **The MIntAct project--IntAct as a common curation platform for 11 molecular interaction databases**, Nucleic Acids Res., 42, D358-D363.
+- Orchard, S. et al. (2014) **The MIntAct project-IntAct as a common curation platform for 11 molecular interaction databases**, Nucleic Acids Res., 42, D358-D363.
  
 - Oughtred, R. et al. (2018) **The BioGRID database: A comprehensive biomedical resource of curated protein, genetic, and chemical interactions**, Protein Sci., 30, 187-200.
    
