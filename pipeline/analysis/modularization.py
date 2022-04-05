@@ -1,5 +1,4 @@
 """Community detection algorithms."""
-import copy
 from typing import Hashable
 
 import networkx as nx
@@ -38,7 +37,7 @@ def clauset_newman_moore(network: nx.Graph,
     communities = [{node} for node in network.nodes()]
     connected = [[bool(A[i][j]) for j in range(i)] for i in range(n)]
 
-    delta_q = [[0.0 for j in range(i)] for i in range(n)]
+    delta_q = [[0.0 for _ in range(i)] for i in range(n)]
     for i in range(n):
         for j in range(i):
             if A[i][j]:
@@ -166,7 +165,7 @@ def louvain(network: nx.Graph,
         sigma_tot = [sum(A[ci]) for ci in range(n)]
         sigma_in = [A[ci][ci] for ci in range(n)]
 
-        k_in = copy.deepcopy(A)
+        k_in = [A[i][:] for i in range(len(A))]
 
         community = list(range(n))
         communities.append([{i} for i in range(n)])
