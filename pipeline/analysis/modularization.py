@@ -239,33 +239,30 @@ def louvain(network: nx.Graph,
 
         if community_aggregation:
             for ci in range(len(communities[1])):
-                if communities[1][ci]:
-                    communities[1][ci] = set.union(*[
-                        set(i
-                            for i in communities[0][node])
-                        for node in communities[1][ci]
-                    ])
+                nodes = set()
+                for node in communities[1][ci]:
+                    nodes.update(set(communities[0][node]))
+                communities[1][ci] = nodes
 
             communities = communities[1:2]
 
-            weights = [[0.0
-                        for _ in range(len(communities[0]))]
-                       for _ in range(len(communities[0]))]
+            weights = [
+                [0.0 for _ in range(i + 1)] for i in range(len(communities[0]))
+            ]
 
             for i in range(n):
                 weights[community[i]][community[i]] += A[i][i]
 
                 for j in range(i):
-                    weights[community[i]][community[j]] += A[i][j]
-                    weights[community[j]][community[i]] += A[j][i]
+                    if community[j] <= community[i]:
+                        weights[community[i]][community[j]] += A[i][j]
+
+                    if community[j] >= community[i]:
+                        weights[community[j]][community[i]] += A[j][i]
 
             weights = [[
-                weights[ci][cj]
-                for cj in range(len(communities[0]))
-                if communities[0][cj]
-            ]
-                       for ci in range(len(communities[0]))
-                       if communities[0][ci]]
+                weights[ci][cj] for cj in range(ci + 1) if communities[0][cj]
+            ] for ci in range(len(communities[0])) if communities[0][ci]]
 
             communities[0] = [
                 community for community in communities[0] if community
