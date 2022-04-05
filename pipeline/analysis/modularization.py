@@ -11,13 +11,13 @@ def clauset_newman_moore(network: nx.Graph,
     Clauset-Newman-Moore community detection algorithm for undirected, weighted
     networks with parameterized modularity.
 
-    A. Clauset, M. E. J. Newman and C. Moore, "Finding community structure in
-    very large networks", Physical Review E, 2004.
+    Clauset, A. et al. (2004) Finding community structure in
+    very large networks, Phys. Rev. E, 70.
 
-    M. E. J. Newman, "Analysis of weighted networks", Physical Review E, 2004.
+    Newman, M. E. J. (2004) Analysis of weighted networks, Phys. Rev. E, 70.
 
-    M. E. J. Newman, "Equivalence between modularity optimization and maximum
-    likelihood methods for community detection", Physical Review E, 2016.
+    Newman, M. E. J. (2016) Equivalence between modularity optimization and 
+    maximum likelihood methods for community detection, Phys. Rev. E, 94.
 
     Args:
         network: An undirected, weighted graph.
@@ -132,13 +132,12 @@ def louvain(network: nx.Graph,
     """
     Louvain community detection algorithm for undirected, weighted networks with
     parameterized modularity.
-
-    A. Clauset, M. E. J. Newman and C. Moore, "Finding community structure in
-    very large networks", Physical Review E, 2004.
    
-    V. D. Blondel, J.-L. networkuillaume, R. Lambiotte and E. Lefebvre, "Fast
-    unfolding of communities in large networks", Journal of Statistical
-    Mechanics: Theory and Experiment, 2008.
+    Blondel, V. D. et al. (2008) Fast unfolding of communities in large 
+    networks, J. Stat. Mech.: Theory Exp.
+
+    Clauset, A. et al. (2004) Finding community structure in
+    very large networks, Phys. Rev. E, 70.
 
     Args:
         network: An undirected, weighted graph.
@@ -146,7 +145,7 @@ def louvain(network: nx.Graph,
         weight: The edge attribute to be utilized as edge weight.
 
     Returns:
-        Communities of the network
+        Communities of the network.
     """
     name = list(network.nodes())
     communities = [[{i} for i in range(network.number_of_nodes())]]
@@ -158,7 +157,7 @@ def louvain(network: nx.Graph,
 
         A = nx.linalg.graphmatrix.adjacency_matrix(network, weight=weight)
         n = network.number_of_nodes()
-        k = [sum(A[i, l] for l in range(n)) for i in range(n)]
+        k = [A[i].sum() for i in range(n)]
         m = sum(k) / 2.0
 
         sigma_tot = [A[ci].sum() for ci in range(n)]
@@ -175,9 +174,11 @@ def louvain(network: nx.Graph,
             modularity_optimization = False
 
             for i in range(n):
-                sigma_tot[community[i]] -= sum(A[i, l] for l in range(n))
-                sigma_in[community[i]] -= sum(
-                    [A[i, l] for l in range(n) if community[l] == community[i]])
+                for l in range(n):
+                    sigma_tot[community[i]] -= A[i, l]
+
+                    if community[l] == community[i]:
+                        sigma_in[community[i]] -= A[i, l]
 
                 k_in[i, community[i]] -= A[i, i]
 
@@ -202,9 +203,11 @@ def louvain(network: nx.Graph,
                                (2.0 * m))**2.0 - resolution * (k[i] /
                                                                (2.0 * m))**2.0))
 
-                sigma_tot[community[i]] += sum(A[i, l] for l in range(n))
-                sigma_in[community[i]] += sum(
-                    A[i, l] for l in range(n) if community[l] == community[i])
+                for l in range(n):
+                    sigma_tot[community[i]] += A[i, l]
+
+                    if community[l] == community[i]:
+                        sigma_in[community[i]] += A[i, l]
 
                 k_in[i, community[i]] += A[i, i]
 
@@ -215,21 +218,15 @@ def louvain(network: nx.Graph,
                         modularity_optimization = True
                         community_aggregation = True
 
-                        sigma_tot[community[i]] -= sum(
-                            A[i, l] for l in range(n))
-                        sigma_tot[community[max_j]] += sum(
-                            A[i, l] for l in range(n))
-
-                        sigma_in[community[i]] -= sum(
-                            A[i, l]
-                            for l in range(n)
-                            if community[l] == community[i])
-                        sigma_in[community[max_j]] += sum(
-                            A[i, l]
-                            for l in range(n)
-                            if community[l] == community[max_j])
-
                         for l in range(n):
+                            sigma_tot[community[i]] -= A[i, l]
+                            sigma_tot[community[max_j]] += A[i, l]
+
+                            if community[l] == community[i]:
+                                sigma_in[community[i]] -= A[i, l]
+                            elif community[l] == community[max_j]:
+                                sigma_in[community[max_j]] += A[i, l]
+
                             k_in[l, community[i]] -= A[l, i]
                             k_in[l, community[max_j]] += A[l, i]
 

@@ -7,7 +7,7 @@ import tempfile
 import zipfile
 
 
-def decompress_gzip_file(compressed_file_name: str, size: int = 8192) -> str:
+def decompress_gzip_file(compressed_file_name: str, size: int = 1024) -> str:
     """
     Decompresses a gzip compressed file and removes the compressed file.
 

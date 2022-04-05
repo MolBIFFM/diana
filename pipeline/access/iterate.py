@@ -16,7 +16,7 @@ from access import decompress, download
 
 def txt(url: str,
         file_from_zip_archive: str = "",
-        buffering: int = 8192) -> Generator[str, None, None]:
+        buffering: int = 1024) -> Generator[str, None, None]:
     """
     Downloads, iterates and subsequently removes the file at a given URL.
 
@@ -89,7 +89,7 @@ def tabular_txt(url: str,
                 header: int = 0,
                 skiprows: int = 0,
                 usecols: Optional[list[Union[int, str]]] = None,
-                chunksize: int = 8192) -> Generator[pd.Series, None, None]:
+                chunksize: int = 1024) -> Generator[pd.Series, None, None]:
     """
     Downloads, iterates and subsequently removes the tabular file at a URL.
 

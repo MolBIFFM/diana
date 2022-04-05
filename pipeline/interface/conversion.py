@@ -21,9 +21,9 @@ MEASUREMENT_CONVERSION: Callable[[Collection[float]], float] = {
     None:
         lambda measurement, measurements: measurement,
     "quantile":
-        lambda quantile, measurements: sorted(measurements)[math.floor(
-            quantile * (len(measurements) - 1))],
+        lambda measurement, measurements: sorted(measurements)[math.floor(
+            measurement * (len(measurements) - 1))],
     "standard score":
-        lambda standard_score, measurements: standard_score * statistics.stdev(
+        lambda measurement, measurements: measurement * statistics.stdev(
             measurements) + statistics.mean(measurements)
 }
