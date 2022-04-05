@@ -1,4 +1,5 @@
 """Community detection algorithms."""
+import copy
 from typing import Hashable
 
 import networkx as nx
@@ -27,19 +28,20 @@ def clauset_newman_moore(network: nx.Graph,
     Returns:
         Communities of the network
     """
-    A = nx.linalg.graphmatrix.adjacency_matrix(network, weight=weight)
+    A = nx.linalg.graphmatrix.adjacency_matrix(
+        network, weight=weight).toarray().tolist()
     n = network.number_of_nodes()
-    k = [sum(A[i, l] for l in range(n)) for i in range(n)]
+    k = [sum(A[i][l] for l in range(n)) for i in range(n)]
     m = sum(k) / 2.0
     a = [k[i] / (2.0 * m) for i in range(n)]
 
     communities = [{node} for node in network.nodes()]
-    connected = [[bool(A[i, j]) for j in range(i)] for i in range(n)]
+    connected = [[bool(A[i][j]) for j in range(i)] for i in range(n)]
 
     delta_q = [[0.0 for j in range(i)] for i in range(n)]
     for i in range(n):
         for j in range(i):
-            if A[i, j]:
+            if A[i][j]:
                 delta_q[i][j] = 1 / (2.0 * m) - resolution * k[i] * k[j] / (
                     (2.0 * m)**2.0)
 
@@ -155,15 +157,16 @@ def louvain(network: nx.Graph,
     while community_aggregation:
         community_aggregation = False
 
-        A = nx.linalg.graphmatrix.adjacency_matrix(network, weight=weight)
+        A = nx.linalg.graphmatrix.adjacency_matrix(
+            network, weight=weight).toarray().tolist()
         n = network.number_of_nodes()
-        k = [A[i].sum() for i in range(n)]
+        k = [sum(A[i][l] for l in range(n)) for i in range(n)]
         m = sum(k) / 2.0
 
-        sigma_tot = [A[ci].sum() for ci in range(n)]
-        sigma_in = [A[ci, ci] for ci in range(n)]
+        sigma_tot = [sum(A[ci][l] for l in range(n)) for ci in range(n)]
+        sigma_in = [A[ci][ci] for ci in range(n)]
 
-        k_in = A.toarray()
+        k_in = copy.deepcopy(A)
 
         community = list(range(n))
         communities.append([{i} for i in range(n)])
@@ -175,18 +178,18 @@ def louvain(network: nx.Graph,
 
             for i in range(n):
                 for l in range(n):
-                    sigma_tot[community[i]] -= A[i, l]
+                    sigma_tot[community[i]] -= A[i][l]
 
                     if community[l] == community[i]:
-                        sigma_in[community[i]] -= A[i, l]
+                        sigma_in[community[i]] -= A[i][l]
 
-                k_in[i, community[i]] -= A[i, i]
+                k_in[i][community[i]] -= A[i][i]
 
                 delta_q = {}
                 for j in range(n):
-                    if A[i, j] and community[i] != community[j]:
+                    if A[i][j] and community[i] != community[j]:
                         delta_q[j] = (
-                            ((sigma_in[community[j]] + k_in[i, community[j]]) /
+                            ((sigma_in[community[j]] + k_in[i][community[j]]) /
                              (2.0 * m) - resolution *
                              ((sigma_tot[community[j]] + k[i]) /
                               (2.0 * m))**2.0) -
@@ -194,7 +197,7 @@ def louvain(network: nx.Graph,
                              (sigma_tot[community[j]] /
                               (2.0 * m))**2.0 - resolution * (k[i] /
                                                               (2.0 * m))**2.0)
-                        ) - (((sigma_in[community[i]] + k_in[i, community[i]]) /
+                        ) - (((sigma_in[community[i]] + k_in[i][community[i]]) /
                               (2.0 * m) - resolution *
                               ((sigma_tot[community[i]] + k[i]) /
                                (2.0 * m))**2.0) -
@@ -204,12 +207,12 @@ def louvain(network: nx.Graph,
                                                                (2.0 * m))**2.0))
 
                 for l in range(n):
-                    sigma_tot[community[i]] += A[i, l]
+                    sigma_tot[community[i]] += A[i][l]
 
                     if community[l] == community[i]:
-                        sigma_in[community[i]] += A[i, l]
+                        sigma_in[community[i]] += A[i][l]
 
-                k_in[i, community[i]] += A[i, i]
+                k_in[i][community[i]] += A[i][i]
 
                 if delta_q:
                     max_j = max(delta_q.items(), key=lambda item: item[1])[0]
@@ -219,16 +222,16 @@ def louvain(network: nx.Graph,
                         community_aggregation = True
 
                         for l in range(n):
-                            sigma_tot[community[i]] -= A[i, l]
-                            sigma_tot[community[max_j]] += A[i, l]
+                            sigma_tot[community[i]] -= A[i][l]
+                            sigma_tot[community[max_j]] += A[i][l]
 
                             if community[l] == community[i]:
-                                sigma_in[community[i]] -= A[i, l]
+                                sigma_in[community[i]] -= A[i][l]
                             elif community[l] == community[max_j]:
-                                sigma_in[community[max_j]] += A[i, l]
+                                sigma_in[community[max_j]] += A[i][l]
 
-                            k_in[l, community[i]] -= A[l, i]
-                            k_in[l, community[max_j]] += A[l, i]
+                            k_in[l][community[i]] -= A[l][i]
+                            k_in[l][community[max_j]] += A[l][i]
 
                         communities[1][community[i]].remove(i)
                         communities[1][community[max_j]].add(i)
@@ -251,11 +254,11 @@ def louvain(network: nx.Graph,
                        for _ in range(len(communities[0]))]
 
             for i in range(n):
-                weights[community[i]][community[i]] += A[i, i]
+                weights[community[i]][community[i]] += A[i][i]
 
                 for j in range(i):
-                    weights[community[i]][community[j]] += A[i, j]
-                    weights[community[j]][community[i]] += A[j, i]
+                    weights[community[i]][community[j]] += A[i][j]
+                    weights[community[j]][community[i]] += A[j][i]
 
             weights = [[
                 weights[ci][cj]
