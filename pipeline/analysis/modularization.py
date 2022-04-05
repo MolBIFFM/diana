@@ -31,7 +31,7 @@ def clauset_newman_moore(network: nx.Graph,
     A = nx.linalg.graphmatrix.adjacency_matrix(
         network, weight=weight).toarray().tolist()
     n = network.number_of_nodes()
-    k = [sum(A[i][l] for l in range(n)) for i in range(n)]
+    k = [sum(A[i]) for i in range(n)]
     m = sum(k) / 2.0
     a = [k[i] / (2.0 * m) for i in range(n)]
 
@@ -160,7 +160,7 @@ def louvain(network: nx.Graph,
         A = nx.linalg.graphmatrix.adjacency_matrix(
             network, weight=weight).toarray().tolist()
         n = network.number_of_nodes()
-        k = [sum(A[i][l] for l in range(n)) for i in range(n)]
+        k = [sum(A[i]) for i in range(n)]
         m = sum(k) / 2.0
 
         sigma_tot = [sum(A[ci][l] for l in range(n)) for ci in range(n)]
