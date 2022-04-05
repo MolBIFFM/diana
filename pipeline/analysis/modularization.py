@@ -163,7 +163,7 @@ def louvain(network: nx.Graph,
         k = [sum(A[i]) for i in range(n)]
         m = sum(k) / 2.0
 
-        sigma_tot = [sum(A[ci][l] for l in range(n)) for ci in range(n)]
+        sigma_tot = [sum(A[ci]) for ci in range(n)]
         sigma_in = [A[ci][ci] for ci in range(n)]
 
         k_in = copy.deepcopy(A)
