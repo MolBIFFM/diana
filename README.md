@@ -1385,7 +1385,7 @@ The following resources can be accessed.
  
 - Oughtred, R. et al. (2018) **The BioGRID database: A comprehensive biomedical resource of curated protein, genetic, and chemical interactions**, Protein Sci., 30, 187-200.
    
-- Szklarczyk, D. et al. (2019) **STRING v11: protein–protein association networks with increased coverage, supporting functional discovery in genome-wide experimental datasets**, Nucleic Acids Res., 47, D607-D613.
+- Szklarczyk, D. et al. (2019) **STRING v11: protein-protein association networks with increased coverage, supporting functional discovery in genome-wide experimental datasets**, Nucleic Acids Res., 47, D607-D613.
     
 - The UniProt Consortium (2021) **UniProt: the universal protein knowledgebase in 2021**, Nucleic Acids Res., 49, D480-D489.
 
