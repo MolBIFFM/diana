@@ -245,7 +245,7 @@ def louvain(network: nx.Graph,
                         weights[community[i]][cj] = 0.0
                     weights[community[i]][cj] += k_in[i][cj]
 
-            network = nx.Graph()
+            network.clear()
             for ci in weights:
                 if weights[ci][ci]:
                     network.add_edge(ci, ci, weight=weights[ci][ci])
