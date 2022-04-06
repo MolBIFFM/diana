@@ -87,8 +87,8 @@ def clauset_newman_moore(network: nx.Graph,
             del delta_q[i][max_i]
             connected[i].discard(max_i)
 
-        del connected[max_i]
         del delta_q[max_i]
+        del connected[max_i]
 
         a[max_j] += a[max_i]
         del a[max_i]
