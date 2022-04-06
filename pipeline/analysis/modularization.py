@@ -16,7 +16,7 @@ def clauset_newman_moore(network: nx.Graph,
 
     Newman, M. E. J. (2004) Analysis of weighted networks, Phys. Rev. E, 70.
 
-    Newman, M. E. J. (2016) Equivalence between modularity optimization and 
+    Newman, M. E. J. (2016) Equivalence between modularity optimization and
     maximum likelihood methods for community detection, Phys. Rev. E, 94.
 
     Args:
@@ -109,8 +109,8 @@ def louvain(network: nx.Graph,
     """
     Louvain community detection algorithm for undirected, weighted networks with
     parameterized modularity.
-   
-    Blondel, V. D. et al. (2008) Fast unfolding of communities in large 
+ 
+    Blondel, V. D. et al. (2008) Fast unfolding of communities in large
     networks, J. Stat. Mech.: Theory Exp.
 
     Clauset, A. et al. (2004) Finding community structure in
