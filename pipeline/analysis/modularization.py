@@ -11,13 +11,15 @@ def clauset_newman_moore(network: nx.Graph,
     Clauset-Newman-Moore community detection algorithm for undirected, weighted
     networks with parameterized modularity.
 
-    Clauset, A. et al. (2004) Finding community structure in
-    very large networks, Phys. Rev. E, 70.
+    References:
+        Clauset, A. et al. (2004) Finding community structure in very large 
+            networks, Phys. Rev. E, 70.
 
-    Newman, M. E. J. (2004) Analysis of weighted networks, Phys. Rev. E, 70.
+        Newman, M. E. J. (2004) Analysis of weighted networks, Phys. Rev. E, 70.
 
-    Newman, M. E. J. (2016) Equivalence between modularity optimization and
-    maximum likelihood methods for community detection, Phys. Rev. E, 94.
+        Newman, M. E. J. (2016) Equivalence between modularity optimization and
+            maximum likelihood methods for community detection, Phys. Rev. E, 
+            94.
 
     Args:
         network: An undirected, weighted graph.
@@ -110,11 +112,12 @@ def louvain(network: nx.Graph,
     Louvain community detection algorithm for undirected, weighted networks with
     parameterized modularity.
  
-    Blondel, V. D. et al. (2008) Fast unfolding of communities in large
-    networks, J. Stat. Mech.: Theory Exp.
+    References:
+        Blondel, V. D. et al. (2008) Fast unfolding of communities in large
+            networks, J. Stat. Mech.: Theory Exp.
 
-    Clauset, A. et al. (2004) Finding community structure in
-    very large networks, Phys. Rev. E, 70.
+        Clauset, A. et al. (2004) Finding community structure in very large 
+            networks, Phys. Rev. E, 70.
 
     Args:
         network: An undirected, weighted graph.
@@ -124,7 +127,9 @@ def louvain(network: nx.Graph,
     Returns:
         The communities of the network.
     """
-    communities = [[{i} for i in network.nodes()]]
+    network = network.copy()
+
+    communities = [{ci: {i} for ci, i in enumerate(network.nodes())}]
 
     community_aggregation = True
 

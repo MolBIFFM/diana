@@ -7,8 +7,9 @@ def benjamini_hochberg(
     """
     Benjamini-Hochberg procedure for multiple testing correction.
 
-    Benjamini, Y. et al. (2009) Selective inference in complex
-    research, Philos. Trans. R. Soc. A, 367, 4255-4271.
+    Reference:
+        Benjamini, Y. et al. (2009) Selective inference in complex research, 
+            Philos. Trans. R. Soc. A, 367, 4255-4271.
 
     Args:
         p_values: Keyed p-values.

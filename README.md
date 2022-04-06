@@ -1391,10 +1391,24 @@ The following resources can be accessed.
 
 ---
 
+The following tools are integrated.
+
+- Shannon, P. et al. (2003) **Cytoscape: a software environment for integrated models of biomolecular interaction networks**, Genome Res., 13, 2498-2504.
+
+---
+
+The following algorithms are implemented. Additional references are listed in the corresponding source code.
+
+- Blondel, V. D. et al. (2008) **Fast unfolding of communities in large networks**, J. Stat. Mech.: Theory Exp.
+
+- Clauset, A. et al. (2004) **Finding community structure in very large networks**, Phys. Rev. E, 70.
+  
+---
+
 The following external libraries are utilized.
 
-- Hagberg, A. A. et al. (2008) **Exploring network structure, dynamics, and function using NetworkX**, Proceedings of the 7th Python in Science Conference, 11-15
+- Hagberg, A. A. et al. (2008) **Exploring network structure, dynamics, and function using NetworkX**, Proceedings of the 7th Python in Science Conference, 11-15.
    
 - McKinney, W. (2010) **Data Structures for Statistical Computing in Python**, Proceedings of the 9th Python in Science Conference, 56-61.
 
-- Virtanen, P. et al. (2020)  **SciPy 1.0: Fundamental Algorithms for Scientific Computing in Python**, Nat. Methods, 17, 261-272
+- Virtanen, P. et al. (2020)  **SciPy 1.0: Fundamental Algorithms for Scientific Computing in Python**, Nat. Methods, 17, 261-272.
