@@ -34,7 +34,7 @@ def clauset_newman_moore(network: nx.Graph,
            } for i in network.nodes()
     }
 
-    connected = {i: set(A[i]) for i in A}
+    connected = {i: set(A[i]) - {i} for i in A}
 
     k = {i: sum(A[i].values()) for i in A}
     m = sum(k.values()) / 2.0
@@ -63,7 +63,7 @@ def clauset_newman_moore(network: nx.Graph,
             i: {j: delta_q[i][j] for j in delta_q[i]} for i in delta_q
         }
 
-        for n in connected[max_i].intersection(connected[max_j]):
+        for n in connected[max_i] & connected[max_j]:
             if n < max_j:
                 delta_q_prime[max_j][n] = delta_q[max_i][n] + delta_q[max_j][n]
             elif n < max_i:
@@ -71,10 +71,7 @@ def clauset_newman_moore(network: nx.Graph,
             else:
                 delta_q_prime[n][max_j] = delta_q[n][max_i] + delta_q[n][max_j]
 
-        for n in connected[max_i].difference(connected[max_j]):
-            if n == max_j:
-                continue
-
+        for n in connected[max_i] - connected[max_j] - {max_j}:
             if n < max_j:
                 delta_q_prime[max_j][
                     n] = delta_q[max_i][n] - 2.0 * resolution * a[max_j] * a[n]
@@ -88,10 +85,7 @@ def clauset_newman_moore(network: nx.Graph,
             connected[max_j].add(n)
             connected[n].add(max_j)
 
-        for n in connected[max_j].difference(connected[max_i]):
-            if n == max_i:
-                continue
-
+        for n in connected[max_j] - connected[max_i] - {max_i}:
             if n < max_j:
                 delta_q_prime[max_j][
                     n] = delta_q[max_j][n] - 2.0 * resolution * a[max_i] * a[n]
