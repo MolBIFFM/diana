@@ -34,6 +34,9 @@ def bonferroni(p_values: dict[Hashable, float]) -> dict[Hashable, float]:
     """
     Bonferroni procedure for multiple testing correction.
 
+    Goeman, J. J. and Solari, A (2014)  Multiple hypothesis testing in genomics,
+        Stat. in Med., 33, 1946-1978.
+
     Args:
         p_values: Keyed p-values.
 

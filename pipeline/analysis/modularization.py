@@ -126,6 +126,9 @@ def louvain(network: nx.Graph,
     Clauset, A. et al. (2004) Finding community structure in very large
         networks, Phys. Rev. E, 70.
 
+    Newman, M. E. J. (2016) Equivalence between modularity optimization and
+        maximum likelihood methods for community detection, Phys. Rev. E, 94.
+
     Args:
         network: An undirected, weighted graph.
         resolution: The resolution parameter for modularity.
