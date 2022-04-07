@@ -41,8 +41,8 @@ def clauset_newman_moore(network: nx.Graph,
 
     delta_q = {
         i: {
-            j: 1.0 / (2.0 * m) - resolution * k[i] * k[j] /
-            ((2.0 * m)**2.0) if j in A[i] else 0.0 for j in A
+            j: (1.0 / (2.0 * m) - resolution * k[i] * k[j] /
+                ((2.0 * m)**2.0) if j in A[i] else 0.0) for j in A if j < i
         } for i in A
     }
 
@@ -64,26 +64,46 @@ def clauset_newman_moore(network: nx.Graph,
         }
 
         for n in connected[max_i].intersection(connected[max_j]):
-            delta_q_prime[max_j][n] = delta_q_prime[n][
-                max_j] = delta_q[max_i][n] + delta_q[max_j][n]
+            if n < max_j:
+                delta_q_prime[max_j][n] = delta_q[max_i][n] + delta_q[max_j][n]
+            elif n < max_i:
+                delta_q_prime[n][max_j] = delta_q[max_i][n] + delta_q[n][max_j]
+            else:
+                delta_q_prime[n][max_j] = delta_q[n][max_i] + delta_q[n][max_j]
 
         for n in connected[max_i].difference(connected[max_j]):
-            if n != max_j:
-                delta_q_prime[max_j][n] = delta_q_prime[n][max_j] = delta_q[
-                    max_i][n] - 2.0 * resolution * a[max_j] * a[n]
+            if n == max_j:
+                continue
 
-                connected[max_j].add(n)
-                connected[n].add(max_j)
+            if n < max_j:
+                delta_q_prime[max_j][
+                    n] = delta_q[max_i][n] - 2.0 * resolution * a[max_j] * a[n]
+            elif n < max_i:
+                delta_q_prime[n][max_j] = delta_q[max_i][
+                    n] - 2.0 * resolution * a[max_j] * a[n]
+            else:
+                delta_q_prime[n][max_j] = delta_q[n][
+                    max_i] - 2.0 * resolution * a[max_j] * a[n]
+
+            connected[max_j].add(n)
+            connected[n].add(max_j)
 
         for n in connected[max_j].difference(connected[max_i]):
-            if n != max_i:
-                delta_q_prime[max_j][n] = delta_q_prime[n][max_j] = delta_q[
-                    max_j][n] - 2.0 * resolution * a[max_i] * a[n]
+            if n == max_i:
+                continue
+
+            if n < max_j:
+                delta_q_prime[max_j][
+                    n] = delta_q[max_j][n] - 2.0 * resolution * a[max_i] * a[n]
+            else:
+                delta_q_prime[n][max_j] = delta_q[n][
+                    max_j] - 2.0 * resolution * a[max_i] * a[n]
 
         delta_q = delta_q_prime
 
         for n in list(delta_q):
-            del delta_q[n][max_i]
+            if n > max_i:
+                del delta_q[n][max_i]
             connected[n].discard(max_i)
         del delta_q[max_i]
 
