@@ -11,15 +11,13 @@ def clauset_newman_moore(network: nx.Graph,
     Clauset-Newman-Moore community detection algorithm for undirected, weighted
     networks with parameterized modularity.
 
-    References:
-        Clauset, A. et al. (2004) Finding community structure in very large 
-            networks, Phys. Rev. E, 70.
+    Clauset, A. et al. (2004) Finding community structure in very large
+        networks, Phys. Rev. E, 70.
 
-        Newman, M. E. J. (2004) Analysis of weighted networks, Phys. Rev. E, 70.
+    Newman, M. E. J. (2004) Analysis of weighted networks, Phys. Rev. E, 70.
 
-        Newman, M. E. J. (2016) Equivalence between modularity optimization and
-            maximum likelihood methods for community detection, Phys. Rev. E, 
-            94.
+    Newman, M. E. J. (2016) Equivalence between modularity optimization and
+        maximum likelihood methods for community detection, Phys. Rev. E, 94.
 
     Args:
         network: An undirected, weighted graph.
@@ -29,7 +27,7 @@ def clauset_newman_moore(network: nx.Graph,
     Returns:
         The communities of the network.
     """
-    communities = {ci: {i} for ci, i in enumerate(network.nodes())}
+    communities = {i: {i} for i in network.nodes()}
 
     A = {
         i: {j: network.edges[i, j][weight] for j in nx.neighbors(network, i)
@@ -65,35 +63,33 @@ def clauset_newman_moore(network: nx.Graph,
             i: {j: delta_q[i][j] for j in delta_q[i]} for i in delta_q
         }
 
-        for n in delta_q[max_j]:
-            if n != max_i and n != max_j:
-                if n in connected[max_i] or n in connected[max_j]:
-                    if n not in connected[max_i]:
-                        delta_q_prime[max_j][n] = delta_q[max_j][
-                            n] - 2.0 * resolution * a[max_i] * a[n]
-                    elif n not in connected[max_j]:
-                        delta_q_prime[max_j][n] = delta_q[max_i][
-                            n] - 2.0 * resolution * a[max_j] * a[n]
-                    else:
-                        delta_q_prime[max_j][
-                            n] = delta_q[max_i][n] + delta_q[max_j][n]
+        for n in connected[max_i].intersection(connected[max_j]):
+            delta_q_prime[max_j][n] = delta_q[max_i][n] + delta_q[max_j][n]
+            delta_q_prime[n][max_j] = delta_q_prime[max_j][n]
 
-                    delta_q_prime[n][max_j] = delta_q_prime[max_j][n]
+        for n in connected[max_i].difference(connected[max_j]):
+            if n != max_j:
+                delta_q_prime[max_j][
+                    n] = delta_q[max_i][n] - 2.0 * resolution * a[max_j] * a[n]
+                delta_q_prime[n][max_j] = delta_q_prime[max_j][n]
 
-                    connected[max_j].add(n)
-                    connected[n].add(max_j)
+                connected[max_j].add(n)
+                connected[n].add(max_j)
+
+        for n in connected[max_j].difference(connected[max_i]):
+            if n != max_i:
+                delta_q_prime[max_j][
+                    n] = delta_q[max_j][n] - 2.0 * resolution * a[max_i] * a[n]
+                delta_q_prime[n][max_j] = delta_q_prime[max_j][n]
 
         delta_q = delta_q_prime
 
-        for i in list(delta_q[max_i]):
-            del delta_q[i][max_i]
-            connected[i].discard(max_i)
-
+        for n in list(delta_q[max_i]):
+            del delta_q[n][max_i]
+            connected[n].discard(max_i)
         del delta_q[max_i]
-        del connected[max_i]
 
         a[max_j] += a[max_i]
-        del a[max_i]
 
         max_entry = -1.0
         for i in delta_q:
@@ -102,7 +98,7 @@ def clauset_newman_moore(network: nx.Graph,
                     max_entry = delta_q[i][j]
                     max_i, max_j = i, j
 
-    return [community for community in communities.values()]
+    return list(communities.values())
 
 
 def louvain(network: nx.Graph,
@@ -111,13 +107,12 @@ def louvain(network: nx.Graph,
     """
     Louvain community detection algorithm for undirected, weighted networks with
     parameterized modularity.
- 
-    References:
-        Blondel, V. D. et al. (2008) Fast unfolding of communities in large
-            networks, J. Stat. Mech.: Theory Exp.
 
-        Clauset, A. et al. (2004) Finding community structure in very large 
-            networks, Phys. Rev. E, 70.
+    Blondel, V. D. et al. (2008) Fast unfolding of communities in large
+        networks, J. Stat. Mech.: Theory Exp.
+
+    Clauset, A. et al. (2004) Finding community structure in very large
+        networks, Phys. Rev. E, 70.
 
     Args:
         network: An undirected, weighted graph.
@@ -129,15 +124,14 @@ def louvain(network: nx.Graph,
     """
     network = network.copy()
 
-    communities = [{ci: {i} for ci, i in enumerate(network.nodes())}]
+    communities = [{i: {i} for i in network.nodes()}]
 
     community_aggregation = True
-
     while community_aggregation:
         community_aggregation = False
 
-        community = {i: ci for ci, i in enumerate(network.nodes())}
-        communities.append({ci: {i} for ci, i in enumerate(network.nodes())})
+        community = {i: i for i in network.nodes()}
+        communities.append({i: {i} for i in network.nodes()})
 
         A = {
             i:
@@ -145,12 +139,8 @@ def louvain(network: nx.Graph,
             for i in network.nodes()
         }
 
-        sigma_in = {
-            ci: A[i].get(i, 0.0) for ci, i in enumerate(network.nodes())
-        }
-        sigma_tot = {
-            ci: sum(A[i].values()) for ci, i in enumerate(network.nodes())
-        }
+        sigma_in = {i: A[i].get(i, 0.0) for i in network.nodes()}
+        sigma_tot = {i: sum(A[i].values()) for i in network.nodes()}
 
         k = {i: sum(A[i].values()) for i in A}
 
@@ -252,6 +242,9 @@ def louvain(network: nx.Graph,
 
             network.clear()
             for ci in weights:
+                if communities[0][ci]:
+                    network.add_node(ci)
+
                 if weights[ci][ci]:
                     network.add_edge(ci, ci, weight=weights[ci][ci])
 

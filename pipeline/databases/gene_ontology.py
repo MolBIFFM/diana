@@ -1,4 +1,4 @@
-"""The interface for the Gene Ontology."""
+"""The interface for the Gene Ontology database."""
 from typing import Container, Generator, Union
 
 from access import iterate

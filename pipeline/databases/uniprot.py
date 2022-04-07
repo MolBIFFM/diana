@@ -1,4 +1,4 @@
-"""The interface for UniProt."""
+"""The interface for the UniProt database."""
 from optparse import Option
 from typing import Generator, Optional
 

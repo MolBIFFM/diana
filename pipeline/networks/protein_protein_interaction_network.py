@@ -844,7 +844,7 @@ def get_neighbors_from_string(network: nx.Graph,
         physical: If True, consider only physical interactions.
         taxonomy_identifier: The taxonomy identifier.
         version: The version of the STRING database.
- 
+
     Returns:
         Neighbors of the protein-protein interaction network in STRING.
     """
