@@ -647,7 +647,7 @@ def add_protein_protein_interactions_from_intact(
         interaction_detection_methods: Optional[Container[str]] = None,
         interaction_types: Optional[Container[str]] = None,
         psi_mi_score: float = 0.0,
-        taxonomy_identifier: int = 9606) -> None:
+        taxonomy_identifier: Optional[int] = None) -> None:
     """
     Adds protein-protein interactions from IntAct to a protein-protein
     interaction network.

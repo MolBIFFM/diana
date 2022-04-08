@@ -16,16 +16,17 @@ from access import decompress, download
 
 def txt(url: str,
         file_from_zip_archive: str = "",
-        buffering: int = 8192) -> Generator[str, None, None]:
+        buffering: int = 8192,
+        pause: float = 60.0) -> Generator[str, None, None]:
     """
     Downloads, iterates and subsequently removes the file at a given URL.
 
     Args:
         url: The file location.
         file_from_zip_archive: The file from the zip archive to extract.
-        buffering: The buffer size to process download, possible decompression
+        buffering: The buffer size to process download, decompression
             and iteration of the file at.
-
+        pause: The number of seconds to wait after a failed download.  
 
     Yields:
         Lines of the file at a given URL.
@@ -50,7 +51,10 @@ def txt(url: str,
     while True:
         try:
             if not os.path.exists(local_file_name):
-                download.download_file(url, local_file_name, buffering)
+                download.download_file(url,
+                                       local_file_name,
+                                       buffering,
+                                       pause=pause)
 
             file_name_extension = os.path.splitext(local_file_name)[1]
 
@@ -63,7 +67,7 @@ def txt(url: str,
             break
 
         except (gzip.BadGzipFile, zipfile.BadZipFile):
-            time.sleep(60)
+            time.sleep(pause)
 
     with open(local_file_name, buffering=buffering) as local_file:
         for line in local_file:
@@ -89,7 +93,8 @@ def tabular_txt(url: str,
                 header: int = 0,
                 skiprows: int = 0,
                 usecols: Optional[list[Union[int, str]]] = None,
-                chunksize: int = 8192) -> Generator[pd.Series, None, None]:
+                chunksize: int = 8192,
+                pause: float = 60.0) -> Generator[pd.Series, None, None]:
     """
     Downloads, iterates and subsequently removes the tabular file at a URL.
 
@@ -102,6 +107,7 @@ def tabular_txt(url: str,
         usecols: The table columns to consider.
         chunksize: The buffer size to process download, decompression and
             iteration of the file at.
+        pause: The number of seconds to wait after a failed or download.
 
     Yields:
         Rows of the file at a given URL.
@@ -139,7 +145,7 @@ def tabular_txt(url: str,
             break
 
         except (gzip.BadGzipFile, zipfile.BadZipFile):
-            time.sleep(60)
+            time.sleep(pause)
 
     if not delimiter:
         if os.path.splitext(local_file_name)[1] == ".csv":

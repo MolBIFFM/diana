@@ -84,7 +84,7 @@ def process_workflow(configuration: dict,
                 number_sites=entry.get("sites", 5),
                 number_replicates=entry.get("replicates", 1),
                 replicate_combination=combination.REPLICATE_COMBINATION[
-                    entry.get("combine replicates", "mean")],
+                    entry.get("replicate combination", "mean")],
                 measurement_conversion=conversion.LOGARITHM[entry.get(
                     "logarithm")])
 
@@ -250,8 +250,7 @@ def process_workflow(configuration: dict,
                         ["STRING"].get("version", 11.5),
                     ))
 
-            protein_protein_interaction_network.add_proteins_from(
-                network, proteins)
+            network.add_nodes_from(proteins)
             protein_protein_interaction_network.relabel_proteins(network)
 
         if "BioGRID" in configuration["protein-protein interactions"]:

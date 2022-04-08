@@ -11,7 +11,7 @@ ORGANISM = {"file": {9606: "human"}}
 def get_ontology(namespaces: Container[str] = ("cellular_component",
                                                "molecular_function",
                                                "biological_process")
-                ) -> Generator[dict[str, Union[str, list[str]]], None, None]:
+                ) -> Generator[dict[str, Union[str, tuple[str]]], None, None]:
     """
     Yields Gene Ontology terms from the given namespaces.
 
@@ -31,9 +31,12 @@ def get_ontology(namespaces: Container[str] = ("cellular_component",
                             "property_value")):
             continue
         elif line in ("[Term]", "[Typedef]"):
-            if term.get("id") and term.get("name") and term.get(
-                    "namespace") in namespaces:
+            if term.get("id") and term.get("namespace") in namespaces:
+                for property in ("is_a", "alt_id"):
+                    term[property] = tuple(term[property])
+
                 yield term
+
             term = {
                 "id": "",
                 "name": "",
@@ -41,6 +44,7 @@ def get_ontology(namespaces: Container[str] = ("cellular_component",
                 "is_a": [],
                 "alt_id": []
             }
+
         elif any(
                 line.startswith(f"{tag}:")
                 for tag in ("id", "name", "namespace")):
@@ -92,9 +96,7 @@ def get_annotation(
             yield (row[4].split(":")[1], row[1])
 
 
-def convert_namespaces(namespaces: Container[str] = (
-    "cellular_component", "molecular_function",
-    "biological_process")) -> tuple[str]:
+def convert_namespaces(namespaces: Container[str]) -> tuple[str]:
     """
     Converts Gene Ontology namespace identifiers.
 

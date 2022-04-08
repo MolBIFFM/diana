@@ -65,7 +65,7 @@ def get_protein_protein_interactions(
 
 
 def get_pathways(
-        taxonomy_identifier: int = 9606
+    taxonomy_identifier: Optional[int] = None
 ) -> Generator[tuple[str, str], None, None]:
     """
     Yields Reactome pathways.
@@ -100,7 +100,7 @@ def get_pathway_relations() -> Generator[tuple[str, str], None, None]:
 
 
 def get_pathway_annotation(
-        taxonomy_identifier: int = 9606
+    taxonomy_identifier: Optional[int] = None
 ) -> Generator[tuple[str, str], None, None]:
     """
     Yields Reactome pathway annotations.

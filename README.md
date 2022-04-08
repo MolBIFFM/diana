@@ -153,7 +153,7 @@ A list of input gene or protein accessions, alternative to extraction from tabul
     }
 ]
 ```
-The NCBI taxonomy ID of the organism. The default and currently only fully supported setting is `9606`, corresponding to Homo sapiens.
+The NCBI taxonomy ID of the organism. The default and currently only completely supported setting is `9606`, corresponding to Homo sapiens.
 
 ```json
 [
@@ -192,7 +192,7 @@ An identifier for the type of post-translational modification associate with mea
     }
 ]
 ```
-The table column reporting modification sites of measurements. If available, measurements are sorted accordingly.
+The table column reporting modification sites of measurements, according to which they are sorted. If an entry contains less positions than measurements, missing sites are substituted by 0. If an entry contains more positions than measurements, only as many as there are measurements are
 
 ```json
 [
@@ -251,13 +251,13 @@ The maximum number of measurements to associate with each protein prioritized by
     {
       "proteins": [
         {
-          "combine replicates": "mean"
+          "replicate combination": "mean"
         }
       ]
     }
 ]
 ```
-A function to combine individual replicates into a single measurement. The default setting is `"mean"`. Available settings are `"mean"` and `"median"`.
+A function to combine individual replicates into a single measurement. The function is applied to ratios, not their log2. The default setting is `"mean"`. Available settings are `"mean"` and `"median"`.
 
 ```json
 [
@@ -308,7 +308,7 @@ The specification of sources of protein-protein interactions for the assembly of
     }
 ]
 ```
-An integer k specifying the extension of the network using proteins separated by up to k protein-protein interactions from the input proteins in the corresponding database. The default setting is 0, corresponding to no extension.
+An integer k specifying the extension of the network using species-specific proteins which are separated by up to k protein-protein interactions from the input proteins in the corresponding database. The default setting is 0, corresponding to no extension.
 
 ```json
 [
@@ -333,7 +333,7 @@ An integer k specifying the extension of the network using proteins separated by
     }
 ]
 ```
-The NCBI taxonomy ID of the organism. The default and currently only fully supported setting is `9606`, corresponding to Homo sapiens.
+The NCBI taxonomy ID of the organism. The default and currently only completely supported setting is `9606`, corresponding to Homo sapiens.
 
 
 ```json
@@ -689,7 +689,7 @@ The specification of Cytoscape styles. If not present, no Cytoscape styles are e
     }
 ]
 ```
-The function used to derive protein-specific measurements from their individual sites. The default setting is `"absmax"`, corresponding to the largest absolute value. Available settings are `"mean"`, `"median"`, `"max"`, `"absmax"`, `"min"`, `"absmin"`, `"sum"`, `"abssum"` and `null`, such that sites are considered individually.
+The function used to derive protein-specific measurements from their individual sites. The function is applied to ratios, not their log2. The default setting is `"absmax"`, corresponding to the largest absolute value. Available settings are `"mean"`, `"median"`, `"max"`, `"absmax"`, `"min"`, `"absmin"`, `"sum"`, `"abssum"` and `null`, such that sites are considered individually.
 
 ```json
 [
@@ -804,7 +804,7 @@ The corrected p-value threshold. The default setting is `1.0`.
     }
 ]
 ```
-The NCBI taxonomy ID of the organism. The default and currently only fully supported setting is `9606`, corresponding to Homo sapiens.
+The NCBI taxonomy ID of the organism. The default and currently only completely supported setting is `9606`, corresponding to Homo sapiens.
 
 ```json
 [
@@ -921,7 +921,7 @@ The modification considered to determine a subset of proteins.
     }
 ]
 ```
-The function used to derive a protein-specific measurement from a its individual sites. The default setting is `"absmax"`, corresponding to the largest absolute value. Available settings are `"mean"`, `"median"`, `"max"`, `"absmax"`, `"min"`, `"absmin"`, `"sum"`, `"abssum"` and `null`, such that sites are considered individually.
+The function used to derive a protein-specific measurement from a its individual sites. The function is applied to ratios, not their log2. The default setting is `"absmax"`, corresponding to the largest absolute value. Available settings are `"mean"`, `"median"`, `"max"`, `"absmax"`, `"min"`, `"absmin"`, `"sum"`, `"abssum"` and `null`, such that sites are considered individually.
 
 ```json
 [
@@ -1030,7 +1030,7 @@ Available settings are `"Benjamini-Hochberg"` and `"Bonferroni"`.
 ]
 ```
 
-The NCBI taxonomy ID of the organism. The default and currently only fully supported setting is `9606`, corresponding to Homo sapiens.
+The NCBI taxonomy ID of the organism. The default and currently only completely supported setting is `9606`, corresponding to Homo sapiens.
 
 ```json
 [
@@ -1278,7 +1278,7 @@ The corrected p-value threshold. The default setting is `1.0`.
     }
 ]
 ```
-The NCBI taxonomy ID of the organism. The default and currently only fully supported setting is `9606`, corresponding to Homo sapiens.
+The NCBI taxonomy ID of the organism. The default and currently only completely supported setting is `9606`, corresponding to Homo sapiens.
 
 ```json
 [
