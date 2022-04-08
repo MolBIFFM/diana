@@ -1,12 +1,12 @@
-"""Utilities to parse the PSI-MITAB file format."""
+"""Utilities to parse the PSI-MI TAB file format."""
 
 
 def parse(entry: str) -> dict[str, str]:
     """
-    Parse an entry in PSI-MITAB format.
+    Parse an entry in PSI-MI TAB format.
 
     Args:
-        entry: A PSI-MITAB formatted entry, corresponding to
+        entry: A PSI-MI TAB formatted entry, corresponding to
             'namespace:"identifier"(term)'.
 
     Returns:
@@ -127,7 +127,7 @@ def namespace_has_any_term_from(entry: str, namespace: str,
     Args:
         entry: The PSI-MITAB entry to parse.
         namespace: The namespace to consider.
-        identifiers: The terms to search.
+        terms: The terms to search.
 
     Returns:
         True, if any term is in namespace, else False.

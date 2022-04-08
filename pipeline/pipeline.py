@@ -55,14 +55,14 @@ def process_workflow(configuration: dict,
                 sheet_name=entry.get("sheet", 1) -
                 1 if isinstance(entry.get("sheet", 1), int) else entry["sheet"],
                 header=entry.get("header", 1) - 1,
-                taxonomy_identifier=entry.get("taxonomy identifier", 9606),
+                taxonomy_identifier=entry.get("species", 9606),
             )
 
         elif "accessions" in entry:
             network.add_nodes_from(entry["accessions"])
 
         protein_protein_interaction_network.map_genes(
-            network, entry.get("taxonomy identifier", 9606))
+            network, entry.get("species", 9606))
 
     for entry in configuration.get("proteins", {}):
         if "file" in entry and "accession column" in entry:
@@ -125,7 +125,7 @@ def process_workflow(configuration: dict,
                                 "multi-validated physical", False),
                         taxonomy_identifier=configuration[
                             "protein-protein interactions"]["BioGRID"].get(
-                                "taxonomy identifier", 9606),
+                                "species", 9606),
                         version=tuple(
                             int(v) for v in
                             configuration["protein-protein interactions"]
@@ -139,7 +139,7 @@ def process_workflow(configuration: dict,
                             "neighbors", 0) > neighbors:
                 proteins.update(
                     protein_protein_interaction_network.
-                    add_proteins_from_intact(
+                    get_neighbors_from_intact(
                         network,
                         interaction_detection_methods=configuration[
                             "protein-protein interactions"]["IntAct"].get(
@@ -152,7 +152,7 @@ def process_workflow(configuration: dict,
                                 "score", 0.0),
                         taxonomy_identifier=configuration[
                             "protein-protein interactions"]["IntAct"].get(
-                                "taxonomy identifier", 9606),
+                                "species", 9606),
                     ))
 
             if "MINT" in configuration[
@@ -160,7 +160,7 @@ def process_workflow(configuration: dict,
                         "protein-protein interactions"]["MINT"].get(
                             "neighbors", 0) > neighbors:
                 proteins.update(
-                    protein_protein_interaction_network.add_proteins_from_mint(
+                    protein_protein_interaction_network.get_neighbors_from_mint(
                         network,
                         interaction_detection_methods=configuration[
                             "protein-protein interactions"]["MINT"].get(
@@ -173,7 +173,7 @@ def process_workflow(configuration: dict,
                                 "score", 0.0),
                         taxonomy_identifier=configuration[
                             "protein-protein interactions"]["MINT"].get(
-                                "taxonomy identifier", 9606),
+                                "species", 9606),
                     ))
 
             if "Reactome" in configuration[
@@ -182,7 +182,7 @@ def process_workflow(configuration: dict,
                             "neighbors", 0) > neighbors:
                 proteins.update(
                     protein_protein_interaction_network.
-                    add_proteins_from_reactome(
+                    get_neighbors_from_reactome(
                         network,
                         interaction_context=configuration[
                             "protein-protein interactions"]["Reactome"].get(
@@ -192,7 +192,7 @@ def process_workflow(configuration: dict,
                                 "interaction type", []),
                         taxonomy_identifier=configuration[
                             "protein-protein interactions"]["Reactome"].get(
-                                "taxonomy identifier", 9606),
+                                "species", 9606),
                     ))
 
             if "STRING" in configuration[
@@ -201,7 +201,7 @@ def process_workflow(configuration: dict,
                             "neighbors", 0) > neighbors:
                 proteins.update(
                     protein_protein_interaction_network.
-                    add_proteins_from_string(
+                    get_neighbors_from_string(
                         network,
                         neighborhood=configuration[
                             "protein-protein interactions"]["STRING"].get(
@@ -245,7 +245,7 @@ def process_workflow(configuration: dict,
                         ["STRING"].get("physical", False),
                         taxonomy_identifier=configuration[
                             "protein-protein interactions"]["STRING"].get(
-                                "taxonomy identifier", 9606),
+                                "species", 9606),
                         version=configuration["protein-protein interactions"]
                         ["STRING"].get("version", 11.5),
                     ))
@@ -270,7 +270,7 @@ def process_workflow(configuration: dict,
                         "multi-validated physical", False),
                 taxonomy_identifier=configuration[
                     "protein-protein interactions"]["BioGRID"].get(
-                        "taxonomy identifier", 9606),
+                        "species", 9606),
                 version=tuple(
                     int(v)
                     for v in configuration["protein-protein interactions"]
@@ -290,7 +290,7 @@ def process_workflow(configuration: dict,
                 ["IntAct"].get("score", 0.0),
                 taxonomy_identifier=configuration[
                     "protein-protein interactions"]["IntAct"].get(
-                        "taxonomy identifier", 9606),
+                        "species", 9606),
             )
 
         if "MINT" in configuration["protein-protein interactions"]:
@@ -305,7 +305,7 @@ def process_workflow(configuration: dict,
                 ["MINT"].get("score", 0.0),
                 taxonomy_identifier=configuration[
                     "protein-protein interactions"]["MINT"].get(
-                        "taxonomy identifier", 9606),
+                        "species", 9606),
             )
 
         if "Reactome" in configuration["protein-protein interactions"]:
@@ -318,7 +318,7 @@ def process_workflow(configuration: dict,
                 ["Reactome"].get("interaction type", []),
                 taxonomy_identifier=configuration[
                     "protein-protein interactions"]["Reactome"].get(
-                        "taxonomy identifier", 9606),
+                        "species", 9606),
             )
 
         if "STRING" in configuration["protein-protein interactions"]:
@@ -361,7 +361,7 @@ def process_workflow(configuration: dict,
                 ["STRING"].get("physical", False),
                 taxonomy_identifier=configuration[
                     "protein-protein interactions"]["STRING"].get(
-                        "taxonomy identifier", 9606),
+                        "species", 9606),
                 version=configuration["protein-protein interactions"]
                 ["STRING"].get("version", 11.5),
             )
@@ -426,7 +426,7 @@ def process_workflow(configuration: dict,
                 configuration["Gene Ontology enrichment"].get(
                     "correction", "Benjamini-Hochberg")],
             taxonomy_identifier=configuration["Gene Ontology enrichment"].get(
-                "taxonomy identifier", 9606),
+                "species", 9606),
             namespaces=configuration["Gene Ontology enrichment"].get(
                 "namespaces", [
                     "cellular_component", "molecular_function",
@@ -448,7 +448,7 @@ def process_workflow(configuration: dict,
                 configuration["Reactome enrichment"].get(
                     "correction", "Benjamini-Hochberg")],
             taxonomy_identifier=configuration["Reactome enrichment"].get(
-                "taxonomy identifier", 9606))
+                "species", 9606))
 
         for (pathway, name), p in sorted(reactome_enrichment[network].items(),
                                          key=lambda item: item[1]):
@@ -512,7 +512,7 @@ def process_workflow(configuration: dict,
                     configuration["Gene Ontology network"].get(
                         "correction", "Benjamini-Hochberg")],
                 taxonomy_identifier=configuration["Gene Ontology network"].get(
-                    "taxonomy identifier", 9606))
+                    "species", 9606))
 
         elif "intersection" in configuration["Gene Ontology network"]:
             proteins = set(network)
@@ -571,7 +571,7 @@ def process_workflow(configuration: dict,
                     configuration["Gene Ontology network"].get(
                         "correction", "Benjamini-Hochberg")],
                 taxonomy_identifier=configuration["Gene Ontology network"].get(
-                    "taxonomy identifier", 9606))
+                    "species", 9606))
 
         else:
             ontology_network = gene_ontology_network.get_gene_ontology_network(
@@ -588,7 +588,7 @@ def process_workflow(configuration: dict,
                     configuration["Gene Ontology network"].get(
                         "correction", "Benjamini-Hochberg")],
                 taxonomy_identifier=configuration["Gene Ontology network"].get(
-                    "taxonomy identifier", 9606))
+                    "species", 9606))
 
         gene_ontology_network.export(
             ontology_network,
@@ -653,7 +653,7 @@ def process_workflow(configuration: dict,
                     configuration["Reactome network"].get(
                         "correction", "Benjamini-Hochberg")],
                 taxonomy_identifier=configuration["Reactome network"].get(
-                    "taxonomy identifier", 9606))
+                    "species", 9606))
 
         elif "intersection" in configuration["Reactome network"]:
             proteins = set(network)
@@ -706,7 +706,7 @@ def process_workflow(configuration: dict,
                     configuration["Reactome network"].get(
                         "correction", "Benjamini-Hochberg")],
                 taxonomy_identifier=configuration["Reactome network"].get(
-                    "taxonomy identifier", 9606))
+                    "species", 9606))
 
         else:
             pathway_network = reactome_network.get_reactome_network(
@@ -718,7 +718,7 @@ def process_workflow(configuration: dict,
                     configuration["Reactome network"].get(
                         "correction", "Benjamini-Hochberg")],
                 taxonomy_identifier=configuration["Reactome network"].get(
-                    "taxonomy identifier", 9606))
+                    "species", 9606))
 
         reactome_network.export(
             pathway_network, f"{logger.name}.reactome.{index}"
@@ -767,7 +767,7 @@ def process_workflow(configuration: dict,
                                 "correction", "Benjamini-Hochberg")],
                         taxonomy_identifier=configuration["module detection"]
                         ["Gene Ontology enrichment"]["annotation"].get(
-                            "taxonomy identifier", 9606),
+                            "species", 9606),
                         namespaces=configuration["module detection"]
                         ["Gene Ontology enrichment"]["annotation"].get(
                             "namespaces", [
@@ -790,7 +790,7 @@ def process_workflow(configuration: dict,
                                 "correction", "Benjamini-Hochberg")],
                         taxonomy_identifier=configuration["module detection"]
                         ["Gene Ontology enrichment"]["network"].get(
-                            "taxonomy identifier", 9606),
+                            "species", 9606),
                         namespaces=configuration["module detection"]
                         ["Gene Ontology enrichment"]["network"].get(
                             "namespaces", [
@@ -816,7 +816,7 @@ def process_workflow(configuration: dict,
                                 "correction", "Benjamini-Hochberg")],
                         taxonomy_identifier=configuration["module detection"]
                         ["Reactome enrichment"]["annotation"].get(
-                            "taxonomy identifier", 9606))
+                            "species", 9606))
 
             if "network" in configuration["module detection"][
                     "Reactome enrichment"]:
@@ -832,8 +832,7 @@ def process_workflow(configuration: dict,
                             ["Reactome enrichment"]["network"].get(
                                 "correction", "Benjamini-Hochberg")],
                         taxonomy_identifier=configuration["module detection"]
-                        ["Reactome enrichment"]["network"].get(
-                            "taxonomy identifier", 9606),
+                        ["Reactome enrichment"]["network"].get("species", 9606),
                         annotation_as_reference=False)
 
         if "measurement enrichment" in configuration["module detection"]:

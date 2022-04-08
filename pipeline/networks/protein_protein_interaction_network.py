@@ -84,7 +84,7 @@ def add_genes_from_table(
     network.add_nodes_from(genes)
 
 
-def map_genes(network: nx.Graph, taxonomy_identifier: int = 9606):
+def map_genes(network: nx.Graph, taxonomy_identifier: int = 9606) -> None:
     """
     Map genes in a protein-protein interaction network to their primary
     UniProt protein identifiers and remove genes not present in SwissProt.
@@ -257,7 +257,7 @@ def add_proteins_from_table(
                 f"{time} {modification} {i + 1}"] = measurement
 
 
-def map_proteins(network: nx.Graph):
+def map_proteins(network: nx.Graph) -> None:
     """
     Map proteins in a protein-protein interaction network to their primary
     UniProt identifiers and remove proteins not present in SwissProt. Isoform
@@ -558,18 +558,18 @@ def get_neighbors_from_biogrid(
     Returns:
         Neighbors of the protein-protein interaction network in BioGRID.
     """
-    nodes_to_add = set()
+    neighbors = set()
     for interactor_a, interactor_b in biogrid.get_protein_protein_interactions(
             experimental_system, experimental_system_type,
             interaction_throughput, multi_validated_physical,
             taxonomy_identifier, version):
         if (interactor_a in network and interactor_b not in network):
-            nodes_to_add.add(interactor_b)
+            neighbors.add(interactor_b)
 
         elif (interactor_a not in network and interactor_b in network):
-            nodes_to_add.add(interactor_a)
+            neighbors.add(interactor_a)
 
-    return nodes_to_add
+    return neighbors
 
 
 def add_protein_protein_interactions_from_biogrid(
@@ -629,17 +629,17 @@ def get_neighbors_from_intact(
     Returns:
         Neighbors of the protein-protein interaction network in IntAct.
     """
-    nodes_to_add = set()
+    neighbors = set()
     for interactor_a, interactor_b, _ in intact.get_protein_protein_interactions(
             interaction_detection_methods, interaction_types, psi_mi_score,
             taxonomy_identifier):
         if (interactor_a in network and interactor_b not in network):
-            nodes_to_add.add(interactor_b)
+            neighbors.add(interactor_b)
 
         elif (interactor_a not in network and interactor_b in network):
-            nodes_to_add.add(interactor_a)
+            neighbors.add(interactor_a)
 
-    return nodes_to_add
+    return neighbors
 
 
 def add_protein_protein_interactions_from_intact(
@@ -647,7 +647,7 @@ def add_protein_protein_interactions_from_intact(
         interaction_detection_methods: Optional[Container[str]] = None,
         interaction_types: Optional[Container[str]] = None,
         psi_mi_score: float = 0.0,
-        taxonomy_identifier: Optional[int] = None) -> None:
+        taxonomy_identifier: int = 9606) -> None:
     """
     Adds protein-protein interactions from IntAct to a protein-protein
     interaction network.
@@ -697,17 +697,17 @@ def get_neighbors_from_mint(network: nx.Graph,
     Returns:
         Neighbors of the protein-protein interaction network in MINT.
     """
-    nodes_to_add = set()
+    neighbors = set()
     for interactor_a, interactor_b, _ in mint.get_protein_protein_interactions(
             interaction_detection_methods, interaction_types, psi_mi_score,
             taxonomy_identifier):
         if (interactor_a in network and interactor_b not in network):
-            nodes_to_add.add(interactor_b)
+            neighbors.add(interactor_b)
 
         elif (interactor_a not in network and interactor_b in network):
-            nodes_to_add.add(interactor_a)
+            neighbors.add(interactor_a)
 
-    return nodes_to_add
+    return neighbors
 
 
 def add_protein_protein_interactions_from_mint(
@@ -763,17 +763,17 @@ def get_neighbors_from_reactome(
     Returns:
         Neighbors of the protein-protein interaction network in Reactome.
     """
-    nodes_to_add = set()
+    neighbors = set()
 
     for interactor_a, interactor_b in reactome.get_protein_protein_interactions(
             interaction_type, interaction_context, taxonomy_identifier):
         if (interactor_a in network and interactor_b not in network):
-            nodes_to_add.add(interactor_b)
+            neighbors.add(interactor_b)
 
         elif (interactor_a not in network and interactor_b in network):
-            nodes_to_add.add(interactor_a)
+            neighbors.add(interactor_a)
 
-    return nodes_to_add
+    return neighbors
 
 
 def add_protein_protein_interactions_from_reactome(
@@ -848,7 +848,7 @@ def get_neighbors_from_string(network: nx.Graph,
     Returns:
         Neighbors of the protein-protein interaction network in STRING.
     """
-    nodes_to_add = set()
+    neighbors = set()
 
     for interactor_a, interactor_b, _ in string.get_protein_protein_interactions(
             neighborhood, neighborhood_transferred, fusion, cooccurence,
@@ -857,12 +857,12 @@ def get_neighbors_from_string(network: nx.Graph,
             textmining_transferred, combined_score, physical,
             taxonomy_identifier, version):
         if (interactor_a in network and interactor_b not in network):
-            nodes_to_add.add(interactor_b)
+            neighbors.add(interactor_b)
 
         elif (interactor_a not in network and interactor_b in network):
-            nodes_to_add.add(interactor_a)
+            neighbors.add(interactor_a)
 
-    return nodes_to_add
+    return neighbors
 
 
 def add_protein_protein_interactions_from_string(

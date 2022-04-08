@@ -1,4 +1,5 @@
 """The interface for the BioGRID database."""
+import re
 from typing import Container, Generator, Optional
 
 from access import iterate
@@ -45,10 +46,11 @@ def get_protein_protein_interactions(
          if multi_validated_physical else
          "https://downloads.thebiogrid.org/Download/BioGRID/Latest-Release/BIOGRID-ORGANISM-LATEST.tab3.zip"
         ),
-            file_from_zip_archive=
-            r"BIOGRID-MV-Physical-[0-9]\.[0-9]\.[0-9]{3}\.tab3\.txt"
-            if multi_validated_physical else
-            fr"BIOGRID-ORGANISM-{ORGANISM['file'][taxonomy_identifier]}-[0-9]\.[0-9]\.[0-9][0-9][0-9]\.tab3\.txt",
+            file_from_zip_archive=re.compile(
+                r"BIOGRID-MV-Physical-[0-9]\.[0-9]\.[0-9]{3}\.tab3\.txt"
+                if multi_validated_physical else
+                fr"BIOGRID-ORGANISM-{ORGANISM['file'][taxonomy_identifier]}-[0-9]\.[0-9]\.[0-9][0-9][0-9]\.tab3\.txt"
+            ),
             delimiter="\t",
             header=0,
             usecols=[

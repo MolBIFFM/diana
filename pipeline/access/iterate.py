@@ -1,13 +1,16 @@
 """Utilities to iterate local files."""
 import gzip
+from optparse import Option
 import os
 import sys
 import tempfile
 import urllib.parse
 import urllib.request
+import re
 from typing import Generator, Optional, Union
 import time
 import zipfile
+from matplotlib.container import Container
 
 import pandas as pd
 
@@ -15,7 +18,7 @@ from access import decompress, download
 
 
 def txt(url: str,
-        file_from_zip_archive: str = "",
+        file_from_zip_archive: Optional[re.Pattern] = None,
         buffering: int = 8192,
         pause: float = 60.0) -> Generator[str, None, None]:
     """
@@ -88,11 +91,11 @@ def txt(url: str,
 
 
 def tabular_txt(url: str,
-                file_from_zip_archive: str = "",
+                file_from_zip_archive: Optional[re.Pattern] = None,
                 delimiter: str = "",
                 header: int = 0,
                 skiprows: int = 0,
-                usecols: Optional[list[Union[int, str]]] = None,
+                usecols: Optional[Container[Union[int, str]]] = None,
                 chunksize: int = 8192,
                 pause: float = 60.0) -> Generator[pd.Series, None, None]:
     """

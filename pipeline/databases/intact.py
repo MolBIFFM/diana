@@ -1,4 +1,5 @@
 """The interface for the IntAct database."""
+import re
 from typing import Container, Generator, Optional
 
 from access import iterate
@@ -11,7 +12,7 @@ def get_protein_protein_interactions(
     interaction_detection_methods: Optional[Container[str]] = None,
     interaction_types: Optional[Container[str]] = None,
     psi_mi_score: float = 0.0,
-    taxonomy_identifier: Optional[int] = None
+    taxonomy_identifier: int = 9606
 ) -> Generator[tuple[str, str, float], None, None]:
     """
     Yields protein-protein interactions from IntAct.
@@ -32,7 +33,7 @@ def get_protein_protein_interactions(
 
     for row in iterate.tabular_txt(
             "ftp://ftp.ebi.ac.uk/pub/databases/intact/current/psimitab/intact.zip",
-            file_from_zip_archive="intact.txt",
+            file_from_zip_archive=re.compile(r"intact\.txt"),
             delimiter="\t",
             header=0,
             usecols=[
@@ -47,11 +48,10 @@ def get_protein_protein_interactions(
                 "Confidence value(s)",
             ],
     ):
-        if ((not taxonomy_identifier or
-             (mitab.namespace_has_identifier(row["Taxid interactor A"], "taxid",
-                                             taxonomy_identifier) and
-              mitab.namespace_has_identifier(row["Taxid interactor B"], "taxid",
-                                             taxonomy_identifier))) and
+        if ((mitab.namespace_has_identifier(row["Taxid interactor A"], "taxid",
+                                            taxonomy_identifier) and
+             mitab.namespace_has_identifier(row["Taxid interactor B"], "taxid",
+                                            taxonomy_identifier)) and
             (not interaction_detection_methods or
              mitab.namespace_has_any_term_from(
                  row["Interaction detection method(s)"],

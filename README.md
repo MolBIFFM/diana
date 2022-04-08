@@ -147,13 +147,13 @@ A list of input gene or protein accessions, alternative to extraction from tabul
     {
       "genes": [
         {
-          "taxonomy identifier": 9606
+          "species": 9606
         }
       ]
     }
 ]
 ```
-The NCBI taxonomy ID of the organism. The default and currently only completely supported setting is `9606`, corresponding to Homo sapiens.
+The NCBI taxonomy ID of the target species. The default and currently only completely supported setting is `9606`, corresponding to Homo sapiens.
 
 ```json
 [
@@ -315,25 +315,25 @@ An integer k specifying the extension of the network using species-specific prot
     {
       "protein-protein interactions": {
         "BioGRID": {
-          "taxonomy identifier": 9606
+          "species": 9606
         },
         "IntAct": {
-          "taxonomy identifier": 9606
+          "species": 9606
         }, 
         "MINT": {
-          "taxonomy identifier": 9606
+          "species": 9606
         },
         "Reactome": {
-          "taxonomy identifier": 9606
+          "species": 9606
         },
         "STRING": {
-          "taxonomy identifier": 9606
+          "species": 9606
         }
       }
     }
 ]
 ```
-The NCBI taxonomy ID of the organism. The default and currently only completely supported setting is `9606`, corresponding to Homo sapiens.
+The NCBI taxonomy ID of the target species. The default and currently only completely supported setting is `9606`, corresponding to Homo sapiens.
 
 
 ```json
@@ -796,15 +796,15 @@ The corrected p-value threshold. The default setting is `1.0`.
 [
     {
       "Gene Ontology enrichment": {
-        "taxonomy identifier": 9606
+        "species": 9606
       },
        "Reactome enrichment": {
-        "taxonomy identifier": 9606
+        "species": 9606
       }
     }
 ]
 ```
-The NCBI taxonomy ID of the organism. The default and currently only completely supported setting is `9606`, corresponding to Homo sapiens.
+The NCBI taxonomy ID of the target species. The default and currently only completely supported setting is `9606`, corresponding to Homo sapiens.
 
 ```json
 [
@@ -1021,16 +1021,16 @@ Available settings are `"Benjamini-Hochberg"` and `"Bonferroni"`.
 [
     {
       "Gene Ontology network": {
-        "taxonomy identifier": 9606
+        "species": 9606
       },
       "Reactome network": {
-        "taxonomy identifier": 9606
+        "species": 9606
       }
     }
 ]
 ```
 
-The NCBI taxonomy ID of the organism. The default and currently only completely supported setting is `9606`, corresponding to Homo sapiens.
+The NCBI taxonomy ID of the target species. The default and currently only completely supported setting is `9606`, corresponding to Homo sapiens.
 
 ```json
 [
@@ -1260,25 +1260,25 @@ The corrected p-value threshold. The default setting is `1.0`.
       "module detection": {
         "Gene Ontology enrichment": {
           "annotation": {
-            "taxonomy identifier": 9606
+            "species": 9606
           },
           "network": {
-            "taxonomy identifier": 9606
+            "species": 9606
           }
         },
         "Reactome enrichment": {
           "annotation": {
-            "taxonomy identifier": 9606
+            "species": 9606
           },
           "network": {
-            "taxonomy identifier": 9606
+            "species": 9606
           }
         }
       }
     }
 ]
 ```
-The NCBI taxonomy ID of the organism. The default and currently only completely supported setting is `9606`, corresponding to Homo sapiens.
+The NCBI taxonomy ID of the target species. The default and currently only completely supported setting is `9606`, corresponding to Homo sapiens.
 
 ```json
 [
