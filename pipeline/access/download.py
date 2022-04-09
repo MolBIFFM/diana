@@ -35,5 +35,5 @@ def download_file(url: str,
                         local_file.write(chunk)
             break
 
-        except (urllib.error.URLError, socket.timeout):
+        except (socket.timeout, urllib.error.URLError):
             time.sleep(pause)
