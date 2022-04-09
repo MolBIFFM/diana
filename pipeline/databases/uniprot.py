@@ -5,11 +5,11 @@ from typing import Generator, Optional
 from access import iterate
 
 
-def get_swissprot_entries(
+def get_swiss_prot_entries(
     taxonomy_identifier: Optional[int] = None
 ) -> Generator[tuple[tuple[str], str, str], None, None]:
     """
-    Yields SwissProt entries.
+    Yields Swiss-Prot entries.
 
     Args:
         taxonomy_identifier: The taxonomy identifier.
@@ -104,7 +104,7 @@ def get_primary_accession(
         A map of any secondary UniProt accessions to its primary equivalents.
     """
     primary_accession = {}
-    for accessions, _, _ in get_swissprot_entries(taxonomy_identifier):
+    for accessions, _, _ in get_swiss_prot_entries(taxonomy_identifier):
         for i, accession in enumerate(accessions):
             if i > 0:
                 if accession not in primary_accession:

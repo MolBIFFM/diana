@@ -35,7 +35,7 @@ def add_genes_from_table(
 ) -> None:
     """
     Parse UniProt gene accessions from a tabular file and add the corresponding
-    primary Uniprot protein accessions to a protein-protein interaction network.
+    primary UniProt protein accessions to a protein-protein interaction network.
 
     Args:
         network: The protein-protein interaction network.
@@ -87,14 +87,14 @@ def add_genes_from_table(
 def map_genes(network: nx.Graph, taxonomy_identifier: int = 9606) -> None:
     """
     Map genes in a protein-protein interaction network to their primary
-    UniProt protein identifiers and remove genes not present in SwissProt.
+    UniProt protein identifiers and remove genes not present in Swiss-Prot.
 
     Args:
         network: The protein-protein interaction network to map genes from.
         taxonomy_identifier: The taxonomy identifier.
     """
     mapping, gene_name, protein_name = {}, {}, {}
-    for accessions, gene, protein in uniprot.get_swissprot_entries(
+    for accessions, gene, protein in uniprot.get_swiss_prot_entries(
             taxonomy_identifier):
         if gene in network.nodes():
             mapping[gene] = accessions[0]
@@ -132,7 +132,7 @@ def add_proteins_from_table(
 ) -> None:
     """
     Parse UniProt protein accessions and measurements of measurements from a
-    tabular file and add the corresponding primary Uniprot protein accessions to
+    tabular file and add the corresponding primary UniProt protein accessions to
     a protein-protein interaction network.
 
     Args:
@@ -260,7 +260,7 @@ def add_proteins_from_table(
 def map_proteins(network: nx.Graph) -> None:
     """
     Map proteins in a protein-protein interaction network to their primary
-    UniProt identifiers and remove proteins not present in SwissProt. Isoform
+    UniProt identifiers and remove proteins not present in Swiss-Prot. Isoform
     identifiers are maintained but not transferred.
 
     Args:
@@ -268,7 +268,7 @@ def map_proteins(network: nx.Graph) -> None:
             from.
     """
     mapping, gene_name, protein_name = {}, {}, {}
-    for accessions, gene, protein in uniprot.get_swissprot_entries():
+    for accessions, gene, protein in uniprot.get_swiss_prot_entries():
         for node in network.nodes():
             if node.split("-")[0] in accessions:
                 if "-" in node and node.split("-")[1].isnumeric(
