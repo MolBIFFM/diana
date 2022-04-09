@@ -137,8 +137,6 @@ def louvain(network: nx.Graph,
     Returns:
         The communities of the network.
     """
-    network = network.copy()
-
     communities = [{i: {i} for i in network.nodes()}]
 
     community_aggregation = True
@@ -255,7 +253,7 @@ def louvain(network: nx.Graph,
                         weights[community[i]][cj] = 0.0
                     weights[community[i]][cj] += k_in[i][cj]
 
-            network.clear()
+            network = nx.Graph()
             for ci in weights:
                 if communities[0][ci]:
                     network.add_node(ci)
