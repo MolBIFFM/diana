@@ -5,7 +5,7 @@ from access import iterate
 
 from databases import uniprot
 
-ORGANISM = {"data": {9606: "Homo sapiens"}, "file": {9606: "homo_sapiens"}}
+ORGANISM = {"data": {9606: "Homo sapiens"}, "files": {9606: "homo_sapiens"}}
 
 
 def get_protein_protein_interactions(
@@ -29,7 +29,9 @@ def get_protein_protein_interactions(
     primary_accession = uniprot.get_primary_accession(taxonomy_identifier)
 
     for row in iterate.tabular_txt(
-            f"https://reactome.org/download/current/interactors/reactome.{ORGANISM['file'][taxonomy_identifier]}.interactions.tab-delimited.txt",
+            "https://reactome.org/download/current/interactors/"
+            f"reactome.{ORGANISM['files'][taxonomy_identifier]}.interactions."
+            "tab-delimited.txt",
             delimiter="\t",
             header=0,
             usecols=[
@@ -93,7 +95,8 @@ def get_pathway_relations() -> Generator[tuple[str, str], None, None]:
         Pairs of parent and child stable pathway identifiers.
     """
     for row in iterate.tabular_txt(
-            "https://reactome.org/download/current/ReactomePathwaysRelation.txt",
+            "https://reactome.org/download/current/"
+            "ReactomePathwaysRelation.txt",
             delimiter="\t",
             usecols=[0, 1]):
         yield (row[0], row[1])
@@ -114,7 +117,8 @@ def get_pathway_annotation(
     primary_accession = uniprot.get_primary_accession(taxonomy_identifier)
 
     for row in iterate.tabular_txt(
-            "https://reactome.org/download/current/UniProt2Reactome_All_Levels.txt",
+            "https://reactome.org/download/current/"
+            "UniProt2Reactome_All_Levels.txt",
             delimiter="\t",
             usecols=[0, 1, 5]):
         if not taxonomy_identifier or row[2] == ORGANISM["data"].get(

@@ -6,7 +6,7 @@ from access import iterate
 
 from databases import uniprot
 
-ORGANISM = {"file": {9606: "Homo_sapiens"}}
+ORGANISM = {"files": {9606: "Homo_sapiens"}}
 
 
 def get_protein_protein_interactions(
@@ -38,19 +38,23 @@ def get_protein_protein_interactions(
     primary_accession = uniprot.get_primary_accession(taxonomy_identifier)
 
     for row in iterate.tabular_txt(
-        (f"https://downloads.thebiogrid.org/Download/BioGRID/Release-Archive/BIOGRID-{version[0]}.{version[1]}.{version[2]}/BIOGRID-MV-Physical-{version[0]}.{version[1]}.{version[2]}.tab3.zip"
+        ("https://downloads.thebiogrid.org/Download/BioGRID/Release-Archive/"
+         f"BIOGRID-{version[0]}.{version[1]}.{version[2]}/"
+         f"BIOGRID-MV-Physical-{version[0]}.{version[1]}.{version[2]}.tab3.zip"
          if multi_validated_physical else
-         f"https://downloads.thebiogrid.org/Download/BioGRID/Release-Archive/BIOGRID-{version[0]}.{version[1]}.{version[2]}/BIOGRID-ORGANISM-{version[0]}.{version[1]}.{version[2]}.tab3.zip"
-        ) if version else
-        ("https://downloads.thebiogrid.org/Download/BioGRID/Latest-Release/BIOGRID-MV-Physical-LATEST.tab3.zip"
-         if multi_validated_physical else
-         "https://downloads.thebiogrid.org/Download/BioGRID/Latest-Release/BIOGRID-ORGANISM-LATEST.tab3.zip"
-        ),
+         "https://downloads.thebiogrid.org/Download/BioGRID/Release-Archive/"
+         f"BIOGRID-{version[0]}.{version[1]}.{version[2]}/"
+         f"BIOGRID-ORGANISM-{version[0]}.{version[1]}.{version[2]}.tab3.zip")
+            if version else
+        ("https://downloads.thebiogrid.org/Download/BioGRID/Latest-Release/"
+         "BIOGRID-MV-Physical-LATEST.tab3.zip" if multi_validated_physical else
+         "https://downloads.thebiogrid.org/Download/BioGRID/Latest-Release/"
+         "BIOGRID-ORGANISM-LATEST.tab3.zip"),
             file_from_zip_archive=re.compile(
                 r"BIOGRID-MV-Physical-[0-9]\.[0-9]\.[0-9]{3}\.tab3\.txt"
                 if multi_validated_physical else
-                fr"BIOGRID-ORGANISM-{ORGANISM['file'][taxonomy_identifier]}-[0-9]\.[0-9]\.[0-9][0-9][0-9]\.tab3\.txt"
-            ),
+                f"BIOGRID-ORGANISM-{ORGANISM['files'][taxonomy_identifier]}-"
+                r"[0-9]\.[0-9]\.[0-9][0-9][0-9]\.tab3\.txt"),
             delimiter="\t",
             header=0,
             usecols=[

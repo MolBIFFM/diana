@@ -39,7 +39,7 @@ def decompress_zip_file(
 
     Args:
         compressed_file_name: The file name of the compressed file.
-        file_from_zip_archive: The file from the zip archive to extract. If 
+        file_from_zip_archive: The file from the zip archive to extract. If
             this file is not specified or found, the first in the archive is
             used. The first file matching the regular expression is used.
 
@@ -60,19 +60,19 @@ def decompress_zip_file(
         if not os.path.exists(
                 os.path.join(
                     tempfile.gettempdir(),
-                    f"{os.path.splitext(os.path.basename(sys.argv[0]))[0]}-{os.getpid()}",
-                    file)):
+                    f"{os.path.splitext(os.path.basename(sys.argv[0]))[0]}-"
+                    f"{os.getpid()}", file)):
             decompressed_file_name = archive.extract(
                 file,
                 path=os.path.join(
                     tempfile.gettempdir(),
-                    f"{os.path.splitext(os.path.basename(sys.argv[0]))[0]}-{os.getpid()}"
-                ))
+                    f"{os.path.splitext(os.path.basename(sys.argv[0]))[0]}-"
+                    f"{os.getpid()}"))
         else:
             decompressed_file_name = os.path.join(
                 tempfile.gettempdir(),
-                f"{os.path.splitext(os.path.basename(sys.argv[0]))[0]}-{os.getpid()}",
-                file)
+                f"{os.path.splitext(os.path.basename(sys.argv[0]))[0]}-"
+                f"{os.getpid()}", file)
 
     os.remove(compressed_file_name)
     return decompressed_file_name

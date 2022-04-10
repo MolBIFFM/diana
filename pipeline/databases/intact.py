@@ -18,10 +18,11 @@ def get_protein_protein_interactions(
     Yields protein-protein interactions from IntAct.
 
     Args:
-        interaction_detection_methods: The accepted PSI-MI terms for interaction
-            detection method. If none are specified, any is accepted.
-        interaction_types: The accepted PSI-MI terms for interaction type.
-            If none are specified, any is accepted.
+        interaction_detection_methods: The accepted PSI-MI identifiers or terms
+            for interaction detection method. If none are specified, any is
+            accepted.
+        interaction_types: The accepted PSI-MI identifiers or terms for
+            interaction type. If none are specified, any is accepted.
         psi_mi_score: The PSI-MI score threshold.
         taxonomy_identifier: The taxonomy identifier.
 
@@ -32,7 +33,8 @@ def get_protein_protein_interactions(
     primary_accession = uniprot.get_primary_accession(taxonomy_identifier)
 
     for row in iterate.tabular_txt(
-            "ftp://ftp.ebi.ac.uk/pub/databases/intact/current/psimitab/intact.zip",
+            "ftp://ftp.ebi.ac.uk/pub/databases/intact/current/psimitab/"
+            "intact.zip",
             file_from_zip_archive=re.compile(r"intact\.txt"),
             delimiter="\t",
             header=0,
@@ -53,12 +55,20 @@ def get_protein_protein_interactions(
              mitab.namespace_has_identifier(row["Taxid interactor B"], "taxid",
                                             taxonomy_identifier)) and
             (not interaction_detection_methods or
-             mitab.namespace_has_any_term_from(
+             (mitab.namespace_has_any_identifier_from(
                  row["Interaction detection method(s)"],
                  "psi-mi",
                  interaction_detection_methods,
-             )) and (not interaction_types or mitab.namespace_has_any_term_from(
-                 row["Interaction type(s)"], "psi-mi", interaction_types)) and
+             ) or mitab.namespace_has_any_term_from(
+                 row["Interaction detection method(s)"],
+                 "psi-mi",
+                 interaction_detection_methods,
+             ))) and
+            (not interaction_types or
+             (mitab.namespace_has_any_identifier_from(
+                 row["Interaction type(s)"], "psi-mi", interaction_types) or
+              mitab.namespace_has_any_term_from(
+                  row["Interaction type(s)"], "psi-mi", interaction_types))) and
             (score := mitab.get_identifiers_from_namespace(
                 row["Confidence value(s)"], "intact-miscore")) and
                 float(score[0]) >= psi_mi_score):

@@ -1,5 +1,5 @@
 """
-The Cytoscape style configuration for a protein-protein interaction 
+The Cytoscape style configuration for a protein-protein interaction
 network.
 """
 
@@ -180,39 +180,48 @@ COMPONENTS = [
                 },
                 "NODE_CUSTOMGRAPHICS_1": {
                     "default":
-                        "org.cytoscape.ding.customgraphics.NullCustomGraphics,0,[ Remove Graphics ],"
+                        "org.cytoscape.ding.customgraphics.NullCustomGraphics,"
+                        "0,[ Remove Graphics ],"
                 },
                 "NODE_CUSTOMGRAPHICS_2": {
                     "default":
-                        "org.cytoscape.ding.customgraphics.NullCustomGraphics,0,[ Remove Graphics ],"
+                        "org.cytoscape.ding.customgraphics.NullCustomGraphics,"
+                        "0,[ Remove Graphics ],"
                 },
                 "NODE_CUSTOMGRAPHICS_3": {
                     "default":
-                        "org.cytoscape.ding.customgraphics.NullCustomGraphics,0,[ Remove Graphics ],"
+                        "org.cytoscape.ding.customgraphics.NullCustomGraphics,"
+                        "0,[ Remove Graphics ],"
                 },
                 "NODE_CUSTOMGRAPHICS_4": {
                     "default":
-                        "org.cytoscape.ding.customgraphics.NullCustomGraphics,0,[ Remove Graphics ],"
+                        "org.cytoscape.ding.customgraphics.NullCustomGraphics,"
+                        "0,[ Remove Graphics ],"
                 },
                 "NODE_CUSTOMGRAPHICS_5": {
                     "default":
-                        "org.cytoscape.ding.customgraphics.NullCustomGraphics,0,[ Remove Graphics ],"
+                        "org.cytoscape.ding.customgraphics.NullCustomGraphics,"
+                        "0,[ Remove Graphics ],"
                 },
                 "NODE_CUSTOMGRAPHICS_6": {
                     "default":
-                        "org.cytoscape.ding.customgraphics.NullCustomGraphics,0,[ Remove Graphics ],"
+                        "org.cytoscape.ding.customgraphics.NullCustomGraphics,"
+                        "0,[ Remove Graphics ],"
                 },
                 "NODE_CUSTOMGRAPHICS_7": {
                     "default":
-                        "org.cytoscape.ding.customgraphics.NullCustomGraphics,0,[ Remove Graphics ],"
+                        "org.cytoscape.ding.customgraphics.NullCustomGraphics,"
+                        "0,[ Remove Graphics ],"
                 },
                 "NODE_CUSTOMGRAPHICS_8": {
                     "default":
-                        "org.cytoscape.ding.customgraphics.NullCustomGraphics,0,[ Remove Graphics ],"
+                        "org.cytoscape.ding.customgraphics.NullCustomGraphics,"
+                        "0,[ Remove Graphics ],"
                 },
                 "NODE_CUSTOMGRAPHICS_9": {
                     "default":
-                        "org.cytoscape.ding.customgraphics.NullCustomGraphics,0,[ Remove Graphics ],"
+                        "org.cytoscape.ding.customgraphics.NullCustomGraphics,"
+                        "0,[ Remove Graphics ],"
                 },
                 "NODE_CUSTOMGRAPHICS_POSITION_1": {
                     "default": "C,C,c,0.00,0.00"
@@ -270,39 +279,48 @@ COMPONENTS = [
                 },
                 "NODE_CUSTOMPAINT_1": {
                     "default":
-                        "DefaultVisualizableVisualProperty(id=NODE_CUSTOMPAINT_1, name=Node Custom Paint 1)"
+                        "DefaultVisualizableVisualProperty("
+                        "id=NODE_CUSTOMPAINT_1, name=Node Custom Paint 1)"
                 },
                 "NODE_CUSTOMPAINT_2": {
                     "default":
-                        "DefaultVisualizableVisualProperty(id=NODE_CUSTOMPAINT_2, name=Node Custom Paint 2)"
+                        "DefaultVisualizableVisualProperty("
+                        "id=NODE_CUSTOMPAINT_2, name=Node Custom Paint 2)"
                 },
                 "NODE_CUSTOMPAINT_3": {
                     "default":
-                        "DefaultVisualizableVisualProperty(id=NODE_CUSTOMPAINT_3, name=Node Custom Paint 3)"
+                        "DefaultVisualizableVisualProperty("
+                        "id=NODE_CUSTOMPAINT_3, name=Node Custom Paint 3)"
                 },
                 "NODE_CUSTOMPAINT_4": {
                     "default":
-                        "DefaultVisualizableVisualProperty(id=NODE_CUSTOMPAINT_4, name=Node Custom Paint 4)"
+                        "DefaultVisualizableVisualProperty("
+                        "id=NODE_CUSTOMPAINT_4, name=Node Custom Paint 4)"
                 },
                 "NODE_CUSTOMPAINT_5": {
                     "default":
-                        "DefaultVisualizableVisualProperty(id=NODE_CUSTOMPAINT_5, name=Node Custom Paint 5)"
+                        "DefaultVisualizableVisualProperty("
+                        "id=NODE_CUSTOMPAINT_5, name=Node Custom Paint 5)"
                 },
                 "NODE_CUSTOMPAINT_6": {
                     "default":
-                        "DefaultVisualizableVisualProperty(id=NODE_CUSTOMPAINT_6, name=Node Custom Paint 6)"
+                        "DefaultVisualizableVisualProperty("
+                        "id=NODE_CUSTOMPAINT_6, name=Node Custom Paint 6)"
                 },
                 "NODE_CUSTOMPAINT_7": {
                     "default":
-                        "DefaultVisualizableVisualProperty(id=NODE_CUSTOMPAINT_7, name=Node Custom Paint 7)"
+                        "DefaultVisualizableVisualProperty("
+                        "id=NODE_CUSTOMPAINT_7, name=Node Custom Paint 7)"
                 },
                 "NODE_CUSTOMPAINT_8": {
                     "default":
-                        "DefaultVisualizableVisualProperty(id=NODE_CUSTOMPAINT_8, name=Node Custom Paint 8)"
+                        "DefaultVisualizableVisualProperty("
+                        "id=NODE_CUSTOMPAINT_8, name=Node Custom Paint 8)"
                 },
                 "NODE_CUSTOMPAINT_9": {
                     "default":
-                        "DefaultVisualizableVisualProperty(id=NODE_CUSTOMPAINT_9, name=Node Custom Paint 9)"
+                        "DefaultVisualizableVisualProperty("
+                        "id=NODE_CUSTOMPAINT_9, name=Node Custom Paint 9)"
                 },
                 "NODE_DEPTH": {
                     "default": "0.0"
@@ -570,39 +588,48 @@ COMPONENTS = [
                 },
                 "NODE_CUSTOMGRAPHICS_1": {
                     "default":
-                        "org.cytoscape.ding.customgraphics.NullCustomGraphics,0,[ Remove Graphics ],"
+                        "org.cytoscape.ding.customgraphics.NullCustomGraphics,"
+                        "0,[ Remove Graphics ],"
                 },
                 "NODE_CUSTOMGRAPHICS_2": {
                     "default":
-                        "org.cytoscape.ding.customgraphics.NullCustomGraphics,0,[ Remove Graphics ],"
+                        "org.cytoscape.ding.customgraphics.NullCustomGraphics,"
+                        "0,[ Remove Graphics ],"
                 },
                 "NODE_CUSTOMGRAPHICS_3": {
                     "default":
-                        "org.cytoscape.ding.customgraphics.NullCustomGraphics,0,[ Remove Graphics ],"
+                        "org.cytoscape.ding.customgraphics.NullCustomGraphics,"
+                        "0,[ Remove Graphics ],"
                 },
                 "NODE_CUSTOMGRAPHICS_4": {
                     "default":
-                        "org.cytoscape.ding.customgraphics.NullCustomGraphics,0,[ Remove Graphics ],"
+                        "org.cytoscape.ding.customgraphics.NullCustomGraphics,"
+                        "0,[ Remove Graphics ],"
                 },
                 "NODE_CUSTOMGRAPHICS_5": {
                     "default":
-                        "org.cytoscape.ding.customgraphics.NullCustomGraphics,0,[ Remove Graphics ],"
+                        "org.cytoscape.ding.customgraphics.NullCustomGraphics,"
+                        "0,[ Remove Graphics ],"
                 },
                 "NODE_CUSTOMGRAPHICS_6": {
                     "default":
-                        "org.cytoscape.ding.customgraphics.NullCustomGraphics,0,[ Remove Graphics ],"
+                        "org.cytoscape.ding.customgraphics.NullCustomGraphics,"
+                        "0,[ Remove Graphics ],"
                 },
                 "NODE_CUSTOMGRAPHICS_7": {
                     "default":
-                        "org.cytoscape.ding.customgraphics.NullCustomGraphics,0,[ Remove Graphics ],"
+                        "org.cytoscape.ding.customgraphics.NullCustomGraphics,"
+                        "0,[ Remove Graphics ],"
                 },
                 "NODE_CUSTOMGRAPHICS_8": {
                     "default":
-                        "org.cytoscape.ding.customgraphics.NullCustomGraphics,0,[ Remove Graphics ],"
+                        "org.cytoscape.ding.customgraphics.NullCustomGraphics,"
+                        "0,[ Remove Graphics ],"
                 },
                 "NODE_CUSTOMGRAPHICS_9": {
                     "default":
-                        "org.cytoscape.ding.customgraphics.NullCustomGraphics,0,[ Remove Graphics ],"
+                        "org.cytoscape.ding.customgraphics.NullCustomGraphics,"
+                        "0,[ Remove Graphics ],"
                 },
                 "NODE_CUSTOMGRAPHICS_POSITION_1": {
                     "default": "C,C,c,0.00,0.00"
@@ -660,39 +687,48 @@ COMPONENTS = [
                 },
                 "NODE_CUSTOMPAINT_1": {
                     "default":
-                        "DefaultVisualizableVisualProperty(id=NODE_CUSTOMPAINT_1, name=Node Custom Paint 1)"
+                        "DefaultVisualizableVisualProperty("
+                        "id=NODE_CUSTOMPAINT_1, name=Node Custom Paint 1)"
                 },
                 "NODE_CUSTOMPAINT_2": {
                     "default":
-                        "DefaultVisualizableVisualProperty(id=NODE_CUSTOMPAINT_2, name=Node Custom Paint 2)"
+                        "DefaultVisualizableVisualProperty("
+                        "id=NODE_CUSTOMPAINT_2, name=Node Custom Paint 2)"
                 },
                 "NODE_CUSTOMPAINT_3": {
                     "default":
-                        "DefaultVisualizableVisualProperty(id=NODE_CUSTOMPAINT_3, name=Node Custom Paint 3)"
+                        "DefaultVisualizableVisualProperty("
+                        "id=NODE_CUSTOMPAINT_3, name=Node Custom Paint 3)"
                 },
                 "NODE_CUSTOMPAINT_4": {
                     "default":
-                        "DefaultVisualizableVisualProperty(id=NODE_CUSTOMPAINT_4, name=Node Custom Paint 4)"
+                        "DefaultVisualizableVisualProperty("
+                        "id=NODE_CUSTOMPAINT_4, name=Node Custom Paint 4)"
                 },
                 "NODE_CUSTOMPAINT_5": {
                     "default":
-                        "DefaultVisualizableVisualProperty(id=NODE_CUSTOMPAINT_5, name=Node Custom Paint 5)"
+                        "DefaultVisualizableVisualProperty("
+                        "id=NODE_CUSTOMPAINT_5, name=Node Custom Paint 5)"
                 },
                 "NODE_CUSTOMPAINT_6": {
                     "default":
-                        "DefaultVisualizableVisualProperty(id=NODE_CUSTOMPAINT_6, name=Node Custom Paint 6)"
+                        "DefaultVisualizableVisualProperty("
+                        "id=NODE_CUSTOMPAINT_6, name=Node Custom Paint 6)"
                 },
                 "NODE_CUSTOMPAINT_7": {
                     "default":
-                        "DefaultVisualizableVisualProperty(id=NODE_CUSTOMPAINT_7, name=Node Custom Paint 7)"
+                        "DefaultVisualizableVisualProperty("
+                        "id=NODE_CUSTOMPAINT_7, name=Node Custom Paint 7)"
                 },
                 "NODE_CUSTOMPAINT_8": {
                     "default":
-                        "DefaultVisualizableVisualProperty(id=NODE_CUSTOMPAINT_8, name=Node Custom Paint 8)"
+                        "DefaultVisualizableVisualProperty("
+                        "id=NODE_CUSTOMPAINT_8, name=Node Custom Paint 8)"
                 },
                 "NODE_CUSTOMPAINT_9": {
                     "default":
-                        "DefaultVisualizableVisualProperty(id=NODE_CUSTOMPAINT_9, name=Node Custom Paint 9)"
+                        "DefaultVisualizableVisualProperty("
+                        "id=NODE_CUSTOMPAINT_9, name=Node Custom Paint 9)"
                 },
                 "NODE_DEPTH": {
                     "default": "0.0"
@@ -713,37 +749,53 @@ COMPONENTS = [
                                 f"#{102:02X}{102:02X}{255:02X}",
                             "down":
                                 f"#{0:02X}{0:02X}{255:02X}",
-                            "{modifications[0]}_up {modifications[1]}_down":
+                            "{modifications[0]} up "
+                            "{modifications[1]} down":
                                 f"#{0:02X}{255:02X}{0:02X}",
-                            "{modifications[0]}_up {modifications[1]}_mid_down":
+                            "{modifications[0]} up "
+                            "{modifications[1]} mid down":
                                 f"#{0:02X}{255:02X}{0:02X}",
-                            "{modifications[0]}_mid_up {modifications[1]}_down":
+                            "{modifications[0]} mid up "
+                            "{modifications[1]} down":
                                 f"#{0:02X}{255:02X}{0:02X}",
-                            "{modifications[0]}_mid_up {modifications[1]}_mid_down":
+                            "{modifications[0]} mid up "
+                            "{modifications[1]} mid down":
                                 f"#{0:02X}{255:02X}{0:02X}",
-                            "{modifications[0]}_down {modifications[1]}_up":
+                            "{modifications[0]} down "
+                            "{modifications[1]} up":
                                 f"#{255:02X}{255:02X}{0:02X}",
-                            "{modifications[0]}_down {modifications[1]}_mid_up":
+                            "{modifications[0]} down "
+                            "{modifications[1]} mid up":
                                 f"#{255:02X}{255:02X}{0:02X}",
-                            "{modifications[0]}_mid_down {modifications[1]}_up":
+                            "{modifications[0]} mid down "
+                            "{modifications[1]} up":
                                 f"#{255:02X}{255:02X}{0:02X}",
-                            "{modifications[0]}_mid_down {modifications[1]}_mid_up":
+                            "{modifications[0]} mid down "
+                            "{modifications[1]} mid up":
                                 f"#{255:02X}{255:02X}{0:02X}",
-                            "{modifications[0]}_up {modifications[1]}_mid":
+                            "{modifications[0]} up "
+                            "{modifications[1]} mid":
                                 f"#{255:02X}{0:02X}{0:02X}",
-                            "{modifications[0]}_mid_up {modifications[1]}_mid":
+                            "{modifications[0]} mid up "
+                            "{modifications[1]} mid":
                                 f"#{255:02X}{102:02X}{102:02X}",
-                            "{modifications[0]}_mid_down {modifications[1]}_mid":
+                            "{modifications[0]} mid down "
+                            "{modifications[1]} mid":
                                 f"#{102:02X}{102:02X}{255:02X}",
-                            "{modifications[0]}_down {modifications[1]}_mid":
+                            "{modifications[0]} down "
+                            "{modifications[1]} mid":
                                 f"#{0:02X}{0:02X}{255:02X}",
-                            "{modifications[0]}_mid {modifications[1]}_up":
+                            "{modifications[0]} mid "
+                            "{modifications[1]} up":
                                 f"#{255:02X}{0:02X}{0:02X}",
-                            "{modifications[0]}_mid {modifications[1]}_mid_up":
+                            "{modifications[0]} mid "
+                            "{modifications[1]} mid up":
                                 f"#{255:02X}{102:02X}{102:02X}",
-                            "{modifications[0]}_mid {modifications[1]}_mid_down":
+                            "{modifications[0]} mid "
+                            "{modifications[1]} mid down":
                                 f"#{102:02X}{102:02X}{255:02X}",
-                            "{modifications[0]}_mid {modifications[1]}_down":
+                            "{modifications[0]} mid "
+                            "{modifications[1]} down":
                                 f"#{0:02X}{0:02X}{255:02X}",
                         },
                     },

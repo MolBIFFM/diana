@@ -415,7 +415,7 @@ The version of the BioGRID database to use. The default setting is `null`, corre
     }
 ]
 ```
-A list of accepted PSI-MI terms for interaction detection methods. The default setting is `[]`, corresponding to accepting any annotation.
+A list of accepted PSI-MI identifiers or terms for interaction detection methods. The default setting is `[]`, corresponding to accepting any annotation.
 
 ```json
 [
@@ -431,7 +431,7 @@ A list of accepted PSI-MI terms for interaction detection methods. The default s
     }
 ]
 ```
-A list of accepted PSI-MI terms for interaction types. The default setting is `[]`, corresponding to accepting any annotation.
+A list of accepted PSI-MI identifiers or terms for interaction types. The default setting is `[]`, corresponding to accepting any annotation.
 
 ```json
 [

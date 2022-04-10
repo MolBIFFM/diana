@@ -102,8 +102,9 @@ def process_workflow(configuration: dict,
     if "protein-protein interactions" in configuration:
         for neighbors in range(
                 max(configuration["protein-protein interactions"].get(
-                    database, {}).get("neighbors", 0) for database in
-                    {"BioGRID", "IntAct", "MINT", "Reactome", "STRING"})):
+                    database, {}).get("neighbors", 0)
+                    for database in ("BioGRID", "IntAct", "MINT", "Reactome",
+                                     "STRING"))):
             proteins = set()
             if "BioGRID" in configuration[
                     "protein-protein interactions"] and configuration[
@@ -993,8 +994,8 @@ def process_workflow(configuration: dict,
                                         "p", 1.0):
                                 export = True
                                 logger.info(
-                                    f"{k}\tprotein measurement enrichment\t{time} {modification}\t{p:.2e}"
-                                )
+                                    f"{k}\tprotein measurement enrichment\t"
+                                    f"{time} {modification}\t{p:.2e}")
 
                 if "sites" in configuration["module detection"][
                         "measurement enrichment"]:
@@ -1008,8 +1009,8 @@ def process_workflow(configuration: dict,
                                         "p", 1.0):
                                 export = True
                                 logger.info(
-                                    f"{k}\tsite measurement enrichment\t{time} {modification}\t{p:.2e}"
-                                )
+                                    f"{k}\tsite measurement enrichment\t{time} "
+                                    f"{modification}\t{p:.2e}")
 
             if "measurement location" in configuration["module detection"]:
                 if "proteins" in configuration["module detection"][
@@ -1024,8 +1025,8 @@ def process_workflow(configuration: dict,
                                         "p", 1.0):
                                 export = True
                                 logger.info(
-                                    f"{k}\tprotein measurement location\t{time} {modification}\t{p:.2e}"
-                                )
+                                    f"{k}\tprotein measurement location\t"
+                                    f"{time} {modification}\t{p:.2e}")
 
                 if "sites" in configuration["module detection"][
                         "measurement location"]:
@@ -1039,8 +1040,8 @@ def process_workflow(configuration: dict,
                                         "p", 1.0):
                                 export = True
                                 logger.info(
-                                    f"{k}\tsite measurement location\t{time} {modification}\t{p:.2e}"
-                                )
+                                    f"{k}\tsite measurement location\t{time} "
+                                    f"{modification}\t{p:.2e}")
 
             if export:
                 protein_protein_interaction_network.export(

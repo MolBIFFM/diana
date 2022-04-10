@@ -5,7 +5,7 @@ from access import iterate
 
 from databases import uniprot
 
-ORGANISM = {"file": {9606: "human"}}
+ORGANISM = {"files": {9606: "human"}}
 
 
 def get_ontology(namespaces: Container[str] = ("cellular_component",
@@ -32,8 +32,8 @@ def get_ontology(namespaces: Container[str] = ("cellular_component",
             continue
         elif line in ("[Term]", "[Typedef]"):
             if term.get("id") and term.get("namespace") in namespaces:
-                for property in ("is_a", "alt_id"):
-                    term[property] = tuple(term[property])
+                for attribute in ("is_a", "alt_id"):
+                    term[attribute] = tuple(term[attribute])
 
                 yield term
 
@@ -76,7 +76,8 @@ def get_annotation(
     primary_accession = uniprot.get_primary_accession(taxonomy_identifier)
 
     for row in iterate.tabular_txt(
-            f"http://geneontology.org/gene-associations/goa_{ORGANISM['file'][taxonomy_identifier]}.gaf.gz",
+            "http://geneontology.org/gene-associations/"
+            f"goa_{ORGANISM['files'][taxonomy_identifier]}.gaf.gz",
             skiprows=41,
             delimiter="\t",
             usecols=[0, 1, 4, 8, 12]):
@@ -86,7 +87,8 @@ def get_annotation(
                 yield (protein, row[2])
 
     for row in iterate.tabular_txt(
-            f"http://geneontology.org/gene-associations/goa_{ORGANISM['file'][taxonomy_identifier]}_isoform.gaf.gz",
+            "http://geneontology.org/gene-associations/"
+            f"goa_{ORGANISM['files'][taxonomy_identifier]}_isoform.gaf.gz",
             skiprows=41,
             delimiter="\t",
             usecols=[0, 4, 8, 12, 16]):

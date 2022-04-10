@@ -31,7 +31,6 @@ def add_genes_from_table(
     gene_accession_format: re.Pattern = re.compile("^(.+?)$"),
     sheet_name=Union[int, str],
     header: int = 0,
-    taxonomy_identifier: int = 9606,
 ) -> None:
     """
     Parse UniProt gene accessions from a tabular file and add the corresponding
@@ -523,7 +522,7 @@ def set_measurements(
                     network.nodes[protein][f"measurement {time}"] = "down"
                 else:
                     network.nodes[protein][f"measurement {time}"] = " ".join(
-                        f"{modification}_{classification[modification]}"
+                        f"{modification} {classification[modification]}"
                         for modification in sorted(classification))
 
             else:
@@ -944,7 +943,7 @@ def get_databases(network: nx.Graph) -> tuple[str, ...]:
         sorted(
             set(database for edge in network.edges()
                 for database in network.edges[edge]).intersection(
-                    {"BioGRID", "IntAct", "MINT", "Reactome", "STRING"})))
+                    ("BioGRID", "IntAct", "MINT", "Reactome", "STRING"))))
 
 
 def set_edge_weights(

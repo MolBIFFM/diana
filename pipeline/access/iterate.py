@@ -1,16 +1,14 @@
 """Utilities to iterate local files."""
 import gzip
-from optparse import Option
 import os
+import re
 import sys
 import tempfile
+import time
 import urllib.parse
 import urllib.request
-import re
-from typing import Generator, Optional, Union
-import time
 import zipfile
-from matplotlib.container import Container
+from typing import Container, Generator, Optional, Union
 
 import pandas as pd
 
@@ -29,7 +27,7 @@ def txt(url: str,
         file_from_zip_archive: The file from the zip archive to extract.
         buffering: The buffer size to process download, decompression
             and iteration of the file at.
-        pause: The number of seconds to wait after a failed download.  
+        pause: The number of seconds to wait after a failed download.
 
     Yields:
         Lines of the file at a given URL.
@@ -37,17 +35,18 @@ def txt(url: str,
     if not os.path.exists(
             os.path.join(
                 tempfile.gettempdir(),
-                f"{os.path.splitext(os.path.basename(sys.argv[0]))[0]}-{os.getpid()}"
-            )):
+                f"{os.path.splitext(os.path.basename(sys.argv[0]))[0]}-"
+                f"{os.getpid()}")):
         os.mkdir(
             os.path.join(
                 tempfile.gettempdir(),
-                f"{os.path.splitext(os.path.basename(sys.argv[0]))[0]}-{os.getpid()}"
-            ))
+                f"{os.path.splitext(os.path.basename(sys.argv[0]))[0]}-"
+                f"{os.getpid()}"))
 
     local_file_name = os.path.join(
         tempfile.gettempdir(),
-        f"{os.path.splitext(os.path.basename(sys.argv[0]))[0]}-{os.getpid()}",
+        f"{os.path.splitext(os.path.basename(sys.argv[0]))[0]}-"
+        f"{os.getpid()}",
         os.path.split(urllib.parse.urlparse(url).path)[1],
     )
 
@@ -81,13 +80,13 @@ def txt(url: str,
     if not os.listdir(
             os.path.join(
                 tempfile.gettempdir(),
-                f"{os.path.splitext(os.path.basename(sys.argv[0]))[0]}-{os.getpid()}"
-            )):
+                f"{os.path.splitext(os.path.basename(sys.argv[0]))[0]}-"
+                f"{os.getpid()}")):
         os.rmdir(
             os.path.join(
                 tempfile.gettempdir(),
-                f"{os.path.splitext(os.path.basename(sys.argv[0]))[0]}-{os.getpid()}"
-            ))
+                f"{os.path.splitext(os.path.basename(sys.argv[0]))[0]}-"
+                f"{os.getpid()}"))
 
 
 def tabular_txt(url: str,
@@ -118,13 +117,13 @@ def tabular_txt(url: str,
     if not os.path.exists(
             os.path.join(
                 tempfile.gettempdir(),
-                f"{os.path.splitext(os.path.basename(sys.argv[0]))[0]}-{os.getpid()}"
-            )):
+                f"{os.path.splitext(os.path.basename(sys.argv[0]))[0]}"
+                f"-{os.getpid()}")):
         os.mkdir(
             os.path.join(
                 tempfile.gettempdir(),
-                f"{os.path.splitext(os.path.basename(sys.argv[0]))[0]}-{os.getpid()}"
-            ))
+                f"{os.path.splitext(os.path.basename(sys.argv[0]))[0]}-"
+                f"{os.getpid()}"))
 
     local_file_name = os.path.join(
         tempfile.gettempdir(),
@@ -172,10 +171,10 @@ def tabular_txt(url: str,
     if not os.listdir(
             os.path.join(
                 tempfile.gettempdir(),
-                f"{os.path.splitext(os.path.basename(sys.argv[0]))[0]}-{os.getpid()}"
-            )):
+                f"{os.path.splitext(os.path.basename(sys.argv[0]))[0]}-"
+                f"{os.getpid()}")):
         os.rmdir(
             os.path.join(
                 tempfile.gettempdir(),
-                f"{os.path.splitext(os.path.basename(sys.argv[0]))[0]}-{os.getpid()}"
-            ))
+                f"{os.path.splitext(os.path.basename(sys.argv[0]))[0]}-"
+                f"{os.getpid()}"))

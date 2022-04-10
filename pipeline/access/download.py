@@ -18,8 +18,8 @@ def download_file(url: str,
         url: The file location.
         local_file_name: The local file name to download the file to.
         size: The buffer size to process the download at.
-        pause: The number of seconds to wait before determining a timeout or 
-            reattempting a failed or timed out download. 
+        pause: The number of seconds to wait before determining a timeout or
+            reattempting a failed or timed out download.
     """
     request = urllib.request.Request(
         url,

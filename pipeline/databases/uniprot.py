@@ -1,5 +1,4 @@
 """The interface for the UniProt database."""
-from optparse import Option
 from typing import Generator, Optional
 
 from access import iterate
@@ -20,8 +19,8 @@ def get_swiss_prot_entries(
     accessions, entry_gene_name, entry_protein_name = [], {}, {}
     rec_name, tax_id = False, 0
     for line in iterate.txt(
-            "https://ftp.uniprot.org/pub/databases/uniprot/current_release/knowledgebase/complete/uniprot_sprot.dat.gz"
-    ):
+            "https://ftp.uniprot.org/pub/databases/uniprot/current_release/"
+            "knowledgebase/complete/uniprot_sprot.dat.gz"):
         if not line.strip():
             continue
 

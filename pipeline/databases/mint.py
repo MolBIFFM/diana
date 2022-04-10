@@ -6,7 +6,7 @@ from formats import mitab
 
 from databases import uniprot
 
-ORGANISM = {"file": {9606: "species:human"}}
+ORGANISM = {"files": {9606: "species:human"}}
 
 
 def get_protein_protein_interactions(
@@ -19,10 +19,11 @@ def get_protein_protein_interactions(
     Yields protein-protein interactions from MINT.
 
     Args:
-        interaction_detection_methods: The accepted PSI-MI terms for interaction
-            detection method. If none are specified, any is accepted.
-        interaction_types: The accepted PSI-MI terms for interaction type.
-            If none are specified, any is accepted.
+        interaction_detection_methods: The accepted PSI-MI identifiers or terms
+            for interaction detection method. If none are specified, any is
+            accepted.
+        interaction_types: The accepted PSI-MI identifiers or terms for
+            interaction type. If none are specified, any is accepted.
         psi_mi_score: The PSI-MI score threshold.
         taxonomy_identifier: The taxonomy identifier.
 
@@ -33,7 +34,9 @@ def get_protein_protein_interactions(
     primary_accession = uniprot.get_primary_accession(taxonomy_identifier)
 
     for row in iterate.tabular_txt(
-            f"https://www.ebi.ac.uk/Tools/webservices/psicquic/mint/webservices/current/search/query/{ORGANISM['file'][taxonomy_identifier]}",
+            "https://www.ebi.ac.uk/Tools/webservices/psicquic/mint/"
+            "webservices/current/search/query/"
+            f"{ORGANISM['files'][taxonomy_identifier]}",
             delimiter="\t",
             header=0,
             usecols=[
@@ -49,16 +52,23 @@ def get_protein_protein_interactions(
             ],
     ):
         if ((not interaction_detection_methods or
-             mitab.namespace_has_any_term_from(
+             (mitab.namespace_has_any_identifier_from(
                  row[4],
                  "psi-mi",
                  interaction_detection_methods,
-             )) and (mitab.namespace_has_identifier(row[5], "taxid",
-                                                    taxonomy_identifier) and
-                     mitab.namespace_has_identifier(row[6], "taxid",
-                                                    taxonomy_identifier)) and
-            (not interaction_types or mitab.namespace_has_any_term_from(
-                row[7], "psi-mi", interaction_types)) and
+             ) or mitab.namespace_has_any_term_from(
+                 row[4],
+                 "psi-mi",
+                 interaction_detection_methods,
+             ))) and (mitab.namespace_has_identifier(row[5], "taxid",
+                                                     taxonomy_identifier) and
+                      mitab.namespace_has_identifier(row[6], "taxid",
+                                                     taxonomy_identifier)) and
+            (not interaction_types or
+             (mitab.namespace_has_any_identifier_from(row[7], "psi-mi",
+                                                      interaction_types) or
+              mitab.namespace_has_any_term_from(row[7], "psi-mi",
+                                                interaction_types))) and
             (score := mitab.get_identifiers_from_namespace(
                 row[8], "intact-miscore")) and float(score[0]) >= psi_mi_score):
             for interactor_a in mitab.get_identifiers_from_namespace(

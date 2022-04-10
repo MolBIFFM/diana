@@ -51,17 +51,18 @@ def get_protein_protein_interactions(
         Pairs of interacting proteins and the combined STRING score associated
             with the interaction.
     """
-    uniprot_id_map = {}
+    uniprot_id = {}
     for row in iterate.tabular_txt(
-            f"https://stringdb-static.org/download/protein.aliases.v{version}/{taxonomy_identifier}.protein.aliases.v{version}.txt.gz",
+            f"https://stringdb-static.org/download/protein.aliases.v{version}/"
+            f"{taxonomy_identifier}.protein.aliases.v{version}.txt.gz",
             delimiter="\t",
             skiprows=1,
             usecols=[0, 1, 2],
     ):
         if "UniProt_AC" in row[2]:
-            if row[0] not in uniprot_id_map:
-                uniprot_id_map[row[0]] = set()
-            uniprot_id_map[row[0]].add(row[1])
+            if row[0] not in uniprot_id:
+                uniprot_id[row[0]] = set()
+            uniprot_id[row[0]].add(row[1])
 
     thresholds = {
         column: threshold for column, threshold in {
@@ -85,17 +86,20 @@ def get_protein_protein_interactions(
     primary_accession = uniprot.get_primary_accession(taxonomy_identifier)
 
     for row in iterate.tabular_txt(
-            f"https://stringdb-static.org/download/protein.physical.links.full.v{version}/{taxonomy_identifier}.protein.links.full.v{version}.txt.gz"
-            if physical else
-            f"https://stringdb-static.org/download/protein.links.full.v{version}/{taxonomy_identifier}.protein.links.full.v{version}.txt.gz",
+            "https://stringdb-static.org/download/"
+            f"protein.physical.links.full.v{version}/"
+            f"{taxonomy_identifier}.protein.links.full.v{version}.txt.gz"
+            if physical else "https://stringdb-static.org/download/"
+            f"protein.links.full.v{version}/"
+            f"{taxonomy_identifier}.protein.links.full.v{version}.txt.gz",
             delimiter=" ",
             header=0,
             usecols=["protein1", "protein2"] + list(thresholds.keys()),
     ):
         if all(row[column] / 1000 >= thresholds[column]
                for column in thresholds):
-            for interactor_a in uniprot_id_map.get(row["protein1"], set()):
-                for interactor_b in uniprot_id_map.get(row["protein2"], set()):
+            for interactor_a in uniprot_id.get(row["protein1"], set()):
+                for interactor_b in uniprot_id.get(row["protein2"], set()):
                     for primary_interactor_a in primary_accession.get(
                             interactor_a, {interactor_a}):
                         for primary_interactor_b in primary_accession.get(
