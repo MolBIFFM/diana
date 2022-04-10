@@ -10,7 +10,9 @@ from typing import Optional
 
 import networkx as nx
 
-from cytoscape import style
+from cytoscape import (gene_ontology_network_style,
+                       protein_protein_interaction_network_style,
+                       reactome_network_style)
 from interface import (combination, conversion, correction, default,
                        modularization, test)
 from networks import (gene_ontology_network,
@@ -367,7 +369,7 @@ def process_workflow(configuration: dict,
             )
 
     if "Cytoscape" in configuration:
-        styles = style.get_protein_protein_interaction_network_styles(
+        styles = protein_protein_interaction_network_style.get_protein_protein_interaction_network_styles(
             network,
             bar_chart_range=default.MEASUREMENT_RANGE[
                 configuration["Cytoscape"].get("bar chart",
@@ -389,7 +391,7 @@ def process_workflow(configuration: dict,
                 configuration["Cytoscape"].get("edge transparency")],
             attribute="score")
 
-        style.export(
+        protein_protein_interaction_network_style.export(
             styles,
             f"{logger.name}.{index}" if index else logger.name,
         )
@@ -595,9 +597,9 @@ def process_workflow(configuration: dict,
             f"{logger.name}.go.{index}" if index else f"{logger.name}.go")
 
         if "Cytoscape" in configuration:
-            ontology_network_style = style.get_gene_ontology_network_style(
+            ontology_network_style = gene_ontology_network_style.get_gene_ontology_network_style(
                 ontology_network)
-            style.export(
+            gene_ontology_network_style.export(
                 ontology_network_style,
                 f"{logger.name}.go.{index}" if index else f"{logger.name}.go")
 
@@ -725,9 +727,9 @@ def process_workflow(configuration: dict,
             if index else f"{logger.name}.reactome")
 
         if "Cytoscape" in configuration:
-            pathway_network_style = style.get_reactome_network_style(
+            pathway_network_style = reactome_network_style.get_reactome_network_style(
                 pathway_network)
-            style.export(
+            reactome_network_style.export(
                 pathway_network_style, f"{logger.name}.reactome.{index}"
                 if index else f"{logger.name}.reactome")
 
