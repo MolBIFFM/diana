@@ -13,7 +13,7 @@ from databases import (biogrid, gene_ontology, intact, mint, reactome, string,
                        uniprot)
 
 
-def get_protein_protein_interaction_network() -> nx.Graph():
+def get_network() -> nx.Graph():
     """
     Initializes a protein-protein interaction network.
 

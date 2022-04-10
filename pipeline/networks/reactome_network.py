@@ -12,13 +12,12 @@ from analysis import correction, test
 from databases import reactome
 
 
-def get_reactome_network(protein_protein_interaction_network: nx.Graph,
-                         enrichment_test: Callable[[int, int, int, int],
-                                                   float] = test.hypergeometric,
-                         multiple_testing_correction: Callable[
-                             [dict[str, float]],
-                             dict[str, float]] = correction.benjamini_hochberg,
-                         taxonomy_identifier: int = 9606) -> nx.Graph:
+def get_network(protein_protein_interaction_network: nx.Graph,
+                enrichment_test: Callable[[int, int, int, int],
+                                          float] = test.hypergeometric,
+                multiple_testing_correction: Callable[[dict[str, float]], dict[
+                    str, float]] = correction.benjamini_hochberg,
+                taxonomy_identifier: int = 9606) -> nx.Graph:
     """
     Assemble a Reactome network corresponding to the protein-protein interaction
     network.

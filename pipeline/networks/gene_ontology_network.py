@@ -13,16 +13,15 @@ from analysis import correction, test
 from databases import gene_ontology
 
 
-def get_gene_ontology_network(
-        protein_protein_interaction_network: nx.Graph,
-        namespaces: Container[str] = ("cellular_component",
-                                      "molecular_function",
-                                      "biological_process"),
-        enrichment_test: Callable[[int, int, int, int],
-                                  float] = test.hypergeometric,
-        multiple_testing_correction: Callable[[dict[str, float]], dict[
-            str, float]] = correction.benjamini_hochberg,
-        taxonomy_identifier: int = 9606) -> nx.Graph:
+def get_network(protein_protein_interaction_network: nx.Graph,
+                namespaces: Container[str] = ("cellular_component",
+                                              "molecular_function",
+                                              "biological_process"),
+                enrichment_test: Callable[[int, int, int, int],
+                                          float] = test.hypergeometric,
+                multiple_testing_correction: Callable[[dict[str, float]], dict[
+                    str, float]] = correction.benjamini_hochberg,
+                taxonomy_identifier: int = 9606) -> nx.Graph:
     """
     Assemble a Gene Ontology network corresponding to the protein-protein
     interaction network.

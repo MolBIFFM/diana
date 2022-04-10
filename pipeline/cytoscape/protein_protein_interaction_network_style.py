@@ -922,7 +922,7 @@ def get_bar_chart(
     return f"org.cytoscape.BarChart: {bar_chart}"
 
 
-def get_protein_protein_interaction_network_styles(
+def get_style(
     network: nx.Graph,
     bar_chart_range: tuple[float, float] = (-1.0, 1.0),
     convert_measurement: Callable[

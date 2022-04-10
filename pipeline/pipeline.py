@@ -43,8 +43,7 @@ def process_workflow(configuration: dict,
             configurations: The specification of a workflow.
             logger: A logger.
     """
-    network = protein_protein_interaction_network.get_protein_protein_interaction_network(
-    )
+    network = protein_protein_interaction_network.get_network()
 
     for entry in configuration.get("genes", {}):
         if "file" in entry and "accession column" in entry:
@@ -370,7 +369,7 @@ def process_workflow(configuration: dict,
             )
 
     if "Cytoscape" in configuration:
-        styles = protein_protein_interaction_network_style.get_protein_protein_interaction_network_styles(
+        style = protein_protein_interaction_network_style.get_style(
             network,
             bar_chart_range=default.MEASUREMENT_RANGE[
                 configuration["Cytoscape"].get("bar chart",
@@ -393,7 +392,7 @@ def process_workflow(configuration: dict,
             attribute="score")
 
         protein_protein_interaction_network_style.export(
-            styles,
+            style,
             f"{logger.name}.{index}" if index else logger.name,
         )
 
@@ -501,7 +500,7 @@ def process_workflow(configuration: dict,
                             measurement: measurement <= measurement_range[
                                 0] or measurement >= measurement_range[1]))
 
-            ontology_network = gene_ontology_network.get_gene_ontology_network(
+            ontology_network = gene_ontology_network.get_network(
                 nx.induced_subgraph(network, proteins),
                 namespaces=configuration["Gene Ontology network"].get(
                     "namespaces", [
@@ -560,7 +559,7 @@ def process_workflow(configuration: dict,
                             measurement: measurement <= measurement_range[
                                 0] or measurement >= measurement_range[1]))
 
-            ontology_network = gene_ontology_network.get_gene_ontology_network(
+            ontology_network = gene_ontology_network.get_network(
                 nx.induced_subgraph(network, proteins),
                 namespaces=configuration["Gene Ontology network"].get(
                     "namespaces", [
@@ -577,7 +576,7 @@ def process_workflow(configuration: dict,
                     "species", 9606))
 
         else:
-            ontology_network = gene_ontology_network.get_gene_ontology_network(
+            ontology_network = gene_ontology_network.get_network(
                 network,
                 namespaces=configuration["Gene Ontology network"].get(
                     "namespaces", [
@@ -598,7 +597,7 @@ def process_workflow(configuration: dict,
             f"{logger.name}.go.{index}" if index else f"{logger.name}.go")
 
         if "Cytoscape" in configuration:
-            ontology_network_style = gene_ontology_network_style.get_gene_ontology_network_style(
+            ontology_network_style = gene_ontology_network_style.get_style(
                 ontology_network)
             gene_ontology_network_style.export(
                 ontology_network_style,
@@ -647,7 +646,7 @@ def process_workflow(configuration: dict,
                             measurement: measurement <= measurement_range[
                                 0] or measurement >= measurement_range[1]))
 
-            pathway_network = reactome_network.get_reactome_network(
+            pathway_network = reactome_network.get_network(
                 nx.induced_subgraph(network, proteins),
                 enrichment_test=test.ENRICHMENT_TEST[
                     configuration["Reactome network"].get(
@@ -700,7 +699,7 @@ def process_workflow(configuration: dict,
                             measurement: measurement <= measurement_range[
                                 0] or measurement >= measurement_range[1]))
 
-            pathway_network = reactome_network.get_reactome_network(
+            pathway_network = reactome_network.get_network(
                 nx.induced_subgraph(network, proteins),
                 enrichment_test=test.ENRICHMENT_TEST[
                     configuration["Reactome network"].get(
@@ -712,7 +711,7 @@ def process_workflow(configuration: dict,
                     "species", 9606))
 
         else:
-            pathway_network = reactome_network.get_reactome_network(
+            pathway_network = reactome_network.get_network(
                 network,
                 enrichment_test=test.ENRICHMENT_TEST[
                     configuration["Reactome network"].get(
@@ -728,7 +727,7 @@ def process_workflow(configuration: dict,
             if index else f"{logger.name}.reactome")
 
         if "Cytoscape" in configuration:
-            pathway_network_style = reactome_network_style.get_reactome_network_style(
+            pathway_network_style = reactome_network_style.get_style(
                 pathway_network)
             reactome_network_style.export(
                 pathway_network_style, f"{logger.name}.reactome.{index}"

@@ -411,9 +411,9 @@ COMPONENTS = {
 }
 
 
-def get_reactome_network_style(network: nx.Graph) -> ET.ElementTree:
+def get_style(network: nx.Graph) -> ET.ElementTree:
     """
-    Returns the Cytoscape styles for a Reactome network.
+    Returns the Cytoscape style for a Reactome network.
 
     Args:
         network: The Reactome network.

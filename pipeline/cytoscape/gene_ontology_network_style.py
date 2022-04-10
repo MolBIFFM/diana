@@ -420,9 +420,9 @@ COMPONENTS = {
 }
 
 
-def get_gene_ontology_network_style(network: nx.Graph) -> ET.ElementTree:
+def get_style(network: nx.Graph) -> ET.ElementTree:
     """
-    Returns the Cytoscape styles for a Gene Ontology network.
+    Returns the Cytoscape style for a Gene Ontology network.
 
     Args:
         network: The Gene Ontology network.
