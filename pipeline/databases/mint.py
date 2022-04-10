@@ -52,7 +52,7 @@ def get_protein_protein_interactions(
             ],
     ):
         if ((not interaction_detection_methods or
-             (mitab.namespace_has_any_identifier_from(
+             mitab.namespace_has_any_identifier_from(
                  row[4],
                  "psi-mi",
                  interaction_detection_methods,
@@ -60,10 +60,10 @@ def get_protein_protein_interactions(
                  row[4],
                  "psi-mi",
                  interaction_detection_methods,
-             ))) and (mitab.namespace_has_identifier(row[5], "taxid",
-                                                     taxonomy_identifier) and
-                      mitab.namespace_has_identifier(row[6], "taxid",
-                                                     taxonomy_identifier)) and
+             )) and (mitab.namespace_has_identifier(row[5], "taxid",
+                                                    taxonomy_identifier) and
+                     mitab.namespace_has_identifier(row[6], "taxid",
+                                                    taxonomy_identifier)) and
             (not interaction_types or
              (mitab.namespace_has_any_identifier_from(row[7], "psi-mi",
                                                       interaction_types) or
@@ -74,7 +74,6 @@ def get_protein_protein_interactions(
             for interactor_a in mitab.get_identifiers_from_namespace(
                     row[0], "uniprotkb") + mitab.get_identifiers_from_namespace(
                         row[2], "uniprotkb"):
-
                 if "-" in interactor_a and not interactor_a.split(
                         "-")[1].isnumeric():
                     interactor_a = interactor_a.split("-")[0]
