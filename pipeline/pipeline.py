@@ -368,7 +368,11 @@ def process_workflow(configuration: dict,
                 ["STRING"].get("version", 11.5),
             )
 
-    if "Cytoscape" in configuration:
+    if "Cytoscape" in configuration and any(
+            len(
+                protein_protein_interaction_network.
+                get_post_translational_modifications(network, time))
+            for time in protein_protein_interaction_network.get_times(network)):
         style = protein_protein_interaction_network_style.get_style(
             network,
             bar_chart_range=default.MEASUREMENT_RANGE[
