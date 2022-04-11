@@ -6,7 +6,7 @@ import logging
 import os
 import re
 import sys
-from typing import Optional
+from typing import Any, Optional
 
 import networkx as nx
 
@@ -19,7 +19,7 @@ from networks import (gene_ontology_network,
                       protein_protein_interaction_network, reactome_network)
 
 
-def process_configuration(configurations: list[dict],
+def process_configuration(configurations: list[dict[str, Any]],
                           logger: logging.Logger) -> None:
     """
     Executes workflows specified in configurations sequentially.
@@ -369,9 +369,8 @@ def process_workflow(configuration: dict,
             )
 
     if "Cytoscape" in configuration and any(
-            len(
-                protein_protein_interaction_network.
-                get_post_translational_modifications(network, time))
+            protein_protein_interaction_network.
+            get_post_translational_modifications(network, time)
             for time in protein_protein_interaction_network.get_times(network)):
         style = protein_protein_interaction_network_style.get_style(
             network,
