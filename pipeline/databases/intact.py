@@ -66,9 +66,9 @@ def get_protein_protein_interactions(
              mitab.namespace_has_any_term_from(row["Interaction type(s)"],
                                                "psi-mi", interaction_types)) and
             (score := mitab.get_identifiers_from_namespace(
-                row["Confidence value(s)"], "intact-miscore") and
-             float(score[0]) >= psi_mi_score) and mitab.namespace_has_term(
-                 row["Type(s) interactor A"], "psi-mi", "protein") and
+                row["Confidence value(s)"], "intact-miscore")) and
+                float(score[0]) >= psi_mi_score and mitab.namespace_has_term(
+                    row["Type(s) interactor A"], "psi-mi", "protein") and
                 mitab.namespace_has_term(row["Type(s) interactor B"], "psi-mi",
                                          "protein")):
             for interactor_a in mitab.get_identifiers_from_namespace(
