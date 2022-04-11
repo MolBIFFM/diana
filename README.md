@@ -27,7 +27,7 @@ A configuration file specifies a list of workflows executed sequentially. Config
 
 The configuration defines the assembly of a protein-protein interaction network from a set of input genes or proteins optionally associated with mass spectrometry data, using protein-protein interaction data from BioGRID, IntAct, MINT Reactome or STRING, optionally extended to proteins neighboring the input.
 
-The distribution of mass spectrometry measurements as well as enrichment of Gene Ontology terms or Reactome pathways by the protein-protein interaction network or its individual modules can be assessed. The protein-protein interaction network as well as networks of represented Gene Ontology terms and Reactome pathways can be exported with a corresponding Cytoscape style specification.
+The distribution of mass spectrometry measurements as well as enrichment of Gene Ontology terms or Reactome pathways by the protein-protein interaction network or its individual modules can be assessed. The protein-protein interaction network as well as networks of represented Gene Ontology terms and Reactome pathways can be exported, each optionally along corresponding Cytoscape style specifications.
 
 ---
 
