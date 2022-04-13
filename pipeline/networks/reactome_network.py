@@ -1,7 +1,7 @@
 """
 Reactome network
 
-Nodes are Reactome pathways annotated with proteins specified species. Edges are 
+Nodes are Reactome pathways annotated with proteins specified species. Edges are
 directed pathway relationships within Reactome.
 """
 

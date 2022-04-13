@@ -616,8 +616,8 @@ def get_neighbors_from_corum(network: nx.Graph,
 
     Args:
         network: The protein-protein interaction network.
-        purification_methods: The accepted PSI-MI identifiers or terms for the 
-            protein complex purification method. If none are specified, any are 
+        purification_methods: The accepted PSI-MI identifiers or terms for the
+            protein complex purification method. If none are specified, any are
             accepted.
         taxonomy_identifier: The taxonomy identifier.
 
@@ -646,8 +646,8 @@ def add_protein_protein_interactions_from_corum(
 
     Args:
         network: The protein-protein interaction network.
-        purification_methods: The accepted PSI-MI identifiers or terms for the 
-            protein complex purification method. If none are specified, any are 
+        purification_methods: The accepted PSI-MI identifiers or terms for the
+            protein complex purification method. If none are specified, any are
             accepted.
         taxonomy_identifier: The taxonomy identifier.
     """
@@ -671,10 +671,10 @@ def get_neighbors_from_intact(
 
     Args:
         network: The protein-protein interaction network.
-        interaction_detection_methods: The accepted PSI-MI identifiers or terms 
-            for interaction detection method. If none are specified, any are 
+        interaction_detection_methods: The accepted PSI-MI identifiers or terms
+            for interaction detection method. If none are specified, any are
             accepted.
-        interaction_types: The accepted PSI-MI identifiers or terms for 
+        interaction_types: The accepted PSI-MI identifiers or terms for
             interaction type. If none are specified, any are accepted.
         psi_mi_score: The PSI-MI score threshold.
         taxonomy_identifier: The taxonomy identifier.
@@ -707,10 +707,10 @@ def add_protein_protein_interactions_from_intact(
 
     Args:
         network: The protein-protein interaction network.
-        interaction_detection_methods: The accepted PSI-MI identifiers or terms 
-            for interaction detection method. If none are specified, any are 
+        interaction_detection_methods: The accepted PSI-MI identifiers or terms
+            for interaction detection method. If none are specified, any are
             accepted.
-        interaction_types: The accepted PSI-MI identifiers or terms for 
+        interaction_types: The accepted PSI-MI identifiers or terms for
             interaction type. If none are specified, any are accepted.
         psi_mi_score: The PSI-MI score threshold.
         taxonomy_identifier: The taxonomy identifier.
@@ -741,10 +741,10 @@ def get_neighbors_from_mint(network: nx.Graph,
 
     Args:
         network: The protein-protein interaction network.
-        interaction_detection_methods: The accepted PSI-MI identifiers or terms 
-            for interaction detection method. If none are specified, any are 
+        interaction_detection_methods: The accepted PSI-MI identifiers or terms
+            for interaction detection method. If none are specified, any are
             accepted.
-        interaction_types: The accepted PSI-MI identifiers or terms for 
+        interaction_types: The accepted PSI-MI identifiers or terms for
             interaction type. If none are specified, any are accepted.
         psi_mi_score: The PSI-MI score threshold.
         taxonomy_identifier: The taxonomy identifier.
@@ -777,10 +777,10 @@ def add_protein_protein_interactions_from_mint(
 
     Args:
         network: The protein-protein interaction network.
-        interaction_detection_methods: The accepted PSI-MI identifiers or terms 
-            for interaction detection method. If none are specified, any are 
+        interaction_detection_methods: The accepted PSI-MI identifiers or terms
+            for interaction detection method. If none are specified, any are
             accepted.
-        interaction_types: The accepted PSI-MI identifiers or terms for 
+        interaction_types: The accepted PSI-MI identifiers or terms for
             interaction type. If none are specified, any are accepted.
         psi_mi_score: The PSI-MI score threshold.
         taxonomy_identifier: The taxonomy identifier.

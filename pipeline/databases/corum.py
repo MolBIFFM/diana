@@ -17,8 +17,8 @@ def get_protein_protein_interactions(
     Yields protein-protein interactions from CORUM.
 
     Args:
-        purification_methods: The accepted PSI-MI identifiers or terms for the 
-            protein complex purification method. If none are specified, any are 
+        purification_methods: The accepted PSI-MI identifiers or terms for the
+            protein complex purification method. If none are specified, any are
             accepted.
         taxonomy_identifier: The taxonomy identifier.
 
@@ -38,13 +38,11 @@ def get_protein_protein_interactions(
                 "SWISSPROT organism"
             ]):
         if ((not purification_methods or any(
-                purification_method.split("-")
-            [0].strip() in purification_methods or purification_method.split(
-                "-")[1].strip() in purification_methods for purification_method
-                in row["Protein complex purification method"].split(";"))) and
-                all(organism[:organism.find("(")].rstrip() == ORGANISM["data"]
-                    [taxonomy_identifier]
-                    for organism in row["SWISSPROT organism"].split(";"))):
+                purification_method.split("-")[0] in purification_methods or
+                purification_method.split(
+                    "-")[1].rstrip() in purification_methods
+                for purification_method in
+                row["Protein complex purification method"].split(";")))):
 
             subunits = [
                 subunit.split("-")[0] if "-" in subunit and
@@ -52,10 +50,18 @@ def get_protein_protein_interactions(
                 for subunit in row["subunits(UniProt IDs)"].split(";")
             ]
 
+            organisms = row["SWISSPROT organism"].split(";")
+
             for a in range(len(subunits) - 1):
+                if organisms[a][:organisms[a].find("(")].rstrip(
+                ) != ORGANISM["data"][taxonomy_identifier]:
+                    continue
                 for primary_interactor_a in primary_accession.get(
                         subunits[a].split("-")[0], {subunits[a]}):
                     for b in range(a + 1, len(subunits)):
+                        if organisms[b][:organisms[b].find("(")].rstrip(
+                        ) != ORGANISM["data"][taxonomy_identifier]:
+                            continue
                         for primary_interactor_b in primary_accession.get(
                                 subunits[b].split("-")[0], {subunits[b]}):
                             yield (primary_interactor_a, primary_interactor_b)
