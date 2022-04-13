@@ -377,13 +377,13 @@ COMPONENTS = {
             "NODE_SIZE": {
                 "default": "35.0",
                 "continuousMapping": {
-                    "attributeName": "proteins",
+                    "attributeName": "number of proteins",
                     "attributeType": "float",
                     "continuousMappingPoint": {
-                        "1.0": {
-                            "equalValue": "36.0",
-                            "greaterValue": "36.0",
-                            "lesserValue": "36.0"
+                        "0.0": {
+                            "equalValue": "35.0",
+                            "greaterValue": "35.0",
+                            "lesserValue": "35.0"
                         },
                         "{max}": {
                             "equalValue": "{size}",

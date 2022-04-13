@@ -1,8 +1,8 @@
 """
 Reactome network
 
-Nodes are Reactome pathways annotated with proteins from a protein-protein
-interaction network. Edges are directed pathway relationships within Reactome.
+Nodes are Reactome pathways annotated with proteins specified species. Edges are 
+directed pathway relationships within Reactome.
 """
 
 from typing import Callable
@@ -12,7 +12,7 @@ from analysis import correction, test
 from databases import reactome
 
 
-def get_network(protein_protein_interaction_network: nx.Graph,
+def get_network(protein_protein_interaction_network: nx.Graph = nx.Graph(),
                 enrichment_test: Callable[[int, int, int, int],
                                           float] = test.hypergeometric,
                 multiple_testing_correction: Callable[[dict[str, float]], dict[
@@ -56,14 +56,14 @@ def get_network(protein_protein_interaction_network: nx.Graph,
     annotated_proteins = set.union(*annotation.values())
 
     network_intersection = {
-        pathway: len(annotation[pathway].intersection(
-            protein_protein_interaction_network.nodes()))
+        pathway: annotation[pathway].intersection(
+            protein_protein_interaction_network.nodes())
         for pathway in annotation
     }
 
     p_value = multiple_testing_correction({
         pathway: enrichment_test(
-            network_intersection[pathway], len(annotated_proteins),
+            len(network_intersection[pathway]), len(annotated_proteins),
             len(annotation[pathway]),
             len(
                 annotated_proteins.intersection(
@@ -71,13 +71,12 @@ def get_network(protein_protein_interaction_network: nx.Graph,
         for pathway in network
     })
 
-    network.remove_nodes_from([
-        pathway for pathway in annotation if not network_intersection[pathway]
-    ])
-
     for pathway in network:
-        network.nodes[pathway]["proteins"] = network_intersection[pathway]
         network.nodes[pathway]["p-value"] = p_value[pathway]
+        network.nodes[pathway]["number of proteins"] = len(
+            network_intersection[pathway])
+        network.nodes[pathway]["proteins"] = " ".join(
+            sorted(network_intersection[pathway]))
 
     return network
 
@@ -90,9 +89,13 @@ def get_pathway_sizes(network: nx.Graph) -> dict[str, int]:
         network: The Reactome network.
 
     Returns:
-        The number of proteins associated with any pathway in Reactome.
+        The number of proteins from the initial protein-protein interaction
+        network associated with any pathway in Reactome.
     """
-    return {pathway: network.nodes[pathway]["proteins"] for pathway in network}
+    return {
+        pathway: network.nodes[pathway]["number of proteins"]
+        for pathway in network
+    }
 
 
 def export(network: nx.Graph, basename: str) -> None:

@@ -36,6 +36,6 @@ CONFIDENCE_SCORE_COMBINATION: dict[str, Callable[
         "sum": lambda scores: math.fsum(scores.values()),
         **{
             database: lambda scores, database=database: scores.get(
-                database, 0.0) for database in ("BioGRID", "IntAct", "MINT", "Reactome", "STRING")
+                database, 0.0) for database in ("BioGRID", "CORUM", "IntAct", "MINT", "Reactome", "STRING")
         }, None: lambda scores: float(bool(scores.values()))
     }

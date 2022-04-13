@@ -102,8 +102,8 @@ def process_workflow(configuration: dict,
         for neighbors in range(
                 max(configuration["protein-protein interactions"].get(
                     database, {}).get("neighbors", 0)
-                    for database in ("BioGRID", "IntAct", "MINT", "Reactome",
-                                     "STRING"))):
+                    for database in ("BioGRID", "CORUM", "IntAct", "MINT",
+                                     "Reactome", "STRING"))):
             proteins = set()
             if "BioGRID" in configuration[
                     "protein-protein interactions"] and configuration[
@@ -134,6 +134,18 @@ def process_workflow(configuration: dict,
                             ["BioGRID"].get("version").split(".")) if "version"
                         in configuration["protein-protein interactions"]
                         ["BioGRID"] else None))
+
+            if "CORUM" in configuration[
+                    "protein-protein interactions"] and configuration[
+                        "protein-protein interactions"]["CORUM"].get(
+                            "neighbors", 0) > neighbors:
+                proteins.update(
+                    protein_protein_interaction_network.
+                    get_neighbors_from_corum(
+                        network,
+                        purification_methods=configuration[
+                            "protein-protein interactions"]["CORUM"].get(
+                                "purification methods", [])))
 
             if "IntAct" in configuration[
                     "protein-protein interactions"] and configuration[
@@ -279,6 +291,13 @@ def process_workflow(configuration: dict,
                     ["BioGRID"].get("version").split(".")) if "version"
                 in configuration["protein-protein interactions"]["BioGRID"] else
                 None)
+
+        if "CORUM" in configuration["protein-protein interactions"]:
+            protein_protein_interaction_network.add_protein_protein_interactions_from_corum(
+                network,
+                purification_methods=configuration[
+                    "protein-protein interactions"]["CORUM"].get(
+                        "purification methods", []))
 
         if "IntAct" in configuration["protein-protein interactions"]:
             protein_protein_interaction_network.add_protein_protein_interactions_from_intact(

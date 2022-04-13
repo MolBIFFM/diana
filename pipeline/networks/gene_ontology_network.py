@@ -1,9 +1,8 @@
 """
 Gene Ontology network
 
-Nodes are Gene Ontology terms annotated with proteins from a protein-protein
-interaction network species. Edges are directed term relationships within the
-Gene Ontology.
+Nodes are Gene Ontology terms annotated with proteins from a specified species. 
+Edges are directed term relationships within the Gene Ontology.
 """
 
 from typing import Callable, Container
@@ -13,7 +12,7 @@ from analysis import correction, test
 from databases import gene_ontology
 
 
-def get_network(protein_protein_interaction_network: nx.Graph,
+def get_network(protein_protein_interaction_network: nx.Graph = nx.Graph(),
                 namespaces: Container[str] = ("cellular_component",
                                               "molecular_function",
                                               "biological_process"),
@@ -67,13 +66,13 @@ def get_network(protein_protein_interaction_network: nx.Graph,
     annotated_proteins = set.union(*annotation.values())
 
     network_intersection = {
-        term: len(annotation[term].intersection(
-            protein_protein_interaction_network.nodes())) for term in annotation
+        term: annotation[term].intersection(
+            protein_protein_interaction_network.nodes()) for term in annotation
     }
 
     p_value = multiple_testing_correction({
         term: enrichment_test(
-            network_intersection[term], len(annotated_proteins),
+            len(network_intersection[term]), len(annotated_proteins),
             len(annotation[term]),
             len(
                 annotated_proteins.intersection(
@@ -81,12 +80,12 @@ def get_network(protein_protein_interaction_network: nx.Graph,
         for term in network
     })
 
-    network.remove_nodes_from(
-        [term for term in annotation if not network_intersection[term]])
-
     for term in network:
-        network.nodes[term]["proteins"] = network_intersection[term]
         network.nodes[term]["p-value"] = p_value[term]
+        network.nodes[term]["number of proteins"] = len(
+            network_intersection[term])
+        network.nodes[term]["proteins"] = " ".join(
+            sorted(network_intersection[term]))
 
     return network
 
@@ -99,10 +98,11 @@ def get_term_sizes(network: nx.Graph) -> dict[str, int]:
         network: The Gene Ontology network.
 
     Returns:
-        The number of proteins associated with any term in the Gene Ontology
+        The number of proteins from the initial protein-protein interaction
+        network associated with any term in the Gene Ontology
         network.
     """
-    return {term: network.nodes[term]["proteins"] for term in network}
+    return {term: network.nodes[term]["number of proteins"] for term in network}
 
 
 def export(network: nx.Graph, basename: str) -> None:

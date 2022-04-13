@@ -25,9 +25,9 @@ A configuration file specifies a list of workflows executed sequentially. Config
 
 ## configuration
 
-The configuration defines the assembly of a protein-protein interaction network from a set of input genes or proteins optionally associated with mass spectrometry data, using protein-protein interaction data from BioGRID, IntAct, MINT Reactome or STRING, optionally extended to proteins neighboring the input.
+The configuration defines the assembly of a protein-protein interaction network from a set of input genes or proteins optionally associated with mass spectrometry data, using protein-protein interaction data from BioGRID, CORUM, IntAct, MINT, Reactome or STRING, optionally extended to proteins neighboring the input.
 
-The distribution of mass spectrometry measurements as well as enrichment of Gene Ontology terms or Reactome pathways by the protein-protein interaction network or its individual modules can be assessed. The protein-protein interaction network as well as networks of represented Gene Ontology terms and Reactome pathways can be exported, each optionally along corresponding Cytoscape style specifications.
+The distribution of mass spectrometry measurements and enrichment of Gene Ontology terms or Reactome pathways by the protein-protein interaction network or its modules can be assessed. The protein-protein interaction network as well as networks derived from the Gene Ontology and Reactome can be exported along comprehensive Cytoscape style specifications.
 
 ---
 
@@ -292,6 +292,9 @@ The specification of sources of protein-protein interactions for the assembly of
         "BioGRID": {
           "neighbors": 0
         },
+        "CORUM": {
+          "neighbors": 0
+        },
         "IntAct": {
           "neighbors": 0
         }, 
@@ -315,6 +318,9 @@ An integer k specifying the extension of the network using species-specific prot
     {
       "protein-protein interactions": {
         "BioGRID": {
+          "species": 9606
+        },
+        "CORUM": {
           "species": 9606
         },
         "IntAct": {
@@ -400,6 +406,19 @@ If true, restrict query to multi-validated physical protein-protein interactions
 ]
 ```
 The version of the BioGRID database to use. The default setting is `null`, corresponding to the latest version.
+
+```json
+[
+    {
+      "protein-protein interactions": {
+        "CORUM": {
+          "purification methods": []
+        }
+      }
+    }
+]
+```
+A list of accepted PSI-MI identifiers or terms for protein complex purification methods. The default setting is `[]`, corresponding to accepting any annotation.
 
 ```json
 [
@@ -823,7 +842,7 @@ The Gene Ontology namespaces to consider. The default setting is `["cellular_com
 
 ---
 
-The specification of the assembly of a Gene Ontology or Reactome network. A Gene Ontology network is composed of terms, a Reactome network of pathways represented in the protein-protein interaction network. Both report the enrichment of each respective entity by proteins in the protein-protein interaction network along with their relations in these databases.
+The specification of the assembly of a Gene Ontology or Reactome network. A Gene Ontology network is composed of terms, a Reactome network of pathways. Both report the enrichment of each respective entity by proteins in the protein-protein interaction network along with their relations in these databases.
 
 The proteins considered can be restricted based on their associated measurements, either by a union or intersection of subsets of proteins exceeding the specified ranges.
 
@@ -1361,49 +1380,62 @@ The function used to derive a protein-specific measurement from a its individual
    
 The configuration files provided refer to data sets supplemented with the following publications.
 
-- Fiskin, E. et al. (2016) **Global Analysis of Host and Bacterial Ubiquitinome in Response to *Salmonella Typhimurium* Infection**, Mol. Cell, 62, 967-981.
+- Fiskin, E. et al. (2016) **Global Analysis of Host and Bacterial Ubiquitinome in Response to *Salmonella Typhimurium* Infection**, *Mol. Cell*, 62, 967-981.
 
-- Hahn, M. et al. (2021) **SIK2 orchestrates actin-dependent host response upon *Salmonella* infection**, Proc. Natl. Acad. Sci., 118.
+- Hahn, M. et al. (2021) **SIK2 orchestrates actin-dependent host response upon *Salmonella* infection**, *Proc. Natl. Acad. Sci.*, 118.
 
-- Klann K. et al. (2020) **Growth Factor Receptor Signaling Inhibition Prevents SARS-CoV-2 Replication**, Mol. Cell, 80, 164-174.
+- Klann K. et al. (2020) **Growth Factor Receptor Signaling Inhibition Prevents SARS-CoV-2 Replication**, *Mol. Cell*, 80, 164-174.
 
-- Schmutz, C. et al. (2013) **Systems-Level Overview of Host Protein Phosphorylation During *Shigella flexneri* Infection Revealed by Phosphoproteomics**, Mol. Cell. Proteom., 12, 2952-2968.
+- Schmutz, C. et al. (2013) **Systems-Level Overview of Host Protein Phosphorylation During *Shigella flexneri* Infection Revealed by Phosphoproteomics**, *Mol. Cell. Proteom.*, 12, 2952-2968.
 
 ---
 
 The following resources can be accessed.
 
-- Ashburner, M. et al. (2000) **Gene Ontology: tool for the unification of biology**, Nat. Genet., 25, 25-29.
+- Ashburner, M. et al. (2000) **Gene Ontology: tool for the unification of biology**, *Nat. Genet.*, 25, 25-29.
 
-- The Gene Ontology Consortium (2021) **The Gene Ontology resource: enriching a GOld mine**, Nucleic Acids Res., 49, D325-D334.
+- The Gene Ontology Consortium (2021) **The Gene Ontology resource: enriching a GOld mine**, *Nucleic Acids Res.*, 49, D325-D334.
 
-- Gillespie, M. et al. (2022) **The reactome pathway knowledgebase 2022**, Nucleic Acids Res., 50, D687-D692.
+- Gillespie, M. et al. (2022) **The reactome pathway knowledgebase 2022**, *Nucleic Acids Res.*, 50, D687-D692.
+  
+- Giurgiu, M et al. (2019) **CORUM: the comprehensive resource of mammalian protein complexes-2019**, *Nucleic Acids Res.*, 47, D559-D563
+  
+- Licata, L. et al. (2012) **MINT, the molecular interaction database: 2012 update**, *Nucleic Acids Res.*, 40, D857-D861.
 
-- Licata, L. et al. (2012) **MINT, the molecular interaction database: 2012 update**, Nucleic Acids Res., 40, D857-D861.
-
-- Orchard, S. et al. (2014) **The MIntAct project-IntAct as a common curation platform for 11 molecular interaction databases**, Nucleic Acids Res., 42, D358-D363.
+- Orchard, S. et al. (2014) **The MIntAct project-IntAct as a common curation platform for 11 molecular interaction databases**, *Nucleic Acids Res.*, 42, D358-D363.
  
-- Oughtred, R. et al. (2018) **The BioGRID database: A comprehensive biomedical resource of curated protein, genetic, and chemical interactions**, Protein Sci., 30, 187-200.
+- Oughtred, R. et al. (2018) **The BioGRID database: A comprehensive biomedical resource of curated protein, genetic, and chemical interactions**, *Protein Sci.*, 30, 187-200.
    
-- Szklarczyk, D. et al. (2019) **STRING v11: protein-protein association networks with increased coverage, supporting functional discovery in genome-wide experimental datasets**, Nucleic Acids Res., 47, D607-D613.
+- Szklarczyk, D. et al. (2019) **STRING v11: protein-protein association networks with increased coverage, supporting functional discovery in genome-wide experimental datasets**, *Nucleic Acids Res.*, 47, D607-D613.
     
-- The UniProt Consortium (2021) **UniProt: the universal protein knowledgebase in 2021**, Nucleic Acids Res., 49, D480-D489.
+- The UniProt Consortium (2021) **UniProt: the universal protein knowledgebase in 2021**, *Nucleic Acids Res.*, 49, D480-D489.
 
 ---
 
-The following tools are integrated.
+The following applications are integrated.
 
-- Shannon, P. et al. (2003) **Cytoscape: a software environment for integrated models of biomolecular interaction networks**, Genome Res., 13, 2498-2504.
+- Shannon, P. et al. (2003) **Cytoscape: a software environment for integrated models of biomolecular interaction networks**, *Genome Res.*, 13, 2498-2504.
 
 ---
 
 The following external libraries are utilized.
 
-- Hagberg, A. A. et al. (2008) **Exploring network structure, dynamics, and function using NetworkX**, Proceedings of the 7th Python in Science Conference, 11-15.
+- Hagberg, A. A. et al. (2008) **Exploring network structure, dynamics, and function using NetworkX**, *Proceedings of the 7th Python in Science Conference*, 11-15.
    
-- McKinney, W. (2010) **Data Structures for Statistical Computing in Python**, Proceedings of the 9th Python in Science Conference, 56-61.
+- McKinney, W. (2010) **Data Structures for Statistical Computing in Python**, *Proceedings of the 9th Python in Science Conference*, 56-61.
 
-- Virtanen, P. et al. (2020)  **SciPy 1.0: Fundamental Algorithms for Scientific Computing in Python**, Nat. Methods, 17, 261-272.
+- Virtanen, P. et al. (2020)  **SciPy 1.0: Fundamental Algorithms for Scientific Computing in Python**, *Nat. Methods*, 17, 261-272.
+
+---
+
+Development was inspired by previous work combining the following applications.
+ 
+- Maere, S. et al. (2005) **BiNGO: a Cytoscape plugin to assess overrepresentation of Gene Ontology categories in Biological Networks**, *Bioinformatics*, 21, 3448-3449.
+
+- Morris, J. H. et al. (2011) **clusterMaker: a multi-algorithm clustering plugin for Cytoscape**, *BMC Bioinform.*, 12.
+  
+- Su, G. et al. (2010) **GLay: community structure analysis of biological networks**, *Bioinformatics*, 26, 3135-3137.
+  
 
 ---
 

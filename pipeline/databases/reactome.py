@@ -18,9 +18,9 @@ def get_protein_protein_interactions(
 
     Args:
         interaction_type: The accepted interaction type annotation. If none are
-            specified, any is accepted.
+            specified, any are accepted.
         interaction_context: The accepted interaction context annotation. If
-            none are specified, any is accepted.
+            none are specified, any are accepted.
         taxonomy_identifier: The taxonomy identifier.
 
     Yields:

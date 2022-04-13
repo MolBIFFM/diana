@@ -9,8 +9,8 @@ from typing import Callable, Collection, Container, Hashable, Optional, Union
 import networkx as nx
 import pandas as pd
 from analysis import correction, modularization, test
-from databases import (biogrid, gene_ontology, intact, mint, reactome, string,
-                       uniprot)
+from databases import (biogrid, corum, gene_ontology, intact, mint, reactome,
+                       string, uniprot)
 
 
 def get_network() -> nx.Graph():
@@ -536,7 +536,7 @@ def get_neighbors_from_biogrid(
         interaction_throughput: Optional[Container[str]] = None,
         multi_validated_physical: bool = False,
         taxonomy_identifier: int = 9606,
-        version: Optional[tuple[int, int, int]] = None) -> None:
+        version: Optional[tuple[int, int, int]] = None) -> set[str]:
     """
     Returns proteins interacting with proteins in a protein-protein interaction
     network from BioGRID.
@@ -544,11 +544,11 @@ def get_neighbors_from_biogrid(
     Args:
         network: The protein-protein interaction network.
         experimental_system: The accepted experimental evidence codes. If none
-            are specified, any is accepted.
+            are specified, any are accepted.
         experimental_system_type: The accepted categories of experimental
-            evidence. If none are specified, any is accepted.
+            evidence. If none are specified, any are accepted.
         interaction_throughput:  The accepted levels of interaction throughput.
-            If none are specified, any is accepted.
+            If none are specified, any are accepted.
         multi-validated physical: If True, consider only multi-validated
             physical interactions.
         taxonomy_identifier: The taxonomy identifier.
@@ -586,11 +586,11 @@ def add_protein_protein_interactions_from_biogrid(
     Args:
         network: The protein-protein interaction network.
         experimental_system: The accepted experimental evidence codes. If none
-            are specified, any is accepted.
+            are specified, any are accepted.
         experimental_system_type: The accepted categories of experimental
-            evidence. If none are specified, any is accepted.
+            evidence. If none are specified, any are accepted.
         interaction_throughput:  The accepted levels of interaction throughput.
-            If none are specified, any is accepted.
+            If none are specified, any are accepted.
         multi-validated physical: If True, add only multi-validated physical
             interactions.
         taxonomy_identifier: The taxonomy identifier.
@@ -606,22 +606,76 @@ def add_protein_protein_interactions_from_biogrid(
             network.edges[interactor_a, interactor_b]["BioGRID"] = 1.0
 
 
+def get_neighbors_from_corum(network: nx.Graph,
+                             purification_methods: Optional[
+                                 Container[str]] = None,
+                             taxonomy_identifier: int = 9606) -> set[str]:
+    """
+    Returns proteins interacting with proteins in a protein-protein interaction
+    network from CORUM.
+
+    Args:
+        network: The protein-protein interaction network.
+        purification_methods: The accepted PSI-MI identifiers or terms for the 
+            protein complex purification method. If none are specified, any are 
+            accepted.
+        taxonomy_identifier: The taxonomy identifier.
+
+    Returns:
+        Neighbors of the protein-protein interaction network in CORUM.
+    """
+    neighbors = set()
+    for interactor_a, interactor_b in corum.get_protein_protein_interactions(
+            purification_methods, taxonomy_identifier):
+        if (interactor_a in network and interactor_b not in network):
+            neighbors.add(interactor_b)
+
+        elif (interactor_a not in network and interactor_b in network):
+            neighbors.add(interactor_a)
+
+    return neighbors
+
+
+def add_protein_protein_interactions_from_corum(
+        network: nx.Graph,
+        purification_methods: Optional[Container[str]] = None,
+        taxonomy_identifier: int = 9606) -> None:
+    """
+    Adds protein-protein interactions from CORUM to a protein-protein
+    interaction network.
+
+    Args:
+        network: The protein-protein interaction network.
+        purification_methods: The accepted PSI-MI identifiers or terms for the 
+            protein complex purification method. If none are specified, any are 
+            accepted.
+        taxonomy_identifier: The taxonomy identifier.
+    """
+    for interactor_a, interactor_b in corum.get_protein_protein_interactions(
+            purification_methods, taxonomy_identifier):
+        if (interactor_a in network and interactor_b in network and
+                interactor_a != interactor_b):
+            network.add_edge(interactor_a, interactor_b)
+            network.edges[interactor_a, interactor_b]["CORUM"] = 1.0
+
+
 def get_neighbors_from_intact(
         network: nx.Graph,
         interaction_detection_methods: Optional[Container[str]] = None,
         interaction_types: Optional[Container[str]] = None,
         psi_mi_score: float = 0.0,
-        taxonomy_identifier: int = 9606) -> None:
+        taxonomy_identifier: int = 9606) -> set[str]:
     """
     Returns proteins interacting with proteins in a protein-protein interaction
     network from IntAct to the network.
 
     Args:
         network: The protein-protein interaction network.
-        interaction_detection_methods: The accepted PSI-MI terms for interaction
-            detection method. If none are specified, any is accepted.
-        interaction_types: The accepted PSI-MI terms for interaction type. If
-            none are specified, any is accepted.
+        interaction_detection_methods: The accepted PSI-MI identifiers or terms 
+            for interaction detection method. If none are specified, any are 
+            accepted.
+        interaction_types: The accepted PSI-MI identifiers or terms for 
+            interaction type. If none are specified, any are accepted.
         psi_mi_score: The PSI-MI score threshold.
         taxonomy_identifier: The taxonomy identifier.
 
@@ -653,10 +707,11 @@ def add_protein_protein_interactions_from_intact(
 
     Args:
         network: The protein-protein interaction network.
-        interaction_detection_methods: The accepted PSI-MI terms for interaction
-            detection method. If none are specified, any is accepted.
-        interaction_types: The accepted PSI-MI terms for interaction type.
-            If none are specified, any is accepted.
+        interaction_detection_methods: The accepted PSI-MI identifiers or terms 
+            for interaction detection method. If none are specified, any are 
+            accepted.
+        interaction_types: The accepted PSI-MI identifiers or terms for 
+            interaction type. If none are specified, any are accepted.
         psi_mi_score: The PSI-MI score threshold.
         taxonomy_identifier: The taxonomy identifier.
     """
@@ -679,17 +734,18 @@ def get_neighbors_from_mint(network: nx.Graph,
                                 Container[str]] = None,
                             interaction_types: Optional[Container[str]] = None,
                             psi_mi_score: float = 0.0,
-                            taxonomy_identifier: int = 9606) -> None:
+                            taxonomy_identifier: int = 9606) -> set[str]:
     """
     Returns proteins interacting with proteins in a protein-protein interaction
     network from MINT.
 
     Args:
         network: The protein-protein interaction network.
-        interaction_detection_methods: The accepted PSI-MI terms for interaction
-            detection method. If none are specified, any is accepted.
-        interaction_types: The accepted PSI-MI terms for interaction type.
-            If none are specified, any is accepted.
+        interaction_detection_methods: The accepted PSI-MI identifiers or terms 
+            for interaction detection method. If none are specified, any are 
+            accepted.
+        interaction_types: The accepted PSI-MI identifiers or terms for 
+            interaction type. If none are specified, any are accepted.
         psi_mi_score: The PSI-MI score threshold.
         taxonomy_identifier: The taxonomy identifier.
 
@@ -721,10 +777,11 @@ def add_protein_protein_interactions_from_mint(
 
     Args:
         network: The protein-protein interaction network.
-        interaction_detection_methods: The accepted PSI-MI terms for interaction
-            detection method. If none are specified, any is accepted.
-        interaction_types: The accepted PSI-MI terms for interaction type.
-            If none are specified, any is accepted.
+        interaction_detection_methods: The accepted PSI-MI identifiers or terms 
+            for interaction detection method. If none are specified, any are 
+            accepted.
+        interaction_types: The accepted PSI-MI identifiers or terms for 
+            interaction type. If none are specified, any are accepted.
         psi_mi_score: The PSI-MI score threshold.
         taxonomy_identifier: The taxonomy identifier.
     """
@@ -746,7 +803,7 @@ def get_neighbors_from_reactome(
         network: nx.Graph,
         interaction_type: Optional[Container[str]] = None,
         interaction_context: Optional[Container[str]] = None,
-        taxonomy_identifier: int = 9606) -> None:
+        taxonomy_identifier: int = 9606) -> set[str]:
     """
     Returns proteins interacting with proteins in a protein-protein interaction
     network from Reactome.
@@ -754,9 +811,9 @@ def get_neighbors_from_reactome(
     Args:
         network: The protein-protein interaction network.
         interaction_type: The accepted interaction type annotation.
-            If none are specified, any is accepted.
+            If none are specified, any are accepted.
         interaction_context: The accepted interaction context annotation.
-            If none are specified, any is accepted.
+            If none are specified, any are accepted.
         taxonomy_identifier: The taxonomy identifier.
 
     Returns:
@@ -788,9 +845,9 @@ def add_protein_protein_interactions_from_reactome(
     Args:
         network: The protein-protein interaction network.
         interaction_type: The accepted interaction type annotation.
-            If none are specified, any is accepted.
+            If none are specified, any are accepted.
         interaction_context: The accepted interaction context annotation.
-            If none are specified, any is accepted.
+            If none are specified, any are accepted.
         taxonomy_identifier: The taxonomy identifier.
     """
     for interactor_a, interactor_b in reactome.get_protein_protein_interactions(
@@ -818,7 +875,7 @@ def get_neighbors_from_string(network: nx.Graph,
                               combined_score: float = 0.0,
                               physical: bool = False,
                               taxonomy_identifier: int = 9606,
-                              version: float = 11.5):
+                              version: float = 11.5) -> set[str]:
     """
     Add proteins interacting with proteins in a protein-protein interaction
     network from STRING to the network.
@@ -882,7 +939,7 @@ def add_protein_protein_interactions_from_string(
         combined_score: float = 0.0,
         physical: bool = False,
         taxonomy_identifier: int = 9606,
-        version: float = 11.5):
+        version: float = 11.5) -> None:
     """
     Adds protein-protein interactions from STRING to a protein-protein
     interaction network.
@@ -943,7 +1000,8 @@ def get_databases(network: nx.Graph) -> tuple[str, ...]:
         sorted(
             set(database for edge in network.edges()
                 for database in network.edges[edge]).intersection(
-                    ("BioGRID", "IntAct", "MINT", "Reactome", "STRING"))))
+                    ("BioGRID", "CORUM", "IntAct", "MINT", "Reactome",
+                     "STRING"))))
 
 
 def set_edge_weights(

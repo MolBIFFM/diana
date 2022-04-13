@@ -20,10 +20,10 @@ def get_protein_protein_interactions(
 
     Args:
         interaction_detection_methods: The accepted PSI-MI identifiers or terms
-            for interaction detection method. If none are specified, any is
+            for interaction detection method. If none are specified, any are
             accepted.
         interaction_types: The accepted PSI-MI identifiers or terms for
-            interaction type. If none are specified, any is accepted.
+            interaction type. If none are specified, any are accepted.
         psi_mi_score: The PSI-MI score threshold.
         taxonomy_identifier: The taxonomy identifier.
 

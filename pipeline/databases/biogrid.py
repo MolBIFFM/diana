@@ -22,11 +22,11 @@ def get_protein_protein_interactions(
 
     Args:
         experimental_system: The accepted experimental evidence codes. If none
-            are specified, any is accepted.
+            are specified, any are accepted.
         experimental_system_type: The accepted categories of experimental
-            evidence. If none are specified, any is accepted.
+            evidence. If none are specified, any are accepted.
         interaction_throughput:  The accepted levels of interaction throughput.
-            If none are specified, any is accepted.
+            If none are specified, any are accepted.
         multi-validated physical: If True, yield only multi-validated physical
             interactions.
         taxonomy_identifier: The taxonomy identifier.
