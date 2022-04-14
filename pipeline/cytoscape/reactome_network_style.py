@@ -429,7 +429,7 @@ def get_style(network: nx.Graph) -> ET.ElementTree:
 
     visual_style_sub_element = ET.SubElement(style.getroot(),
                                              "visualStyle",
-                                             attrib={"name": "pathway"})
+                                             attrib={"name": "Reactome"})
 
     for component in COMPONENTS:
         component_sub_element = ET.SubElement(visual_style_sub_element,
