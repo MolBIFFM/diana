@@ -353,7 +353,7 @@ The NCBI taxonomy ID of the target species. The default and currently only compl
     }
 ]
 ```
-A list of accepted interaction throughput annotations. The default setting is `[]`, corresponding to accepting any annotation.
+A list of accepted interaction throughput annotations. The default setting is `[]`, corresponding to any annotation.
 
 ```json
 [
@@ -366,7 +366,7 @@ A list of accepted interaction throughput annotations. The default setting is `[
     }
 ]
 ```
-A list of accepted experimental system annotations. The default setting is `[]`, corresponding to accepting any annotation.
+A list of accepted experimental system annotations. The default setting is `[]`, corresponding to any annotation.
 
 ```json
 [
@@ -379,7 +379,7 @@ A list of accepted experimental system annotations. The default setting is `[]`,
     }
 ]
 ```
-A list of accepted experimental system type annotations. The default setting is `[]`, corresponding to accepting any annotation.
+A list of accepted experimental system type annotations. The default setting is `[]`, corresponding to any annotation.
 
 ```json
 [
@@ -418,7 +418,7 @@ The version of the BioGRID database to use. The default setting is `null`, corre
     }
 ]
 ```
-A list of accepted PSI-MI identifiers or terms for protein complex purification methods. The default setting is `[]`, corresponding to accepting any annotation.
+A list of accepted PSI-MI identifiers or terms for protein complex purification methods. The default setting is `[]`, corresponding to any annotation.
 
 ```json
 [
@@ -434,7 +434,7 @@ A list of accepted PSI-MI identifiers or terms for protein complex purification 
     }
 ]
 ```
-A list of accepted PSI-MI identifiers or terms for interaction detection methods. The default setting is `[]`, corresponding to accepting any annotation.
+A list of accepted PSI-MI identifiers or terms for interaction detection methods. The default setting is `[]`, corresponding to any annotation.
 
 ```json
 [
@@ -450,7 +450,7 @@ A list of accepted PSI-MI identifiers or terms for interaction detection methods
     }
 ]
 ```
-A list of accepted PSI-MI identifiers or terms for interaction types. The default setting is `[]`, corresponding to accepting any annotation.
+A list of accepted PSI-MI identifiers or terms for interaction types. The default setting is `[]`, corresponding to any annotation.
 
 ```json
 [
@@ -479,7 +479,7 @@ A PSI-MI score threshold. The default setting is `0.0`.
     }
 ]
 ```
-A list of accepted interaction context annotations. The default setting is `[]`, corresponding to accepting any annotation.
+A list of accepted interaction context annotations. The default setting is `[]`, corresponding to any annotation.
 
 ```json
 [
@@ -492,7 +492,7 @@ A list of accepted interaction context annotations. The default setting is `[]`,
     }
 ]
 ```
-A list of accepted interaction type annotations. The default setting is `[]`, corresponding to accepting any annotation.
+A list of accepted interaction type annotations. The default setting is `[]`, corresponding to any annotation.
 
 ```json
 [
