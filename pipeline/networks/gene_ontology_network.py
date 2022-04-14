@@ -1,7 +1,7 @@
 """
 Gene Ontology network
 
-Nodes are Gene Ontology terms annotated with proteins from a specified species.
+Nodes are Gene Ontology terms annotated with proteins from a particular species.
 Edges are directed term relationships within the Gene Ontology.
 """
 
@@ -12,7 +12,7 @@ from analysis import correction, test
 from databases import gene_ontology
 
 
-def get_network(protein_protein_interaction_network: nx.Graph = nx.Graph(),
+def get_network(proteins: Container[str] = frozenset(),
                 namespaces: Container[str] = ("cellular_component",
                                               "molecular_function",
                                               "biological_process"),
@@ -20,14 +20,12 @@ def get_network(protein_protein_interaction_network: nx.Graph = nx.Graph(),
                                           float] = test.hypergeometric,
                 multiple_testing_correction: Callable[[dict[str, float]], dict[
                     str, float]] = correction.benjamini_hochberg,
-                taxonomy_identifier: int = 9606) -> nx.Graph:
+                taxonomy_identifier: int = 9606) -> nx.DiGraph:
     """
-    Assemble a Gene Ontology network corresponding to the protein-protein
-    interaction network.
+    Assemble a Gene Ontology network from proteins.
 
     Args:
-        protein_protein_interaction_network: The protein-protein interaction
-            network.
+        proteins: The proteins to assemble the Gene Ontology network from.
         namespaces: The Gene Ontology namespaces.
         enrichment_test: The statistical test used to assess enrichment of a
             term by the protein-protein interaction network.
@@ -66,17 +64,13 @@ def get_network(protein_protein_interaction_network: nx.Graph = nx.Graph(),
     annotated_proteins = set.union(*annotation.values())
 
     network_intersection = {
-        term: annotation[term].intersection(
-            protein_protein_interaction_network.nodes()) for term in annotation
+        term: annotation[term].intersection(proteins) for term in annotation
     }
 
     p_value = multiple_testing_correction({
-        term: enrichment_test(
-            len(network_intersection[term]), len(annotated_proteins),
-            len(annotation[term]),
-            len(
-                annotated_proteins.intersection(
-                    protein_protein_interaction_network.nodes())))
+        term: enrichment_test(len(network_intersection[term]),
+                              len(annotated_proteins), len(annotation[term]),
+                              len(annotated_proteins.intersection(proteins)))
         for term in network
     })
 

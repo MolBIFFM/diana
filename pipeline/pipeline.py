@@ -523,7 +523,7 @@ def process_workflow(configuration: dict,
                                 0] or measurement >= measurement_range[1]))
 
             ontology_network = gene_ontology_network.get_network(
-                nx.induced_subgraph(network, proteins),
+                proteins,
                 namespaces=configuration["Gene Ontology network"].get(
                     "namespaces", [
                         "biological_process", "cellular_component",
@@ -582,7 +582,7 @@ def process_workflow(configuration: dict,
                                 0] or measurement >= measurement_range[1]))
 
             ontology_network = gene_ontology_network.get_network(
-                nx.induced_subgraph(network, proteins),
+                proteins,
                 namespaces=configuration["Gene Ontology network"].get(
                     "namespaces", [
                         "biological_process", "cellular_component",
@@ -599,7 +599,7 @@ def process_workflow(configuration: dict,
 
         else:
             ontology_network = gene_ontology_network.get_network(
-                network,
+                network.nodes(),
                 namespaces=configuration["Gene Ontology network"].get(
                     "namespaces", [
                         "biological_process", "cellular_component",
@@ -669,7 +669,7 @@ def process_workflow(configuration: dict,
                                 0] or measurement >= measurement_range[1]))
 
             pathway_network = reactome_network.get_network(
-                nx.induced_subgraph(network, proteins),
+                proteins,
                 enrichment_test=test.ENRICHMENT_TEST[
                     configuration["Reactome network"].get(
                         "test", "hypergeometric")],
@@ -722,7 +722,7 @@ def process_workflow(configuration: dict,
                                 0] or measurement >= measurement_range[1]))
 
             pathway_network = reactome_network.get_network(
-                nx.induced_subgraph(network, proteins),
+                proteins,
                 enrichment_test=test.ENRICHMENT_TEST[
                     configuration["Reactome network"].get(
                         "test", "hypergeometric")],
@@ -734,7 +734,7 @@ def process_workflow(configuration: dict,
 
         else:
             pathway_network = reactome_network.get_network(
-                network,
+                network.nodes(),
                 enrichment_test=test.ENRICHMENT_TEST[
                     configuration["Reactome network"].get(
                         "test", "hypergeometric")],

@@ -1,30 +1,28 @@
 """
 Reactome network
 
-Nodes are Reactome pathways annotated with proteins specified species. Edges are
-directed pathway relationships within Reactome.
+Nodes are Reactome pathways annotated with proteins from a particular species. 
+Edges are directed pathway relationships within Reactome.
 """
 
-from typing import Callable
+from typing import Callable, Container
 
 import networkx as nx
 from analysis import correction, test
 from databases import reactome
 
 
-def get_network(protein_protein_interaction_network: nx.Graph = nx.Graph(),
+def get_network(proteins: Container[str] = frozenset(),
                 enrichment_test: Callable[[int, int, int, int],
                                           float] = test.hypergeometric,
                 multiple_testing_correction: Callable[[dict[str, float]], dict[
                     str, float]] = correction.benjamini_hochberg,
-                taxonomy_identifier: int = 9606) -> nx.Graph:
+                taxonomy_identifier: int = 9606) -> nx.DiGraph:
     """
-    Assemble a Reactome network corresponding to the protein-protein interaction
-    network.
+    Assemble a Reactome network from proteins.
 
     Args:
-        protein_protein_interaction_network: The protein-protein interaction
-            network.
+        proteins: The proteins to assemble the Reactome network from.
         enrichment_test: The statistical test used to assess enrichment of a
             pathway by the protein-protein interaction network.
         multiple_testing_correction: The procedure to correct for testing of
@@ -56,18 +54,15 @@ def get_network(protein_protein_interaction_network: nx.Graph = nx.Graph(),
     annotated_proteins = set.union(*annotation.values())
 
     network_intersection = {
-        pathway: annotation[pathway].intersection(
-            protein_protein_interaction_network.nodes())
+        pathway: annotation[pathway].intersection(proteins)
         for pathway in annotation
     }
 
     p_value = multiple_testing_correction({
-        pathway: enrichment_test(
-            len(network_intersection[pathway]), len(annotated_proteins),
-            len(annotation[pathway]),
-            len(
-                annotated_proteins.intersection(
-                    protein_protein_interaction_network.nodes())))
+        pathway: enrichment_test(len(network_intersection[pathway]),
+                                 len(annotated_proteins),
+                                 len(annotation[pathway]),
+                                 len(annotated_proteins.intersection(proteins)))
         for pathway in network
     })
 
