@@ -387,58 +387,53 @@ def process_workflow(configuration: dict,
                 ["STRING"].get("version", 11.5),
             )
 
-    if "Cytoscape" in configuration and any(
-            protein_protein_interaction_network.
-            get_post_translational_modifications(network, time)
-            for time in protein_protein_interaction_network.get_times(network)):
-        style = protein_protein_interaction_network_style.get_style(
-            network,
-            bar_chart_range=default.MEASUREMENT_RANGE[
-                configuration["Cytoscape"].get("bar chart",
-                                               {}).get("conversion")],
-            convert_measurement=conversion.MEASUREMENT_CONVERSION[
-                configuration["Cytoscape"].get("bar chart",
-                                               {}).get("conversion")],
-            site_combination=combination.SITE_COMBINATION[
-                configuration["Cytoscape"].get("bar chart",
-                                               {}).get("site combination",
-                                                       "absmax")],
-            confidence_score_combination=combination.
-            CONFIDENCE_SCORE_COMBINATION[configuration["Cytoscape"].get(
-                "edge transparency")])
+        if "Cytoscape" in configuration:
+            style = protein_protein_interaction_network_style.get_style(
+                network,
+                bar_chart_range=default.MEASUREMENT_RANGE[
+                    configuration["Cytoscape"].get("bar chart",
+                                                   {}).get("conversion")],
+                convert_measurement=conversion.MEASUREMENT_CONVERSION[
+                    configuration["Cytoscape"].get("bar chart",
+                                                   {}).get("conversion")],
+                site_combination=combination.SITE_COMBINATION[
+                    configuration["Cytoscape"].get("bar chart", {}).get(
+                        "site combination", "absmax")],
+                confidence_score_combination=combination.
+                CONFIDENCE_SCORE_COMBINATION[configuration["Cytoscape"].get(
+                    "edge transparency")])
 
-        protein_protein_interaction_network.set_edge_weights(
-            network,
-            weight=combination.CONFIDENCE_SCORE_COMBINATION[
-                configuration["Cytoscape"].get("edge transparency")],
-            attribute="score")
+            protein_protein_interaction_network.set_edge_weights(
+                network,
+                weight=combination.CONFIDENCE_SCORE_COMBINATION[
+                    configuration["Cytoscape"].get("edge transparency")],
+                attribute="score")
 
-        protein_protein_interaction_network_style.export(
-            style,
+            protein_protein_interaction_network_style.export(
+                style,
+                f"{logger.name}.{index}" if index else logger.name,
+            )
+
+            protein_protein_interaction_network.set_post_translational_modification(
+                network)
+
+            protein_protein_interaction_network.set_measurements(
+                network,
+                site_combination=combination.SITE_COMBINATION[
+                    configuration["Cytoscape"].get("node color", {}).get(
+                        "site combination", "absmax")],
+                measurements=default.MEASUREMENT_RANGE[
+                    configuration["Cytoscape"].get("node color",
+                                                   {}).get("conversion")],
+                convert_measurement=conversion.MEASUREMENT_CONVERSION[
+                    configuration["Cytoscape"].get("node color",
+                                                   {}).get("conversion")],
+            )
+
+        protein_protein_interaction_network.export(
+            network,
             f"{logger.name}.{index}" if index else logger.name,
         )
-
-        protein_protein_interaction_network.set_post_translational_modification(
-            network)
-
-        protein_protein_interaction_network.set_measurements(
-            network,
-            site_combination=combination.SITE_COMBINATION[
-                configuration["Cytoscape"].get("node color",
-                                               {}).get("site combination",
-                                                       "absmax")],
-            measurements=default.MEASUREMENT_RANGE[
-                configuration["Cytoscape"].get("node color",
-                                               {}).get("conversion")],
-            convert_measurement=conversion.MEASUREMENT_CONVERSION[
-                configuration["Cytoscape"].get("node color",
-                                               {}).get("conversion")],
-        )
-
-    protein_protein_interaction_network.export(
-        network,
-        f"{logger.name}.{index}" if index else logger.name,
-    )
 
     if "Gene Ontology enrichment" in configuration:
         gene_ontology_enrichment = protein_protein_interaction_network.get_gene_ontology_enrichment(

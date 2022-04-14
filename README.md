@@ -283,7 +283,7 @@ A list of input protein-protein interaction networks as output by a workflow. If
 
 ---
 
-The specification of sources of protein-protein interactions for the assembly of the protein-protein interaction network. Database-specific requirements can be defined, where each must be satisfied for an interaction to be incorporated.
+The specification of sources of protein-protein interactions for the assembly of the protein-protein interaction network. The protein-protein interaction network is exported if any source is specified. Database-specific requirements can be defined, where each must be satisfied for an interaction to be incorporated.
 
 ```json
 [
