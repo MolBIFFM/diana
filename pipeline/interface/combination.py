@@ -7,11 +7,11 @@ SITE_COMBINATION: dict[str, Callable[[Collection[float]], float]] = {
     "mean": statistics.mean,
     "median": statistics.median,
     "max": max,
-    "absmax": lambda sites: max(sites, key=abs),
+    "maxabs": lambda sites: max(sites, key=abs),
     "min": min,
-    "absmin": lambda sites: min(sites, key=abs),
+    "minabs": lambda sites: min(sites, key=abs),
     "sum": math.fsum,
-    "abssum": lambda sites: math.fsum(math.fabs(site) for site in sites),
+    "sumabs": lambda sites: math.fsum(math.fabs(site) for site in sites),
 }
 
 REPLICATE_COMBINATION: dict[str, Callable[[Collection[float]], float]] = {

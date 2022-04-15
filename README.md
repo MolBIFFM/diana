@@ -27,7 +27,7 @@ A configuration file specifies a list of workflows executed sequentially. Config
 
 The configuration defines the assembly of a protein-protein interaction network from a set of input genes or proteins optionally associated with mass spectrometry data, using protein-protein interaction data from BioGRID, CORUM, IntAct, MINT, Reactome or STRING, optionally extended to proteins neighboring the input.
 
-The distribution of mass spectrometry measurements and enrichment of Gene Ontology terms or Reactome pathways by the protein-protein interaction network or its modules can be assessed. The protein-protein interaction network as well as networks derived from the Gene Ontology and Reactome can be exported along comprehensive Cytoscape style specifications.
+The distribution of mass spectrometry measurements and enrichment of Gene Ontology terms or Reactome pathways by the protein-protein interaction network or its modules can be assessed. The protein-protein interaction network as well as networks derived from the Gene Ontology or Reactome capturing enrichment can be exported along comprehensive Cytoscape style specifications.
 
 ---
 
@@ -699,16 +699,16 @@ The specification of Cytoscape styles. If not present, no Cytoscape styles are e
     {
       "Cytoscape": {
         "bar chart": {
-          "site combination": "absmax"
+          "site combination": "maxabs"
         },
         "node color": {
-          "site combination": "absmax"
+          "site combination": "maxabs"
         }
       }
     }
 ]
 ```
-The function used to derive protein-specific measurements from their individual sites. The function is applied to ratios, not their log2. The default setting is `"absmax"`, corresponding to the largest absolute value. Available settings are `"mean"`, `"median"`, `"max"`, `"absmax"`, `"min"`, `"absmin"`, `"sum"`, `"abssum"` and `null`, such that sites are considered individually.
+The function used to derive protein-specific measurements from their individual sites. The function is applied to ratios, not their log2. The default setting is `"maxabs"`, corresponding to the largest absolute value. Available settings are `"mean"`, `"median"`, `"max"`, `"maxabs"`, `"min"`, `"minabs"`, `"sum"`, `"sumabs"` and `null`, such that sites are considered individually.
 
 ```json
 [
@@ -916,31 +916,31 @@ The modification considered to determine a subset of proteins.
       "Gene Ontology network": {
         "union": [
           {
-            "site combination": "absmax"
+            "site combination": "maxabs"
           }
         ],
         "intersection": [
           {
-            "site combination": "absmax",
+            "site combination": "maxabs",
           }
         ]
       },
       "Reactome network": {
         "union": [
           {
-            "site combination": "absmax"
+            "site combination": "maxabs"
           }
         ],
         "intersection": [
           {
-            "site combination": "absmax",
+            "site combination": "maxabs",
           }
         ]
       }
     }
 ]
 ```
-The function used to derive a protein-specific measurement from a its individual sites. The function is applied to ratios, not their log2. The default setting is `"absmax"`, corresponding to the largest absolute value. Available settings are `"mean"`, `"median"`, `"max"`, `"absmax"`, `"min"`, `"absmin"`, `"sum"`, `"abssum"` and `null`, such that sites are considered individually.
+The function used to derive a protein-specific measurement from a its individual sites. The function is applied to ratios, not their log2. The default setting is `"maxabs"`, corresponding to the largest absolute value. Available settings are `"mean"`, `"median"`, `"max"`, `"maxabs"`, `"min"`, `"minabs"`, `"sum"`, `"sumabs"` and `null`, such that sites are considered individually.
 
 ```json
 [
@@ -1367,20 +1367,20 @@ The conversion of measurements that a range refers to. It defaults to the log2-f
       "module detection": {
         "measurement enrichment": {
           "proteins": {
-            "site combination": "absmax"
+            "site combination": "maxabs"
           } 
         }
       }
     }
 ]
 ```
-The function used to derive a protein-specific measurement from a its individual sites. The default setting is `"absmax"`, corresponding to the largest absolute value. Available settings are `"mean"`, `"median"`, `"max"`, `"absmax"`, `"min"`, `"absmin"`, `"sum"` and `"abssum"`.
+The function used to derive a protein-specific measurement from a its individual sites. The default setting is `"maxabs"`, corresponding to the largest absolute value. Available settings are `"mean"`, `"median"`, `"max"`, `"maxabs"`, `"min"`, `"minabs"`, `"sum"` and `"sumabs"`.
 
 ---
    
 The configuration files provided refer to data sets supplemented with the following publications.
 
-- Fiskin, E. et al. (2016) **Global Analysis of Host and Bacterial Ubiquitinome in Response to *Salmonella Typhimurium* Infection**, *Mol. Cell*, 62, 967-981.
+- Fiskin, E. et al. (2016) **Global Analysis of Host and Bacterial Ubiquitinome in Response to *Salmonella* Typhimurium Infection**, *Mol. Cell*, 62, 967-981.
 
 - Hahn, M. et al. (2021) **SIK2 orchestrates actin-dependent host response upon *Salmonella* infection**, *Proc. Natl. Acad. Sci.*, 118.
 
@@ -1412,7 +1412,7 @@ The following resources can be accessed.
 
 ---
 
-The following applications are integrated.
+The following applications are targeted.
 
 - Shannon, P. et al. (2003) **Cytoscape: a software environment for integrated models of biomolecular interaction networks**, *Genome Res.*, 13, 2498-2504.
 
@@ -1430,9 +1430,9 @@ The following external libraries are utilized.
 
 Development was inspired by previous work combining the following applications.
  
-- Maere, S. et al. (2005) **BiNGO: a Cytoscape plugin to assess overrepresentation of Gene Ontology categories in Biological Networks**, *Bioinformatics*, 21, 3448-3449.
+- Maere, S. et al. (2005) ***BiNGO*: a Cytoscape plugin to assess overrepresentation of Gene Ontology categories in Biological Networks**, *Bioinformatics*, 21, 3448-3449.
 
-- Morris, J. H. et al. (2011) **clusterMaker: a multi-algorithm clustering plugin for Cytoscape**, *BMC Bioinform.*, 12.
+- Morris, J. H. et al. (2011) ***clusterMaker*: a multi-algorithm clustering plugin for Cytoscape**, *BMC Bioinform.*, 12.
   
 - Su, G. et al. (2010) **GLay: community structure analysis of biological networks**, *Bioinformatics*, 26, 3135-3137.
   

@@ -398,7 +398,7 @@ def process_workflow(configuration: dict,
                                                    {}).get("conversion")],
                 site_combination=combination.SITE_COMBINATION[
                     configuration["Cytoscape"].get("bar chart", {}).get(
-                        "site combination", "absmax")],
+                        "site combination", "maxabs")],
                 confidence_score_combination=combination.
                 CONFIDENCE_SCORE_COMBINATION[configuration["Cytoscape"].get(
                     "edge transparency")])
@@ -421,7 +421,7 @@ def process_workflow(configuration: dict,
                 network,
                 site_combination=combination.SITE_COMBINATION[
                     configuration["Cytoscape"].get("node color", {}).get(
-                        "site combination", "absmax")],
+                        "site combination", "maxabs")],
                 measurements=default.MEASUREMENT_RANGE[
                     configuration["Cytoscape"].get("node color",
                                                    {}).get("conversion")],
@@ -496,7 +496,7 @@ def process_workflow(configuration: dict,
                              network, subset["time"],
                              subset["post-translational modification"],
                              combination.SITE_COMBINATION[subset.get(
-                                 "site combination", "absmax")])),
+                                 "site combination", "maxabs")])),
                         conversion.MEASUREMENT_CONVERSION[subset.get(
                             "conversion")]
                         (subset.get(
@@ -506,14 +506,14 @@ def process_workflow(configuration: dict,
                              network, subset["time"],
                              subset["post-translational modification"],
                              combination.SITE_COMBINATION[subset.get(
-                                 "site combination", "absmax")])))
+                                 "site combination", "maxabs")])))
 
                     proteins.update(
                         protein_protein_interaction_network.get_proteins(
                             network, subset["time"],
                             subset["post-translational modification"],
                             combination.SITE_COMBINATION[subset.get(
-                                "site combination", "absmax")], lambda
+                                "site combination", "maxabs")], lambda
                             measurement: measurement <= measurement_range[
                                 0] or measurement >= measurement_range[1]))
 
@@ -555,7 +555,7 @@ def process_workflow(configuration: dict,
                              network, subset["time"],
                              subset["post-translational modification"],
                              combination.SITE_COMBINATION[subset.get(
-                                 "site combination", "absmax")])),
+                                 "site combination", "maxabs")])),
                         conversion.MEASUREMENT_CONVERSION[subset.get(
                             "conversion")]
                         (subset.get(
@@ -565,14 +565,14 @@ def process_workflow(configuration: dict,
                              network, subset["time"],
                              subset["post-translational modification"],
                              combination.SITE_COMBINATION[subset.get(
-                                 "site combination", "absmax")])))
+                                 "site combination", "maxabs")])))
 
                     proteins.intersection_update(
                         protein_protein_interaction_network.get_proteins(
                             network, subset["time"],
                             subset["post-translational modification"],
                             combination.SITE_COMBINATION[subset.get(
-                                "site combination", "absmax")], lambda
+                                "site combination", "maxabs")], lambda
                             measurement: measurement <= measurement_range[
                                 0] or measurement >= measurement_range[1]))
 
@@ -642,7 +642,7 @@ def process_workflow(configuration: dict,
                              network, subset["time"],
                              subset["post-translational modification"],
                              combination.SITE_COMBINATION[subset.get(
-                                 "site combination", "absmax")])),
+                                 "site combination", "maxabs")])),
                         conversion.MEASUREMENT_CONVERSION[subset.get(
                             "conversion")]
                         (subset.get(
@@ -652,14 +652,14 @@ def process_workflow(configuration: dict,
                              network, subset["time"],
                              subset["post-translational modification"],
                              combination.SITE_COMBINATION[subset.get(
-                                 "site combination", "absmax")])))
+                                 "site combination", "maxabs")])))
 
                     proteins.update(
                         protein_protein_interaction_network.get_proteins(
                             network, subset["time"],
                             subset["post-translational modification"],
                             combination.SITE_COMBINATION[subset.get(
-                                "site combination", "absmax")], lambda
+                                "site combination", "maxabs")], lambda
                             measurement: measurement <= measurement_range[
                                 0] or measurement >= measurement_range[1]))
 
@@ -695,7 +695,7 @@ def process_workflow(configuration: dict,
                              network, subset["time"],
                              subset["post-translational modification"],
                              combination.SITE_COMBINATION[subset.get(
-                                 "site combination", "absmax")])),
+                                 "site combination", "maxabs")])),
                         conversion.MEASUREMENT_CONVERSION[subset.get(
                             "conversion")]
                         (subset.get(
@@ -705,14 +705,14 @@ def process_workflow(configuration: dict,
                              network, subset["time"],
                              subset["post-translational modification"],
                              combination.SITE_COMBINATION[subset.get(
-                                 "site combination", "absmax")])))
+                                 "site combination", "maxabs")])))
 
                     proteins.intersection_update(
                         protein_protein_interaction_network.get_proteins(
                             network, subset["time"],
                             subset["post-translational modification"],
                             combination.SITE_COMBINATION[subset.get(
-                                "site combination", "absmax")], lambda
+                                "site combination", "maxabs")], lambda
                             measurement: measurement <= measurement_range[
                                 0] or measurement >= measurement_range[1]))
 
@@ -873,7 +873,7 @@ def process_workflow(configuration: dict,
                         site_combination=combination.SITE_COMBINATION[
                             configuration["module detection"]
                             ["measurement enrichment"]["proteins"].get(
-                                "site combination", "absmax")],
+                                "site combination", "maxabs")],
                         enrichment_test=test.ENRICHMENT_TEST[
                             configuration["module detection"]
                             ["measurement enrichment"]["proteins"].get(
@@ -917,7 +917,7 @@ def process_workflow(configuration: dict,
                         combination.SITE_COMBINATION[
                             configuration["module detection"]
                             ["measurement location"]["proteins"].get(
-                                "site combination", "absmax")],
+                                "site combination", "maxabs")],
                         location_test=test.LOCATION_TEST[
                             configuration["module detection"]
                             ["measurement location"]["proteins"].get(
