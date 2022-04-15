@@ -1,14 +1,12 @@
 # pipeline
 
-protein-protein interaction network assembly and analysis from mass spectrometry data
-
-## setup
+## Setup
 ```
 pip3 install -r pipeline/requirements.txt 
 ```
 Developed using Python 3.9.7, Ubuntu 21.10 and Cytoscape 3.9.1.
 
-## command line interface
+## Command Line Interface
 ```
 usage: pipeline.py [-h] -c CONFIGURATIONS [CONFIGURATIONS ...] [-l {CRITICAL,ERROR,WARNING,INFO,DEBUG}] [-p PROCESSES]
 
@@ -21,15 +19,14 @@ optional arguments:
   -p PROCESSES, --processes PROCESSES
                         maximum number of concurrent processes (default: 4)
 ```
-A configuration file specifies a list of workflows executed sequentially. Configuration files are processed concurrently.
 
-## configuration
+A workflow defines the assembly of a protein-protein interaction network from a set of input genes or proteins, optionally associated with mass spectrometry data, using protein-protein interaction data from BioGRID, CORUM, IntAct, MINT, Reactome or STRING, optionally extending to proteins neighboring the input.
 
-The configuration defines the assembly of a protein-protein interaction network from a set of input genes or proteins optionally associated with mass spectrometry data, using protein-protein interaction data from BioGRID, CORUM, IntAct, MINT, Reactome or STRING, optionally extended to proteins neighboring the input.
+The distribution of measurements and enrichment of Gene Ontology terms or Reactome pathways by the protein-protein interaction network or its separate modules can be assessed. The protein-protein interaction network as well as networks derived from the Gene Ontology or Reactome, capturing enrichment, can be exported along comprehensive Cytoscape style specifications.
 
-The distribution of mass spectrometry measurements and enrichment of Gene Ontology terms or Reactome pathways by the protein-protein interaction network or its modules can be assessed. The protein-protein interaction network as well as networks derived from the Gene Ontology or Reactome capturing enrichment can be exported along comprehensive Cytoscape style specifications.
+A configuration file specifies a list of workflows processed sequentially. Multiple configuration files are processed concurrently.
 
----
+## Configuration
 
 The specification of input genes or proteins.
 
@@ -842,9 +839,9 @@ The Gene Ontology namespaces to consider. The default setting is `["cellular_com
 
 ---
 
-The specification of the assembly of a Gene Ontology or Reactome network. A Gene Ontology network is composed of terms, a Reactome network of pathways. Both report the enrichment of each respective entity by proteins in the protein-protein interaction network along with their relations in these databases.
+The specification of the assembly of a Gene Ontology or Reactome network. A Gene Ontology network is composed of terms, a Reactome network of pathways. Both report the enrichment of each respective entity by proteins in the protein-protein interaction network, along with their relations in these databases.
 
-The proteins considered can be restricted based on their associated measurements, either by a union or intersection of subsets of proteins exceeding the specified ranges.
+The proteins considered can be restricted, based on measurements associated with them, either by a union or intersection of specified subsets.
 
 ```json
 [
@@ -1376,7 +1373,7 @@ The conversion of measurements that a range refers to. It defaults to the log2-f
 ```
 The function used to derive a protein-specific measurement from a its individual sites. The default setting is `"maxabs"`, corresponding to the largest absolute value. Available settings are `"mean"`, `"median"`, `"max"`, `"maxabs"`, `"min"`, `"minabs"`, `"sum"` and `"sumabs"`.
 
----
+## References
    
 The configuration files provided refer to data sets supplemented with the following publications.
 
