@@ -19,12 +19,13 @@ optional arguments:
   -p PROCESSES, --processes PROCESSES
                         maximum number of concurrent processes (default: 4)
 ```
+A configuration file specifies a list of workflows processed sequentially. Multiple configuration files are processed concurrently. 
+
+---
 
 A workflow defines the assembly of a protein-protein interaction network from a set of input genes or proteins, optionally associated with mass spectrometry data, using protein-protein interaction data from BioGRID, CORUM, IntAct, MINT, Reactome or STRING, optionally extending to proteins neighboring the input.
 
 The distribution of measurements and enrichment of Gene Ontology terms or Reactome pathways by the protein-protein interaction network or its separate modules can be assessed. The protein-protein interaction network as well as networks derived from the Gene Ontology or Reactome, capturing enrichment, can be exported along comprehensive Cytoscape style specifications.
-
-A configuration file specifies a list of workflows processed sequentially. Multiple configuration files are processed concurrently.
 
 ## Configuration
 
