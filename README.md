@@ -1,5 +1,7 @@
 # pipeline
 
+protein-protein interaction network assembly and analysis from mass spectrometry data 
+
 ## Setup
 ```
 pip3 install -r pipeline/requirements.txt 
