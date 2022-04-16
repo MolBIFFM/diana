@@ -11,7 +11,7 @@ ORGANISM = {"data": {9606: "Homo sapiens"}}
 
 def get_protein_protein_interactions(
     purification_methods: Optional[Container[str]] = None,
-    taxonomy_identifier: int = 9606,
+    organism: int = 9606,
 ) -> Generator[tuple[str, str, float], None, None]:
     """
     Yields protein-protein interactions from CORUM.
@@ -20,12 +20,12 @@ def get_protein_protein_interactions(
         purification_methods: The accepted PSI-MI identifiers or terms for the
             protein complex purification method. If none are specified, any are
             accepted.
-        taxonomy_identifier: The taxonomy identifier.
+        organism: The NCBI taxonomy identifier for the organism of interest. 
 
     Yields:
         Pairs of interacting proteins.
     """
-    primary_accession = uniprot.get_primary_accession(taxonomy_identifier)
+    primary_accession = uniprot.get_primary_accession(organism)
 
     for row in iterate.tabular_txt(
             "http://mips.helmholtz-muenchen.de/corum/download/"
@@ -54,13 +54,13 @@ def get_protein_protein_interactions(
 
             for a in range(len(subunits) - 1):
                 if organisms[a][:organisms[a].find("(")].rstrip(
-                ) != ORGANISM["data"][taxonomy_identifier]:
+                ) != ORGANISM["data"][organism]:
                     continue
                 for primary_interactor_a in primary_accession.get(
                         subunits[a].split("-")[0], {subunits[a]}):
                     for b in range(a + 1, len(subunits)):
                         if organisms[b][:organisms[b].find("(")].rstrip(
-                        ) != ORGANISM["data"][taxonomy_identifier]:
+                        ) != ORGANISM["data"][organism]:
                             continue
                         for primary_interactor_b in primary_accession.get(
                                 subunits[b].split("-")[0], {subunits[b]}):

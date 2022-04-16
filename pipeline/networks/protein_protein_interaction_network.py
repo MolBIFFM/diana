@@ -44,7 +44,7 @@ def add_genes_from_table(
             from an entry.
         sheet_name: The sheet to parse gene accessions from.
         header: The index of the header row.
-        taxonomy_identifier: The taxonomy identifier.
+        organism: The NCBI taxonomy identifier for the organism of interest. 
     """
     if os.path.splitext(file_name)[1].lstrip(".") in (
             "xls",
@@ -83,18 +83,17 @@ def add_genes_from_table(
     network.add_nodes_from(genes)
 
 
-def map_genes(network: nx.Graph, taxonomy_identifier: int = 9606) -> None:
+def map_genes(network: nx.Graph, organism: int = 9606) -> None:
     """
     Map genes in a protein-protein interaction network to their primary
     UniProt protein identifiers and remove genes not present in Swiss-Prot.
 
     Args:
         network: The protein-protein interaction network to map genes from.
-        taxonomy_identifier: The taxonomy identifier.
+        organism: The NCBI taxonomy identifier for the organism of interest. 
     """
     mapping, gene_name, protein_name = {}, {}, {}
-    for accessions, gene, protein in uniprot.get_swiss_prot_entries(
-            taxonomy_identifier):
+    for accessions, gene, protein in uniprot.get_swiss_prot_entries(organism):
         if gene in network.nodes():
             mapping[gene] = accessions[0]
             gene_name[accessions[0]] = gene
@@ -535,7 +534,7 @@ def get_neighbors_from_biogrid(
         experimental_system_type: Optional[Container[str]] = None,
         interaction_throughput: Optional[Container[str]] = None,
         multi_validated_physical: bool = False,
-        taxonomy_identifier: int = 9606,
+        organism: int = 9606,
         version: Optional[tuple[int, int, int]] = None) -> set[str]:
     """
     Returns proteins interacting with proteins in a protein-protein interaction
@@ -551,7 +550,7 @@ def get_neighbors_from_biogrid(
             If none are specified, any are accepted.
         multi-validated physical: If True, consider only multi-validated
             physical interactions.
-        taxonomy_identifier: The taxonomy identifier.
+        organism: The NCBI taxonomy identifier for the organism of interest. 
         version: The version of the BioGRID database, if not passed, the latest.
 
     Returns:
@@ -560,8 +559,8 @@ def get_neighbors_from_biogrid(
     neighbors = set()
     for interactor_a, interactor_b in biogrid.get_protein_protein_interactions(
             experimental_system, experimental_system_type,
-            interaction_throughput, multi_validated_physical,
-            taxonomy_identifier, version):
+            interaction_throughput, multi_validated_physical, organism,
+            version):
         if (interactor_a in network and interactor_b not in network):
             neighbors.add(interactor_b)
 
@@ -577,7 +576,7 @@ def add_protein_protein_interactions_from_biogrid(
         experimental_system_type: Optional[Container[str]] = None,
         interaction_throughput: Optional[Container[str]] = None,
         multi_validated_physical: bool = False,
-        taxonomy_identifier: int = 9606,
+        organism: int = 9606,
         version: Optional[tuple[int, int, int]] = None) -> None:
     """
     Adds protein-protein interactions from BioGRID to a protein-protein
@@ -593,13 +592,13 @@ def add_protein_protein_interactions_from_biogrid(
             If none are specified, any are accepted.
         multi-validated physical: If True, add only multi-validated physical
             interactions.
-        taxonomy_identifier: The taxonomy identifier.
+        organism: The NCBI taxonomy identifier for the organism of interest. 
         version: The version of the BioGRID database, if not passed, the latest.
     """
     for interactor_a, interactor_b in biogrid.get_protein_protein_interactions(
             experimental_system, experimental_system_type,
-            interaction_throughput, multi_validated_physical,
-            taxonomy_identifier, version):
+            interaction_throughput, multi_validated_physical, organism,
+            version):
         if (interactor_a in network and interactor_b in network and
                 interactor_a != interactor_b):
             network.add_edge(interactor_a, interactor_b)
@@ -609,7 +608,7 @@ def add_protein_protein_interactions_from_biogrid(
 def get_neighbors_from_corum(network: nx.Graph,
                              purification_methods: Optional[
                                  Container[str]] = None,
-                             taxonomy_identifier: int = 9606) -> set[str]:
+                             organism: int = 9606) -> set[str]:
     """
     Returns proteins interacting with proteins in a protein-protein interaction
     network from CORUM.
@@ -619,14 +618,14 @@ def get_neighbors_from_corum(network: nx.Graph,
         purification_methods: The accepted PSI-MI identifiers or terms for the
             protein complex purification method. If none are specified, any are
             accepted.
-        taxonomy_identifier: The taxonomy identifier.
+        organism: The NCBI taxonomy identifier for the organism of interest. 
 
     Returns:
         Neighbors of the protein-protein interaction network in CORUM.
     """
     neighbors = set()
     for interactor_a, interactor_b in corum.get_protein_protein_interactions(
-            purification_methods, taxonomy_identifier):
+            purification_methods, organism):
         if (interactor_a in network and interactor_b not in network):
             neighbors.add(interactor_b)
 
@@ -636,10 +635,10 @@ def get_neighbors_from_corum(network: nx.Graph,
     return neighbors
 
 
-def add_protein_protein_interactions_from_corum(
-        network: nx.Graph,
-        purification_methods: Optional[Container[str]] = None,
-        taxonomy_identifier: int = 9606) -> None:
+def add_protein_protein_interactions_from_corum(network: nx.Graph,
+                                                purification_methods: Optional[
+                                                    Container[str]] = None,
+                                                organism: int = 9606) -> None:
     """
     Adds protein-protein interactions from CORUM to a protein-protein
     interaction network.
@@ -649,10 +648,10 @@ def add_protein_protein_interactions_from_corum(
         purification_methods: The accepted PSI-MI identifiers or terms for the
             protein complex purification method. If none are specified, any are
             accepted.
-        taxonomy_identifier: The taxonomy identifier.
+        organism: The NCBI taxonomy identifier for the organism of interest. 
     """
     for interactor_a, interactor_b in corum.get_protein_protein_interactions(
-            purification_methods, taxonomy_identifier):
+            purification_methods, organism):
         if (interactor_a in network and interactor_b in network and
                 interactor_a != interactor_b):
             network.add_edge(interactor_a, interactor_b)
@@ -664,7 +663,7 @@ def get_neighbors_from_intact(
         interaction_detection_methods: Optional[Container[str]] = None,
         interaction_types: Optional[Container[str]] = None,
         psi_mi_score: float = 0.0,
-        taxonomy_identifier: int = 9606) -> set[str]:
+        organism: int = 9606) -> set[str]:
     """
     Returns proteins interacting with proteins in a protein-protein interaction
     network from IntAct to the network.
@@ -677,7 +676,7 @@ def get_neighbors_from_intact(
         interaction_types: The accepted PSI-MI identifiers or terms for
             interaction type. If none are specified, any are accepted.
         psi_mi_score: The PSI-MI score threshold.
-        taxonomy_identifier: The taxonomy identifier.
+        organism: The NCBI taxonomy identifier for the organism of interest. 
 
     Returns:
         Neighbors of the protein-protein interaction network in IntAct.
@@ -685,7 +684,7 @@ def get_neighbors_from_intact(
     neighbors = set()
     for interactor_a, interactor_b, _ in intact.get_protein_protein_interactions(
             interaction_detection_methods, interaction_types, psi_mi_score,
-            taxonomy_identifier):
+            organism):
         if (interactor_a in network and interactor_b not in network):
             neighbors.add(interactor_b)
 
@@ -700,7 +699,7 @@ def add_protein_protein_interactions_from_intact(
         interaction_detection_methods: Optional[Container[str]] = None,
         interaction_types: Optional[Container[str]] = None,
         psi_mi_score: float = 0.0,
-        taxonomy_identifier: int = 9606) -> None:
+        organism: int = 9606) -> None:
     """
     Adds protein-protein interactions from IntAct to a protein-protein
     interaction network.
@@ -713,11 +712,11 @@ def add_protein_protein_interactions_from_intact(
         interaction_types: The accepted PSI-MI identifiers or terms for
             interaction type. If none are specified, any are accepted.
         psi_mi_score: The PSI-MI score threshold.
-        taxonomy_identifier: The taxonomy identifier.
+        organism: The NCBI taxonomy identifier for the organism of interest. 
     """
     for interactor_a, interactor_b, score in intact.get_protein_protein_interactions(
             interaction_detection_methods, interaction_types, psi_mi_score,
-            taxonomy_identifier):
+            organism):
         if (interactor_a in network and interactor_b in network and
                 interactor_a != interactor_b):
             if network.has_edge(interactor_a, interactor_b):
@@ -734,7 +733,7 @@ def get_neighbors_from_mint(network: nx.Graph,
                                 Container[str]] = None,
                             interaction_types: Optional[Container[str]] = None,
                             psi_mi_score: float = 0.0,
-                            taxonomy_identifier: int = 9606) -> set[str]:
+                            organism: int = 9606) -> set[str]:
     """
     Returns proteins interacting with proteins in a protein-protein interaction
     network from MINT.
@@ -747,7 +746,7 @@ def get_neighbors_from_mint(network: nx.Graph,
         interaction_types: The accepted PSI-MI identifiers or terms for
             interaction type. If none are specified, any are accepted.
         psi_mi_score: The PSI-MI score threshold.
-        taxonomy_identifier: The taxonomy identifier.
+        organism: The NCBI taxonomy identifier for the organism of interest. 
 
     Returns:
         Neighbors of the protein-protein interaction network in MINT.
@@ -755,7 +754,7 @@ def get_neighbors_from_mint(network: nx.Graph,
     neighbors = set()
     for interactor_a, interactor_b, _ in mint.get_protein_protein_interactions(
             interaction_detection_methods, interaction_types, psi_mi_score,
-            taxonomy_identifier):
+            organism):
         if (interactor_a in network and interactor_b not in network):
             neighbors.add(interactor_b)
 
@@ -770,7 +769,7 @@ def add_protein_protein_interactions_from_mint(
         interaction_detection_methods: Optional[Container[str]] = None,
         interaction_types: Optional[Container[str]] = None,
         psi_mi_score: float = 0.0,
-        taxonomy_identifier: int = 9606) -> None:
+        organism: int = 9606) -> None:
     """
     Adds protein-protein interactions from MINT to a protein-protein interaction
     network.
@@ -783,11 +782,11 @@ def add_protein_protein_interactions_from_mint(
         interaction_types: The accepted PSI-MI identifiers or terms for
             interaction type. If none are specified, any are accepted.
         psi_mi_score: The PSI-MI score threshold.
-        taxonomy_identifier: The taxonomy identifier.
+        organism: The NCBI taxonomy identifier for the organism of interest. 
     """
     for interactor_a, interactor_b, score in mint.get_protein_protein_interactions(
             interaction_detection_methods, interaction_types, psi_mi_score,
-            taxonomy_identifier):
+            organism):
         if (interactor_a in network and interactor_b in network and
                 interactor_a != interactor_b):
             if network.has_edge(interactor_a, interactor_b):
@@ -803,7 +802,7 @@ def get_neighbors_from_reactome(
         network: nx.Graph,
         interaction_type: Optional[Container[str]] = None,
         interaction_context: Optional[Container[str]] = None,
-        taxonomy_identifier: int = 9606) -> set[str]:
+        organism: int = 9606) -> set[str]:
     """
     Returns proteins interacting with proteins in a protein-protein interaction
     network from Reactome.
@@ -814,7 +813,7 @@ def get_neighbors_from_reactome(
             If none are specified, any are accepted.
         interaction_context: The accepted interaction context annotation.
             If none are specified, any are accepted.
-        taxonomy_identifier: The taxonomy identifier.
+        organism: The NCBI taxonomy identifier for the organism of interest. 
 
     Returns:
         Neighbors of the protein-protein interaction network in Reactome.
@@ -822,7 +821,7 @@ def get_neighbors_from_reactome(
     neighbors = set()
 
     for interactor_a, interactor_b in reactome.get_protein_protein_interactions(
-            interaction_type, interaction_context, taxonomy_identifier):
+            interaction_type, interaction_context, organism):
         if (interactor_a in network and interactor_b not in network):
             neighbors.add(interactor_b)
 
@@ -836,7 +835,7 @@ def add_protein_protein_interactions_from_reactome(
     network: nx.Graph,
     interaction_type: Optional[Container[str]] = None,
     interaction_context: Optional[Container[str]] = None,
-    taxonomy_identifier: int = 9606,
+    organism: int = 9606,
 ) -> None:
     """
     Adds protein-protein interactions from Reactome to a protein-protein
@@ -848,10 +847,10 @@ def add_protein_protein_interactions_from_reactome(
             If none are specified, any are accepted.
         interaction_context: The accepted interaction context annotation.
             If none are specified, any are accepted.
-        taxonomy_identifier: The taxonomy identifier.
+        organism: The NCBI taxonomy identifier for the organism of interest. 
     """
     for interactor_a, interactor_b in reactome.get_protein_protein_interactions(
-            interaction_type, interaction_context, taxonomy_identifier):
+            interaction_type, interaction_context, organism):
         if (interactor_a in network and interactor_b in network and
                 interactor_a != interactor_b):
             network.add_edge(interactor_a, interactor_b)
@@ -874,7 +873,7 @@ def get_neighbors_from_string(network: nx.Graph,
                               textmining_transferred: float = 0.0,
                               combined_score: float = 0.0,
                               physical: bool = False,
-                              taxonomy_identifier: int = 9606,
+                              organism: int = 9606,
                               version: float = 11.5) -> set[str]:
     """
     Add proteins interacting with proteins in a protein-protein interaction
@@ -898,7 +897,7 @@ def get_neighbors_from_string(network: nx.Graph,
         textmining_transferred: The transferred textmining score threshold.
         combined_score: The combined score threshold.
         physical: If True, consider only physical interactions.
-        taxonomy_identifier: The taxonomy identifier.
+        organism: The NCBI taxonomy identifier for the organism of interest. 
         version: The version of the STRING database.
 
     Returns:
@@ -910,8 +909,8 @@ def get_neighbors_from_string(network: nx.Graph,
             neighborhood, neighborhood_transferred, fusion, cooccurence,
             homology, coexpression, coexpression_transferred, experiments,
             experiments_transferred, database, database_transferred, textmining,
-            textmining_transferred, combined_score, physical,
-            taxonomy_identifier, version):
+            textmining_transferred, combined_score, physical, organism,
+            version):
         if (interactor_a in network and interactor_b not in network):
             neighbors.add(interactor_b)
 
@@ -938,7 +937,7 @@ def add_protein_protein_interactions_from_string(
         textmining_transferred: float = 0.0,
         combined_score: float = 0.0,
         physical: bool = False,
-        taxonomy_identifier: int = 9606,
+        organism: int = 9606,
         version: float = 11.5) -> None:
     """
     Adds protein-protein interactions from STRING to a protein-protein
@@ -962,15 +961,15 @@ def add_protein_protein_interactions_from_string(
         textmining_transferred: The transferred textmining score threshold.
         combined_score: The combined score threshold.
         physical: If True, add only physical interactions.
-        taxonomy_identifier: The taxonomy identifier.
+        organism: The NCBI taxonomy identifier for the organism of interest. 
         version: The version of the STRING database.
     """
     for interactor_a, interactor_b, score in string.get_protein_protein_interactions(
             neighborhood, neighborhood_transferred, fusion, cooccurence,
             homology, coexpression, coexpression_transferred, experiments,
             experiments_transferred, database, database_transferred, textmining,
-            textmining_transferred, combined_score, physical,
-            taxonomy_identifier, version):
+            textmining_transferred, combined_score, physical, organism,
+            version):
         if (interactor_a in network and interactor_b in network and
                 interactor_a != interactor_b):
             if network.has_edge(interactor_a, interactor_b):
@@ -1307,7 +1306,7 @@ def get_gene_ontology_enrichment(
     multiple_testing_correction: Callable[[dict[tuple[
         nx.Graph, str], float]], dict[tuple[nx.Graph, str],
                                       float]] = correction.benjamini_hochberg,
-    taxonomy_identifier: int = 9606,
+    organism: int = 9606,
     namespaces: Container[str] = ("cellular_component", "molecular_function",
                                   "biological_process"),
     annotation_as_reference: bool = True
@@ -1322,7 +1321,7 @@ def get_gene_ontology_enrichment(
             Ontology terms.
         multiple_testing_correction: The procedure to correct for multiple
             testing of multiple terms and networks.
-        taxonomy_identifier: The taxonomy identifier.
+        organism: The NCBI taxonomy identifier for the organism of interest. 
         namespaces: The Gene Ontology namespaces.
         annotation_as_reference: If True, compute enrichment with respect to the
             species-specific Gene Ontology annotation in namespaces, else with
@@ -1342,7 +1341,7 @@ def get_gene_ontology_enrichment(
 
     annotation = {}
     for protein, term in gene_ontology.get_annotation(
-            taxonomy_identifier, gene_ontology.convert_namespaces(namespaces)):
+            organism, gene_ontology.convert_namespaces(namespaces)):
         if annotation_as_reference or any(
                 protein in network.nodes() for network in networks):
             for primary_term in go_id.get(term, {term}):
@@ -1389,7 +1388,7 @@ def get_reactome_enrichment(
     multiple_testing_correction: Callable[[dict[tuple[
         nx.Graph, str], float]], dict[tuple[nx.Graph, str],
                                       float]] = correction.benjamini_hochberg,
-    taxonomy_identifier: int = 9606,
+    organism: int = 9606,
     annotation_as_reference: bool = True
 ) -> dict[nx.Graph, dict[tuple[str, str], float]]:
     """
@@ -1402,7 +1401,7 @@ def get_reactome_enrichment(
             Reactome pathways.
         multiple_testing_correction: The procedure to correct for multiple
             testing of multiple pathways and networks.
-        taxonomy_identifier: The taxonomy identifier.
+        organism: The NCBI taxonomy identifier for the organism of interest. 
         annotation_as_reference: If True, compute enrichment with respect to the
             species-specific Reactome pathway annotation, else with respect to
             the union of the protein-protein interaction networks.
@@ -1412,12 +1411,11 @@ def get_reactome_enrichment(
         each network.
     """
     name = {}
-    for pathway, pathway_name in reactome.get_pathways(taxonomy_identifier):
+    for pathway, pathway_name in reactome.get_pathways(organism):
         name[pathway] = pathway_name
 
     annotation = {}
-    for protein, pathway in reactome.get_pathway_annotation(
-            taxonomy_identifier):
+    for protein, pathway in reactome.get_pathway_annotation(organism):
         if annotation_as_reference or any(
                 protein in network.nodes() for network in networks):
             if pathway not in annotation:

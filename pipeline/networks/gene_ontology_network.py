@@ -20,7 +20,7 @@ def get_network(proteins: Container[str] = frozenset(),
                                           float] = test.hypergeometric,
                 multiple_testing_correction: Callable[[dict[str, float]], dict[
                     str, float]] = correction.benjamini_hochberg,
-                taxonomy_identifier: int = 9606) -> nx.DiGraph:
+                organism: int = 9606) -> nx.DiGraph:
     """
     Assemble a Gene Ontology network from proteins.
 
@@ -31,7 +31,7 @@ def get_network(proteins: Container[str] = frozenset(),
             term by the protein-protein interaction network.
         multiple_testing_correction: The procedure to correct for testing of
             multiple terms.
-        taxonomy_identifier: The taxonomy identifier.
+        organism: The NCBI taxonomy identifier for the organism of interest. 
 
     Returns:
         The Gene Ontology network.
@@ -52,7 +52,7 @@ def get_network(proteins: Container[str] = frozenset(),
 
     annotation = {}
     for protein, term in gene_ontology.get_annotation(
-            taxonomy_identifier, gene_ontology.convert_namespaces(namespaces)):
+            organism, gene_ontology.convert_namespaces(namespaces)):
         for primary_term in go_id.get(term, {term}):
             if primary_term not in annotation:
                 annotation[primary_term] = set()

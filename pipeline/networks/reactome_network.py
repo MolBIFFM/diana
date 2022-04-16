@@ -17,7 +17,7 @@ def get_network(proteins: Container[str] = frozenset(),
                                           float] = test.hypergeometric,
                 multiple_testing_correction: Callable[[dict[str, float]], dict[
                     str, float]] = correction.benjamini_hochberg,
-                taxonomy_identifier: int = 9606) -> nx.DiGraph:
+                organism: int = 9606) -> nx.DiGraph:
     """
     Assemble a Reactome network from proteins.
 
@@ -27,13 +27,13 @@ def get_network(proteins: Container[str] = frozenset(),
             pathway by the protein-protein interaction network.
         multiple_testing_correction: The procedure to correct for testing of
             multiple pathways.
-        taxonomy_identifier: The taxonomy identifier.
+        organism: The NCBI taxonomy identifier for the organism of interest. 
 
     Returns:
         The Reactome network.
     """
     network = nx.DiGraph()
-    for pathway, name in reactome.get_pathways(taxonomy_identifier):
+    for pathway, name in reactome.get_pathways(organism):
         network.add_node(pathway)
         network.nodes[pathway]["pathway"] = name
 
@@ -42,8 +42,7 @@ def get_network(proteins: Container[str] = frozenset(),
             network.add_edge(child, parent)
 
     annotation = {}
-    for protein, pathway in reactome.get_pathway_annotation(
-            taxonomy_identifier):
+    for protein, pathway in reactome.get_pathway_annotation(organism):
         if pathway not in annotation:
             annotation[pathway] = set()
         annotation[pathway].add(protein)

@@ -147,7 +147,7 @@ A list of input gene or protein accessions, alternative to extraction from tabul
     {
       "genes": [
         {
-          "species": 9606
+          "organism": 9606
         }
       ]
     }
@@ -318,28 +318,28 @@ An integer k specifying the extension of the network using species-specific prot
     {
       "protein-protein interactions": {
         "BioGRID": {
-          "species": 9606
+          "organism": 9606
         },
         "CORUM": {
-          "species": 9606
+          "organism": 9606
         },
         "IntAct": {
-          "species": 9606
+          "organism": 9606
         }, 
         "MINT": {
-          "species": 9606
+          "organism": 9606
         },
         "Reactome": {
-          "species": 9606
+          "organism": 9606
         },
         "STRING": {
-          "species": 9606
+          "organism": 9606
         }
       }
     }
 ]
 ```
-The NCBI taxonomy ID of the target species. The default and currently only completely supported setting is `9606`, corresponding to Homo sapiens.
+The NCBI taxonomy ID for the organism of interest. The default and currently only completely supported setting is `9606`, corresponding to Homo sapiens.
 
 
 ```json
@@ -815,10 +815,10 @@ The corrected p-value threshold. The default setting is `1.0`.
 [
     {
       "Gene Ontology enrichment": {
-        "species": 9606
+        "organism": 9606
       },
        "Reactome enrichment": {
-        "species": 9606
+        "organism": 9606
       }
     }
 ]
@@ -1040,10 +1040,10 @@ Available settings are `"Benjamini-Hochberg"` and `"Bonferroni"`.
 [
     {
       "Gene Ontology network": {
-        "species": 9606
+        "organism": 9606
       },
       "Reactome network": {
-        "species": 9606
+        "organism": 9606
       }
     }
 ]
@@ -1279,18 +1279,18 @@ The corrected p-value threshold. The default setting is `1.0`.
       "module detection": {
         "Gene Ontology enrichment": {
           "annotation": {
-            "species": 9606
+            "organism": 9606
           },
           "network": {
-            "species": 9606
+            "organism": 9606
           }
         },
         "Reactome enrichment": {
           "annotation": {
-            "species": 9606
+            "organism": 9606
           },
           "network": {
-            "species": 9606
+            "organism": 9606
           }
         }
       }

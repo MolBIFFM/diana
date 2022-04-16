@@ -22,7 +22,7 @@ def get_protein_protein_interactions(
         textmining_transferred: float = 0.0,
         combined_score: float = 0.0,
         physical: bool = False,
-        taxonomy_identifier: int = 9606,
+        organism: int = 9606,
         version: float = 11.5) -> Generator[tuple[str, str, float], None, None]:
     """
     Yields protein-protein interactions from STRING.
@@ -44,7 +44,7 @@ def get_protein_protein_interactions(
         textmining_transferred: The transferred textmining score threshold.
         combined_score: The combined score threshold.
         physical: If True, yield only physical interactions.
-        taxonomy_identifier: The taxonomy identifier.
+        organism: The NCBI taxonomy identifier for the organism of interest. 
         version: The version of the STRING database.
 
     Yields:
@@ -54,7 +54,7 @@ def get_protein_protein_interactions(
     uniprot_id = {}
     for row in iterate.tabular_txt(
             f"https://stringdb-static.org/download/protein.aliases.v{version}/"
-            f"{taxonomy_identifier}.protein.aliases.v{version}.txt.gz",
+            f"{organism}.protein.aliases.v{version}.txt.gz",
             delimiter="\t",
             skiprows=1,
             usecols=[0, 1, 2],
@@ -83,15 +83,15 @@ def get_protein_protein_interactions(
     }
     thresholds["combined_score"] = combined_score
 
-    primary_accession = uniprot.get_primary_accession(taxonomy_identifier)
+    primary_accession = uniprot.get_primary_accession(organism)
 
     for row in iterate.tabular_txt(
             "https://stringdb-static.org/download/"
             f"protein.physical.links.full.v{version}/"
-            f"{taxonomy_identifier}.protein.links.full.v{version}.txt.gz"
+            f"{organism}.protein.links.full.v{version}.txt.gz"
             if physical else "https://stringdb-static.org/download/"
             f"protein.links.full.v{version}/"
-            f"{taxonomy_identifier}.protein.links.full.v{version}.txt.gz",
+            f"{organism}.protein.links.full.v{version}.txt.gz",
             delimiter=" ",
             header=0,
             usecols=["protein1", "protein2"] + list(thresholds.keys()),

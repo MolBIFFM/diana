@@ -14,7 +14,7 @@ def get_protein_protein_interactions(
     experimental_system_type: Optional[Container[str]] = None,
     interaction_throughput: Optional[Container[str]] = None,
     multi_validated_physical: bool = False,
-    taxonomy_identifier: int = 9606,
+    organism: int = 9606,
     version: Optional[tuple[int, int, int]] = None
 ) -> Generator[tuple[str, str], None, None]:
     """
@@ -29,13 +29,13 @@ def get_protein_protein_interactions(
             If none are specified, any are accepted.
         multi-validated physical: If True, yield only multi-validated physical
             interactions.
-        taxonomy_identifier: The taxonomy identifier.
+        organism: The NCBI taxonomy identifier for the organism of interest. 
         version: The version of the BioGRID database, if not passed, the latest.
 
     Yields:
         Pairs of interacting proteins.
     """
-    primary_accession = uniprot.get_primary_accession(taxonomy_identifier)
+    primary_accession = uniprot.get_primary_accession(organism)
 
     for row in iterate.tabular_txt(
         ("https://downloads.thebiogrid.org/Download/BioGRID/Release-Archive/"
@@ -53,7 +53,7 @@ def get_protein_protein_interactions(
             file_from_zip_archive=re.compile(
                 r"BIOGRID-MV-Physical-[0-9]\.[0-9]\.[0-9]{3}\.tab3\.txt"
                 if multi_validated_physical else
-                f"BIOGRID-ORGANISM-{ORGANISM['files'][taxonomy_identifier]}-"
+                f"BIOGRID-ORGANISM-{ORGANISM['files'][organism]}-"
                 r"[0-9]\.[0-9]\.[0-9][0-9][0-9]\.tab3\.txt"),
             delimiter="\t",
             header=0,
@@ -72,8 +72,8 @@ def get_protein_protein_interactions(
              row["Experimental System"] in experimental_system) and
             (not experimental_system_type or
              row["Experimental System Type"] in experimental_system_type) and
-            (row["Organism ID Interactor A"] == taxonomy_identifier and
-             row["Organism ID Interactor B"] == taxonomy_identifier) and
+            (row["Organism ID Interactor A"] == organism and
+             row["Organism ID Interactor B"] == organism) and
             (not interaction_throughput or
              any(it in interaction_throughput
                  for it in row["Throughput"].split("|")))):

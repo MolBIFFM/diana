@@ -60,41 +60,40 @@ def get_ontology(namespaces: Container[str] = ("cellular_component",
 
 
 def get_annotation(
-    taxonomy_identifier: int = 9606,
+    organism: int = 9606,
     namespaces: Container[str] = ("C", "F", "P")
 ) -> Generator[tuple[str, str], None, None]:
     """
     Yields Gene Ontology annotations within specified namespaces.
 
     Args:
-        taxonomy_identifier: The taxonomy identifier.
+        organism: The NCBI taxonomy identifier for the organism of interest. 
         namespace: The Gene Ontology namespace identifiers.
 
     Yields:
         Pairs of protein accessions and Gene Ontology term identifiers.
     """
-    primary_accession = uniprot.get_primary_accession(taxonomy_identifier)
+    primary_accession = uniprot.get_primary_accession(organism)
 
     for row in iterate.tabular_txt(
             "http://geneontology.org/gene-associations/"
-            f"goa_{ORGANISM['files'][taxonomy_identifier]}.gaf.gz",
+            f"goa_{ORGANISM['files'][organism]}.gaf.gz",
             skiprows=41,
             delimiter="\t",
             usecols=[0, 1, 4, 8, 12]):
         if row[0] == "UniProtKB" and row[3] in namespaces and row[4].split(
-                ":")[-1] == str(taxonomy_identifier):
+                ":")[-1] == str(organism):
             for protein in primary_accession.get(row[1], {row[1]}):
                 yield (protein, row[2])
 
     for row in iterate.tabular_txt(
             "http://geneontology.org/gene-associations/"
-            f"goa_{ORGANISM['files'][taxonomy_identifier]}_isoform.gaf.gz",
+            f"goa_{ORGANISM['files'][organism]}_isoform.gaf.gz",
             skiprows=41,
             delimiter="\t",
             usecols=[0, 4, 8, 12, 16]):
         if row[0] == "UniProtKB" and row[2] in namespaces and row[3].split(
-                ":")[-1] == str(taxonomy_identifier) and row[4].startswith(
-                    "UniProtKB:"):
+                ":")[-1] == str(organism) and row[4].startswith("UniProtKB:"):
             yield (row[4].split(":")[1], row[1])
 
 

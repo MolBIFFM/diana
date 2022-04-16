@@ -5,13 +5,13 @@ from access import iterate
 
 
 def get_swiss_prot_entries(
-    taxonomy_identifier: Optional[int] = None
+    organism: Optional[int] = None
 ) -> Generator[tuple[tuple[str], str, str], None, None]:
     """
     Yields Swiss-Prot entries.
 
     Args:
-        taxonomy_identifier: The taxonomy identifier.
+        organism: The NCBI taxonomy identifier for the organism of interest. 
 
     Yields:
         An entries UniProt accessions, gene name and protein name.
@@ -81,7 +81,7 @@ def get_swiss_prot_entries(
                         [1].split("{")[0])
 
         elif line == "//":
-            if not taxonomy_identifier or tax_id == taxonomy_identifier:
+            if not organism or tax_id == organism:
                 yield (tuple(accessions), entry_gene_name.get("Name", "NA"),
                        entry_protein_name.get("Full", "NA"))
 
@@ -92,18 +92,18 @@ def get_swiss_prot_entries(
 
 
 def get_primary_accession(
-        taxonomy_identifier: Optional[int] = None) -> dict[str, set[str]]:
+        organism: Optional[int] = None) -> dict[str, set[str]]:
     """
     Returns a map of primary UniProt accessions.
 
     Args:
-        taxonomy_identifier: The taxonomy identifier.
+        organism: The NCBI taxonomy identifier for the organism of interest. 
 
     Returns:
         A map of any secondary UniProt accessions to its primary equivalents.
     """
     primary_accession = {}
-    for accessions, _, _ in get_swiss_prot_entries(taxonomy_identifier):
+    for accessions, _, _ in get_swiss_prot_entries(organism):
         for i, accession in enumerate(accessions):
             if i > 0:
                 if accession not in primary_accession:

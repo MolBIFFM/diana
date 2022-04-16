@@ -9,11 +9,10 @@ from databases import uniprot
 
 
 def get_protein_protein_interactions(
-    interaction_detection_methods: Optional[Container[str]] = None,
-    interaction_types: Optional[Container[str]] = None,
-    psi_mi_score: float = 0.0,
-    taxonomy_identifier: int = 9606
-) -> Generator[tuple[str, str, float], None, None]:
+        interaction_detection_methods: Optional[Container[str]] = None,
+        interaction_types: Optional[Container[str]] = None,
+        psi_mi_score: float = 0.0,
+        organism: int = 9606) -> Generator[tuple[str, str, float], None, None]:
     """
     Yields protein-protein interactions from IntAct.
 
@@ -24,13 +23,13 @@ def get_protein_protein_interactions(
         interaction_types: The accepted PSI-MI identifiers or terms for
             interaction type. If none are specified, any are accepted.
         psi_mi_score: The PSI-MI score threshold.
-        taxonomy_identifier: The taxonomy identifier.
+        organism: The NCBI taxonomy identifier for the organism of interest. 
 
     Yields:
         Pairs of interacting proteins and the PSI-MI score associated with the
         interaction.
     """
-    primary_accession = uniprot.get_primary_accession(taxonomy_identifier)
+    primary_accession = uniprot.get_primary_accession(organism)
 
     for row in iterate.tabular_txt(
             "ftp://ftp.ebi.ac.uk/pub/databases/intact/current/psimitab/"
@@ -56,11 +55,10 @@ def get_protein_protein_interactions(
                  row["Interaction detection method(s)"],
                  "psi-mi",
                  interaction_detection_methods,
-             )) and
-            (mitab.namespace_has_identifier(row["Taxid interactor A"], "taxid",
-                                            taxonomy_identifier) and
-             mitab.namespace_has_identifier(row["Taxid interactor B"], "taxid",
-                                            taxonomy_identifier)) and
+             )) and (mitab.namespace_has_identifier(row["Taxid interactor A"],
+                                                    "taxid", organism) and
+                     mitab.namespace_has_identifier(row["Taxid interactor B"],
+                                                    "taxid", organism)) and
             (not interaction_types or mitab.namespace_has_any_identifier_from(
                 row["Interaction type(s)"], "psi-mi", interaction_types) or
              mitab.namespace_has_any_term_from(row["Interaction type(s)"],
