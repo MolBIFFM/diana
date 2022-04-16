@@ -265,7 +265,7 @@ def process_workflow(configuration: dict,
                     ))
 
             network.add_nodes_from(proteins)
-            protein_protein_interaction_network.relabel_proteins(network)
+            protein_protein_interaction_network.map_proteins(network)
 
         if "BioGRID" in configuration["protein-protein interactions"]:
             protein_protein_interaction_network.add_protein_protein_interactions_from_biogrid(
@@ -387,7 +387,11 @@ def process_workflow(configuration: dict,
                 ["STRING"].get("version", 11.5),
             )
 
-        if "Cytoscape" in configuration:
+        if "Cytoscape" in configuration and any(
+                protein_protein_interaction_network.
+                get_post_translational_modifications(network, time)
+                for time in protein_protein_interaction_network.get_times(
+                    network)):
             style = protein_protein_interaction_network_style.get_style(
                 network,
                 bar_chart_range=default.MEASUREMENT_RANGE[
@@ -926,6 +930,7 @@ def process_workflow(configuration: dict,
                             configuration["module detection"]
                             ["measurement location"]["proteins"].get(
                                 "correction", "Benjamini-Hochberg")])
+
             if "sites" in configuration["module detection"][
                     "measurement location"]:
                 measurement_location[

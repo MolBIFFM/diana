@@ -480,32 +480,46 @@ def get_style(network: nx.Graph) -> ET.ElementTree:
 
                 for key, values in visual_property["continuousMapping"][
                         "continuousMappingPoint"].items():
-                    ET.SubElement(
-                        continuous_mapping_sub_element,
-                        "continuousMappingPoint",
-                        attrib={
-                            "attrValue":
-                                key.format(max=float(
-                                    max(
-                                        gene_ontology_network.get_term_sizes(
-                                            network).values()))),
-                            "equalValue":
-                                values["equalValue"].format(size=35.0 + float(
-                                    max(
-                                        gene_ontology_network.get_term_sizes(
-                                            network).values()))),
-                            "greaterValue":
-                                values["greaterValue"].format(size=35.0 + float(
-                                    max(
-                                        gene_ontology_network.get_term_sizes(
-                                            network).values()))),
-                            "lesserValue":
-                                values["lesserValue"].format(size=35.0 + float(
-                                    max(
-                                        gene_ontology_network.get_term_sizes(
-                                            network).values())))
-                        },
-                    )
+                    if name == "NODE_SIZE":
+                        ET.SubElement(
+                            continuous_mapping_sub_element,
+                            "continuousMappingPoint",
+                            attrib={
+                                "attrValue":
+                                    key.format(max=float(
+                                        max(
+                                            gene_ontology_network.
+                                            get_term_sizes(network).values()))),
+                                "equalValue":
+                                    values["equalValue"].
+                                    format(size=35.0 + float(
+                                        max(
+                                            gene_ontology_network.
+                                            get_term_sizes(network).values()))),
+                                "greaterValue":
+                                    values["greaterValue"].
+                                    format(size=35.0 + float(
+                                        max(
+                                            gene_ontology_network.
+                                            get_term_sizes(network).values()))),
+                                "lesserValue":
+                                    values["lesserValue"].
+                                    format(size=35.0 + float(
+                                        max(
+                                            gene_ontology_network.
+                                            get_term_sizes(network).values())))
+                            },
+                        )
+                    else:
+                        ET.SubElement(
+                            continuous_mapping_sub_element,
+                            "continuousMappingPoint",
+                            attrib={
+                                "attrValue": key,
+                                "greaterValue": values["greaterValue"],
+                                "lesserValue": values["lesserValue"]
+                            },
+                        )
 
             elif visual_property.get("discreteMapping"):
                 discrete_mapping_sub_element = ET.SubElement(

@@ -15,7 +15,7 @@ from databases import (biogrid, corum, gene_ontology, intact, mint, reactome,
 
 def get_network() -> nx.Graph():
     """
-    Initializes a protein-protein interaction network.
+    Returns an initialized protein-protein interaction network.
 
     Returns
         The protein-protein interaction network.
@@ -260,7 +260,7 @@ def map_proteins(network: nx.Graph) -> None:
     """
     Map proteins in a protein-protein interaction network to their primary
     UniProt identifiers and remove proteins not present in Swiss-Prot. Isoform
-    identifiers are maintained but not transferred.
+    identifiers are maintained, but not transferred.
 
     Args:
         network: The protein-protein interaction network to map proteins
@@ -1066,6 +1066,9 @@ def get_modules(network: nx.Graph,
     Returns:
         Modules of the protein-protein interaction network.
     """
+    if not network.number_of_edges():
+        return []
+
     copied_network = network.copy()
     copied_network.remove_nodes_from(list(nx.isolates(copied_network)))
 
@@ -1073,7 +1076,6 @@ def get_modules(network: nx.Graph,
 
     while (module_size_combination(len(community) for community in communities)
            > module_size):
-
         subdivision = False
         for i, subdivided_community in enumerate(
                 algorithm(copied_network.subgraph(communities[j]), resolution,

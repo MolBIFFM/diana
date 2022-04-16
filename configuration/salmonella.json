@@ -103,7 +103,7 @@
           "range": [-2.0, 2.0]
         },
         "node color": {
-          "change": [-1.0, 1.0]
+          "measurement": [-1.0, 1.0]
         }
       },
       "Gene Ontology enrichment": {
@@ -117,22 +117,22 @@
           {
             "time": 30,
             "post-translational modification": "P",
-            "change": [-1.0, 1.0]
+            "measurement": [-1.0, 1.0]
           },
           {
             "time": 120,
             "post-translational modification": "P",
-            "change": [-1.0, 1.0]
+            "measurement": [-1.0, 1.0]
           },
           {
             "time": 30,
             "post-translational modification": "U",
-            "change": [-1.0, 1.0]
+            "measurement": [-1.0, 1.0]
           },
           {
             "time": 120,
             "post-translational modification": "U",
-            "change": [-1.0, 1.0]
+            "measurement": [-1.0, 1.0]
           }
         ]
       },
@@ -141,22 +141,22 @@
           {
             "time": 30,
             "post-translational modification": "P",
-            "change": [-1.0, 1.0]
+            "measurement": [-1.0, 1.0]
           },
           {
             "time": 120,
             "post-translational modification": "P",
-            "change": [-1.0, 1.0]
+            "measurement": [-1.0, 1.0]
           },
           {
             "time": 30,
             "post-translational modification": "U",
-            "change": [-1.0, 1.0]
+            "measurement": [-1.0, 1.0]
           },
           {
             "time": 120,
             "post-translational modification": "U",
-            "change": [-1.0, 1.0]
+            "measurement": [-1.0, 1.0]
           }
         ]
       },
@@ -177,17 +177,17 @@
             "p": 0.05
           }
         },
-        "change enrichment": {
+        "measurement enrichment": {
           "proteins": {
             "p": 0.05,
-            "change": [-1.0, 1.0]
+            "measurement": [-1.0, 1.0]
           },
           "sites": {
             "p": 0.05,
-            "change": [-1.0, 1.0]
+            "measurement": [-1.0, 1.0]
           }       
         },
-        "change location": {
+        "measurement location": {
           "proteins": {
             "p": 0.05
           },
