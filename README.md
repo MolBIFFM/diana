@@ -153,7 +153,7 @@ A list of input gene or protein accessions, alternative to extraction from tabul
     }
 ]
 ```
-The NCBI taxonomy ID of the target species. The default and currently only completely supported setting is `9606`, corresponding to Homo sapiens.
+The NCBI taxonomy ID of the organism of interest. The default and currently only completely supported setting is `9606`, corresponding to Homo sapiens.
 
 ```json
 [
@@ -823,7 +823,7 @@ The corrected p-value threshold. The default setting is `1.0`.
     }
 ]
 ```
-The NCBI taxonomy ID of the target species. The default and currently only completely supported setting is `9606`, corresponding to Homo sapiens.
+The NCBI taxonomy ID of the organism of interest. The default and currently only completely supported setting is `9606`, corresponding to Homo sapiens.
 
 ```json
 [
@@ -1049,7 +1049,7 @@ Available settings are `"Benjamini-Hochberg"` and `"Bonferroni"`.
 ]
 ```
 
-The NCBI taxonomy ID of the target species. The default and currently only completely supported setting is `9606`, corresponding to Homo sapiens.
+The NCBI taxonomy ID of the organism of interest. The default and currently only completely supported setting is `9606`, corresponding to Homo sapiens.
 
 ```json
 [
@@ -1297,7 +1297,7 @@ The corrected p-value threshold. The default setting is `1.0`.
     }
 ]
 ```
-The NCBI taxonomy ID of the target species. The default and currently only completely supported setting is `9606`, corresponding to Homo sapiens.
+The NCBI taxonomy ID of the organism of interest. The default and currently only completely supported setting is `9606`, corresponding to Homo sapiens.
 
 ```json
 [
