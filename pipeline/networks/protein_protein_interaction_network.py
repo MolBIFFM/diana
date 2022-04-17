@@ -408,7 +408,7 @@ def set_post_translational_modification(network: nx.Graph) -> None:
     for time in get_times(network):
         for protein in network:
             network.nodes[protein][
-                f"post-translational modification {time}"] = "".join(
+                f"post-translational modification {time}"] = " ".join(
                     sorted(
                         set(
                             measurement.split(" ")[1]

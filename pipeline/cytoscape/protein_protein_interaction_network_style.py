@@ -850,7 +850,7 @@ COMPONENTS = [
                         "discreteMappingEntry": {
                             "{modifications[0]}": "RECTANGLE",
                             "{modifications[1]}": "TRIANGLE",
-                            "{modifications[0]}{modifications[1]}": "ELLIPSE",
+                            "{modifications[0]} {modifications[1]}": "ELLIPSE",
                         },
                     },
                 },
