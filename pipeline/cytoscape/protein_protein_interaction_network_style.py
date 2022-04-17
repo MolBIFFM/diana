@@ -493,7 +493,7 @@ COMPONENTS = [
                 "EDGE_TRANSPARENCY": {
                     "default": "255",
                     "continuousMapping": {
-                        "attributeName": "confidence",
+                        "attributeName": "score",
                         "attributeType": "float",
                         "continuousMappingPoint": {
                             "0.0": {
