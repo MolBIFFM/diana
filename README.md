@@ -708,7 +708,7 @@ The specification of Cytoscape styles. If not present, no Cytoscape styles are e
     }
 ]
 ```
-The function used to derive protein-specific measurements from their individual sites. The function is applied to ratios, not their log2. The default setting is `"maxabs"`, corresponding to the largest absolute value. Available settings are `"mean"`, `"median"`, `"max"`, `"maxabs"`, `"min"`, `"minabs"`, `"sum"`, `"sumabs"` and `null`, such that sites are considered individually.
+The function used to derive protein-specific measurements from their individual sites. The function is applied to ratios, not their log2. The default setting is `"maxabs"`, corresponding to the largest absolute value. Available settings are `"mean"`, `"median"`, `"max"`, `"maxabs"`, `"min"`, `"minabs"`, `"sum"`, `"sumabs"` as well as `"increase"` and `"decrease"`, referring to the proportion of a proteins' sites exhibiting either, and, finally, `null`, such that sites are considered individually.
 
 ```json
 [
@@ -964,7 +964,7 @@ The modification considered to determine a subset of proteins.
     }
 ]
 ```
-The function used to derive a protein-specific measurement from a its individual sites. The function is applied to ratios, not their log2. The default setting is `"maxabs"`, corresponding to the largest absolute value. Available settings are `"mean"`, `"median"`, `"max"`, `"maxabs"`, `"min"`, `"minabs"`, `"sum"`, `"sumabs"` and `null`, such that sites are considered individually.
+The function used to derive a protein-specific measurement from a its individual sites. The function is applied to ratios, not their log2. The default setting is `"maxabs"`, corresponding to the largest absolute value. Available settings are `"mean"`, `"median"`, `"max"`, `"maxabs"`, `"min"`, `"minabs"`, `"sum"`, `"sumabs"` as well as `"increase"` and `"decrease"`, referring to the proportion of a proteins' sites exhibiting either, and, finally, `null`, such that sites are considered individually.
 
 ```json
 [
@@ -1448,7 +1448,7 @@ The conversion of measurements that a range refers to. It defaults to the log2-f
     }
 ]
 ```
-The function used to derive a protein-specific measurement from a its individual sites. The default setting is `"maxabs"`, corresponding to the largest absolute value. Available settings are `"mean"`, `"median"`, `"max"`, `"maxabs"`, `"min"`, `"minabs"`, `"sum"` and `"sumabs"`.
+The function used to derive a protein-specific measurement from a its individual sites. The default setting is `"maxabs"`, corresponding to the largest absolute value. Available settings are `"mean"`, `"median"`, `"max"`, `"maxabs"`, `"min"`, `"minabs"`, `"sum"` and `"sumabs"` as well as `"increase"` and `"decrease"`, referring to the proportion of a proteins' sites exhibiting either.
 
 ## References
    

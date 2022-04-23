@@ -12,6 +12,8 @@ SITE_COMBINATION: dict[str, Callable[[Collection[float]], float]] = {
     "minabs": lambda sites: min(sites, key=abs),
     "sum": math.fsum,
     "sumabs": lambda sites: math.fsum(math.fabs(site) for site in sites),
+    "increase": lambda sites: sum(site > 1.0 for site in sites) / len(sites),
+    "decrease": lambda sites: sum(site < 1.0 for site in sites) / len(sites),
 }
 
 REPLICATE_COMBINATION: dict[str, Callable[[Collection[float]], float]] = {
@@ -28,6 +30,7 @@ MODULE_SIZE_COMBINATION: dict[str, Callable[[Collection[int]], float]] = {
 
 CONFIDENCE_SCORE_COMBINATION: dict[str, Callable[
     [Collection[float]], float]] = {
+        None: lambda scores: float(bool(scores.values())),
         "mean": lambda scores: statistics.mean(scores.values()),
         "median": lambda scores: statistics.median(scores.values()),
         "max": lambda scores: max(scores.values()),
@@ -37,5 +40,5 @@ CONFIDENCE_SCORE_COMBINATION: dict[str, Callable[
         **{
             database: lambda scores, database=database: scores.get(
                 database, 0.0) for database in ("BioGRID", "CORUM", "IntAct", "MINT", "Reactome", "STRING")
-        }, None: lambda scores: float(bool(scores.values()))
+        }
     }
