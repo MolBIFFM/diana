@@ -1,12 +1,14 @@
 """The interface for the UniProt database."""
-from typing import Generator, Optional
+from typing import Iterator, Optional
+
+from attr import frozen
 
 from access import iterate
 
 
 def get_swiss_prot_entries(
-    organism: Optional[int] = None
-) -> Generator[tuple[tuple[str], str, str], None, None]:
+        organism: Optional[int] = None
+) -> Iterator[tuple[tuple[str], str, str]]:
     """
     Yields Swiss-Prot entries.
 
@@ -92,7 +94,7 @@ def get_swiss_prot_entries(
 
 
 def get_primary_accession(
-        organism: Optional[int] = None) -> dict[str, set[str]]:
+        organism: Optional[int] = None) -> dict[str, frozenset[str]]:
     """
     Returns a map of primary UniProt accessions.
 
@@ -110,4 +112,7 @@ def get_primary_accession(
                     primary_accession[accession] = set()
                 primary_accession[accession].add(accessions[0])
 
-    return primary_accession
+    return {
+        accession: frozenset(accessions)
+        for accession, accessions in primary_accession.items()
+    }

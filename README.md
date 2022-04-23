@@ -27,7 +27,7 @@ A configuration file specifies a list of workflows processed sequentially. Multi
 
 A workflow defines the assembly of a protein-protein interaction network from a set of input genes or proteins, optionally associated with mass spectrometry data, using protein-protein interaction data from BioGRID, CORUM, IntAct, MINT, Reactome or STRING, optionally extending to proteins neighboring the input.
 
-The distribution of measurements and enrichment of Gene Ontology terms or Reactome pathways by the protein-protein interaction network or its separate modules can be assessed. The protein-protein interaction network as well as networks derived from the Gene Ontology or Reactome, capturing enrichment, can be exported along comprehensive Cytoscape style specifications.
+The distribution of measurements and enrichment of CORUM protein complexes, Gene Ontology terms or Reactome pathways by the protein-protein interaction network or its separate modules can be assessed. The protein-protein interaction network as well as networks derived from the Gene Ontology or Reactome, capturing enrichment, can be exported along comprehensive Cytoscape style specifications.
 
 ## Configuration
 
@@ -770,6 +770,9 @@ The specification of Gene Ontology and Reactome enrichment analysis of the prote
 ```json
 [
     {
+      "CORUM enrichment": {
+        "test": "hypergeometric"
+      },
       "Gene Ontology enrichment": {
         "test": "hypergeometric"
       },
@@ -785,6 +788,9 @@ Available settings are `"binomial"` and `"hypergeometric"`.
 ```json
 [
     {
+      "CORUM enrichment": {
+        "correction": "Benjamini-Hochberg"
+      },
       "Gene Ontology enrichment": {
         "correction": "Benjamini-Hochberg"
       },
@@ -800,6 +806,9 @@ Available settings are `"Benjamini-Hochberg"` and `"Bonferroni"`.
 ```json
 [
     {
+      "CORUM enrichment": {
+        "p": 1.0
+      },
       "Gene Ontology enrichment": {
         "p": 1.0
       },
@@ -814,6 +823,9 @@ The corrected p-value threshold. The default setting is `1.0`.
 ```json
 [
     {
+      "CORUM enrichment": {
+        "organism": 9606
+      },
       "Gene Ontology enrichment": {
         "organism": 9606
       },
@@ -822,8 +834,20 @@ The corrected p-value threshold. The default setting is `1.0`.
       }
     }
 ]
+
 ```
 The NCBI taxonomy ID of the organism of interest. The default and currently only completely supported setting is `9606`, corresponding to Homo sapiens.
+
+```json
+[
+    {
+      "CORUM enrichment": {
+        "purification methods": []
+      }
+    }
+]
+```
+A list of accepted PSI-MI identifiers or terms for protein complex purification methods. The default setting is `[]`, corresponding to any annotation.
 
 ```json
 [
@@ -1129,7 +1153,7 @@ The function used to derive a combined edge confidence score from scores in IntA
 
 The specification of statistical tests on individual modules with respect to either Gene Ontology or Reactome enrichment or the distribution of measurements across the protein-protein interaction network. 
 
-Gene Ontology and Reactome enrichment can be assessed with respect to the respective annotation or the protein-protein interaction network. 
+CORUM, Gene Ontology and Reactome enrichment can be assessed with respect to the respective annotation or the protein-protein interaction network. 
 
 To assess the distribution of measurements, these can be classified in a binary way to measure the modules' enrichment of proteins which exhibit measurements exceeding a specified threshold. Alternatively, the distribution of measurements within separate modules can be compared with the remaining network.
 
@@ -1139,6 +1163,14 @@ These tests act as filter on the exported modules of the protein-protein interac
 [
     {
       "module detection": {
+        "CORUM enrichment": {
+          "annotation": {
+            "test": "hypergeometric"
+          },
+          "network": {
+            "test": "hypergeometric"
+          }
+        },
         "Gene Ontology enrichment": {
           "annotation": {
             "test": "hypergeometric"
@@ -1192,6 +1224,14 @@ The statistical test to compare modification- and time-specific measurement dist
 [
     {
       "module detection": {
+        "CORUM enrichment": {
+          "annotation": {
+            "correction": "Benjamini-Hochberg"
+          },
+          "network": {
+            "correction": "Benjamini-Hochberg"
+          }
+        },
         "Gene Ontology enrichment": {
           "annotation": {
             "correction": "Benjamini-Hochberg"
@@ -1235,6 +1275,14 @@ Available settings are `"Benjamini-Hochberg"` and `"Bonferroni"`.
 [
     {
       "module detection": {
+        "CORUM enrichment": {
+          "annotation": {
+            "p": 1.0
+          },
+          "network": {
+            "p": 1.0
+          }
+        },
         "Gene Ontology enrichment": {
           "annotation": {
             "p": 1.0
@@ -1277,6 +1325,14 @@ The corrected p-value threshold. The default setting is `1.0`.
 [
     {
       "module detection": {
+        "CORUM enrichment": {
+          "annotation": {
+            "organism": 9606
+          },
+          "network": {
+            "organism": 9606
+          }
+        },
         "Gene Ontology enrichment": {
           "annotation": {
             "organism": 9606
@@ -1298,6 +1354,24 @@ The corrected p-value threshold. The default setting is `1.0`.
 ]
 ```
 The NCBI taxonomy ID of the organism of interest. The default and currently only completely supported setting is `9606`, corresponding to Homo sapiens.
+
+```json
+[
+    {
+      "module detection": {
+        "CORUM enrichment": {
+          "annotation": {
+            "purification methods": []
+          },
+          "network": {
+            "purification methods": []
+          },
+        }
+      }
+    }
+]
+```
+A list of accepted PSI-MI identifiers or terms for protein complex purification methods. The default setting is `[]`, corresponding to any annotation.
 
 ```json
 [

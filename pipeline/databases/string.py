@@ -1,5 +1,5 @@
 """The interface for the STRING database."""
-from typing import Generator
+from typing import Iterator
 
 from access import iterate
 
@@ -23,7 +23,7 @@ def get_protein_protein_interactions(
         combined_score: float = 0.0,
         physical: bool = False,
         organism: int = 9606,
-        version: float = 11.5) -> Generator[tuple[str, str, float], None, None]:
+        version: float = 11.5) -> Iterator[tuple[str, str, float]]:
     """
     Yields protein-protein interactions from STRING.
 

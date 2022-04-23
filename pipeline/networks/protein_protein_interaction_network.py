@@ -4,7 +4,8 @@ import math
 import os
 import re
 import statistics
-from typing import Callable, Collection, Container, Hashable, Optional, Union
+from typing import (Callable, Collection, Container, Hashable, Iterable,
+                    Optional, Union)
 
 import networkx as nx
 import pandas as pd
@@ -116,15 +117,15 @@ def add_proteins_from_table(
     modification: str = "",
     position_column: str = Union[int, str],
     position_format: re.Pattern = re.compile("^(.+?)$"),
-    replicates: Optional[Container[Union[int, str]]] = None,
+    replicates: Optional[Collection[Union[int, str]]] = None,
     sheet_name: Union[int, str] = 0,
     header: int = 0,
     number_sites: int = 100,
     number_replicates: int = 1,
-    replicate_combination: Callable[[Container[float]],
+    replicate_combination: Callable[[Collection[float]],
                                     float] = statistics.mean,
     measurement_conversion: Callable[
-        [Container[float], Callable[[Container[float]], float]],
+        [Collection[float], Callable[[Collection[float]], float]],
         float] = lambda measurements, combination: math.log2(
             combination(measurements))
 ) -> None:
@@ -1048,7 +1049,7 @@ def get_modules(network: nx.Graph,
                 algorithm: Callable[
                     [nx.Graph], list[set[Hashable]]] = modularization.louvain,
                 resolution: float = 1.0,
-                weight: str = "weight") -> list[nx.Graph]:
+                weight: str = "weight") -> tuple[nx.Graph, ...]:
     """
     Returns modules of a protein-protein interaction network.
 
@@ -1086,7 +1087,7 @@ def get_modules(network: nx.Graph,
         if not subdivision:
             break
 
-    return [network.subgraph(community) for community in communities]
+    return tuple(network.subgraph(community) for community in communities)
 
 
 def get_measurements(
@@ -1133,7 +1134,7 @@ def get_measurements(
 
 def get_measurement_enrichment(
     network: nx.Graph,
-    modules: list[nx.Graph],
+    modules: Iterable[nx.Graph],
     measurements: tuple[float, float] = (-1.0, 1.0),
     convert_measurement: Callable[
         [float, Collection[float]],
@@ -1238,7 +1239,7 @@ def get_measurement_enrichment(
 
 def get_measurement_location(
     network: nx.Graph,
-    modules: list[nx.Graph],
+    modules: Iterable[nx.Graph],
     site_combination: Optional[Callable[[Collection[float]], float]] = None,
     location_test: Callable[[Collection[float], Collection[float]],
                             float] = test.wilcoxon,
@@ -1284,7 +1285,8 @@ def get_measurement_location(
             p_values.update({(module, time, modification):
                              location_test(module_measurements[i],
                                            network_measurements[i])
-                             for i, module in enumerate(modules)})
+                             for i, module in enumerate(modules)
+                             if module_measurements[i]})
 
     p_values = multiple_testing_correction(p_values)
 
@@ -1294,13 +1296,86 @@ def get_measurement_location(
                 modification: p_values[(module, time, modification)]
                 for modification in get_post_translational_modifications(
                     network, time)
+                if (module, time, modification) in p_values
             } for time in get_times(network)
         } for module in modules
     }
 
 
+def get_corum_enrichment(
+    networks: Iterable[nx.Graph],
+    enrichment_test: Callable[[int, int, int, int],
+                              float] = test.hypergeometric,
+    multiple_testing_correction: Callable[[dict[tuple[
+        nx.Graph, str], float]], dict[tuple[nx.Graph, str],
+                                      float]] = correction.benjamini_hochberg,
+    purification_methods: Optional[Container[str]] = None,
+    organism: int = 9606,
+    annotation_as_reference: bool = True
+) -> dict[nx.Graph, dict[tuple[str, str], float]]:
+    """
+    Test the protein-protein interaction networks for enrichment of CORUM
+    protein complexes.
+
+    Args:
+        networks: The protein-protein interaction networks.
+        enrichment_test: The statistical test used to assess enrichment of
+            CORUM protein complexes.
+        multiple_testing_correction: The procedure to correct for multiple
+            testing of multiple pathways and networks.
+        purification_methods: The accepted PSI-MI identifiers or terms for the
+            protein complex purification method. If none are specified, any are
+            accepted.
+        organism: The NCBI taxonomy identifier for the organism of interest. 
+        annotation_as_reference: If True, compute enrichment with respect to the
+            species-specific set of protein complexes, else with respect to
+            the union of the protein-protein interaction networks.
+
+    Returns:
+        Corrected p-value for the enrichment of each CORUM protein complex by
+        each network.
+    """
+    annotation, name = {}, {}
+    for protein_complex, complex_name, subunits in corum.get_protein_complexes(
+            purification_methods, organism):
+        if annotation_as_reference or any(
+                subunits.intersection(network.nodes()) for network in networks):
+            annotation[protein_complex] = subunits
+            name[protein_complex] = complex_name
+
+    annotated_proteins = frozenset.union(*annotation.values())
+
+    annotated_network_proteins = {
+        network: len(annotated_proteins.intersection(network.nodes()))
+        for network in networks
+    }
+
+    network_intersection = {
+        network: {
+            protein_complex:
+            len(annotation[protein_complex].intersection(network.nodes()))
+            for protein_complex in annotation
+        } for network in networks
+    }
+
+    p_value = multiple_testing_correction({
+        (network, protein_complex):
+        enrichment_test(network_intersection[network][protein_complex],
+                        len(annotated_proteins),
+                        len(annotation[protein_complex]),
+                        annotated_network_proteins[network])
+        for protein_complex in annotation for network in networks
+    })
+
+    return {
+        network: {(protein_complex, name[protein_complex]):
+                  p_value[(network, protein_complex)]
+                  for protein_complex in annotation} for network in networks
+    }
+
+
 def get_gene_ontology_enrichment(
-    networks: list[nx.Graph],
+    networks: Iterable[nx.Graph],
     enrichment_test: Callable[[int, int, int, int],
                               float] = test.hypergeometric,
     multiple_testing_correction: Callable[[dict[tuple[
@@ -1382,7 +1457,7 @@ def get_gene_ontology_enrichment(
 
 
 def get_reactome_enrichment(
-    networks: list[nx.Graph],
+    networks: Iterable[nx.Graph],
     enrichment_test: Callable[[int, int, int, int],
                               float] = test.hypergeometric,
     multiple_testing_correction: Callable[[dict[tuple[

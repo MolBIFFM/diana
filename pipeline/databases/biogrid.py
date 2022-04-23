@@ -1,6 +1,6 @@
 """The interface for the BioGRID database."""
 import re
-from typing import Container, Generator, Optional
+from typing import Container, Iterator, Optional
 
 from access import iterate
 
@@ -15,8 +15,8 @@ def get_protein_protein_interactions(
     interaction_throughput: Optional[Container[str]] = None,
     multi_validated_physical: bool = False,
     organism: int = 9606,
-    version: Optional[tuple[int, int, int]] = None
-) -> Generator[tuple[str, str], None, None]:
+    version: Optional[tuple[int, int,
+                            int]] = None) -> Iterator[tuple[str, str]]:
     """
     Yields protein-protein interactions from BioGRID.
 

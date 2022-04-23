@@ -53,6 +53,9 @@
           "measurement": [-1.0, 1.0]
         }
       },
+      "CORUM enrichment": {
+        "p": 0.05
+      },
       "Gene Ontology enrichment": {
         "p": 0.05
       },
@@ -78,6 +81,14 @@
         ]
       },
       "module detection": {
+        "CORUM enrichment": {
+          "annotation": {
+            "p": 0.05
+          }, 
+          "network": {
+            "p": 0.05
+          }
+        },
         "Gene Ontology enrichment": {
           "annotation": {
             "p": 0.05

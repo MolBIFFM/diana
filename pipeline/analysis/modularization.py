@@ -9,7 +9,7 @@ def clauset_newman_moore(network: nx.Graph,
                          weight: str = "weight") -> list[set[Hashable]]:
     """
     Clauset-Newman-Moore community detection algorithm for undirected, weighted
-    networks with parameterized modularity.
+    networks with resolution-parameterized modularity.
 
     Clauset, A. et al. (2004) Finding community structure in very large
         networks, Phys. Rev. E, 70.
@@ -118,7 +118,7 @@ def louvain(network: nx.Graph,
             weight: str = "weight") -> list[set[Hashable]]:
     """
     Louvain community detection algorithm for undirected, weighted networks with
-    parameterized modularity.
+    resolution-parameterized modularity.
 
     Blondel, V. D. et al. (2008) Fast unfolding of communities in large
         networks, J. Stat. Mech.: Theory Exp.

@@ -8,7 +8,7 @@ import time
 import urllib.parse
 import urllib.request
 import zipfile
-from typing import Container, Generator, Optional, Union
+from typing import Collection, Iterator, Optional, Union
 
 import pandas as pd
 
@@ -18,7 +18,7 @@ from access import decompress, download
 def txt(url: str,
         file_from_zip_archive: Optional[re.Pattern] = None,
         buffering: int = 8192,
-        pause: float = 60.0) -> Generator[str, None, None]:
+        pause: float = 60.0) -> Iterator[str]:
     """
     Downloads, iterates and subsequently removes the file at a given URL.
 
@@ -94,9 +94,9 @@ def tabular_txt(url: str,
                 delimiter: str = "",
                 header: int = 0,
                 skiprows: int = 0,
-                usecols: Optional[Container[Union[int, str]]] = None,
+                usecols: Optional[Collection[Union[int, str]]] = None,
                 chunksize: int = 8192,
-                pause: float = 60.0) -> Generator[pd.Series, None, None]:
+                pause: float = 60.0) -> Iterator[pd.Series]:
     """
     Downloads, iterates and subsequently removes the tabular file at a URL.
 

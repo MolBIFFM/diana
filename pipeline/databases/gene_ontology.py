@@ -1,5 +1,5 @@
 """The interface for the Gene Ontology database."""
-from typing import Container, Generator, Union
+from typing import Container, Iterator, Union
 
 from access import iterate
 
@@ -8,10 +8,9 @@ from databases import uniprot
 ORGANISM = {"files": {9606: "human"}}
 
 
-def get_ontology(namespaces: Container[str] = ("cellular_component",
-                                               "molecular_function",
-                                               "biological_process")
-                ) -> Generator[dict[str, Union[str, tuple[str]]], None, None]:
+def get_ontology(namespaces: Container[str] = (
+    "cellular_component", "molecular_function",
+    "biological_process")) -> Iterator[dict[str, Union[str, tuple[str]]]]:
     """
     Yields Gene Ontology terms from the given namespaces.
 
@@ -62,7 +61,7 @@ def get_ontology(namespaces: Container[str] = ("cellular_component",
 def get_annotation(
     organism: int = 9606,
     namespaces: Container[str] = ("C", "F", "P")
-) -> Generator[tuple[str, str], None, None]:
+) -> Iterator[tuple[str, str]]:
     """
     Yields Gene Ontology annotations within specified namespaces.
 

@@ -434,6 +434,25 @@ def process_workflow(configuration: dict,
             f"{logger.name}.{index}" if index else logger.name,
         )
 
+    if "CORUM enrichment" in configuration:
+        corum_enrichment = protein_protein_interaction_network.get_corum_enrichment(
+            [network],
+            enrichment_test=test.ENRICHMENT_TEST[
+                configuration["CORUM enrichment"].get("test",
+                                                      "hypergeometric")],
+            multiple_testing_correction=correction.CORRECTION[
+                configuration["CORUM enrichment"].get("correction",
+                                                      "Benjamini-Hochberg")],
+            purification_methods=configuration["CORUM enrichment"].get(
+                "purification methods", []),
+            organism=configuration["CORUM enrichment"].get("organism", 9606))
+
+        for (protein_complex,
+             name), p in sorted(corum_enrichment[network].items(),
+                                key=lambda item: item[1]):
+            if p <= configuration["CORUM enrichment"].get("p", 1.0):
+                logger.info(f"{protein_complex}\t{p:.2e}\t{name}")
+
     if "Gene Ontology enrichment" in configuration:
         gene_ontology_enrichment = protein_protein_interaction_network.get_gene_ontology_enrichment(
             [network],
@@ -767,6 +786,48 @@ def process_workflow(configuration: dict,
 
         protein_protein_interaction_network.remove_edge_weights(network)
 
+        if "CORUM enrichment" in configuration["module detection"]:
+            corum_enrichment = {}
+            if "annotation" in configuration["module detection"][
+                    "CORUM enrichment"]:
+                corum_enrichment[
+                    "annotation"] = protein_protein_interaction_network.get_corum_enrichment(
+                        modules,
+                        enrichment_test=test.ENRICHMENT_TEST[
+                            configuration["module detection"]
+                            ["CORUM enrichment"]["annotation"].get(
+                                "test", "hypergeometric")],
+                        multiple_testing_correction=correction.CORRECTION[
+                            configuration["module detection"]
+                            ["CORUM enrichment"]["annotation"].get(
+                                "correction", "Benjamini-Hochberg")],
+                        purification_methods=configuration["module detection"]
+                        ["CORUM enrichment"]["annotation"].get(
+                            "purification methods", []),
+                        organism=configuration["module detection"]
+                        ["CORUM enrichment"]["annotation"].get(
+                            "organism", 9606))
+
+            if "network" in configuration["module detection"][
+                    "CORUM enrichment"]:
+                corum_enrichment[
+                    "network"] = protein_protein_interaction_network.get_corum_enrichment(
+                        modules,
+                        enrichment_test=test.ENRICHMENT_TEST[
+                            configuration["module detection"]
+                            ["CORUM enrichment"]["network"].get(
+                                "test", "hypergeometric")],
+                        multiple_testing_correction=correction.CORRECTION[
+                            configuration["module detection"]
+                            ["CORUM enrichment"]["network"].get(
+                                "correction", "Benjamini-Hochberg")],
+                        purification_methods=configuration["module detection"]
+                        ["CORUM enrichment"]["network"].get(
+                            "purification methods", []),
+                        organism=configuration["module detection"]
+                        ["CORUM enrichment"]["network"].get("organism", 9606),
+                        annotation_as_reference=False)
+
         if "Gene Ontology enrichment" in configuration["module detection"]:
             gene_ontology_enrichment = {}
             if "annotation" in configuration["module detection"][
@@ -947,6 +1008,31 @@ def process_workflow(configuration: dict,
                        reverse=True),
                 start=1):
             export = False
+            if "CORUM enrichment" in configuration["module detection"]:
+                if "annotation" in configuration["module detection"][
+                        "CORUM enrichment"]:
+                    for (protein_complex, name), p in sorted(
+                            corum_enrichment["annotation"][module].items(),
+                            key=lambda item: item[1]):
+                        if p <= configuration["module detection"][
+                                "CORUM enrichment"]["annotation"].get("p", 1.0):
+                            export = True
+                            logger.info(
+                                f"{k}\tannotation\t{protein_complex}\t{p:.2e}\t"
+                                f"{name}")
+
+                if "network" in configuration["module detection"][
+                        "CORUM enrichment"]:
+                    for (protein_complex, name), p in sorted(
+                            corum_enrichment["network"][module].items(),
+                            key=lambda item: item[1]):
+                        if p <= configuration["module detection"][
+                                "CORUM enrichment"]["network"].get("p", 1.0):
+                            export = True
+                            logger.info(
+                                f"{k}\tnetwork\t{protein_complex}\t{p:.2e}\t{name}"
+                            )
+
             if "Gene Ontology enrichment" in configuration["module detection"]:
                 if "annotation" in configuration["module detection"][
                         "Gene Ontology enrichment"]:

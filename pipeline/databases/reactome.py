@@ -1,5 +1,5 @@
 """The interface for the Reactome database."""
-from typing import Container, Generator, Optional
+from typing import Container, Iterator, Optional
 
 from access import iterate
 
@@ -12,7 +12,7 @@ def get_protein_protein_interactions(
     interaction_type: Optional[Container[str]] = None,
     interaction_context: Optional[Container[str]] = None,
     organism: int = 9606,
-) -> Generator[tuple[str, str, float], None, None]:
+) -> Iterator[tuple[str, str, float]]:
     """
     Yields protein-protein interactions from Reactome.
 
@@ -66,9 +66,7 @@ def get_protein_protein_interactions(
                         yield (primary_interactor_a, primary_interactor_b)
 
 
-def get_pathways(
-        organism: Optional[int] = None
-) -> Generator[tuple[str, str], None, None]:
+def get_pathways(organism: Optional[int] = None) -> Iterator[tuple[str, str]]:
     """
     Yields Reactome pathways.
 
@@ -86,7 +84,7 @@ def get_pathways(
             yield (row[0], row[1])
 
 
-def get_pathway_relations() -> Generator[tuple[str, str], None, None]:
+def get_pathway_relations() -> Iterator[tuple[str, str]]:
     """
     Yields Reactome pathway relations.
 
@@ -102,8 +100,7 @@ def get_pathway_relations() -> Generator[tuple[str, str], None, None]:
 
 
 def get_pathway_annotation(
-        organism: Optional[int] = None
-) -> Generator[tuple[str, str], None, None]:
+        organism: Optional[int] = None) -> Iterator[tuple[str, str]]:
     """
     Yields Reactome pathway annotations.
 
