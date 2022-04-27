@@ -1136,7 +1136,7 @@ The community detection algorithm. The default setting is `"Louvain"`. Available
     }
 ]
 ```
-The resolution parameter of modularity optimized by module detection. The default setting is `1.0`, corresponding to non-parameterized modularity. Larger values produce smaller modules, emphasizing the expected number of edges.
+The resolution parameter of modularity optimized by module detection. The default setting is `1.0`, corresponding to non-parameterized modularity. Larger values produce smaller modules, emphasizing the expected number of intra-community edges.
 
 ```json
 [
