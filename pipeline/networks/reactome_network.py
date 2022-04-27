@@ -8,13 +8,14 @@ Edges are directed pathway relationships within Reactome.
 from typing import Callable, Container
 
 import networkx as nx
-from analysis import correction, test
+import scipy.stats
+from analysis import correction
 from databases import reactome
 
 
 def get_network(proteins: Container[str] = frozenset(),
-                enrichment_test: Callable[[int, int, int, int],
-                                          float] = test.hypergeometric,
+                enrichment_test: Callable[[int, int, int, int], float] = lambda
+                k, M, n, N: scipy.stats.hypergeom.sf(k - 1, M, n, N),
                 multiple_testing_correction: Callable[[dict[str, float]], dict[
                     str, float]] = correction.benjamini_hochberg,
                 organism: int = 9606) -> nx.DiGraph:

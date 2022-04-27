@@ -9,7 +9,8 @@ from typing import (Callable, Collection, Container, Hashable, Iterable,
 
 import networkx as nx
 import pandas as pd
-from analysis import correction, modularization, test
+import scipy.stats
+from analysis import correction, modularization
 from databases import (biogrid, corum, gene_ontology, intact, mint, reactome,
                        string, uniprot)
 
@@ -1140,8 +1141,9 @@ def get_measurement_enrichment(
         [float, Collection[float]],
         float] = lambda measurement, measurements: measurement,
     site_combination: Optional[Callable[[Collection[float]], float]] = None,
-    enrichment_test: Callable[[int, int, int, int],
-                              float] = test.hypergeometric,
+    enrichment_test: Callable[
+        [int, int, int, int],
+        float] = lambda k, M, n, N: scipy.stats.hypergeom.sf(k - 1, M, n, N),
     multiple_testing_correction: Callable[
         [dict[tuple[nx.Graph, int, str], float]],
         dict[tuple[nx.Graph, int, str], float]] = correction.benjamini_hochberg,
@@ -1241,8 +1243,9 @@ def get_measurement_location(
     network: nx.Graph,
     modules: Iterable[nx.Graph],
     site_combination: Optional[Callable[[Collection[float]], float]] = None,
-    location_test: Callable[[Collection[float], Collection[float]],
-                            float] = test.wilcoxon,
+    location_test: Callable[
+        [Collection[float], Collection[float]],
+        float] = lambda x, y: scipy.stats.ranksums(x, y).pvalue,
     multiple_testing_correction: Callable[
         [dict[tuple[nx.Graph, int, str], float]],
         dict[tuple[nx.Graph, int, str], float]] = correction.benjamini_hochberg,
@@ -1304,8 +1307,9 @@ def get_measurement_location(
 
 def get_corum_enrichment(
     networks: Iterable[nx.Graph],
-    enrichment_test: Callable[[int, int, int, int],
-                              float] = test.hypergeometric,
+    enrichment_test: Callable[
+        [int, int, int, int],
+        float] = lambda k, M, n, N: scipy.stats.hypergeom.sf(k - 1, M, n, N),
     multiple_testing_correction: Callable[[dict[tuple[
         nx.Graph, str], float]], dict[tuple[nx.Graph, str],
                                       float]] = correction.benjamini_hochberg,
@@ -1376,8 +1380,9 @@ def get_corum_enrichment(
 
 def get_gene_ontology_enrichment(
     networks: Iterable[nx.Graph],
-    enrichment_test: Callable[[int, int, int, int],
-                              float] = test.hypergeometric,
+    enrichment_test: Callable[
+        [int, int, int, int],
+        float] = lambda k, M, n, N: scipy.stats.hypergeom.sf(k - 1, M, n, N),
     multiple_testing_correction: Callable[[dict[tuple[
         nx.Graph, str], float]], dict[tuple[nx.Graph, str],
                                       float]] = correction.benjamini_hochberg,
@@ -1458,8 +1463,9 @@ def get_gene_ontology_enrichment(
 
 def get_reactome_enrichment(
     networks: Iterable[nx.Graph],
-    enrichment_test: Callable[[int, int, int, int],
-                              float] = test.hypergeometric,
+    enrichment_test: Callable[
+        [int, int, int, int],
+        float] = lambda k, M, n, N: scipy.stats.hypergeom.sf(k - 1, M, n, N),
     multiple_testing_correction: Callable[[dict[tuple[
         nx.Graph, str], float]], dict[tuple[nx.Graph, str],
                                       float]] = correction.benjamini_hochberg,
