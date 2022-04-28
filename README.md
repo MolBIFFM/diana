@@ -27,7 +27,7 @@ A configuration file specifies a list of workflows processed sequentially. Multi
 
 A workflow defines the assembly of a protein-protein interaction network from a set of input genes or proteins, optionally associated with mass spectrometry data, using protein-protein interaction data from BioGRID, CORUM, IntAct, MINT, Reactome or STRING, optionally extending to proteins neighboring the input.
 
-The distribution of measurements and enrichment of CORUM protein complexes, Gene Ontology terms or Reactome pathways by the protein-protein interaction network or its separate modules can be assessed. The protein-protein interaction network as well as networks derived from the Gene Ontology or Reactome, capturing enrichment, can be exported along comprehensive Cytoscape style specifications.
+The distribution of measurements and enrichment of CORUM protein complexes, Gene Ontology terms or Reactome pathways by the protein-protein interaction network or its separate modules can be assessed. The protein-protein interaction network as well as networks derived from the Gene Ontology or Reactome, capturing enrichment by the input, can be exported along comprehensive Cytoscape style specifications.
 
 ## Configuration
 
@@ -85,7 +85,7 @@ The table column to extract UniProt gene or protein accessions from. These are m
     }
 ]
 ```
-A regular expression used to extract all matching gene or protein accessions from an entry in the table, possibly stripping it of additional information. The default setting is `"^(.+?)$"`, corresponding to the entire entry.
+A regular expression used to extract all matching gene or protein accessions from an entry in the table, possibly removing additional information. The default setting is `"^(.+?)$"`, corresponding to the entire entry.
 
 ```json
 [
@@ -205,7 +205,7 @@ The table column reporting modification sites of measurements, according to whic
     }
 ]
 ```
-A regular expression used to extract all matching modification sites from an entry in the table, possibly stripping it of additional information. The default setting is `"^(.+?)$"`, corresponding to the entire entry.
+A regular expression used to extract all matching modification sites from an entry in the table, possibly removing additional information. The default setting is `"^(.+?)$"`, corresponding to the entire entry.
 
 ```json
 [
@@ -544,7 +544,7 @@ The STRING gene fusion score threshold. The default setting is `0.0`.
     }
 ]
 ```
-The STRING gene coooccurrence score threshold. The default setting is `0.0`.
+The STRING gene cooccurrence score threshold. The default setting is `0.0`.
 
 ```json
 [
@@ -1114,7 +1114,7 @@ An upper bound on the number of nodes per module. Modules are iteratively subdiv
     }
 ]
 ```
-The function to cobine sizes of modules into a value decisive to meeting the module size threshold. The default setting is `"mean"`. Available settings are `"mean"`, `"median"`, `"max"` and `"min"`.
+The function to combine sizes of modules into a value decisive to meeting the module size threshold. The default setting is `"mean"`. Available settings are `"mean"`, `"median"`, `"max"` and `"min"`.
 
 ```json
 [
@@ -1136,7 +1136,7 @@ The community detection algorithm. The default setting is `"Louvain"`. Available
     }
 ]
 ```
-The resolution parameter of modularity optimized by module detection. The default setting is `1.0`, corresponding to non-parameterized modularity. Larger values produce smaller modules, emphasizing the expected number of intra-community edges.
+The resolution parameter of modularity optimized by community detection. The default setting is `1.0`, corresponding to non-parameterized modularity. Larger resolutions produce smaller communities, emphasizing the expected number of intra-community edges.
 
 ```json
 [
