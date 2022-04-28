@@ -6,7 +6,7 @@ protein-protein interaction network analysis from mass spectrometry data
 ```
 pip3 install -r pipeline/requirements.txt 
 ```
-Developed using Python 3.9.7, Ubuntu 21.10 and Cytoscape 3.9.1.
+Developed with Python 3.10.4, Ubuntu 22.04 and Cytoscape 3.9.1.
 
 ## Command Line Interface
 ```
@@ -27,7 +27,7 @@ A configuration file specifies a list of workflows processed sequentially. Multi
 
 A workflow defines the assembly of a protein-protein interaction network from a set of input genes or proteins, optionally associated with mass spectrometry data, using protein-protein interaction data from BioGRID, CORUM, IntAct, MINT, Reactome or STRING, optionally extending to proteins neighboring the input.
 
-The distribution of measurements and enrichment of CORUM protein complexes, Gene Ontology terms or Reactome pathways by the protein-protein interaction network or its separate modules can be assessed. The protein-protein interaction network as well as networks derived from the Gene Ontology or Reactome, capturing enrichment by the input, can be exported along comprehensive Cytoscape style specifications.
+The distribution of measurements and enrichment of CORUM protein complexes, Gene Ontology terms or Reactome pathways by the protein-protein interaction network or its separate modules can be assessed. The protein-protein interaction network as well as networks derived from the Gene Ontology or Reactome, capturing enrichment by the input proteins, can be exported along comprehensive Cytoscape style specifications.
 
 ## Configuration
 
@@ -1136,7 +1136,7 @@ The community detection algorithm. The default setting is `"Louvain"`. Available
     }
 ]
 ```
-The resolution parameter of modularity optimized by community detection. The default setting is `1.0`, corresponding to non-parameterized modularity. Larger resolutions produce smaller communities, emphasizing the expected number of intra-community edges.
+The resolution parameter of modularity maximized by community detection. The default setting is `1.0`, corresponding to unparameterized modularity. Larger resolutions generate smaller communities, emphasizing the expected number of intra-community edges.
 
 ```json
 [
@@ -1147,7 +1147,7 @@ The resolution parameter of modularity optimized by community detection. The def
     }
 ]
 ```
-The function used to derive a combined edge confidence score from scores in IntAct, MINT and STRING as well as 1.0 used for BioGRID and Reactome, respectively for a lack of corresponding scoring. The combined score is utilized as edge weight in module detection. By default any edge receives a score of 1.0, corresponding to an unweighted network. Available settings are `null`, `"mean"`, `"median"`, `"max"`, `"min"`, `"sum"`, `"number"`. Additionally, `"BioGRID"`, `"IntAct"`, `"MINT"`, `"Reactome"` and `"STRING"` refer to the score in only the particular database.
+The function used to derive a combined edge confidence score from scores in IntAct, MINT and STRING as well as 1.0 used for BioGRID, CORUM and Reactome, respectively for a lack of corresponding scoring. The combined score is utilized as edge weight in module detection. By default any edge receives a score of 1.0, corresponding to an unweighted network. Available settings are `null`, `"mean"`, `"median"`, `"max"`, `"min"`, `"sum"`, `"number"`. Additionally, `"BioGRID"`, `"IntAct"`, `"MINT"`, `"Reactome"` and `"STRING"` refer to the score in only the particular database.
 
 ---
 
