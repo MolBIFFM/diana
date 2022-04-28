@@ -6,7 +6,7 @@ protein-protein interaction network analysis from mass spectrometry data
 ```
 pip3 install -r pipeline/requirements.txt 
 ```
-Developed with Python 3.10.4, Ubuntu 22.04 and Cytoscape 3.9.1.
+Developed using Python 3.10.4, Ubuntu 22.04 and Cytoscape 3.9.1.
 
 ## Command Line Interface
 ```
