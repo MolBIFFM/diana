@@ -28,17 +28,25 @@ MODULE_SIZE_COMBINATION: dict[str, Callable[[Collection[int]], float]] = {
     "min": min,
 }
 
-CONFIDENCE_SCORE_COMBINATION: dict[str, Callable[
-    [Collection[float]], float]] = {
-        None: lambda scores: float(bool(scores.values())),
-        "mean": lambda scores: statistics.mean(scores.values()),
-        "median": lambda scores: statistics.median(scores.values()),
-        "max": lambda scores: max(scores.values()),
-        "min": lambda scores: min(scores.values()),
-        "number": len,
-        "sum": lambda scores: math.fsum(scores.values()),
-        **{
-            database: lambda scores, database=database: scores.get(
-                database, 0.0) for database in ("BioGRID", "CORUM", "IntAct", "MINT", "Reactome", "STRING")
-        }
+CONFIDENCE_SCORE_COMBINATION: dict[str, Callable[[Collection[float]], float]] = {
+    None:
+    lambda scores: float(bool(scores.values(
+    ))),
+    "mean":
+    lambda scores: statistics.mean(scores.values(
+    )),
+    "median":
+    lambda scores: statistics.median(scores.values(
+    )),
+    "max": lambda scores: max(scores.values(
+    )),
+    "min": lambda scores: min(scores.values(
+    )),
+    "number": len,
+    "sum": lambda scores: math.fsum(scores.values(
+    )),
+    **{
+        database: lambda scores, database=database: scores.get(database, 0.0)
+        for database in ("BioGRID", "CORUM", "IntAct", "MINT", "Reactome", "STRING")
     }
+}

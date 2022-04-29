@@ -47,9 +47,8 @@ def get_ontology(namespaces: Container[str] = (
         elif any(
                 line.startswith(f"{tag}:")
                 for tag in ("id", "name", "namespace")):
-            term[line.split(":",
-                            maxsplit=1)[0]] = line.split(":",
-                                                         maxsplit=1)[1].strip()
+            term[line.split(":", maxsplit=1)[0]] = line.split(
+                ":", maxsplit=1)[1].strip()
         elif line.startswith("is_a:"):
             term["is_a"].append(
                 line.split(":", maxsplit=1)[1].split("!")[0].strip())

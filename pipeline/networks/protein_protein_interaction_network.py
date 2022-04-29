@@ -173,11 +173,13 @@ def add_proteins_from_table(
             sheet_name=sheet_name,
             header=header,
             usecols=[protein_accession_column] +
-            [column for column in (position_column,) if column] + replicates,
+            [column for column in (position_column, ) if column] + replicates,
             dtype={
                 protein_accession_column: str,
-                **{column: str for column in (position_column,) if column},
-                **{column: float for column in replicates},
+                **{column: str
+                   for column in (position_column, ) if column},
+                **{column: float
+                   for column in replicates},
             },
         )
     else:
@@ -185,11 +187,13 @@ def add_proteins_from_table(
             file_name,
             header=header,
             usecols=[protein_accession_column] +
-            [column for column in (position_column,) if column] + replicates,
+            [column for column in (position_column, ) if column] + replicates,
             dtype={
                 protein_accession_column: str,
-                **{column: str for column in (position_column,) if column},
-                **{column: float for column in replicates},
+                **{column: str
+                   for column in (position_column, ) if column},
+                **{column: float
+                   for column in replicates},
             },
         )
 
@@ -222,8 +226,7 @@ def add_proteins_from_table(
                     positions = positions[:len(protein_accessions)]
 
             measurements = [
-                row[replicate]
-                for replicate in replicates
+                row[replicate] for replicate in replicates
                 if not pd.isna(row[replicate])
             ]
 
@@ -293,7 +296,8 @@ def get_proteins(
         network: nx.Graph,
         time: int,
         modification: str,
-        site_combination: Optional[Callable[[Collection[float]], float]] = None,
+        site_combination: Optional[Callable[[Collection[float]],
+                                            float]] = None,
         combined_measurement_filter: Callable[[float],
                                               bool] = bool) -> set[str]:
     """
@@ -319,8 +323,8 @@ def get_proteins(
         sites = [
             network.nodes[protein][measurement]
             for measurement in network.nodes[protein]
-            if len(measurement.split(" ")) == 3 and measurement.split(" ")[0] ==
-            str(time) and measurement.split(" ")[1] == modification
+            if len(measurement.split(" ")) == 3 and measurement.split(" ")[0]
+            == str(time) and measurement.split(" ")[1] == modification
         ]
 
         if sites and combined_measurement_filter(site_combination(sites)):
@@ -344,11 +348,10 @@ def get_times(network: nx.Graph) -> tuple[int, ...]:
     return tuple(
         sorted(
             set(
-                int(measurement.split(" ")[0])
-                for protein in network
+                int(measurement.split(" ")[0]) for protein in network
                 for measurement in network.nodes[protein]
-                if len(measurement.split(" ")) == 3 and
-                measurement.split(" ")[0].isnumeric())))
+                if len(measurement.split(" ")) == 3
+                and measurement.split(" ")[0].isnumeric())))
 
 
 def get_post_translational_modifications(network: nx.Graph,
@@ -369,11 +372,10 @@ def get_post_translational_modifications(network: nx.Graph,
     return tuple(
         sorted(
             set(
-                measurement.split(" ")[1]
-                for protein in network
+                measurement.split(" ")[1] for protein in network
                 for measurement in network.nodes[protein]
-                if len(measurement.split(" ")) == 3 and
-                measurement.split(" ")[0] == str(time))))
+                if len(measurement.split(" ")) == 3
+                and measurement.split(" ")[0] == str(time))))
 
 
 def get_sites(network: nx.Graph, time: int, modification: str) -> int:
@@ -393,8 +395,7 @@ def get_sites(network: nx.Graph, time: int, modification: str) -> int:
         modification at a particular time of measurement.
     """
     return max(
-        int(measurement.split(" ")[2])
-        for protein in network
+        int(measurement.split(" ")[2]) for protein in network
         for measurement in network.nodes[protein]
         if len(measurement.split(" ")) == 3 and measurement.split(" ")[0] ==
         str(time) and measurement.split(" ")[1] == modification)
@@ -415,8 +416,8 @@ def set_post_translational_modification(network: nx.Graph) -> None:
                         set(
                             measurement.split(" ")[1]
                             for measurement in network.nodes[protein]
-                            if len(measurement.split(" ")) == 3 and
-                            measurement.split(" ")[0] == str(time))))
+                            if len(measurement.split(" ")) == 3
+                            and measurement.split(" ")[0] == str(time))))
 
 
 def set_measurements(
@@ -450,14 +451,16 @@ def set_measurements(
         time: {
             modification: (convert_measurement(
                 measurements[0],
-                get_measurements(network, time, modification, site_combination),
+                get_measurements(network, time, modification,
+                                 site_combination),
             ),
                            convert_measurement(
                                measurements[1],
                                get_measurements(network, time, modification,
                                                 site_combination)))
             for modification in modifications[time]
-        } for time in times
+        }
+        for time in times
     }
 
     for time in times:
@@ -467,9 +470,9 @@ def set_measurements(
                 sites = [
                     network.nodes[protein][measurement]
                     for measurement in network.nodes[protein]
-                    if len(measurement.split(" ")) == 3 and
-                    measurement.split(" ")[0] == str(time) and
-                    measurement.split(" ")[1] == modification
+                    if len(measurement.split(" ")) == 3
+                    and measurement.split(" ")[0] == str(time)
+                    and measurement.split(" ")[1] == modification
                 ]
 
                 if sites:
@@ -514,8 +517,9 @@ def set_measurements(
                 elif set(classification.values()) == {"mid down"}:
                     network.nodes[protein][f"measurement {time}"] = "mid down"
 
-                elif set(
-                        classification.values()) == {"mid", "mid down", "down"}:
+                elif set(classification.values()) == {
+                        "mid", "mid down", "down"
+                }:
                     network.nodes[protein][f"measurement {time}"] = "down"
                 elif set(classification.values()) == {"mid down", "down"}:
                     network.nodes[protein][f"measurement {time}"] = "down"
@@ -601,8 +605,8 @@ def add_protein_protein_interactions_from_biogrid(
             experimental_system, experimental_system_type,
             interaction_throughput, multi_validated_physical, organism,
             version):
-        if (interactor_a in network and interactor_b in network and
-                interactor_a != interactor_b):
+        if (interactor_a in network and interactor_b in network
+                and interactor_a != interactor_b):
             network.add_edge(interactor_a, interactor_b)
             network.edges[interactor_a, interactor_b]["BioGRID"] = 1.0
 
@@ -654,8 +658,8 @@ def add_protein_protein_interactions_from_corum(network: nx.Graph,
     """
     for interactor_a, interactor_b in corum.get_protein_protein_interactions(
             purification_methods, organism):
-        if (interactor_a in network and interactor_b in network and
-                interactor_a != interactor_b):
+        if (interactor_a in network and interactor_b in network
+                and interactor_a != interactor_b):
             network.add_edge(interactor_a, interactor_b)
             network.edges[interactor_a, interactor_b]["CORUM"] = 1.0
 
@@ -719,8 +723,8 @@ def add_protein_protein_interactions_from_intact(
     for interactor_a, interactor_b, score in intact.get_protein_protein_interactions(
             interaction_detection_methods, interaction_types, psi_mi_score,
             organism):
-        if (interactor_a in network and interactor_b in network and
-                interactor_a != interactor_b):
+        if (interactor_a in network and interactor_b in network
+                and interactor_a != interactor_b):
             if network.has_edge(interactor_a, interactor_b):
                 network.edges[interactor_a, interactor_b]["IntAct"] = max(
                     score, network.edges[interactor_a,
@@ -789,8 +793,8 @@ def add_protein_protein_interactions_from_mint(
     for interactor_a, interactor_b, score in mint.get_protein_protein_interactions(
             interaction_detection_methods, interaction_types, psi_mi_score,
             organism):
-        if (interactor_a in network and interactor_b in network and
-                interactor_a != interactor_b):
+        if (interactor_a in network and interactor_b in network
+                and interactor_a != interactor_b):
             if network.has_edge(interactor_a, interactor_b):
                 network.edges[interactor_a, interactor_b]["MINT"] = max(
                     score, network.edges[interactor_a,
@@ -853,8 +857,8 @@ def add_protein_protein_interactions_from_reactome(
     """
     for interactor_a, interactor_b in reactome.get_protein_protein_interactions(
             interaction_type, interaction_context, organism):
-        if (interactor_a in network and interactor_b in network and
-                interactor_a != interactor_b):
+        if (interactor_a in network and interactor_b in network
+                and interactor_a != interactor_b):
             network.add_edge(interactor_a, interactor_b)
             network.edges[interactor_a, interactor_b]["Reactome"] = 1.0
 
@@ -910,9 +914,9 @@ def get_neighbors_from_string(network: nx.Graph,
     for interactor_a, interactor_b, _ in string.get_protein_protein_interactions(
             neighborhood, neighborhood_transferred, fusion, cooccurence,
             homology, coexpression, coexpression_transferred, experiments,
-            experiments_transferred, database, database_transferred, textmining,
-            textmining_transferred, combined_score, physical, organism,
-            version):
+            experiments_transferred, database, database_transferred,
+            textmining, textmining_transferred, combined_score, physical,
+            organism, version):
         if (interactor_a in network and interactor_b not in network):
             neighbors.add(interactor_b)
 
@@ -969,11 +973,11 @@ def add_protein_protein_interactions_from_string(
     for interactor_a, interactor_b, score in string.get_protein_protein_interactions(
             neighborhood, neighborhood_transferred, fusion, cooccurence,
             homology, coexpression, coexpression_transferred, experiments,
-            experiments_transferred, database, database_transferred, textmining,
-            textmining_transferred, combined_score, physical, organism,
-            version):
-        if (interactor_a in network and interactor_b in network and
-                interactor_a != interactor_b):
+            experiments_transferred, database, database_transferred,
+            textmining, textmining_transferred, combined_score, physical,
+            organism, version):
+        if (interactor_a in network and interactor_b in network
+                and interactor_a != interactor_b):
             if network.has_edge(interactor_a, interactor_b):
                 network.edges[interactor_a, interactor_b]["STRING"] = max(
                     score,
@@ -1007,8 +1011,9 @@ def get_databases(network: nx.Graph) -> tuple[str, ...]:
 
 def set_edge_weights(
     network: nx.Graph,
-    weight: Callable[[dict[str, float]], float] = lambda confidence_scores: int(
-        bool(confidence_scores.values())),
+    weight: Callable[[dict[str, float]],
+                     float] = lambda confidence_scores: int(
+                         bool(confidence_scores.values())),
     attribute: str = "weight",
 ) -> None:
     """
@@ -1025,8 +1030,7 @@ def set_edge_weights(
     for edge in network.edges:
         network.edges[edge][attribute] = weight({
             database: network.edges[edge][database]
-            for database in network.edges[edge]
-            if database in databases
+            for database in network.edges[edge] if database in databases
         })
 
 
@@ -1075,8 +1079,8 @@ def get_modules(network: nx.Graph,
 
     communities = algorithm(copied_network, resolution, weight)
 
-    while (module_size_combination(len(community) for community in communities)
-           > module_size):
+    while (module_size_combination(
+            len(community) for community in communities) > module_size):
         subdivision = False
         for i, subdivided_community in enumerate(
                 algorithm(copied_network.subgraph(communities[j]), resolution,
@@ -1117,8 +1121,8 @@ def get_measurements(
         sites = [
             network.nodes[protein][measurement]
             for measurement in network.nodes[protein]
-            if len(measurement.split(" ")) == 3 and measurement.split(" ")[0] ==
-            str(time) and measurement.split(" ")[1] == modification
+            if len(measurement.split(" ")) == 3 and measurement.split(" ")[0]
+            == str(time) and measurement.split(" ")[1] == modification
         ]
 
         if sites:
@@ -1145,8 +1149,9 @@ def get_measurement_enrichment(
         [int, int, int, int],
         float] = lambda k, M, n, N: scipy.stats.hypergeom.sf(k - 1, M, n, N),
     multiple_testing_correction: Callable[
-        [dict[tuple[nx.Graph, int, str], float]],
-        dict[tuple[nx.Graph, int, str], float]] = correction.benjamini_hochberg,
+        [dict[tuple[nx.Graph, int, str],
+              float]], dict[tuple[nx.Graph, int, str],
+                            float]] = correction.benjamini_hochberg,
 ) -> dict[nx.Graph, dict[int, dict[str, float]]]:
     """
     Test modules for enrichment of large protein-specific measurements for each
@@ -1175,7 +1180,8 @@ def get_measurement_enrichment(
     """
     p_values = {}
     for time in get_times(network):
-        for modification in get_post_translational_modifications(network, time):
+        for modification in get_post_translational_modifications(
+                network, time):
             measurement_range = (convert_measurement(
                 measurements[0],
                 get_measurements(network, time, modification,
@@ -1194,35 +1200,32 @@ def get_measurement_enrichment(
 
             modified_module_proteins = [
                 len([
-                    measurement
-                    for measurement in get_measurements(
+                    measurement for measurement in get_measurements(
                         module, time, modification, site_combination)
                     if measurement
-                ])
-                for module in modules
+                ]) for module in modules
             ]
 
             target_proteins = len([
                 measurement for measurement in get_measurements(
                     network, time, modification, site_combination)
-                if measurement <= measurement_range[0] or
-                measurement >= measurement_range[1]
+                if measurement <= measurement_range[0]
+                or measurement >= measurement_range[1]
             ])
 
             target_module_proteins = [
                 len([
-                    measurement
-                    for measurement in get_measurements(
+                    measurement for measurement in get_measurements(
                         module, time, modification, site_combination)
-                    if measurement <= measurement_range[0] or
-                    measurement >= measurement_range[1]
-                ])
-                for module in modules
+                    if measurement <= measurement_range[0]
+                    or measurement >= measurement_range[1]
+                ]) for module in modules
             ]
 
             p_values.update({(module, time, modification):
                              enrichment_test(target_module_proteins[i],
-                                             modified_proteins, target_proteins,
+                                             modified_proteins,
+                                             target_proteins,
                                              modified_module_proteins[i])
                              for i, module in enumerate(modules)})
 
@@ -1234,8 +1237,10 @@ def get_measurement_enrichment(
                 modification: p_values[(module, time, modification)]
                 for modification in get_post_translational_modifications(
                     network, time)
-            } for time in get_times(network)
-        } for module in modules
+            }
+            for time in get_times(network)
+        }
+        for module in modules
     }
 
 
@@ -1247,8 +1252,9 @@ def get_measurement_location(
         [Collection[float], Collection[float]],
         float] = lambda x, y: scipy.stats.ranksums(x, y).pvalue,
     multiple_testing_correction: Callable[
-        [dict[tuple[nx.Graph, int, str], float]],
-        dict[tuple[nx.Graph, int, str], float]] = correction.benjamini_hochberg,
+        [dict[tuple[nx.Graph, int, str],
+              float]], dict[tuple[nx.Graph, int, str],
+                            float]] = correction.benjamini_hochberg,
 ) -> dict[nx.Graph, dict[int, dict[str, float]]]:
     """
     Test modules for difference tendencies in protein-specific measurements for
@@ -1273,7 +1279,8 @@ def get_measurement_location(
     """
     p_values = {}
     for time in get_times(network):
-        for modification in get_post_translational_modifications(network, time):
+        for modification in get_post_translational_modifications(
+                network, time):
             network_measurements = [
                 get_measurements(
                     nx.union_all([m for m in modules if m != module]), time,
@@ -1298,10 +1305,11 @@ def get_measurement_location(
             time: {
                 modification: p_values[(module, time, modification)]
                 for modification in get_post_translational_modifications(
-                    network, time)
-                if (module, time, modification) in p_values
-            } for time in get_times(network)
-        } for module in modules
+                    network, time) if (module, time, modification) in p_values
+            }
+            for time in get_times(network)
+        }
+        for module in modules
     }
 
 
@@ -1343,7 +1351,8 @@ def get_corum_enrichment(
     for protein_complex, complex_name, subunits in corum.get_protein_complexes(
             purification_methods, organism):
         if annotation_as_reference or any(
-                subunits.intersection(network.nodes()) for network in networks):
+                subunits.intersection(network.nodes())
+                for network in networks):
             annotation[protein_complex] = subunits
             name[protein_complex] = complex_name
 
@@ -1359,7 +1368,8 @@ def get_corum_enrichment(
             protein_complex:
             len(annotation[protein_complex].intersection(network.nodes()))
             for protein_complex in annotation
-        } for network in networks
+        }
+        for network in networks
     }
 
     p_value = multiple_testing_correction({
@@ -1374,7 +1384,8 @@ def get_corum_enrichment(
     return {
         network: {(protein_complex, name[protein_complex]):
                   p_value[(network, protein_complex)]
-                  for protein_complex in annotation} for network in networks
+                  for protein_complex in annotation}
+        for network in networks
     }
 
 
@@ -1422,15 +1433,16 @@ def get_gene_ontology_enrichment(
     annotation = {}
     for protein, term in gene_ontology.get_annotation(
             organism, gene_ontology.convert_namespaces(namespaces)):
-        if annotation_as_reference or any(
-                protein in network.nodes() for network in networks):
+        if annotation_as_reference or any(protein in network.nodes()
+                                          for network in networks):
             for primary_term in go_id.get(term, {term}):
                 if primary_term not in annotation:
                     annotation[primary_term] = set()
                 annotation[primary_term].add(protein)
 
     annotation = {
-        term: proteins for term, proteins in annotation.items() if proteins
+        term: proteins
+        for term, proteins in annotation.items() if proteins
     }
 
     annotated_proteins = set.union(*annotation.values())
@@ -1444,7 +1456,8 @@ def get_gene_ontology_enrichment(
         network: {
             term: len(annotation[term].intersection(network.nodes()))
             for term in annotation
-        } for network in networks
+        }
+        for network in networks
     }
 
     p_value = multiple_testing_correction({
@@ -1457,7 +1470,8 @@ def get_gene_ontology_enrichment(
 
     return {
         network: {(term, name[term]): p_value[(network, term)]
-                  for term in annotation} for network in networks
+                  for term in annotation}
+        for network in networks
     }
 
 
@@ -1497,16 +1511,15 @@ def get_reactome_enrichment(
 
     annotation = {}
     for protein, pathway in reactome.get_pathway_annotation(organism):
-        if annotation_as_reference or any(
-                protein in network.nodes() for network in networks):
+        if annotation_as_reference or any(protein in network.nodes()
+                                          for network in networks):
             if pathway not in annotation:
                 annotation[pathway] = set()
             annotation[pathway].add(protein)
 
     annotation = {
         pathway: proteins
-        for pathway, proteins in annotation.items()
-        if proteins
+        for pathway, proteins in annotation.items() if proteins
     }
 
     annotated_proteins = set.union(*annotation.values())
@@ -1520,7 +1533,8 @@ def get_reactome_enrichment(
         network: {
             pathway: len(annotation[pathway].intersection(network.nodes()))
             for pathway in annotation
-        } for network in networks
+        }
+        for network in networks
     }
 
     p_value = multiple_testing_correction({
@@ -1533,7 +1547,8 @@ def get_reactome_enrichment(
 
     return {
         network: {(pathway, name[pathway]): p_value[(network, pathway)]
-                  for pathway in annotation} for network in networks
+                  for pathway in annotation}
+        for network in networks
     }
 
 

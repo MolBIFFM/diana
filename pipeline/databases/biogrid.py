@@ -64,21 +64,21 @@ def get_protein_protein_interactions(
                 "SWISS-PROT Accessions Interactor B"
             ],
     ):
-        if (row["SWISS-PROT Accessions Interactor A"] == "-" or
-                row["SWISS-PROT Accessions Interactor B"] == "-"):
+        if (row["SWISS-PROT Accessions Interactor A"] == "-"
+                or row["SWISS-PROT Accessions Interactor B"] == "-"):
             continue
 
-        if ((not experimental_system or
-             row["Experimental System"] in experimental_system) and
-            (not experimental_system_type or
-             row["Experimental System Type"] in experimental_system_type) and
-            (row["Organism ID Interactor A"] == organism and
-             row["Organism ID Interactor B"] == organism) and
-            (not interaction_throughput or
-             any(it in interaction_throughput
-                 for it in row["Throughput"].split("|")))):
-            for interactor_a in row["SWISS-PROT Accessions Interactor A"].split(
-                    "|"):
+        if ((not experimental_system
+             or row["Experimental System"] in experimental_system) and
+            (not experimental_system_type
+             or row["Experimental System Type"] in experimental_system_type)
+                and (row["Organism ID Interactor A"] == organism
+                     and row["Organism ID Interactor B"] == organism)
+                and (not interaction_throughput
+                     or any(it in interaction_throughput
+                            for it in row["Throughput"].split("|")))):
+            for interactor_a in row[
+                    "SWISS-PROT Accessions Interactor A"].split("|"):
                 if "-" in interactor_a and not interactor_a.split(
                         "-")[1].isnumeric():
                     interactor_a = interactor_a.split("-")[0]

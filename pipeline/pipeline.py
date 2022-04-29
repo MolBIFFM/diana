@@ -57,8 +57,8 @@ def process_workflow(configuration: dict,
                 gene_accession_column=entry["accession column"],
                 gene_accession_format=re.compile(
                     entry.get("accession format", "^(.+?)$")),
-                sheet_name=entry.get("sheet", 1) -
-                1 if isinstance(entry.get("sheet", 1), int) else entry["sheet"],
+                sheet_name=entry.get("sheet", 1) - 1 if isinstance(
+                    entry.get("sheet", 1), int) else entry["sheet"],
                 header=entry.get("header", 1) - 1,
                 organism=entry.get("organism", 9606),
             )
@@ -83,8 +83,8 @@ def process_workflow(configuration: dict,
                 position_format=re.compile(
                     entry.get("position format", "^(.+?)$")),
                 replicates=entry.get("replicate columns", []),
-                sheet_name=entry.get("sheet", 1) -
-                1 if isinstance(entry.get("sheet", 1), int) else entry["sheet"],
+                sheet_name=entry.get("sheet", 1) - 1 if isinstance(
+                    entry.get("sheet", 1), int) else entry["sheet"],
                 header=entry.get("header", 1) - 1,
                 number_sites=entry.get("sites", 5),
                 number_replicates=entry.get("replicates", 1),
@@ -176,7 +176,8 @@ def process_workflow(configuration: dict,
                         "protein-protein interactions"]["MINT"].get(
                             "neighbors", 0) > neighbors:
                 proteins.update(
-                    protein_protein_interaction_network.get_neighbors_from_mint(
+                    protein_protein_interaction_network.
+                    get_neighbors_from_mint(
                         network,
                         interaction_detection_methods=configuration[
                             "protein-protein interactions"]["MINT"].get(
@@ -247,8 +248,9 @@ def process_workflow(configuration: dict,
                         database_transferred=configuration[
                             "protein-protein interactions"]["STRING"].get(
                                 "database transferred score", 0.0),
-                        textmining=configuration["protein-protein interactions"]
-                        ["STRING"].get("textmining score", 0.0),
+                        textmining=configuration[
+                            "protein-protein interactions"]["STRING"].get(
+                                "textmining score", 0.0),
                         textmining_transferred=configuration[
                             "protein-protein interactions"]["STRING"].get(
                                 "textmining transferred score", 0.0),
@@ -287,8 +289,8 @@ def process_workflow(configuration: dict,
                     int(v)
                     for v in configuration["protein-protein interactions"]
                     ["BioGRID"].get("version").split(".")) if "version"
-                in configuration["protein-protein interactions"]["BioGRID"] else
-                None)
+                in configuration["protein-protein interactions"]["BioGRID"]
+                else None)
 
         if "CORUM" in configuration["protein-protein interactions"]:
             protein_protein_interaction_network.add_protein_protein_interactions_from_corum(
@@ -469,8 +471,9 @@ def process_workflow(configuration: dict,
                     "biological_process"
                 ]))
 
-        for (term, name), p in sorted(gene_ontology_enrichment[network].items(),
-                                      key=lambda item: item[1]):
+        for (term,
+             name), p in sorted(gene_ontology_enrichment[network].items(),
+                                key=lambda item: item[1]):
             if p <= configuration["Gene Ontology enrichment"].get("p", 1.0):
                 logger.info(f"{term}\t{p:.2e}\t{name}")
 
@@ -483,7 +486,8 @@ def process_workflow(configuration: dict,
             multiple_testing_correction=correction.CORRECTION[
                 configuration["Reactome enrichment"].get(
                     "correction", "Benjamini-Hochberg")],
-            organism=configuration["Reactome enrichment"].get("organism", 9606))
+            organism=configuration["Reactome enrichment"].get(
+                "organism", 9606))
 
         for (pathway, name), p in sorted(reactome_enrichment[network].items(),
                                          key=lambda item: item[1]):
@@ -506,8 +510,8 @@ def process_workflow(configuration: dict,
                         conversion.MEASUREMENT_CONVERSION[subset.get(
                             "conversion")]
                         (subset.get(
-                            "measurement", default.MEASUREMENT_RANGE[subset.get(
-                                "conversion")])[0],
+                            "measurement", default.MEASUREMENT_RANGE[
+                                subset.get("conversion")])[0],
                          protein_protein_interaction_network.get_measurements(
                              network, subset["time"],
                              subset["post-translational modification"],
@@ -516,8 +520,8 @@ def process_workflow(configuration: dict,
                         conversion.MEASUREMENT_CONVERSION[subset.get(
                             "conversion")]
                         (subset.get(
-                            "measurement", default.MEASUREMENT_RANGE[subset.get(
-                                "conversion")])[1],
+                            "measurement", default.MEASUREMENT_RANGE[
+                                subset.get("conversion")])[1],
                          protein_protein_interaction_network.get_measurements(
                              network, subset["time"],
                              subset["post-translational modification"],
@@ -565,8 +569,8 @@ def process_workflow(configuration: dict,
                         conversion.MEASUREMENT_CONVERSION[subset.get(
                             "conversion")]
                         (subset.get(
-                            "measurement", default.MEASUREMENT_RANGE[subset.get(
-                                "conversion")])[0],
+                            "measurement", default.MEASUREMENT_RANGE[
+                                subset.get("conversion")])[0],
                          protein_protein_interaction_network.get_measurements(
                              network, subset["time"],
                              subset["post-translational modification"],
@@ -575,8 +579,8 @@ def process_workflow(configuration: dict,
                         conversion.MEASUREMENT_CONVERSION[subset.get(
                             "conversion")]
                         (subset.get(
-                            "measurement", default.MEASUREMENT_RANGE[subset.get(
-                                "conversion")])[1],
+                            "measurement", default.MEASUREMENT_RANGE[
+                                subset.get("conversion")])[1],
                          protein_protein_interaction_network.get_measurements(
                              network, subset["time"],
                              subset["post-translational modification"],
@@ -652,8 +656,8 @@ def process_workflow(configuration: dict,
                         conversion.MEASUREMENT_CONVERSION[subset.get(
                             "conversion")]
                         (subset.get(
-                            "measurement", default.MEASUREMENT_RANGE[subset.get(
-                                "conversion")])[0],
+                            "measurement", default.MEASUREMENT_RANGE[
+                                subset.get("conversion")])[0],
                          protein_protein_interaction_network.get_measurements(
                              network, subset["time"],
                              subset["post-translational modification"],
@@ -662,8 +666,8 @@ def process_workflow(configuration: dict,
                         conversion.MEASUREMENT_CONVERSION[subset.get(
                             "conversion")]
                         (subset.get(
-                            "measurement", default.MEASUREMENT_RANGE[subset.get(
-                                "conversion")])[1],
+                            "measurement", default.MEASUREMENT_RANGE[
+                                subset.get("conversion")])[1],
                          protein_protein_interaction_network.get_measurements(
                              network, subset["time"],
                              subset["post-translational modification"],
@@ -705,8 +709,8 @@ def process_workflow(configuration: dict,
                         conversion.MEASUREMENT_CONVERSION[subset.get(
                             "conversion")]
                         (subset.get(
-                            "measurement", default.MEASUREMENT_RANGE[subset.get(
-                                "conversion")])[0],
+                            "measurement", default.MEASUREMENT_RANGE[
+                                subset.get("conversion")])[0],
                          protein_protein_interaction_network.get_measurements(
                              network, subset["time"],
                              subset["post-translational modification"],
@@ -715,8 +719,8 @@ def process_workflow(configuration: dict,
                         conversion.MEASUREMENT_CONVERSION[subset.get(
                             "conversion")]
                         (subset.get(
-                            "measurement", default.MEASUREMENT_RANGE[subset.get(
-                                "conversion")])[1],
+                            "measurement", default.MEASUREMENT_RANGE[
+                                subset.get("conversion")])[1],
                          protein_protein_interaction_network.get_measurements(
                              network, subset["time"],
                              subset["post-translational modification"],
@@ -777,11 +781,12 @@ def process_workflow(configuration: dict,
             module_size=configuration["module detection"].get(
                 "module size", network.number_of_nodes()),
             module_size_combination=combination.MODULE_SIZE_COMBINATION[
-                configuration["module detection"].get("module size combination",
-                                                      "mean")],
+                configuration["module detection"].get(
+                    "module size combination", "mean")],
             algorithm=modularization.ALGORITHM[
                 configuration["module detection"].get("algorithm", "Louvain")],
-            resolution=configuration["module detection"].get("resolution", 1.0))
+            resolution=configuration["module detection"].get(
+                "resolution", 1.0))
 
         protein_protein_interaction_network.remove_edge_weights(network)
 
@@ -1014,7 +1019,8 @@ def process_workflow(configuration: dict,
                             corum_enrichment["annotation"][module].items(),
                             key=lambda item: item[1]):
                         if p <= configuration["module detection"][
-                                "CORUM enrichment"]["annotation"].get("p", 1.0):
+                                "CORUM enrichment"]["annotation"].get(
+                                    "p", 1.0):
                             export = True
                             logger.info(
                                 f"{k}\tannotation\t{protein_complex}\t{p:.2e}\t"
@@ -1048,9 +1054,10 @@ def process_workflow(configuration: dict,
 
                 if "network" in configuration["module detection"][
                         "Gene Ontology enrichment"]:
-                    for (term, name), p in sorted(
-                            gene_ontology_enrichment["network"][module].items(),
-                            key=lambda item: item[1]):
+                    for (term,
+                         name), p in sorted(gene_ontology_enrichment["network"]
+                                            [module].items(),
+                                            key=lambda item: item[1]):
                         if p <= configuration["module detection"][
                                 "Gene Ontology enrichment"]["network"].get(
                                     "p", 1.0):
@@ -1077,7 +1084,8 @@ def process_workflow(configuration: dict,
                             reactome_enrichment["network"][module].items(),
                             key=lambda item: item[1]):
                         if p <= configuration["module detection"][
-                                "Reactome enrichment"]["network"].get("p", 1.0):
+                                "Reactome enrichment"]["network"].get(
+                                    "p", 1.0):
                             export = True
                             logger.info(
                                 f"{k}\tnetwork\t{pathway}\t{p:.2e}\t{name}")

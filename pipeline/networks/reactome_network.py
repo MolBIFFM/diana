@@ -59,10 +59,10 @@ def get_network(proteins: Container[str] = frozenset(),
     }
 
     p_value = multiple_testing_correction({
-        pathway: enrichment_test(len(network_intersection[pathway]),
-                                 len(annotated_proteins),
-                                 len(annotation[pathway]),
-                                 len(annotated_proteins.intersection(proteins)))
+        pathway:
+        enrichment_test(len(network_intersection[pathway]),
+                        len(annotated_proteins), len(annotation[pathway]),
+                        len(annotated_proteins.intersection(proteins)))
         for pathway in network
     })
 
