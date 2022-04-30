@@ -36,7 +36,7 @@ def process_configuration(configurations: list[dict[str]],
         for i, configuration in enumerate(configurations, start=1):
             process_workflow(configuration, logger, i)
     else:
-        process_workflow(configuration, logger)
+        process_workflow(configurations[0], logger)
 
 
 def process_workflow(configuration: dict,
