@@ -23,22 +23,6 @@ from networks import (gene_ontology_network,
                       protein_protein_interaction_network, reactome_network)
 
 
-def process_configuration(configurations: list[dict[str]],
-                          logger: logging.Logger) -> None:
-    """
-    Executes workflows specified in configurations sequentially.
-
-    Args:
-        configurations: The specification of workflows.
-        logger: A configuration-specific logger.
-    """
-    if len(configurations) > 1:
-        for i, configuration in enumerate(configurations, start=1):
-            process_workflow(configuration, logger, i)
-    else:
-        process_workflow(configurations[0], logger)
-
-
 def process_workflow(configuration: dict,
                      logger: logging.Logger,
                      index: Optional[int] = None) -> None:
@@ -1160,6 +1144,22 @@ def process_workflow(configuration: dict,
                     f"{logger.name}.{index}.{k}"
                     if index else f"{logger.name}.{k}",
                 )
+
+
+def process_configuration(configurations: list[dict[str]],
+                          logger: logging.Logger) -> None:
+    """
+    Executes workflows specified in configurations sequentially.
+
+    Args:
+        configurations: The specification of workflows.
+        logger: A configuration-specific logger.
+    """
+    if len(configurations) > 1:
+        for i, configuration in enumerate(configurations, start=1):
+            process_workflow(configuration, logger, i)
+    else:
+        process_workflow(configurations[0], logger)
 
 
 def process_configuration_file(configuration_file: str) -> None:
