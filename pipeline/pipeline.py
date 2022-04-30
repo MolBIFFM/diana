@@ -1,7 +1,8 @@
 """
 pipeline
 
-protein-protein interaction network analysis from mass spectrometry data
+protein-protein interaction network analysis from mass spectrometric 
+measurements of post-translational modifications
 """
 import argparse
 import concurrent.futures
