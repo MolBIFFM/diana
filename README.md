@@ -1092,7 +1092,40 @@ The Gene Ontology namespaces to consider. The default setting is `["cellular_com
 
 ---
 
-The specification of a modular decomposition of the protein-protein interaction network using a network topological community detection algorithm.
+The specification of community detection the protein-protein interaction network.
+
+```json
+[
+    {
+      "module detection": {
+        "algorithm": "Louvain"
+      }
+    }
+]
+```
+The community detection algorithm. The default setting is `"Louvain"`. Available settings are `"Clauset-Newman-Moore"` and `"Louvain"`.
+
+```json
+[
+    {
+      "module detection": {
+        "resolution": 1.0
+      }
+    }
+]
+```
+The resolution parameter of modularity which is maximized. The default setting is `1.0`. Larger resolutions generate smaller communities, emphasizing the expected number of intra-community edges.
+
+```json
+[
+    {
+      "module detection": {
+        "edge weight": null
+      }
+    }
+]
+```
+The function used to derive a combined edge score from confidence scores in IntAct, MINT and STRING as well as 1.0 used for BioGRID, CORUM and Reactome, respectively, for a lack of a corresponding score. The combined score is utilized as edge weight in module detection. By default any edge receives a score of 1.0, corresponding to an unweighted network. Available settings are `null`, `"mean"`, `"median"`, `"max"`, `"min"`, `"sum"`, `"number"`. Further, `"BioGRID"`, `"CORUM"`, `"IntAct"`, `"MINT"`, `"Reactome"` and `"STRING"` refer to the score in only that particular database.
 
 ```json
 [
@@ -1115,39 +1148,6 @@ An upper bound on the number of nodes per module. Modules are iteratively subdiv
 ]
 ```
 The function to combine sizes of modules into a value decisive to meeting the module size threshold. The default setting is `"mean"`. Available settings are `"mean"`, `"median"`, `"max"` and `"min"`.
-
-```json
-[
-    {
-      "module detection": {
-        "algorithm": "Louvain"
-      }
-    }
-]
-```
-The community detection algorithm. The default setting is `"Louvain"`. Available settings are `"Clauset-Newman-Moore"` and `"Louvain"`.
-
-```json
-[
-    {
-      "module detection": {
-        "resolution": 1.0
-      }
-    }
-]
-```
-The resolution parameter of modularity maximized by community detection. The default setting is `1.0`, corresponding to unparameterized modularity. Larger resolutions generate smaller communities, emphasizing the expected number of intra-community edges.
-
-```json
-[
-    {
-      "module detection": {
-        "edge weight": null
-      }
-    }
-]
-```
-The function used to derive a combined edge confidence score from scores in IntAct, MINT and STRING as well as 1.0 used for BioGRID, CORUM and Reactome, respectively for a lack of corresponding scoring. The combined score is utilized as edge weight in module detection. By default any edge receives a score of 1.0, corresponding to an unweighted network. Available settings are `null`, `"mean"`, `"median"`, `"max"`, `"min"`, `"sum"`, `"number"`. Additionally, `"BioGRID"`, `"IntAct"`, `"MINT"`, `"Reactome"` and `"STRING"` refer to the score in only the particular database.
 
 ---
 
