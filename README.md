@@ -1125,7 +1125,7 @@ The resolution parameter of modularity which is maximized. The default setting i
     }
 ]
 ```
-The function used to derive a combined edge score from confidence scores in IntAct, MINT and STRING as well as 1.0 used for BioGRID, CORUM and Reactome, respectively, for a lack of a corresponding score. The combined score is utilized as edge weight in module detection. By default any edge receives a score of 1.0, corresponding to an unweighted network. Available settings are `null`, `"mean"`, `"median"`, `"max"`, `"min"`, `"sum"`, `"number"`. Further, `"BioGRID"`, `"CORUM"`, `"IntAct"`, `"MINT"`, `"Reactome"` and `"STRING"` refer to the score in only that particular database.
+The function used to derive a combined edge score from confidence scores in IntAct, MINT and STRING as well as 1.0 used for BioGRID, CORUM and Reactome, respectively, for a lack of a corresponding score. The combined score is utilized as edge weight in module detection. By default any edge receives a score of 1.0, corresponding to an unweighted network. Available settings are `null`, `"mean"`, `"median"`, `"max"`, `"min"`, `"sum"`, `"number"`. Further, `"BioGRID"`, `"CORUM"`, `"IntAct"`, `"MINT"`, `"Reactome"` and `"STRING"` refer to the score in that particular database.
 
 ```json
 [
