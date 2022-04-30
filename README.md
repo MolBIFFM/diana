@@ -761,7 +761,7 @@ The range of combined measurements categorizing proteins by whether the range is
     }
 ]
 ```
-The function used to derive a combined edge confidence score from scores in IntAct, MINT and STRING. For lack of corresponding score, 1.0 is used for all interactions from BioGRID and Reactome. The combined score is reflected by edge transparency. By default any edge receives a score of 1.0. Available settings are `null`,  `"mean"`, `"median"`, `"max"`, `"min"`, `"sum"`, `"number"`. Additionally, `"BioGRID"`, `"IntAct"`, `"MINT"`, `"Reactome"` and `"STRING"` refer to the score in only the particular database.
+The function used to derive a combined edge confidence score from scores in IntAct, MINT and STRING. For lack of corresponding score, 1.0 is used for all interactions from BioGRID, CORUM and Reactome. The combined score is reflected by edge transparency. By default any edge receives a score of 1.0. Available settings are `null`,  `"mean"`, `"median"`, `"max"`, `"min"`, `"sum"`, `"number"`, the number of queried databases supporting the interaction. Further, `"BioGRID"`, `"CORUM"`, `"IntAct"`, `"MINT"`, `"Reactome"` and `"STRING"` refer to the score in the particular database.
 
 ---
 
@@ -1125,7 +1125,7 @@ The resolution parameter of modularity which is maximized. The default setting i
     }
 ]
 ```
-The function used to derive a combined edge score from confidence scores in IntAct, MINT and STRING as well as 1.0 used for BioGRID, CORUM and Reactome, respectively, for a lack of a corresponding score. The combined score is utilized as edge weight in module detection. By default any edge receives a score of 1.0, corresponding to an unweighted network. Available settings are `null`, `"mean"`, `"median"`, `"max"`, `"min"`, `"sum"`, `"number"`. Further, `"BioGRID"`, `"CORUM"`, `"IntAct"`, `"MINT"`, `"Reactome"` and `"STRING"` refer to the score in that particular database.
+The function used to derive a combined edge score from confidence scores in IntAct, MINT and STRING as well as 1.0 used for BioGRID, CORUM and Reactome, respectively, for a lack of a corresponding score. The combined score is utilized as edge weight in module detection. By default any edge receives a score of 1.0, corresponding to an unweighted network. Available settings are `null`, `"mean"`, `"median"`, `"max"`, `"min"`, `"sum"`, `"number"`, the number of queried databases supporting the interaction. Further, `"BioGRID"`, `"CORUM"`, `"IntAct"`, `"MINT"`, `"Reactome"` and `"STRING"` refer to the score in that particular database.
 
 ```json
 [
@@ -1136,7 +1136,7 @@ The function used to derive a combined edge score from confidence scores in IntA
     }
 ]
 ```
-An upper bound on the number of nodes per module. Modules are iteratively subdivided until this threshold is met. The default setting is the number of proteins in the network, corresponding to a single iteration of the community detection algorithm.
+An additional upper bound on the number of proteins per module. Modules are iteratively subdivided until this threshold is met. The default setting is the number of proteins in the network, resulting in a single iteration of the community detection algorithm.
 
 ```json
 [
@@ -1147,7 +1147,7 @@ An upper bound on the number of nodes per module. Modules are iteratively subdiv
     }
 ]
 ```
-The function to combine sizes of modules into a value decisive to meeting the module size threshold. The default setting is `"mean"`. Available settings are `"mean"`, `"median"`, `"max"` and `"min"`.
+The function to combine sizes of modules into a value compared to the module size threshold. The default setting is `"mean"`. Available settings are `"mean"`, `"median"`, `"max"` and `"min"`.
 
 ---
 
