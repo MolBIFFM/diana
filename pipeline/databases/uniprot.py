@@ -24,15 +24,15 @@ def get_swiss_prot_entries(
         if not line.strip():
             continue
 
-        if line.split(maxsplit=1)[0] == "AC":
-            if len(line.split(maxsplit=1)) == 1:
+        if line.split()[0] == "AC":
+            if len(line.split()) == 1:
                 continue
 
             accessions.extend(
                 line.split(maxsplit=1)[1].rstrip(";").split("; "))
 
-        elif line.split(maxsplit=1)[0] == "GN":
-            if len(line.split(maxsplit=1)) == 1:
+        elif line.split()[0] == "GN":
+            if len(line.split()) == 1:
                 continue
 
             for entry in line.split(maxsplit=1)[1].rstrip(";").split("; "):
@@ -40,8 +40,8 @@ def get_swiss_prot_entries(
                     entry_gene_name[entry.split("=")[0]] = (
                         entry.split("=")[1].split("{")[0].rstrip())
 
-        elif line.split(maxsplit=1)[0] == "DE":
-            if len(line.split(maxsplit=1)) == 1:
+        elif line.split()[0] == "DE":
+            if len(line.split()) == 1:
                 continue
 
             if line.split(maxsplit=1)[1].split(":", 1)[0] == "RecName":
@@ -69,8 +69,8 @@ def get_swiss_prot_entries(
                         entry_protein_name[entry.split("=")[0]] = (
                             entry.split("=")[1].split("{")[0].rstrip())
 
-        elif line.split(maxsplit=1)[0] == "OX":
-            if len(line.split(maxsplit=1)) == 1:
+        elif line.split()[0] == "OX":
+            if len(line.split()) == 1:
                 continue
 
             if line.split(
