@@ -257,7 +257,7 @@ The maximum number of measurements to associate with each protein prioritized by
     }
 ]
 ```
-A function to combine individual replicates into a single measurement. The function is applied to ratios, not their log2. The default setting is `"mean"`. Available settings are `"mean"` and `"median"`.
+A function to combine individual replicates into a single measurement. The function is applied to ratios, not their log2. The default setting is `"mean"`. Available settings are `"mean"`, `"median"`, `"max"`, `"maxabs"`, `"min"`, `"minabs"`, `"sum"`, and `"sumabs"`.
 
 ```json
 [
@@ -1147,7 +1147,7 @@ An additional upper bound on the number of proteins per module. Modules are iter
     }
 ]
 ```
-The function to combine sizes of modules into a value compared to the module size threshold. The default setting is `"mean"`. Available settings are `"mean"`, `"median"`, `"max"` and `"min"`.
+The function to combine sizes of modules into a value compared to the module size threshold. The default setting is `"mean"`. Available settings are `"mean"`, `"median"`, `"max"`, and `"min"`.
 
 ---
 
