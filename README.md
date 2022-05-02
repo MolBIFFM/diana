@@ -6,7 +6,7 @@ protein-protein interaction network analysis from mass spectrometric measurement
 ```
 pip3 install -r pipeline/requirements.txt 
 ```
-Developed using Python 3.10.4, Ubuntu 22.04 and Cytoscape 3.9.1.
+Developed using Python 3.10.4, Ubuntu 22.04 and Cytoscape 3.9.1. External dependencies consist of networkx, pandas, and scipy as well as openpyxl, pyxlsb, and xlrd which are required by pandas.
 
 ## Command Line Interface
 ```
