@@ -1,7 +1,7 @@
 """
 pipeline
 
-protein-protein interaction network analysis from mass spectrometric 
+protein-protein interaction network analysis from mass spectrometric
 measurements of post-translational modifications
 """
 import argparse
