@@ -65,8 +65,7 @@ def get_network(proteins: Container[str] = frozenset(),
     annotated_proteins = set.union(*annotation.values())
 
     network_intersection = {
-        term: annotation[term].intersection(proteins)
-        for term in annotation
+        term: annotation[term].intersection(proteins) for term in annotation
     }
 
     p_value = multiple_testing_correction({
@@ -98,10 +97,7 @@ def get_term_sizes(network: nx.Graph) -> dict[str, int]:
         network associated with any term in the Gene Ontology
         network.
     """
-    return {
-        term: network.nodes[term]["number of proteins"]
-        for term in network
-    }
+    return {term: network.nodes[term]["number of proteins"] for term in network}
 
 
 def export(network: nx.Graph, basename: str) -> None:

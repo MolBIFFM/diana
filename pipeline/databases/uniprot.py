@@ -28,8 +28,7 @@ def get_swiss_prot_entries(
             if len(line.split()) == 1:
                 continue
 
-            accessions.extend(
-                line.split(maxsplit=1)[1].rstrip(";").split("; "))
+            accessions.extend(line.split(maxsplit=1)[1].rstrip(";").split("; "))
 
         elif line.split()[0] == "GN":
             if len(line.split()) == 1:
@@ -75,8 +74,8 @@ def get_swiss_prot_entries(
 
             if line.split(
                     maxsplit=1)[1].split(";")[0].split("=")[0] == "NCBI_TaxID":
-                if (line.split(maxsplit=1)[1].split(";")[0].split("=")
-                    [1].split("{")[0].isnumeric()):
+                if (line.split(maxsplit=1)[1].split(";")[0].split("=")[1].split(
+                        "{")[0].isnumeric()):
                     tax_id = int(
                         line.split(maxsplit=1)[1].split(";")[0].split("=")
                         [1].split("{")[0])

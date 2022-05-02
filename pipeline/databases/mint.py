@@ -50,8 +50,8 @@ def get_protein_protein_interactions(
                 14,
             ],
     ):
-        if ((not interaction_detection_methods
-             or mitab.namespace_has_any_identifier_from(
+        if ((not interaction_detection_methods or
+             mitab.namespace_has_any_identifier_from(
                  row[4],
                  "psi-mi",
                  interaction_detection_methods,
@@ -60,19 +60,17 @@ def get_protein_protein_interactions(
                  "psi-mi",
                  interaction_detection_methods,
              )) and
-            (mitab.namespace_has_identifier(row[5], "taxid", organism)
-             and mitab.namespace_has_identifier(row[6], "taxid", organism))
-                and (not interaction_types or
-                     (mitab.namespace_has_any_identifier_from(
-                         row[7], "psi-mi", interaction_types)
-                      or mitab.namespace_has_any_term_from(
-                          row[7], "psi-mi", interaction_types)))
-                and (score := mitab.get_identifiers_from_namespace(
-                    row[8], "intact-miscore"))
-                and float(score[0]) >= psi_mi_score):
+            (mitab.namespace_has_identifier(row[5], "taxid", organism) and
+             mitab.namespace_has_identifier(row[6], "taxid", organism)) and
+            (not interaction_types or
+             (mitab.namespace_has_any_identifier_from(row[7], "psi-mi",
+                                                      interaction_types) or
+              mitab.namespace_has_any_term_from(row[7], "psi-mi",
+                                                interaction_types))) and
+            (score := mitab.get_identifiers_from_namespace(
+                row[8], "intact-miscore")) and float(score[0]) >= psi_mi_score):
             for interactor_a in mitab.get_identifiers_from_namespace(
-                    row[0],
-                    "uniprotkb") + mitab.get_identifiers_from_namespace(
+                    row[0], "uniprotkb") + mitab.get_identifiers_from_namespace(
                         row[2], "uniprotkb"):
                 if "-" in interactor_a and not interactor_a.split(
                         "-")[1].isnumeric():

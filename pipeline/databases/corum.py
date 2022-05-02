@@ -38,15 +38,15 @@ def get_protein_protein_interactions(
                 "SWISSPROT organism"
             ]):
         if (not purification_methods or any(
-                purification_method.split("-")[0] in purification_methods
-                or purification_method.split(
+                purification_method.split("-")[0] in purification_methods or
+                purification_method.split(
                     "-")[1].rstrip() in purification_methods
                 for purification_method in
                 row["Protein complex purification method"].split(";"))):
 
             subunits = [
-                subunit.split("-")[0] if "-" in subunit
-                and not subunit.split("-")[1].isnumeric() else subunit
+                subunit.split("-")[0] if "-" in subunit and
+                not subunit.split("-")[1].isnumeric() else subunit
                 for subunit in row["subunits(UniProt IDs)"].split(";")
             ]
 
@@ -96,8 +96,8 @@ def get_protein_complexes(
                 "Protein complex purification method", "SWISSPROT organism"
             ]):
         if ((not purification_methods or any(
-                purification_method.split("-")[0] in purification_methods
-                or purification_method.split(
+                purification_method.split("-")[0] in purification_methods or
+                purification_method.split(
                     "-")[1].rstrip() in purification_methods
                 for purification_method in
                 row["Protein complex purification method"].split(";"))) and
@@ -105,8 +105,8 @@ def get_protein_complexes(
                     for spo in row["SWISSPROT organism"].split(";"))):
 
             subunits = [
-                subunit.split("-")[0] if "-" in subunit
-                and not subunit.split("-")[1].isnumeric() else subunit
+                subunit.split("-")[0] if "-" in subunit and
+                not subunit.split("-")[1].isnumeric() else subunit
                 for subunit in row["subunits(UniProt IDs)"].split(";")
             ]
 

@@ -30,9 +30,8 @@ def clauset_newman_moore(network: nx.Graph,
     communities = {i: {i} for i in network.nodes()}
 
     A = {
-        i: {j: network.edges[i, j][weight]
-            for j in nx.neighbors(network, i)}
-        for i in network.nodes()
+        i: {j: network.edges[i, j][weight] for j in nx.neighbors(network, i)
+           } for i in network.nodes()
     }
 
     connected = {i: set(A[i]) - {i} for i in A}
@@ -43,10 +42,8 @@ def clauset_newman_moore(network: nx.Graph,
     delta_q = {
         i: {
             j: (1.0 / (2.0 * m) - resolution * k[i] * k[j] /
-                ((2.0 * m)**2.0) if j in A[i] else 0.0)
-            for j in A if j < i
-        }
-        for i in A
+                ((2.0 * m)**2.0) if j in A[i] else 0.0) for j in A if j < i
+        } for i in A
     }
 
     a = {i: k[i] / (2.0 * m) for i in A}
@@ -63,9 +60,7 @@ def clauset_newman_moore(network: nx.Graph,
         del communities[max_i]
 
         delta_q_prime = {
-            i: {j: delta_q[i][j]
-                for j in delta_q[i]}
-            for i in delta_q
+            i: {j: delta_q[i][j] for j in delta_q[i]} for i in delta_q
         }
 
         for n in connected[max_i] & connected[max_j]:
@@ -153,8 +148,7 @@ def louvain(network: nx.Graph,
 
         A = {
             i:
-            {j: network.edges[i, j][weight]
-             for j in nx.neighbors(network, i)}
+            {j: network.edges[i, j][weight] for j in nx.neighbors(network, i)}
             for i in network.nodes()
         }
 
@@ -168,10 +162,8 @@ def louvain(network: nx.Graph,
                 **{
                     community[i]: 0.0
                 },
-                **{community[j]: A[i][j]
-                   for j in A[i]}
-            }
-            for i in A
+                **{community[j]: A[i][j] for j in A[i]}
+            } for i in A
         }
 
         m = sum(k.values()) / 2.0
@@ -202,15 +194,14 @@ def louvain(network: nx.Graph,
                              (sigma_tot[community[j]] /
                               (2.0 * m))**2.0 - resolution * (k[i] /
                                                               (2.0 * m))**2.0)
-                        ) - (
-                            ((sigma_in[community[i]] + k_in[i][community[i]]) /
-                             (2.0 * m) - resolution *
-                             ((sigma_tot[community[i]] + k[i]) /
-                              (2.0 * m))**2.0) -
-                            (sigma_in[community[i]] / (2.0 * m) - resolution *
-                             (sigma_tot[community[i]] /
-                              (2.0 * m))**2.0 - resolution * (k[i] /
-                                                              (2.0 * m))**2.0))
+                        ) - (((sigma_in[community[i]] + k_in[i][community[i]]) /
+                              (2.0 * m) - resolution *
+                              ((sigma_tot[community[i]] + k[i]) /
+                               (2.0 * m))**2.0) -
+                             (sigma_in[community[i]] / (2.0 * m) - resolution *
+                              (sigma_tot[community[i]] /
+                               (2.0 * m))**2.0 - resolution * (k[i] /
+                                                               (2.0 * m))**2.0))
 
                 for n in A[i]:
                     sigma_tot[community[i]] += A[i][n]

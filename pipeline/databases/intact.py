@@ -46,8 +46,8 @@ def get_protein_protein_interactions(
                 "Type(s) interactor B"
             ],
     ):
-        if ((not interaction_detection_methods
-             or mitab.namespace_has_any_identifier_from(
+        if ((not interaction_detection_methods or
+             mitab.namespace_has_any_identifier_from(
                  row["Interaction detection method(s)"],
                  "psi-mi",
                  interaction_detection_methods,
@@ -56,20 +56,19 @@ def get_protein_protein_interactions(
                  "psi-mi",
                  interaction_detection_methods,
              )) and (mitab.namespace_has_identifier(row["Taxid interactor A"],
-                                                    "taxid", organism)
-                     and mitab.namespace_has_identifier(
-                         row["Taxid interactor B"], "taxid", organism)) and
+                                                    "taxid", organism) and
+                     mitab.namespace_has_identifier(row["Taxid interactor B"],
+                                                    "taxid", organism)) and
             (not interaction_types or mitab.namespace_has_any_identifier_from(
-                row["Interaction type(s)"], "psi-mi", interaction_types)
-             or mitab.namespace_has_any_term_from(row["Interaction type(s)"],
-                                                  "psi-mi", interaction_types))
-                and (score := mitab.get_identifiers_from_namespace(
-                    row["Confidence value(s)"], "intact-miscore"))
-                and float(score[0]) >= psi_mi_score
-                and mitab.namespace_has_term(row["Type(s) interactor A"],
-                                             "psi-mi", "protein")
-                and mitab.namespace_has_term(row["Type(s) interactor B"],
-                                             "psi-mi", "protein")):
+                row["Interaction type(s)"], "psi-mi", interaction_types) or
+             mitab.namespace_has_any_term_from(row["Interaction type(s)"],
+                                               "psi-mi", interaction_types)) and
+            (score := mitab.get_identifiers_from_namespace(
+                row["Confidence value(s)"], "intact-miscore")) and
+                float(score[0]) >= psi_mi_score and mitab.namespace_has_term(
+                    row["Type(s) interactor A"], "psi-mi", "protein") and
+                mitab.namespace_has_term(row["Type(s) interactor B"], "psi-mi",
+                                         "protein")):
             for interactor_a in mitab.get_identifiers_from_namespace(
                     row["#ID(s) interactor A"],
                     "uniprotkb") + mitab.get_identifiers_from_namespace(

@@ -66,8 +66,8 @@ def get_terms_from_namespace(entry: str, namespace: str) -> tuple[str, ...]:
     Returns:
         Terms from a namespace.
     """
-    return tuple(term for _, term in parse(entry).get(namespace, [("", None)])
-                 if term)
+    return tuple(
+        term for _, term in parse(entry).get(namespace, [("", None)]) if term)
 
 
 def namespace_has_identifier(entry: str, namespace: str,

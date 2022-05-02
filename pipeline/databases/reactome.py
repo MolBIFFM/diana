@@ -46,10 +46,10 @@ def get_protein_protein_interactions(
             interactor_a = row["# Interactor 1 uniprot id"].split(":")[1]
             interactor_b = row["Interactor 2 uniprot id"].split(":")[1]
 
-            if ((not interaction_type
-                 or row["Interaction type"] in interaction_type) and
-                (not interaction_context
-                 or row["Interaction context"] in interaction_context)):
+            if ((not interaction_type or
+                 row["Interaction type"] in interaction_type) and
+                (not interaction_context or
+                 row["Interaction context"] in interaction_context)):
 
                 if "-" in interactor_a and not interactor_a.split(
                         "-")[1].isnumeric():
