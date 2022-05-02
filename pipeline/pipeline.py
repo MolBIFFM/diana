@@ -28,11 +28,11 @@ def process_workflow(configuration: dict,
                      logger: logging.Logger,
                      index: Optional[int] = None) -> None:
     """
-        Executes a workflow specified in configuration.
+    Executes a workflow specified in configuration.
 
-        Args:
-            configurations: The specification of a workflow.
-            logger: A logger.
+    Args:
+        configurations: The specification of a workflow.
+        logger: A logger.
     """
     network = protein_protein_interaction_network.get_network()
 
