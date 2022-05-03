@@ -27,7 +27,7 @@ A configuration file specifies a list of workflows processed sequentially. Multi
 
 A workflow defines the assembly of a protein-protein interaction network from a set of input genes or proteins, optionally associated with mass spectrometry data, using protein-protein interaction data from *BioGRID*, *CORUM*, *IntAct*, *MINT*, *Reactome*, and *STRING*, optionally extending to proteins neighboring the input.
 
-The distribution of mass spectrometry measurements and enrichment of *CORUM* protein complexes, *Gene Ontology* terms or *Reactome* pathways by the protein-protein interaction network or its separate modules can be assessed. The protein-protein interaction network as well as networks derived from the *Gene Ontology* or *Reactome*, capturing enrichment by the input proteins, can be exported along comprehensive *Cytoscape* style specifications.
+The distribution of mass spectrometry measurements and enrichment of *CORUM* protein complexes, *Gene Ontology* terms or *Reactome* pathways by the protein-protein interaction network or its separate modules can be assessed. The protein-protein interaction network as well as networks derived from the *Gene Ontology* or *Reactome*, capturing enrichment by subsets of the input proteins, can be exported along comprehensive *Cytoscape* style specifications.
 
 ## Configuration
 
