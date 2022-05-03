@@ -418,7 +418,7 @@ The version of the *BioGRID* database to use. The default setting is `null`, cor
     }
 ]
 ```
-A list of accepted *PSI-MI* identifiers or terms for protein complex purification methods. The default setting is `[]`, corresponding to any annotation.
+A list of accepted PSI-MI identifiers or terms for protein complex purification methods. The default setting is `[]`, corresponding to any annotation.
 
 ```json
 [
@@ -434,7 +434,7 @@ A list of accepted *PSI-MI* identifiers or terms for protein complex purificatio
     }
 ]
 ```
-A list of accepted *PSI-MI* identifiers or terms for interaction detection methods. The default setting is `[]`, corresponding to any annotation.
+A list of accepted PSI-MI identifiers or terms for interaction detection methods. The default setting is `[]`, corresponding to any annotation.
 
 ```json
 [
@@ -450,7 +450,7 @@ A list of accepted *PSI-MI* identifiers or terms for interaction detection metho
     }
 ]
 ```
-A list of accepted *PSI-MI* identifiers or terms for interaction types. The default setting is `[]`, corresponding to any annotation.
+A list of accepted PSI-MI identifiers or terms for interaction types. The default setting is `[]`, corresponding to any annotation.
 
 ```json
 [
@@ -466,7 +466,7 @@ A list of accepted *PSI-MI* identifiers or terms for interaction types. The defa
     }
 ]
 ```
-A *PSI-MI* score threshold. The default setting is `0.0`.
+A PSI-MI score threshold. The default setting is `0.0`.
 
 ```json
 [
@@ -847,7 +847,7 @@ The NCBI taxonomy ID of the organism of interest. The default and currently only
     }
 ]
 ```
-A list of accepted *PSI-MI* identifiers or terms for protein complex purification methods. The default setting is `[]`, corresponding to any annotation.
+A list of accepted PSI-MI identifiers or terms for protein complex purification methods. The default setting is `[]`, corresponding to any annotation.
 
 ```json
 [
@@ -1371,7 +1371,7 @@ The NCBI taxonomy ID of the organism of interest. The default and currently only
     }
 ]
 ```
-A list of accepted *PSI-MI* identifiers or terms for protein complex purification methods. The default setting is `[]`, corresponding to any annotation.
+A list of accepted PSI-MI identifiers or terms for protein complex purification methods. The default setting is `[]`, corresponding to any annotation.
 
 ```json
 [
