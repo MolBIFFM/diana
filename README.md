@@ -6,7 +6,7 @@ protein-protein interaction network analysis from mass spectrometric measurement
 ```
 pip3 install -r pipeline/requirements.txt 
 ```
-External dependencies consist of *NetworkX*, *pandas*, and *SciPy* as well as *openpyxl*, *pyxlsb*, and *xlrd* which are required by *pandas*. Developed using *Python* 3.10.4, *Ubuntu* 22.04 and *Cytoscape* 3.9.1.
+External dependencies consist of NetworkX, pandas, and SciPy as well as openpyxl, pyxlsb, and xlrd which are required by pandas. Developed using Python 3.10.4, Ubuntu 22.04 and Cytoscape 3.9.1.
 
 ## Command Line Interface
 ```
@@ -27,7 +27,7 @@ A configuration file specifies a list of workflows processed sequentially. Multi
 
 A workflow defines the assembly of a protein-protein interaction network from a set of input genes or proteins, optionally associated with mass spectrometry data, using protein-protein interaction data from *BioGRID*, *CORUM*, *IntAct*, *MINT*, *Reactome*, and *STRING*, optionally extending to proteins neighboring the input.
 
-The distribution of mass spectrometry measurements and enrichment of *CORUM* protein complexes, *Gene Ontology* terms or *Reactome* pathways by the protein-protein interaction network or its separate modules can be assessed. The protein-protein interaction network as well as networks derived from the *Gene Ontology* or *Reactome*, capturing enrichment by subsets of the input proteins, can be exported along comprehensive *Cytoscape* style specifications.
+The distribution of mass spectrometry measurements across and enrichment of *CORUM* protein complexes, *Gene Ontology* terms and *Reactome* pathways by the protein-protein interaction network and its separate modules can be assessed. The protein-protein interaction network as well as networks derived from the *Gene Ontology* or *Reactome*, capturing enrichment by subsets of the input proteins, can be exported along comprehensive Cytoscape style specifications.
 
 ## Configuration
 
@@ -67,7 +67,7 @@ The tabular input file.
     }
 ]
 ```
-The table column to extract *UniProt* gene or protein accessions from. These are mapped to primary *UniProt* accessions or discarded if not present in SwissProt. Isoform identifiers are maintained on primary, but not transferred from secondary accessions.
+The table column to extract *UniProt* gene or protein accessions from. These are mapped to primary *UniProt* accessions or discarded if not present in *SwissProt*. Isoform identifiers are maintained on primary, but not transferred from secondary accessions.
 
 ```json
 [
@@ -179,7 +179,7 @@ The time of measurement to be associated with the measurements from the input fi
     }
 ]
 ```
-An identifier for the type of post-translational modification associate with measurements from the corresponding file. The default setting is `"M"`. Currently, up to two types of post-translational modification per time of measurement are supported in *Cytoscape* styles.
+An identifier for the type of post-translational modification associate with measurements from the corresponding file. The default setting is `"M"`. Currently, up to two types of post-translational modification per time of measurement are supported in Cytoscape styles.
 
 ```json
 [
@@ -692,7 +692,7 @@ The version of *STRING* to use. The default setting is `11.5`.
 
 ---
 
-The specification of *Cytoscape* styles. If not present, no *Cytoscape* styles are exported.
+The specification of Cytoscape styles. If not present, no Cytoscape styles are exported.
 
 ```json
 [
