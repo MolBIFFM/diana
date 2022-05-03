@@ -179,7 +179,7 @@ The time of measurement to be associated with the measurements from the input fi
     }
 ]
 ```
-An identifier for the type of post-translational modification associate with measurements from the corresponding file. The default setting is `"M"`. Up to two types of post-translational modification per time of measurement are supported in *Cytoscape* styles.
+An identifier for the type of post-translational modification associate with measurements from the corresponding file. The default setting is `"M"`. Currently, up to two types of post-translational modification per time of measurement are supported in *Cytoscape* styles.
 
 ```json
 [
