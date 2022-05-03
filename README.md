@@ -1,6 +1,6 @@
 # pipeline
 
-protein-protein interaction network analysis from mass spectrometric measurements of post-translational modifications
+protein-protein interaction network analysis from mass spectrometric measurements of differential post-translational modification
 
 ## Setup
 ```
