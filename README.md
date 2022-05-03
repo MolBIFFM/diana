@@ -25,9 +25,9 @@ A configuration file specifies a list of workflows processed sequentially. Multi
 
 ---
 
-A workflow defines the assembly of a protein-protein interaction network from a set of input genes or proteins, optionally associated with mass spectrometry data, using protein-protein interaction data from *BioGRID*, *CORUM*, *IntAct*, *MINT*, *Reactome*, and *STRING*, optionally extending to proteins neighboring the input.
+A workflow defines the assembly of a protein-protein interaction network from a set of input genes or proteins, optionally associated with mass spectrometry data, using protein-protein interaction data from BioGRID, CORUM, IntAct, MINT, Reactome, and STRING, optionally extending to proteins neighboring the input.
 
-The distribution of mass spectrometry measurements across and enrichment of *CORUM* protein complexes, *Gene Ontology* terms, and *Reactome* pathways by the protein-protein interaction network and its separate communities can be assessed. The protein-protein interaction network as well as networks derived from the *Gene Ontology* or *Reactome*, capturing enrichment by subsets of the input proteins, can be exported along comprehensive Cytoscape style specifications.
+The distribution of mass spectrometry measurements across and enrichment of CORUM protein complexes, Gene Ontology terms, and Reactome pathways by the protein-protein interaction network and its separate communities can be assessed. The protein-protein interaction network as well as networks derived from the Gene Ontology or Reactome, capturing enrichment by subsets of the input proteins, can be exported along comprehensive Cytoscape style specifications.
 
 ## Configuration
 
@@ -67,7 +67,7 @@ The tabular input file.
     }
 ]
 ```
-The table column to extract *UniProt* gene or protein accessions from. These are mapped to primary *UniProt* accessions or discarded if not present in *SwissProt*. Isoform identifiers are maintained on primary, but not transferred from secondary accessions.
+The table column to extract UniProt gene or protein accessions from. These are mapped to primary UniProt accessions or discarded if not present in Swiss-Prot. Isoform identifiers are maintained on primary, but not transferred from secondary accessions.
 
 ```json
 [
@@ -405,7 +405,7 @@ If true, restrict query to multi-validated physical protein-protein interactions
     }
 ]
 ```
-The version of the *BioGRID* database to use. The default setting is `null`, corresponding to the latest version.
+The version of the BioGRID database to use. The default setting is `null`, corresponding to the latest version.
 
 ```json
 [
@@ -505,7 +505,7 @@ A list of accepted interaction type annotations. The default setting is `[]`, co
     }
 ]
 ```
-The *STRING* gene neighborhood score threshold. The default setting is `0.0`.
+The STRING gene neighborhood score threshold. The default setting is `0.0`.
 
 ```json
 [
@@ -518,7 +518,7 @@ The *STRING* gene neighborhood score threshold. The default setting is `0.0`.
     }
 ]
 ```
-The *STRING* transferred gene neighborhood score threshold. The default setting is `0.0`.
+The STRING transferred gene neighborhood score threshold. The default setting is `0.0`.
 
 ```json
 [
@@ -531,7 +531,7 @@ The *STRING* transferred gene neighborhood score threshold. The default setting 
     }
 ]
 ```
-The *STRING* gene fusion score threshold. The default setting is `0.0`.
+The STRING gene fusion score threshold. The default setting is `0.0`.
 
 ```json
 [
@@ -544,7 +544,7 @@ The *STRING* gene fusion score threshold. The default setting is `0.0`.
     }
 ]
 ```
-The *STRING* gene cooccurrence score threshold. The default setting is `0.0`.
+The STRING gene cooccurrence score threshold. The default setting is `0.0`.
 
 ```json
 [
@@ -557,7 +557,7 @@ The *STRING* gene cooccurrence score threshold. The default setting is `0.0`.
     }
 ]
 ```
-The *STRING* gene coexpression score threshold. The default setting is `0.0`.
+The STRING gene coexpression score threshold. The default setting is `0.0`.
 
 ```json
 [
@@ -570,7 +570,7 @@ The *STRING* gene coexpression score threshold. The default setting is `0.0`.
     }
 ]
 ```
-The *STRING* transferred gene coexpression score threshold. The default setting is `0.0`.
+The STRING transferred gene coexpression score threshold. The default setting is `0.0`.
 
 ```json
 [
@@ -583,7 +583,7 @@ The *STRING* transferred gene coexpression score threshold. The default setting 
     }
 ]
 ```
-The *STRING* experiments score threshold. The default setting is `0.0`.
+The STRING experiments score threshold. The default setting is `0.0`.
 
 ```json
 [
@@ -596,7 +596,7 @@ The *STRING* experiments score threshold. The default setting is `0.0`.
     }
 ]
 ```
-The *STRING* transferred experiments score threshold. The default setting is `0.0`.
+The STRING transferred experiments score threshold. The default setting is `0.0`.
 
 ```json
 [
@@ -609,7 +609,7 @@ The *STRING* transferred experiments score threshold. The default setting is `0.
     }
 ]
 ```
-The *STRING* database score threshold. The default setting is `0.0`.
+The STRING database score threshold. The default setting is `0.0`.
 
 ```json
 [
@@ -622,7 +622,7 @@ The *STRING* database score threshold. The default setting is `0.0`.
     }
 ]
 ```
-The *STRING* transferred database score threshold. The default setting is `0.0`.
+The STRING transferred database score threshold. The default setting is `0.0`.
 
 ```json
 [
@@ -635,7 +635,7 @@ The *STRING* transferred database score threshold. The default setting is `0.0`.
     }
 ]
 ```
-The *STRING* textmining score threshold. The default setting is `0.0`.
+The STRING textmining score threshold. The default setting is `0.0`.
 
 ```json
 [
@@ -648,7 +648,7 @@ The *STRING* textmining score threshold. The default setting is `0.0`.
     }
 ]
 ```
-The *STRING* transferred textmining score threshold. The default setting is `0.0`.
+The STRING transferred textmining score threshold. The default setting is `0.0`.
 
 ```json
 [
@@ -661,7 +661,7 @@ The *STRING* transferred textmining score threshold. The default setting is `0.0
     }
 ]
 ```
-The *STRING* combined score threshold. The default setting is `0.0`.
+The STRING combined score threshold. The default setting is `0.0`.
 
 ```json
 [
@@ -688,7 +688,7 @@ If true, restrict query to physical protein-protein interactions. The default se
 ]
 
 ```
-The version of *STRING* to use. The default setting is `11.5`.
+The version of STRING to use. The default setting is `11.5`.
 
 ---
 
@@ -761,11 +761,11 @@ The range of combined measurements categorizing proteins by whether the range is
     }
 ]
 ```
-The function used to derive a combined edge confidence score from scores in *IntAct*, *MINT* and *STRING*. For lack of corresponding score, 1.0 is used for all interactions from *BioGRID*, *CORUM* and *Reactome*. The combined score is reflected by edge transparency. By default any edge receives a score of 1.0. Available settings are `null`,  `"mean"`, `"median"`, `"max"`, `"min"`, `"sum"`, `"number"`, the number of queried databases supporting the interaction. Further, `"BioGRID"`, `"CORUM"`, `"IntAct"`, `"MINT"`, `"Reactome"`, and `"STRING"` refer to the score in the particular database.
+The function used to derive a combined edge confidence score from scores in IntAct, MINT and STRING. For lack of corresponding score, 1.0 is used for all interactions from BioGRID, CORUM and Reactome. The combined score is reflected by edge transparency. By default any edge receives a score of 1.0. Available settings are `null`,  `"mean"`, `"median"`, `"max"`, `"min"`, `"sum"`, `"number"`, the number of queried databases supporting the interaction. Further, `"BioGRID"`, `"CORUM"`, `"IntAct"`, `"MINT"`, `"Reactome"`, and `"STRING"` refer to the score in the particular database.
 
 ---
 
-The specification of *CORUM*, *Gene Ontology* and *Reactome* enrichment analysis of the protein-protein interaction network.
+The specification of CORUM, Gene Ontology and Reactome enrichment analysis of the protein-protein interaction network.
 
 ```json
 [
@@ -862,11 +862,11 @@ A list of accepted PSI-MI identifiers or terms for protein complex purification 
     }
 ]
 ```
-The *Gene Ontology* namespaces to consider. The default setting is `["cellular_component", "molecular_function" "biological_process"]`.
+The Gene Ontology namespaces to consider. The default setting is `["cellular_component", "molecular_function" "biological_process"]`.
 
 ---
 
-The specification of the assembly of a *Gene Ontology* or *Reactome* network. A *Gene Ontology* network is composed of terms, a *Reactome* network of pathways. Both report the enrichment of each respective entity by proteins in the protein-protein interaction network, along with their relations in these databases.
+The specification of the assembly of a Gene Ontology or Reactome network. A Gene Ontology network is composed of terms, a Reactome network of pathways. Both report the enrichment of each respective entity by proteins in the protein-protein interaction network, along with their relations in these databases.
 
 The proteins considered can be restricted, based on measurements associated with them, either by a union or intersection of specified subsets.
 
@@ -1088,7 +1088,7 @@ The NCBI taxonomy ID of the organism of interest. The default and currently only
     }
 ]
 ```
-The *Gene Ontology* namespaces to consider. The default setting is `["cellular_component", "molecular_function" "biological_process"]`.
+The Gene Ontology namespaces to consider. The default setting is `["cellular_component", "molecular_function" "biological_process"]`.
 
 ---
 
@@ -1125,7 +1125,7 @@ The resolution parameter of modularity which is maximized. The default setting i
     }
 ]
 ```
-The function used to derive a combined edge score from confidence scores in *IntAct*, *MINT*, and *STRING* as well as 1.0 used for *BioGRID*, *CORUM* and *Reactome*, respectively, for a lack of a corresponding score. The combined score is utilized as edge weight in module detection. By default any edge receives a score of 1.0, corresponding to an unweighted network. Available settings are `null`, `"mean"`, `"median"`, `"max"`, `"min"`, `"sum"`, `"number"`, the number of queried databases supporting the interaction. Further, `"BioGRID"`, `"CORUM"`, `"IntAct"`, `"MINT"`, `"Reactome"`, and `"STRING"` refer to the score in that particular database.
+The function used to derive a combined edge score from confidence scores in IntAct, MINT, and STRING as well as 1.0 used for BioGRID, CORUM and Reactome, respectively, for a lack of a corresponding score. The combined score is utilized as edge weight in module detection. By default any edge receives a score of 1.0, corresponding to an unweighted network. Available settings are `null`, `"mean"`, `"median"`, `"max"`, `"min"`, `"sum"`, `"number"`, the number of queried databases supporting the interaction. Further, `"BioGRID"`, `"CORUM"`, `"IntAct"`, `"MINT"`, `"Reactome"`, and `"STRING"` refer to the score in that particular database.
 
 ```json
 [
@@ -1151,9 +1151,9 @@ The function to combine sizes of modules into a value compared to the module siz
 
 ---
 
-The specification of statistical tests on individual modules with respect to either *Gene Ontology* or *Reactome* enrichment or the distribution of measurements across the protein-protein interaction network. 
+The specification of statistical tests on individual modules with respect to either Gene Ontology or Reactome enrichment or the distribution of measurements across the protein-protein interaction network. 
 
-*CORUM*, *Gene Ontology* and *Reactome* enrichment can be assessed with respect to the respective annotation or the protein-protein interaction network. 
+CORUM, Gene Ontology and Reactome enrichment can be assessed with respect to the respective annotation or the protein-protein interaction network. 
 
 To assess the distribution of measurements, these can be classified in a binary way to measure the modules' enrichment of proteins which exhibit measurements exceeding a specified threshold. Alternatively, the distribution of measurements within separate modules can be compared with the remaining network.
 
@@ -1397,7 +1397,7 @@ A list of accepted PSI-MI identifiers or terms for protein complex purification 
     }
 ]
 ```
-The *Gene Ontology* namespaces to consider. The default setting is `["cellular_component", "molecular_function" "biological_process"]`.
+The Gene Ontology namespaces to consider. The default setting is `["cellular_component", "molecular_function" "biological_process"]`.
 
 ```json
 [
