@@ -1,9 +1,4 @@
-"""
-pipeline
-
-protein-protein interaction network analysis from mass spectrometric
-measurements of differential post-translational modification
-"""
+"""pipeline"""
 import argparse
 import concurrent.futures
 import json
