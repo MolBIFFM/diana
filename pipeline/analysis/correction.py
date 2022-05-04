@@ -1,9 +1,9 @@
 """Multiple testing correction procedures."""
-from typing import Hashable
+from typing import Hashable, Mapping
 
 
 def benjamini_hochberg(
-        p_values: dict[Hashable, float]) -> dict[Hashable, float]:
+        p_values: Mapping[Hashable, float]) -> dict[Hashable, float]:
     """
     Benjamini-Hochberg procedure for multiple testing correction.
 
@@ -30,7 +30,7 @@ def benjamini_hochberg(
     }
 
 
-def bonferroni(p_values: dict[Hashable, float]) -> dict[Hashable, float]:
+def bonferroni(p_values: Mapping[Hashable, float]) -> dict[Hashable, float]:
     """
     Bonferroni procedure for multiple testing correction.
 

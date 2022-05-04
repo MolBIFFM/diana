@@ -5,7 +5,7 @@ network.
 
 import json
 import xml.etree.ElementTree as ET
-from typing import Callable, Collection
+from typing import Callable, Collection, Mapping
 
 import networkx as nx
 from networks import protein_protein_interaction_network
@@ -930,8 +930,9 @@ def get_style(
         float] = lambda measurement, measurements: measurement,
     site_combination: Callable[[Collection[float]],
                                float] = lambda sites: max(sites, key=abs),
-    confidence_score_combination: Callable[[dict[str, float]], float] = lambda
-    confidence_scores: float(bool(confidence_scores.values()))
+    confidence_score_combination: Callable[[Mapping[str, float]],
+                                           float] = lambda confidence_scores:
+    float(bool(confidence_scores.values()))
 ) -> ET.ElementTree:
     """
     Returns the Cytoscape styles for a protein-protein interaction network.

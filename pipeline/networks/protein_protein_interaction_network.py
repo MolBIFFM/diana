@@ -5,7 +5,7 @@ import os
 import re
 import statistics
 from typing import (Callable, Collection, Container, Hashable, Iterable,
-                    Optional, Union)
+                    Mapping, Optional, Union)
 
 import networkx as nx
 import pandas as pd
@@ -1007,8 +1007,9 @@ def get_databases(network: nx.Graph) -> tuple[str, ...]:
 
 def set_edge_weights(
     network: nx.Graph,
-    weight: Callable[[dict[str, float]], float] = lambda confidence_scores: int(
-        bool(confidence_scores.values())),
+    weight: Callable[[Mapping[str, float]],
+                     float] = lambda confidence_scores: int(
+                         bool(confidence_scores.values())),
     attribute: str = "weight",
 ) -> None:
     """
@@ -1045,10 +1046,11 @@ def remove_edge_weights(network: nx.Graph, attribute: str = "weight") -> None:
 
 def get_modules(network: nx.Graph,
                 module_size: int,
-                module_size_combination: Callable[[list[int]],
+                module_size_combination: Callable[[Collection[int]],
                                                   float] = statistics.mean,
                 algorithm: Callable[
-                    [nx.Graph], list[set[Hashable]]] = modularization.louvain,
+                    [nx.Graph],
+                    Iterable[set[Hashable]]] = modularization.louvain,
                 resolution: float = 1.0,
                 weight: str = "weight") -> tuple[nx.Graph, ...]:
     """
@@ -1145,8 +1147,9 @@ def get_measurement_enrichment(
         [int, int, int, int],
         float] = lambda k, M, n, N: scipy.stats.hypergeom.sf(k - 1, M, n, N),
     multiple_testing_correction: Callable[
-        [dict[tuple[nx.Graph, int, str], float]],
-        dict[tuple[nx.Graph, int, str], float]] = correction.benjamini_hochberg,
+        [Mapping[tuple[nx.Graph, int, str],
+                 float]], Mapping[tuple[nx.Graph, int, str],
+                                  float]] = correction.benjamini_hochberg,
 ) -> dict[nx.Graph, dict[int, dict[str, float]]]:
     """
     Test modules for enrichment of large protein-specific measurements for each
@@ -1247,8 +1250,9 @@ def get_measurement_location(
         [Collection[float], Collection[float]],
         float] = lambda x, y: scipy.stats.ranksums(x, y).pvalue,
     multiple_testing_correction: Callable[
-        [dict[tuple[nx.Graph, int, str], float]],
-        dict[tuple[nx.Graph, int, str], float]] = correction.benjamini_hochberg,
+        [Mapping[tuple[nx.Graph, int, str],
+                 float]], Mapping[tuple[nx.Graph, int, str],
+                                  float]] = correction.benjamini_hochberg,
 ) -> dict[nx.Graph, dict[int, dict[str, float]]]:
     """
     Test modules for difference tendencies in protein-specific measurements for
@@ -1310,9 +1314,9 @@ def get_corum_enrichment(
     enrichment_test: Callable[
         [int, int, int, int],
         float] = lambda k, M, n, N: scipy.stats.hypergeom.sf(k - 1, M, n, N),
-    multiple_testing_correction: Callable[[dict[tuple[
-        nx.Graph, str], float]], dict[tuple[nx.Graph, str],
-                                      float]] = correction.benjamini_hochberg,
+    multiple_testing_correction: Callable[
+        [Mapping[tuple[nx.Graph, str], float]],
+        Mapping[tuple[nx.Graph, str], float]] = correction.benjamini_hochberg,
     purification_methods: Optional[Container[str]] = None,
     organism: int = 9606,
     annotation_as_reference: bool = True
@@ -1383,9 +1387,9 @@ def get_gene_ontology_enrichment(
     enrichment_test: Callable[
         [int, int, int, int],
         float] = lambda k, M, n, N: scipy.stats.hypergeom.sf(k - 1, M, n, N),
-    multiple_testing_correction: Callable[[dict[tuple[
-        nx.Graph, str], float]], dict[tuple[nx.Graph, str],
-                                      float]] = correction.benjamini_hochberg,
+    multiple_testing_correction: Callable[
+        [Mapping[tuple[nx.Graph, str], float]],
+        Mapping[tuple[nx.Graph, str], float]] = correction.benjamini_hochberg,
     organism: int = 9606,
     namespaces: Container[str] = ("cellular_component", "molecular_function",
                                   "biological_process"),
@@ -1466,9 +1470,9 @@ def get_reactome_enrichment(
     enrichment_test: Callable[
         [int, int, int, int],
         float] = lambda k, M, n, N: scipy.stats.hypergeom.sf(k - 1, M, n, N),
-    multiple_testing_correction: Callable[[dict[tuple[
-        nx.Graph, str], float]], dict[tuple[nx.Graph, str],
-                                      float]] = correction.benjamini_hochberg,
+    multiple_testing_correction: Callable[
+        [Mapping[tuple[nx.Graph, str], float]],
+        Mapping[tuple[nx.Graph, str], float]] = correction.benjamini_hochberg,
     organism: int = 9606,
     annotation_as_reference: bool = True
 ) -> dict[nx.Graph, dict[tuple[str, str], float]]:

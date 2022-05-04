@@ -6,7 +6,7 @@ import logging
 import os
 import re
 import sys
-from typing import Optional
+from typing import Collection, Mapping, Optional
 
 import networkx as nx
 
@@ -19,7 +19,7 @@ from networks import (gene_ontology_network,
                       protein_protein_interaction_network, reactome_network)
 
 
-def process_workflow(configuration: dict,
+def process_workflow(configuration: Mapping[str],
                      logger: logging.Logger,
                      index: Optional[int] = None) -> None:
     """
@@ -1134,7 +1134,7 @@ def process_workflow(configuration: dict,
                 )
 
 
-def process_configuration(configurations: list[dict[str]],
+def process_configuration(configurations: Collection[Mapping[str]],
                           logger: logging.Logger) -> None:
     """
     Executes workflows specified in configurations sequentially.
