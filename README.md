@@ -27,7 +27,7 @@ A configuration file specifies a list of workflows processed sequentially. Multi
 
 A workflow defines the assembly of a protein-protein interaction network from a set of input genes or proteins, optionally associated with mass spectrometry data, using protein-protein interaction data from BioGRID, CORUM, IntAct, MINT, Reactome, and STRING, optionally extending to proteins neighboring the input.
 
-The distribution of mass spectrometry measurements across and enrichment of CORUM protein complexes, Gene Ontology terms, and Reactome pathways by the protein-protein interaction network and its separate communities can be assessed. The protein-protein interaction network as well as networks derived from the Gene Ontology or Reactome, capturing enrichment by subsets of the input proteins based on measurements, can be exported along comprehensive Cytoscape style specifications.
+The distribution of mass spectrometry measurements across and enrichment of CORUM protein complexes, Gene Ontology terms, and Reactome pathways by the protein-protein interaction network and its individual communities and subsets of proteins based on measurements can be assessed. The protein-protein interaction network as well as networks derived from the Gene Ontology or Reactome, capturing enrichment by the input proteins, can be exported along comprehensive Cytoscape style specifications.
 
 ## Configuration
 
@@ -767,6 +767,8 @@ The function used to derive a combined edge confidence score from scores in IntA
 
 The specification of CORUM, Gene Ontology and Reactome enrichment analysis of the protein-protein interaction network.
 
+The proteins considered can be restricted, based on associated measurements, either by a union or intersection of specified subsets.
+
 ```json
 [
     {
@@ -834,9 +836,228 @@ The corrected p-value threshold. The default setting is `1.0`.
       }
     }
 ]
-
 ```
 The NCBI taxonomy ID of the organism of interest. The default and currently only completely supported setting is `9606`, corresponding to Homo sapiens.
+
+```json
+[
+    {
+      "CORUM enrichment": {
+        "union": [
+          {
+            "time": null
+          }
+        ],
+        "intersection": [
+          {
+            "time": null
+          }
+        ]
+      },
+      "Gene Ontology enrichment": {
+        "union": [
+          {
+            "time": null
+          }
+        ],
+        "intersection": [
+          {
+            "time": null
+          }
+        ]
+      },
+      "Reactome enrichment": {
+        "union": [
+          {
+            "time": null
+          }
+        ],
+        "intersection": [
+          {
+            "time": null
+          }
+        ]
+      }
+    }
+]
+```
+The time of measurement considered to determine a subset of proteins.
+
+```json
+[
+    {   
+      "CORUM enrichment": {
+        "union": [
+          {
+            "post-translational modification": null
+          }
+        ],
+        "intersection": [
+          {
+            "post-translational modification": null
+          }
+        ]
+      },
+      "Gene Ontology enrichment": {
+        "union": [
+          {
+            "post-translational modification": null
+          }
+        ],
+        "intersection": [
+          {
+            "post-translational modification": null
+          }
+        ]
+      },
+      "Reactome enrichment": {
+        "union": [
+          {
+            "post-translational modification": null
+          }
+        ],
+        "intersection": [
+          {
+            "post-translational modification": null
+          }
+        ]
+      }
+    }
+]
+```
+The modification considered to determine a subset of proteins.
+
+```json
+[
+    {
+      "CORUM enrichment": {
+        "union": [
+          {
+            "site combination": "maxabs"
+          }
+        ],
+        "intersection": [
+          {
+            "site combination": "maxabs",
+          }
+        ]
+      },
+      "Gene Ontology enrichment": {
+        "union": [
+          {
+            "site combination": "maxabs"
+          }
+        ],
+        "intersection": [
+          {
+            "site combination": "maxabs",
+          }
+        ]
+      },
+      "Reactome enrichment": {
+        "union": [
+          {
+            "site combination": "maxabs"
+          }
+        ],
+        "intersection": [
+          {
+            "site combination": "maxabs",
+          }
+        ]
+      }
+    }
+]
+```
+The function used to derive a protein-specific measurement from a its individual sites. The function is applied to ratios, not their log2. The default setting is `"maxabs"`, corresponding to the largest absolute value. Available settings are `"mean"`, `"median"`, `"max"`, `"maxabs"`, `"min"`, `"minabs"`, `"sum"`, `"sumabs"` as well as `"increase"` and `"decrease"`, referring to the proportion of a proteins' sites exhibiting either, and `null`, so that sites are considered individually.
+
+```json
+[
+    {
+      "CORUM enrichment": {
+        "union": [
+          {
+            "conversion": null
+          }
+        ],
+        "intersection": [
+          {
+            "conversion": null
+          }
+        ]
+      },
+      "Gene Ontology enrichment": {
+        "union": [
+          {
+            "conversion": null
+          }
+        ],
+        "intersection": [
+          {
+            "conversion": null
+          }
+        ]
+      },
+      "Reactome enrichment": {
+        "union": [
+          {
+            "conversion": null
+          }
+        ],
+        "intersection": [
+          {
+            "conversion": null
+          }
+        ]
+      }
+    }
+]
+```
+The conversion of measurements that a range refers to. It defaults to the log2-fold measurement but may be set to `"standard score"` or `"quantile"` with respect to the distribution of a particular modification at a particular time of measurement across the protein-protein interaction network.
+
+```json
+[
+    {
+      "CORUM enrichment": {
+        "union": [
+          {
+            "measurement": [-1.0, 1.0]
+          }
+        ],
+        "intersection": [
+          {
+            "measurement": [-1.0, 1.0]
+          }
+        ]
+      },
+      "Gene Ontology enrichment": {
+        "union": [
+          {
+            "measurement": [-1.0, 1.0]
+          }
+        ],
+        "intersection": [
+          {
+            "measurement": [-1.0, 1.0]
+          }
+        ]
+      },
+      "Reactome enrichment": {
+        "union": [
+          {
+            "measurement": [-1.0, 1.0]
+          }
+        ],
+        "intersection": [
+          {
+            "measurement": [-1.0, 1.0]
+          }
+        ]
+      }
+    }
+]
+```
+The range of combined measurements categorizing proteins by whether the range is exceeded or not. The default setting is `[-1.0, 1.0]` if `"conversion"` is not set, `[-2.0, 2.0]` if `"conversion"` is set to `"standard score"` and `[0.025, 0.975]` if `"conversion"` is set to `"quantile"`.
 
 ```json
 [
@@ -868,7 +1089,7 @@ The Gene Ontology namespaces to consider. The default setting is `["cellular_com
 
 The specification of the assembly of a Gene Ontology or Reactome network. A Gene Ontology network is composed of terms, a Reactome network of pathways. Both report the enrichment of each respective entity by proteins in the protein-protein interaction network, along with their relations in these databases.
 
-The proteins considered can be restricted, based on measurements associated with them, either by a union or intersection of specified subsets.
+The proteins considered can be restricted, based on associated measurements, either by a union or intersection of specified subsets.
 
 ```json
 [
@@ -1153,7 +1374,7 @@ The function to combine sizes of modules into a value compared to the module siz
 
 The specification of statistical tests on individual modules with respect to either Gene Ontology or Reactome enrichment or the distribution of measurements across the protein-protein interaction network. 
 
-CORUM, Gene Ontology and Reactome enrichment can be assessed with respect to the respective annotation or the protein-protein interaction network. 
+CORUM, Gene Ontology and Reactome enrichment can be assessed with respect to the respective annotation or the protein-protein interaction network. The proteins considered can be restricted, based on associated measurements, either by a union or intersection of specified subsets.
 
 To assess the distribution of measurements, these can be classified in a binary way to measure the modules' enrichment of proteins which exhibit measurements exceeding a specified threshold. Alternatively, the distribution of measurements within separate modules can be compared with the remaining network.
 
@@ -1164,36 +1385,16 @@ These tests act as filter on the exported modules of the protein-protein interac
     {
       "module detection": {
         "CORUM enrichment": {
-          "annotation": {
-            "test": "hypergeometric"
-          },
-          "network": {
-            "test": "hypergeometric"
-          }
+          "test": "hypergeometric"
         },
         "Gene Ontology enrichment": {
-          "annotation": {
-            "test": "hypergeometric"
-          },
-          "network": {
-            "test": "hypergeometric"
-          }
+          "test": "hypergeometric"
         },
         "Reactome enrichment": {
-          "annotation": {
-            "test": "hypergeometric"
-          },
-          "network": {
-            "test": "hypergeometric"
-          }
+          "test": "hypergeometric"
         },
         "measurement enrichment": {
-          "proteins": {
-            "test": "hypergeometric"
-          },
-          "sites": {
-            "test": "hypergeometric"
-          }
+          "test": "hypergeometric"
         }
       }
     }
@@ -1207,12 +1408,7 @@ Available settings are `"binomial"` and `"hypergeometric"`.
     {
       "module detection": {
         "measurement location": {
-          "proteins": {
-            "test": "Wilcoxon"
-          },
-          "sites": {
-            "test": "Wilcoxon"
-          }
+          "test": "Wilcoxon"
         }
       }
     }
@@ -1225,44 +1421,19 @@ The statistical test to compare modification- and time-specific measurement dist
     {
       "module detection": {
         "CORUM enrichment": {
-          "annotation": {
-            "correction": "Benjamini-Hochberg"
-          },
-          "network": {
-            "correction": "Benjamini-Hochberg"
-          }
+          "correction": "Benjamini-Hochberg"
         },
         "Gene Ontology enrichment": {
-          "annotation": {
-            "correction": "Benjamini-Hochberg"
-          },
-          "network": {
-            "correction": "Benjamini-Hochberg"
-          }
+          "correction": "Benjamini-Hochberg"
         },
         "Reactome enrichment": {
-          "annotation": {
-            "correction": "Benjamini-Hochberg"
-          },
-          "network": {
-            "correction": "Benjamini-Hochberg"
-          }
+          "correction": "Benjamini-Hochberg"
         },
         "measurement enrichment": {
-          "proteins": {
-            "correction": "Benjamini-Hochberg"
-          },
-          "sites": {
-            "correction": "Benjamini-Hochberg"
-          }
+          "correction": "Benjamini-Hochberg"
         },
         "measurement location": {
-          "proteins": {
-            "correction": "Benjamini-Hochberg"
-          },
-          "sites": {
-            "correction": "Benjamini-Hochberg"
-          }
+          "correction": "Benjamini-Hochberg"
         }
       }
     }
@@ -1276,44 +1447,19 @@ Available settings are `"Benjamini-Hochberg"` and `"Bonferroni"`.
     {
       "module detection": {
         "CORUM enrichment": {
-          "annotation": {
-            "p": 1.0
-          },
-          "network": {
-            "p": 1.0
-          }
+          "p": 1.0
         },
         "Gene Ontology enrichment": {
-          "annotation": {
-            "p": 1.0
-          },
-          "network": {
-            "p": 1.0
-          }
+          "p": 1.0
         },
         "Reactome enrichment": {
-          "annotation": {
-            "p": 1.0
-          },
-          "network": {
-            "p": 1.0
-          }
+          "p": 1.0
         },
         "measurement enrichment": {
-          "proteins": {
-            "p": 1.0
-          },
-          "sites": {
-            "p": 1.0
-          }
+          "p": 1.0
         },
         "measurement location": {
-          "proteins": {
-            "p": 1.0
-          },
-          "sites": {
-            "p": 1.0
-          }
+          "p": 1.0
         }
       }
     }
@@ -1326,28 +1472,13 @@ The corrected p-value threshold. The default setting is `1.0`.
     {
       "module detection": {
         "CORUM enrichment": {
-          "annotation": {
-            "organism": 9606
-          },
-          "network": {
-            "organism": 9606
-          }
+          "organism": 9606
         },
         "Gene Ontology enrichment": {
-          "annotation": {
-            "organism": 9606
-          },
-          "network": {
-            "organism": 9606
-          }
+          "organism": 9606
         },
         "Reactome enrichment": {
-          "annotation": {
-            "organism": 9606
-          },
-          "network": {
-            "organism": 9606
-          }
+          "organism": 9606
         }
       }
     }
@@ -1360,12 +1491,256 @@ The NCBI taxonomy ID of the organism of interest. The default and currently only
     {
       "module detection": {
         "CORUM enrichment": {
-          "annotation": {
-            "purification methods": []
-          },
-          "network": {
-            "purification methods": []
-          },
+          "annotation": false
+        },
+        "Gene Ontology enrichment": {
+          "annotation": false
+        },
+        "Reactome enrichment": {
+          "annotation": false
+        }
+      }
+    }
+]
+```
+If true, compute enrichment with respect to the entire annotation, specific to the organism of interest, otherwise with respect to the protein-protein interaction network. The default setting is `false`.
+
+```json
+[
+    {
+      "module detection": {
+        "CORUM enrichment": {
+          "union": [
+            {
+              "time": null
+            }
+          ],
+          "intersection": [
+            {
+              "time": null
+            }
+          ]
+        },
+        "Gene Ontology enrichment": {
+          "union": [
+            {
+              "time": null
+            }
+          ],
+          "intersection": [
+            {
+              "time": null
+            }
+          ]
+        },
+        "Reactome enrichment": {
+          "union": [
+            {
+              "time": null
+            }
+          ],
+          "intersection": [
+            {
+              "time": null
+            }
+          ]
+        }
+      }
+    }
+]
+```
+The time of measurement considered to determine a subset of proteins.
+
+```json
+[
+    { 
+      "module detection": {  
+        "CORUM enrichment": {
+          "union": [
+            {
+              "post-translational modification": null
+            }
+          ],
+          "intersection": [
+            {
+              "post-translational modification": null
+            }
+          ]
+        },
+        "Gene Ontology enrichment": {
+          "union": [
+            {
+              "post-translational modification": null
+            }
+          ],
+          "intersection": [
+            {
+              "post-translational modification": null
+            }
+          ]
+        },
+        "Reactome enrichment": {
+          "union": [
+            {
+              "post-translational modification": null
+            }
+          ],
+          "intersection": [
+            {
+              "post-translational modification": null
+            }
+          ]
+        }
+      }
+    }
+]
+```
+The modification considered to determine a subset of proteins.
+
+```json
+[
+    {
+      "module detection": {
+        "CORUM enrichment": {
+          "union": [
+            {
+              "site combination": "maxabs"
+            }
+          ],
+          "intersection": [
+            {
+              "site combination": "maxabs",
+            }
+          ]
+        },
+        "Gene Ontology enrichment": {
+          "union": [
+            {
+              "site combination": "maxabs"
+            }
+          ],
+          "intersection": [
+            {
+              "site combination": "maxabs",
+            }
+          ]
+        },
+        "Reactome enrichment": {
+          "union": [
+            {
+              "site combination": "maxabs"
+            }
+          ],
+          "intersection": [
+            {
+              "site combination": "maxabs",
+            }
+          ]
+        }
+      }
+    }
+]
+```
+The function used to derive a protein-specific measurement from a its individual sites. The function is applied to ratios, not their log2. The default setting is `"maxabs"`, corresponding to the largest absolute value. Available settings are `"mean"`, `"median"`, `"max"`, `"maxabs"`, `"min"`, `"minabs"`, `"sum"`, `"sumabs"` as well as `"increase"` and `"decrease"`, referring to the proportion of a proteins' sites exhibiting either, and `null`, so that sites are considered individually.
+
+```json
+[
+    {
+      "module detection": {
+        "CORUM enrichment": {
+          "union": [
+            {
+              "conversion": null
+            }
+          ],
+          "intersection": [
+            {
+              "conversion": null
+            }
+          ]
+        },
+        "Gene Ontology enrichment": {
+          "union": [
+            {
+              "conversion": null
+            }
+          ],
+          "intersection": [
+            {
+              "conversion": null
+            }
+          ]
+        },
+        "Reactome enrichment": {
+          "union": [
+            {
+              "conversion": null
+            }
+          ],
+          "intersection": [
+            {
+              "conversion": null
+            }
+          ]
+        }
+      }
+    }
+]
+```
+The conversion of measurements that a range refers to. It defaults to the log2-fold measurement but may be set to `"standard score"` or `"quantile"` with respect to the distribution of a particular modification at a particular time of measurement across the protein-protein interaction network. Conversions are computed with respect to individual modules.
+
+```json
+[
+    {
+      "module detection": {
+        "CORUM enrichment": {
+          "union": [
+            {
+              "measurement": [-1.0, 1.0]
+            }
+          ],
+          "intersection": [
+            {
+              "measurement": [-1.0, 1.0]
+            }
+          ]
+        },
+        "Gene Ontology enrichment": {
+          "union": [
+            {
+              "measurement": [-1.0, 1.0]
+            }
+          ],
+          "intersection": [
+            {
+              "measurement": [-1.0, 1.0]
+            }
+          ]
+        },
+        "Reactome enrichment": {
+          "union": [
+            {
+              "measurement": [-1.0, 1.0]
+            }
+          ],
+          "intersection": [
+            {
+              "measurement": [-1.0, 1.0]
+            }
+          ]
+        }
+      }
+    }
+]
+```
+The range of combined measurements categorizing proteins by whether the range is exceeded or not. The default setting is `[-1.0, 1.0]` if `"conversion"` is not set, `[-2.0, 2.0]` if `"conversion"` is set to `"standard score"` and `[0.025, 0.975]` if `"conversion"` is set to `"quantile"`.
+
+```json
+[
+    {
+      "module detection": {
+        "CORUM enrichment": {
+          "purification methods": []
         }
       }
     }
@@ -1378,20 +1753,11 @@ A list of accepted PSI-MI identifiers or terms for protein complex purification 
     {
       "module detection": {
         "Gene Ontology enrichment": {
-          "annotation": {
-            "namespaces": [
+          "namespaces": [
               "cellular_component",
               "molecular_function",
               "biological_process"
             ]
-          },
-          "network": {
-            "namespaces": [
-              "cellular_component",
-              "molecular_function",
-              "biological_process"
-            ]
-          }
         }
       }
     }
@@ -1404,12 +1770,7 @@ The Gene Ontology namespaces to consider. The default setting is `["cellular_com
     {
       "module detection": {
         "measurement enrichment": {
-          "proteins": {
-            "measurement": [-1.0, 1.0]
-          },
-          "sites": {
-            "measurement": [-1.0, 1.0]
-          }
+          "measurement": [-1.0, 1.0]
         }
       }
     }
@@ -1422,12 +1783,7 @@ The range of measurements categorizing proteins by whether the range is exceeded
     {
       "module detection": {
         "measurement enrichment": {
-          "proteins": {
-            "conversion": null
-          },
-          "sites": {
-            "conversion": null
-          }
+          "conversion": null
         }
       }
     }
@@ -1448,7 +1804,7 @@ The conversion of measurements that a range refers to. It defaults to the log2-f
     }
 ]
 ```
-The function used to derive a protein-specific measurement from a its individual sites. The default setting is `"maxabs"`, corresponding to the largest absolute value. Available settings are `"mean"`, `"median"`, `"max"`, `"maxabs"`, `"min"`, `"minabs"`, `"sum"` and `"sumabs"` as well as `"increase"` and `"decrease"`, referring to the proportion of a proteins' sites exhibiting either.
+The function used to derive a protein-specific measurement from a its sites. The default setting is `"maxabs"`, corresponding to the largest absolute value. Available settings are `"mean"`, `"median"`, `"max"`, `"maxabs"`, `"min"`, `"minabs"`, `"sum"` and `"sumabs"` as well as `"increase"` and `"decrease"`, referring to the proportion of a proteins' sites exhibiting either, and `null`, so that sites are considered individually.
 
 ## References
    

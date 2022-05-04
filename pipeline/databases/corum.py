@@ -1,8 +1,11 @@
 """The interface for the CORUM database."""
 import re
-from typing import Container, Iterator, Optional
+from typing import (Callable, Collection, Container, Iterable, Iterator,
+                    Mapping, Optional)
 
+import scipy.stats
 from access import iterate
+from analysis import correction
 
 from databases import uniprot
 
@@ -114,3 +117,74 @@ def get_protein_complexes(
                    frozenset.union(
                        *(frozenset(primary_accession.get(subunit, {subunit}))
                          for subunit in subunits)))
+
+
+def get_enrichment(
+    proteins: Iterable[frozenset[str]],
+    enrichment_test: Callable[
+        [int, int, int, int],
+        float] = lambda k, M, n, N: scipy.stats.hypergeom.sf(k - 1, M, n, N),
+    multiple_testing_correction: Callable[
+        [Mapping[tuple[frozenset[str], str],
+                 float]], Mapping[tuple[frozenset[str], str],
+                                  float]] = correction.benjamini_hochberg,
+    purification_methods: Optional[Container[str]] = None,
+    organism: int = 9606,
+    annotation_as_reference: bool = True
+) -> dict[frozenset[str], dict[tuple[str, str], float]]:
+    """
+    Test sets of proteins for enrichment of CORUM protein complexes.
+
+    Args:
+        proteins: The sets of proteins to test.
+        enrichment_test: The statistical test used to assess enrichment of
+            CORUM protein complexes.
+        multiple_testing_correction: The procedure to correct for multiple
+            testing of multiple pathways and sets of proteins.
+        purification_methods: The accepted PSI-MI identifiers or terms for the
+            protein complex purification method. If none are specified, any are
+            accepted.
+        organism: The NCBI taxonomy identifier for the organism of interest. 
+        annotation_as_reference: If True, compute enrichment with respect to the
+            species-specific set of protein complexes, else with respect to
+            the union of the sets of proteins.
+
+    Returns:
+        Corrected p-value for the enrichment of each CORUM protein complex by
+        each set of proteins.
+    """
+    annotation, name = {}, {}
+    for protein_complex, complex_name, subunits in get_protein_complexes(
+            purification_methods, organism):
+        if annotation_as_reference or any(
+                subunits.intersection(p) for p in proteins):
+            annotation[protein_complex] = subunits
+            name[protein_complex] = complex_name
+
+    annotated_proteins = frozenset.union(*annotation.values())
+
+    annotated_network_proteins = {
+        p: len(annotated_proteins.intersection(p)) for p in proteins
+    }
+
+    network_intersection = {
+        p: {
+            protein_complex: len(annotation[protein_complex].intersection(p))
+            for protein_complex in annotation
+        } for p in proteins
+    }
+
+    p_value = multiple_testing_correction({
+        (p, protein_complex):
+        enrichment_test(network_intersection[p][protein_complex],
+                        len(annotated_proteins),
+                        len(annotation[protein_complex]),
+                        annotated_network_proteins[p])
+        for protein_complex in annotation for p in proteins
+    })
+
+    return {
+        p: {(protein_complex, name[protein_complex]):
+            p_value[(p, protein_complex)]
+            for protein_complex in annotation} for p in proteins
+    }

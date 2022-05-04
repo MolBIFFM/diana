@@ -290,12 +290,12 @@ def map_proteins(network: nx.Graph) -> None:
 
 
 def get_proteins(
-        network: nx.Graph,
-        time: int,
-        modification: str,
-        site_combination: Optional[Callable[[Collection[float]], float]] = None,
-        combined_measurement_filter: Callable[[float],
-                                              bool] = bool) -> set[str]:
+    network: nx.Graph,
+    time: int,
+    modification: str,
+    site_combination: Optional[Callable[[Collection[float]], float]] = None,
+    combined_measurement_filter: Callable[[float],
+                                          bool] = bool) -> frozenset[str]:
     """
     Returns proteins of a protein-protein interaction network with specified
     measurements.
@@ -326,7 +326,7 @@ def get_proteins(
         if sites and combined_measurement_filter(site_combination(sites)):
             proteins.append(protein)
 
-    return set(proteins)
+    return frozenset(proteins)
 
 
 def get_times(network: nx.Graph) -> tuple[int, ...]:
@@ -1306,238 +1306,6 @@ def get_measurement_location(
                 if (module, time, modification) in p_values
             } for time in get_times(network)
         } for module in modules
-    }
-
-
-def get_corum_enrichment(
-    networks: Iterable[nx.Graph],
-    enrichment_test: Callable[
-        [int, int, int, int],
-        float] = lambda k, M, n, N: scipy.stats.hypergeom.sf(k - 1, M, n, N),
-    multiple_testing_correction: Callable[
-        [Mapping[tuple[nx.Graph, str], float]],
-        Mapping[tuple[nx.Graph, str], float]] = correction.benjamini_hochberg,
-    purification_methods: Optional[Container[str]] = None,
-    organism: int = 9606,
-    annotation_as_reference: bool = True
-) -> dict[nx.Graph, dict[tuple[str, str], float]]:
-    """
-    Test the protein-protein interaction networks for enrichment of CORUM
-    protein complexes.
-
-    Args:
-        networks: The protein-protein interaction networks.
-        enrichment_test: The statistical test used to assess enrichment of
-            CORUM protein complexes.
-        multiple_testing_correction: The procedure to correct for multiple
-            testing of multiple pathways and networks.
-        purification_methods: The accepted PSI-MI identifiers or terms for the
-            protein complex purification method. If none are specified, any are
-            accepted.
-        organism: The NCBI taxonomy identifier for the organism of interest. 
-        annotation_as_reference: If True, compute enrichment with respect to the
-            species-specific set of protein complexes, else with respect to
-            the union of the protein-protein interaction networks.
-
-    Returns:
-        Corrected p-value for the enrichment of each CORUM protein complex by
-        each network.
-    """
-    annotation, name = {}, {}
-    for protein_complex, complex_name, subunits in corum.get_protein_complexes(
-            purification_methods, organism):
-        if annotation_as_reference or any(
-                subunits.intersection(network.nodes()) for network in networks):
-            annotation[protein_complex] = subunits
-            name[protein_complex] = complex_name
-
-    annotated_proteins = frozenset.union(*annotation.values())
-
-    annotated_network_proteins = {
-        network: len(annotated_proteins.intersection(network.nodes()))
-        for network in networks
-    }
-
-    network_intersection = {
-        network: {
-            protein_complex:
-            len(annotation[protein_complex].intersection(network.nodes()))
-            for protein_complex in annotation
-        } for network in networks
-    }
-
-    p_value = multiple_testing_correction({
-        (network, protein_complex):
-        enrichment_test(network_intersection[network][protein_complex],
-                        len(annotated_proteins),
-                        len(annotation[protein_complex]),
-                        annotated_network_proteins[network])
-        for protein_complex in annotation for network in networks
-    })
-
-    return {
-        network: {(protein_complex, name[protein_complex]):
-                  p_value[(network, protein_complex)]
-                  for protein_complex in annotation} for network in networks
-    }
-
-
-def get_gene_ontology_enrichment(
-    networks: Iterable[nx.Graph],
-    enrichment_test: Callable[
-        [int, int, int, int],
-        float] = lambda k, M, n, N: scipy.stats.hypergeom.sf(k - 1, M, n, N),
-    multiple_testing_correction: Callable[
-        [Mapping[tuple[nx.Graph, str], float]],
-        Mapping[tuple[nx.Graph, str], float]] = correction.benjamini_hochberg,
-    organism: int = 9606,
-    namespaces: Container[str] = ("cellular_component", "molecular_function",
-                                  "biological_process"),
-    annotation_as_reference: bool = True
-) -> dict[nx.Graph, dict[tuple[str, str], float]]:
-    """
-    Test the protein-protein interaction networks for enrichment of Gene
-    Ontology terms.
-
-    Args:
-        networks: The protein-protein interaction networks.
-        enrichment_test: The statistical test used to assess enrichment of Gene
-            Ontology terms.
-        multiple_testing_correction: The procedure to correct for multiple
-            testing of multiple terms and networks.
-        organism: The NCBI taxonomy identifier for the organism of interest. 
-        namespaces: The Gene Ontology namespaces.
-        annotation_as_reference: If True, compute enrichment with respect to the
-            species-specific Gene Ontology annotation in namespaces, else with
-            respect to the union of the protein-protein interaction networks.
-
-    Returns:
-        Corrected p-value for the enrichment of each Gene Ontology term by each
-        network.
-    """
-    name, go_id = {}, {}
-    for term in gene_ontology.get_ontology(namespaces):
-        name[term["id"]] = term["name"]
-        for alt_id in term["alt_id"]:
-            if alt_id not in go_id:
-                go_id[alt_id] = set()
-            go_id[alt_id].add(term["id"])
-
-    annotation = {}
-    for protein, term in gene_ontology.get_annotation(
-            organism, gene_ontology.convert_namespaces(namespaces)):
-        if annotation_as_reference or any(
-                protein in network.nodes() for network in networks):
-            for primary_term in go_id.get(term, {term}):
-                if primary_term not in annotation:
-                    annotation[primary_term] = set()
-                annotation[primary_term].add(protein)
-
-    annotation = {
-        term: proteins for term, proteins in annotation.items() if proteins
-    }
-
-    annotated_proteins = set.union(*annotation.values())
-
-    annotated_network_proteins = {
-        network: len(annotated_proteins.intersection(network.nodes()))
-        for network in networks
-    }
-
-    network_intersection = {
-        network: {
-            term: len(annotation[term].intersection(network.nodes()))
-            for term in annotation
-        } for network in networks
-    }
-
-    p_value = multiple_testing_correction({
-        (network, term): enrichment_test(network_intersection[network][term],
-                                         len(annotated_proteins),
-                                         len(annotation[term]),
-                                         annotated_network_proteins[network])
-        for term in annotation for network in networks
-    })
-
-    return {
-        network: {(term, name[term]): p_value[(network, term)]
-                  for term in annotation} for network in networks
-    }
-
-
-def get_reactome_enrichment(
-    networks: Iterable[nx.Graph],
-    enrichment_test: Callable[
-        [int, int, int, int],
-        float] = lambda k, M, n, N: scipy.stats.hypergeom.sf(k - 1, M, n, N),
-    multiple_testing_correction: Callable[
-        [Mapping[tuple[nx.Graph, str], float]],
-        Mapping[tuple[nx.Graph, str], float]] = correction.benjamini_hochberg,
-    organism: int = 9606,
-    annotation_as_reference: bool = True
-) -> dict[nx.Graph, dict[tuple[str, str], float]]:
-    """
-    Test the protein-protein interaction networks for enrichment of Reactome
-    pathways.
-
-    Args:
-        networks: The protein-protein interaction networks.
-        enrichment_test: The statistical test used to assess enrichment of
-            Reactome pathways.
-        multiple_testing_correction: The procedure to correct for multiple
-            testing of multiple pathways and networks.
-        organism: The NCBI taxonomy identifier for the organism of interest. 
-        annotation_as_reference: If True, compute enrichment with respect to the
-            species-specific Reactome pathway annotation, else with respect to
-            the union of the protein-protein interaction networks.
-
-    Returns:
-        Corrected p-value for the enrichment of each Reactome pathway by
-        each network.
-    """
-    name = {}
-    for pathway, pathway_name in reactome.get_pathways(organism):
-        name[pathway] = pathway_name
-
-    annotation = {}
-    for protein, pathway in reactome.get_pathway_annotation(organism):
-        if annotation_as_reference or any(
-                protein in network.nodes() for network in networks):
-            if pathway not in annotation:
-                annotation[pathway] = set()
-            annotation[pathway].add(protein)
-
-    annotation = {
-        pathway: proteins
-        for pathway, proteins in annotation.items()
-        if proteins
-    }
-
-    annotated_proteins = set.union(*annotation.values())
-
-    annotated_network_proteins = {
-        network: len(annotated_proteins.intersection(network.nodes()))
-        for network in networks
-    }
-
-    network_intersection = {
-        network: {
-            pathway: len(annotation[pathway].intersection(network.nodes()))
-            for pathway in annotation
-        } for network in networks
-    }
-
-    p_value = multiple_testing_correction({
-        (network, pathway):
-        enrichment_test(network_intersection[network][pathway],
-                        len(annotated_proteins), len(annotation[pathway]),
-                        annotated_network_proteins[network])
-        for pathway in annotation for network in networks
-    })
-
-    return {
-        network: {(pathway, name[pathway]): p_value[(network, pathway)]
-                  for pathway in annotation} for network in networks
     }
 
 

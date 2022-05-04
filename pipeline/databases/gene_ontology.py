@@ -1,7 +1,9 @@
 """The interface for the Gene Ontology database."""
-from typing import Container, Iterator, Union
+from typing import Callable, Container, Iterable, Iterator, Mapping, Union
 
+import scipy.stats
 from access import iterate
+from analysis import correction
 
 from databases import uniprot
 
@@ -109,3 +111,81 @@ def convert_namespaces(namespaces: Container[str]) -> tuple[str]:
         "molecular_function": "F",
         "biological_process": "P"
     }[ns] for ns in namespaces)
+
+
+def get_enrichment(
+    proteins: Iterable[frozenset[str]],
+    enrichment_test: Callable[
+        [int, int, int, int],
+        float] = lambda k, M, n, N: scipy.stats.hypergeom.sf(k - 1, M, n, N),
+    multiple_testing_correction: Callable[
+        [Mapping[tuple[frozenset[str], str],
+                 float]], Mapping[tuple[frozenset[str], str],
+                                  float]] = correction.benjamini_hochberg,
+    organism: int = 9606,
+    namespaces: Container[str] = ("cellular_component", "molecular_function",
+                                  "biological_process"),
+    annotation_as_reference: bool = True
+) -> dict[frozenset, dict[tuple[str, str], float]]:
+    """
+    Test sets of proteins for enrichment of Gene Ontology terms.
+
+    Args:
+        proteins: The sets of proteins test.
+        enrichment_test: The statistical test used to assess enrichment of Gene
+            Ontology terms.
+        multiple_testing_correction: The procedure to correct for multiple
+            testing of multiple terms and sets of proteins.
+        organism: The NCBI taxonomy identifier for the organism of interest. 
+        namespaces: The Gene Ontology namespaces.
+        annotation_as_reference: If True, compute enrichment with respect to the
+            species-specific Gene Ontology annotation in namespaces, else with
+            respect to the union of the sets of proteins.
+
+    Returns:
+        Corrected p-value for the enrichment of each Gene Ontology term by each
+        network.
+    """
+    name, go_id = {}, {}
+    for term in get_ontology(namespaces):
+        name[term["id"]] = term["name"]
+        for alt_id in term["alt_id"]:
+            if alt_id not in go_id:
+                go_id[alt_id] = set()
+            go_id[alt_id].add(term["id"])
+
+    annotation = {}
+    for protein, term in get_annotation(organism,
+                                        convert_namespaces(namespaces)):
+        if annotation_as_reference or any(protein in p for p in proteins):
+            for primary_term in go_id.get(term, {term}):
+                if primary_term not in annotation:
+                    annotation[primary_term] = set()
+                annotation[primary_term].add(protein)
+
+    annotation = {
+        term: proteins for term, proteins in annotation.items() if proteins
+    }
+
+    annotated_proteins = set.union(*annotation.values())
+
+    annotated_network_proteins = {
+        p: len(annotated_proteins.intersection(p)) for p in proteins
+    }
+
+    network_intersection = {
+        p: {term: len(annotation[term].intersection(p)) for term in annotation
+           } for p in proteins
+    }
+
+    p_value = multiple_testing_correction({
+        (p, term):
+        enrichment_test(network_intersection[p][term], len(annotated_proteins),
+                        len(annotation[term]), annotated_network_proteins[p])
+        for term in annotation for p in proteins
+    })
+
+    return {
+        p: {(term, name[term]): p_value[(p, term)] for term in annotation
+           } for p in proteins
+    }

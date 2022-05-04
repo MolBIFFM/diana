@@ -151,46 +151,20 @@
       },
       "module detection": {
         "CORUM enrichment": {
-          "annotation": {
-            "p": 0.05
-          }, 
-          "network": {
-            "p": 0.05
-          }
+          "p": 0.05
         },
         "Gene Ontology enrichment": {
-          "annotation": {
-            "p": 0.05
-          }, 
-          "network": {
-            "p": 0.05
-          }
+          "p": 0.05
         },
         "Reactome enrichment": {
-          "annotation": {
-            "p": 0.05
-          }, 
-          "network": {
-            "p": 0.05
-          }
+          "p": 0.05
         },
         "measurement enrichment": {
-          "proteins": {
-            "p": 0.05,
-            "measurement": [-1.0, 1.0]
-          },
-          "sites": {
-            "p": 0.05,
-            "measurement": [-1.0, 1.0]
-          }       
+          "p": 0.05,
+          "measurement": [-1.0, 1.0]      
         },
         "measurement location": {
-          "proteins": {
-            "p": 0.05
-          },
-          "sites": {
-            "p": 0.05
-          }
+          "p": 0.05
         }
       }
     }
