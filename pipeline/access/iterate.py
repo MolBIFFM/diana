@@ -8,7 +8,7 @@ import time
 import urllib.parse
 import urllib.request
 import zipfile
-from typing import Collection, Iterator, Optional, Union
+from typing import Collection, Iterator, Optional
 
 import pandas as pd
 
@@ -94,7 +94,7 @@ def tabular_txt(url: str,
                 delimiter: str = "",
                 header: int = 0,
                 skiprows: int = 0,
-                usecols: Optional[Collection[Union[int, str]]] = None,
+                usecols: Optional[Collection[int | str]] = None,
                 chunksize: int = 8192,
                 pause: float = 60.0) -> Iterator[pd.Series]:
     """

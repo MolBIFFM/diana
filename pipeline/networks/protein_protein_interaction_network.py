@@ -5,14 +5,13 @@ import os
 import re
 import statistics
 from typing import (Callable, Collection, Container, Hashable, Iterable,
-                    Mapping, Optional, Union)
+                    Mapping, Optional)
 
 import networkx as nx
 import pandas as pd
 import scipy.stats
 from analysis import correction, modularization
-from databases import (biogrid, corum, gene_ontology, intact, mint, reactome,
-                       string, uniprot)
+from databases import biogrid, corum, intact, mint, reactome, string, uniprot
 
 
 def get_network() -> nx.Graph():
@@ -29,9 +28,9 @@ def get_network() -> nx.Graph():
 def add_genes_from_table(
     network: nx.Graph,
     file_name: str,
-    gene_accession_column: Union[int, str],
+    gene_accession_column: int | str,
     gene_accession_format: re.Pattern = re.compile("^(.+?)$"),
-    sheet_name=Union[int, str],
+    sheet_name: int | str = 0,
     header: int = 0,
 ) -> None:
     """
@@ -112,14 +111,14 @@ def map_genes(network: nx.Graph, organism: int = 9606) -> None:
 def add_proteins_from_table(
     network: nx.Graph,
     file_name: str,
-    protein_accession_column: Union[int, str],
+    protein_accession_column: int | str,
     protein_accession_format: re.Pattern = re.compile("^(.+?)$"),
     time: int = 0,
     modification: str = "",
-    position_column: str = Union[int, str],
+    position_column: str = int | str,
     position_format: re.Pattern = re.compile("^(.+?)$"),
-    replicates: Optional[Collection[Union[int, str]]] = None,
-    sheet_name: Union[int, str] = 0,
+    replicates: Optional[Collection[int | str]] = None,
+    sheet_name: int | str = 0,
     header: int = 0,
     number_sites: int = 100,
     number_replicates: int = 1,

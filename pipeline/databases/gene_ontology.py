@@ -1,5 +1,5 @@
 """The interface for the Gene Ontology database."""
-from typing import Callable, Container, Iterable, Iterator, Mapping, Union
+from typing import Callable, Container, Iterable, Iterator, Mapping
 
 import scipy.stats
 from access import iterate
@@ -12,7 +12,7 @@ ORGANISM = {"files": {9606: "human"}}
 
 def get_ontology(namespaces: Container[str] = (
     "cellular_component", "molecular_function",
-    "biological_process")) -> Iterator[dict[str, Union[str, tuple[str]]]]:
+    "biological_process")) -> Iterator[dict[str, str | tuple[str, ...]]]:
     """
     Yields Gene Ontology terms from the given namespaces.
 
