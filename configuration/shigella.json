@@ -149,7 +149,7 @@
           }
         ]     
       },
-      "module detection": {
+      "community detection": {
         "CORUM enrichment": {
           "p": 0.05
         },

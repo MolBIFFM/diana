@@ -157,7 +157,7 @@ def get_enrichment(
     annotation = {}
     for protein, term in get_annotation(organism,
                                         convert_namespaces(namespaces)):
-        if annotation_as_reference or any(protein in p for p in proteins):
+        if annotation_as_reference or any(protein in prt for prt in proteins):
             for primary_term in go_id.get(term, {term}):
                 if primary_term not in annotation:
                     annotation[primary_term] = set()
@@ -170,22 +170,24 @@ def get_enrichment(
     annotated_proteins = set.union(*annotation.values())
 
     annotated_network_proteins = {
-        p: len(annotated_proteins.intersection(p)) for p in proteins
+        prt: len(annotated_proteins.intersection(prt)) for prt in proteins
     }
 
     network_intersection = {
-        p: {term: len(annotation[term].intersection(p)) for term in annotation
-           } for p in proteins
+        prt:
+        {term: len(annotation[term].intersection(prt)) for term in annotation}
+        for prt in proteins
     }
 
     p_value = multiple_testing_correction({
-        (p, term):
-        enrichment_test(network_intersection[p][term], len(annotated_proteins),
-                        len(annotation[term]), annotated_network_proteins[p])
-        for term in annotation for p in proteins
+        (prt, term): enrichment_test(network_intersection[prt][term],
+                                     len(annotated_proteins),
+                                     len(annotation[term]),
+                                     annotated_network_proteins[prt])
+        for term in annotation for prt in proteins
     })
 
     return {
-        p: {(term, name[term]): p_value[(p, term)] for term in annotation
-           } for p in proteins
+        prt: {(term, name[term]): p_value[(prt, term)] for term in annotation
+             } for prt in proteins
     }

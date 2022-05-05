@@ -157,34 +157,34 @@ def get_enrichment(
     for protein_complex, complex_name, subunits in get_protein_complexes(
             purification_methods, organism):
         if annotation_as_reference or any(
-                subunits.intersection(p) for p in proteins):
+                subunits.intersection(prt) for prt in proteins):
             annotation[protein_complex] = subunits
             name[protein_complex] = complex_name
 
     annotated_proteins = frozenset.union(*annotation.values())
 
     annotated_network_proteins = {
-        p: len(annotated_proteins.intersection(p)) for p in proteins
+        prt: len(annotated_proteins.intersection(prt)) for prt in proteins
     }
 
     network_intersection = {
-        p: {
-            protein_complex: len(annotation[protein_complex].intersection(p))
+        prt: {
+            protein_complex: len(annotation[protein_complex].intersection(prt))
             for protein_complex in annotation
-        } for p in proteins
+        } for prt in proteins
     }
 
     p_value = multiple_testing_correction({
-        (p, protein_complex):
-        enrichment_test(network_intersection[p][protein_complex],
+        (prt, protein_complex):
+        enrichment_test(network_intersection[prt][protein_complex],
                         len(annotated_proteins),
                         len(annotation[protein_complex]),
-                        annotated_network_proteins[p])
-        for protein_complex in annotation for p in proteins
+                        annotated_network_proteins[prt])
+        for protein_complex in annotation for prt in proteins
     })
 
     return {
-        p: {(protein_complex, name[protein_complex]):
-            p_value[(p, protein_complex)]
-            for protein_complex in annotation} for p in proteins
+        prt: {(protein_complex, name[protein_complex]):
+              p_value[(prt, protein_complex)]
+              for protein_complex in annotation} for prt in proteins
     }

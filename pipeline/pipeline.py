@@ -6,7 +6,7 @@ import logging
 import os
 import re
 import sys
-from typing import Collection, Mapping, Optional
+from typing import Collection, Optional
 
 import networkx as nx
 
@@ -20,7 +20,7 @@ from networks import (gene_ontology_network,
                       protein_protein_interaction_network, reactome_network)
 
 
-def process_workflow(configuration: Mapping[str],
+def process_workflow(configuration: dict[str],
                      logger: logging.Logger,
                      index: Optional[int] = None) -> None:
     """
@@ -464,7 +464,7 @@ def process_workflow(configuration: Mapping[str],
                                 measurement: measurement <= measurement_range[
                                     0] or measurement >= measurement_range[1]))
 
-            if "intersection" in configuration["CORUM enrichment"]:
+            elif "intersection" in configuration["CORUM enrichment"]:
                 proteins = set(network.nodes())
                 for subset in configuration["CORUM enrichment"]["intersection"]:
                     if subset.get(
@@ -596,7 +596,7 @@ def process_workflow(configuration: Mapping[str],
                                 measurement: measurement <= measurement_range[
                                     0] or measurement >= measurement_range[1]))
 
-            if "intersection" in configuration["Gene Ontology enrichment"]:
+            elif "intersection" in configuration["Gene Ontology enrichment"]:
                 proteins = set(network.nodes())
                 for subset in configuration["Gene Ontology enrichment"][
                         "intersection"]:
@@ -657,11 +657,11 @@ def process_workflow(configuration: Mapping[str],
                         "biological_process"
                     ]))
 
-            for (protein_complex, name), p in sorted(
+            for (term, name), p in sorted(
                     gene_ontology_enrichment[frozenset(proteins)].items(),
                     key=lambda item: item[1]):
                 if p <= configuration["Gene Ontology enrichment"].get("p", 1.0):
-                    logger.info(f"{protein_complex}\t{p:.2e}\t{name}")
+                    logger.info(f"{term}\t{p:.2e}\t{name}")
 
         else:
             gene_ontology_enrichment = gene_ontology.get_enrichment(
@@ -734,7 +734,7 @@ def process_workflow(configuration: Mapping[str],
                                 measurement: measurement <= measurement_range[
                                     0] or measurement >= measurement_range[1]))
 
-            if "intersection" in configuration["Reactome enrichment"]:
+            elif "intersection" in configuration["Reactome enrichment"]:
                 proteins = set(network.nodes())
                 for subset in configuration["Reactome enrichment"][
                         "intersection"]:
@@ -790,11 +790,11 @@ def process_workflow(configuration: Mapping[str],
                 organism=configuration["Reactome enrichment"].get(
                     "organism", 9606))
 
-            for (protein_complex, name), p in sorted(
+            for (pathway, name), p in sorted(
                     reactome_enrichment[frozenset(proteins)].items(),
                     key=lambda item: item[1]):
                 if p <= configuration["Reactome enrichment"].get("p", 1.0):
-                    logger.info(f"{protein_complex}\t{p:.2e}\t{name}")
+                    logger.info(f"{pathway}\t{p:.2e}\t{name}")
         else:
             reactome_enrichment = reactome.get_enrichment(
                 [frozenset(network.nodes())],
@@ -862,7 +862,7 @@ def process_workflow(configuration: Mapping[str],
                                     0] or measurement >= measurement_range[1]))
 
             elif "intersection" in configuration["Gene Ontology network"]:
-                proteins = set(network.nodes)
+                proteins = set(network.nodes())
                 for subset in configuration["Gene Ontology network"][
                         "intersection"]:
                     if subset.get(
@@ -1076,35 +1076,37 @@ def process_workflow(configuration: Mapping[str],
                 pathway_network_style, f"{logger.name}.reactome.{index}"
                 if index else f"{logger.name}.reactome")
 
-    if "module detection" in configuration:
+    if "community detection" in configuration:
         protein_protein_interaction_network.set_edge_weights(
             network,
             weight=combination.CONFIDENCE_SCORE_COMBINATION[
-                configuration["module detection"].get("edge weight")])
+                configuration["community detection"].get("edge weight")])
 
-        modules = protein_protein_interaction_network.get_modules(
+        communities = protein_protein_interaction_network.get_communities(
             network,
-            module_size=configuration["module detection"].get(
-                "module size", network.number_of_nodes()),
-            module_size_combination=combination.MODULE_SIZE_COMBINATION[
-                configuration["module detection"].get("module size combination",
-                                                      "mean")],
+            community_size=configuration["community detection"].get(
+                "community size", network.number_of_nodes()),
+            community_size_combination=combination.MODULE_SIZE_COMBINATION[
+                configuration["community detection"].get(
+                    "community size combination", "mean")],
             algorithm=modularization.ALGORITHM[
-                configuration["module detection"].get("algorithm", "Louvain")],
-            resolution=configuration["module detection"].get("resolution", 1.0))
+                configuration["community detection"].get(
+                    "algorithm", "Louvain")],
+            resolution=configuration["community detection"].get(
+                "resolution", 1.0))
 
         protein_protein_interaction_network.remove_edge_weights(network)
 
-        export = {module: False for module in modules}
+        export = {community: False for community in communities}
 
-        if "CORUM enrichment" in configuration["module detection"]:
-            if "union" in configuration["module detection"][
+        if "CORUM enrichment" in configuration["community detection"]:
+            if "union" in configuration["community detection"][
                     "CORUM enrichment"] or "intersection" in configuration[
-                        "module detection"]["CORUM enrichment"]:
-                if "union" in configuration["module detection"][
+                        "community detection"]["CORUM enrichment"]:
+                if "union" in configuration["community detection"][
                         "CORUM enrichment"]:
-                    proteins = {module: set() for module in modules}
-                    for subset in configuration["module detection"][
+                    proteins = {community: set() for community in communities}
+                    for subset in configuration["community detection"][
                             "CORUM enrichment"]["union"]:
                         if subset.get(
                                 "time"
@@ -1114,7 +1116,7 @@ def process_workflow(configuration: Mapping[str],
                                 "post-translational modification"
                         ) in protein_protein_interaction_network.get_post_translational_modifications(
                                 network, subset["time"]):
-                            for module in proteins:
+                            for community in proteins:
                                 measurement_range = (
                                     conversion.MEASUREMENT_CONVERSION[
                                         subset.get("conversion")]
@@ -1124,7 +1126,7 @@ def process_workflow(configuration: Mapping[str],
                                             "conversion")])[0],
                                      protein_protein_interaction_network.
                                      get_measurements(
-                                         module, subset["time"], subset[
+                                         community, subset["time"], subset[
                                              "post-translational modification"],
                                          combination.SITE_COMBINATION[
                                              subset.get("site combination",
@@ -1137,16 +1139,16 @@ def process_workflow(configuration: Mapping[str],
                                             "conversion")])[1],
                                      protein_protein_interaction_network.
                                      get_measurements(
-                                         module, subset["time"], subset[
+                                         community, subset["time"], subset[
                                              "post-translational modification"],
                                          combination.SITE_COMBINATION[
                                              subset.get("site combination",
                                                         "maxabs")])))
 
-                                proteins[module].update(
+                                proteins[community].update(
                                     protein_protein_interaction_network.
                                     get_proteins(
-                                        module, subset["time"], subset[
+                                        community, subset["time"], subset[
                                             "post-translational modification"],
                                         combination.SITE_COMBINATION[subset.get(
                                             "site combination",
@@ -1154,12 +1156,13 @@ def process_workflow(configuration: Mapping[str],
                                         measurement <= measurement_range[0] or
                                         measurement >= measurement_range[1]))
 
-                if "intersection" in configuration["module detection"][
+                elif "intersection" in configuration["community detection"][
                         "CORUM enrichment"]:
                     proteins = {
-                        module: set(module.nodes()) for module in modules
+                        community: set(community.nodes())
+                        for community in communities
                     }
-                    for subset in configuration["module detection"][
+                    for subset in configuration["community detection"][
                             "CORUM enrichment"]["intersection"]:
                         if subset.get(
                                 "time"
@@ -1169,7 +1172,7 @@ def process_workflow(configuration: Mapping[str],
                                 "post-translational modification"
                         ) in protein_protein_interaction_network.get_post_translational_modifications(
                                 network, subset["time"]):
-                            for module in proteins:
+                            for community in proteins:
                                 measurement_range = (
                                     conversion.MEASUREMENT_CONVERSION[
                                         subset.get("conversion")]
@@ -1179,7 +1182,7 @@ def process_workflow(configuration: Mapping[str],
                                             "conversion")])[0],
                                      protein_protein_interaction_network.
                                      get_measurements(
-                                         module, subset["time"], subset[
+                                         community, subset["time"], subset[
                                              "post-translational modification"],
                                          combination.SITE_COMBINATION[
                                              subset.get("site combination",
@@ -1192,16 +1195,16 @@ def process_workflow(configuration: Mapping[str],
                                             "conversion")])[1],
                                      protein_protein_interaction_network.
                                      get_measurements(
-                                         module, subset["time"], subset[
+                                         community, subset["time"], subset[
                                              "post-translational modification"],
                                          combination.SITE_COMBINATION[
                                              subset.get("site combination",
                                                         "maxabs")])))
 
-                                proteins[module].intersection_update(
+                                proteins[community].intersection_update(
                                     protein_protein_interaction_network.
                                     get_proteins(
-                                        module, subset["time"], subset[
+                                        community, subset["time"], subset[
                                             "post-translational modification"],
                                         combination.SITE_COMBINATION[subset.get(
                                             "site combination",
@@ -1210,7 +1213,10 @@ def process_workflow(configuration: Mapping[str],
                                         measurement >= measurement_range[1]))
 
                 corum_enrichment = corum.get_enrichment(
-                    [frozenset(proteins[module]) for module in modules],
+                    [
+                        frozenset(proteins[community])
+                        for community in communities
+                    ],
                     enrichment_test=test.ENRICHMENT_TEST[
                         configuration["CORUM enrichment"].get(
                             "test", "hypergeometric")],
@@ -1221,62 +1227,63 @@ def process_workflow(configuration: Mapping[str],
                         "purification methods", []),
                     organism=configuration["CORUM enrichment"].get(
                         "organism", 9606),
-                    annotation_as_reference=configuration["module detection"]
+                    annotation_as_reference=configuration["community detection"]
                     ["CORUM enrichment"].get("annotation", False))
 
-                for k, module in enumerate(sorted(
-                        modules,
-                        key=lambda module: module.number_of_nodes(),
+                for k, community in enumerate(sorted(
+                        communities,
+                        key=lambda community: community.number_of_nodes(),
                         reverse=True),
-                                           start=1):
+                                              start=1):
                     for (protein_complex,
                          name), p in sorted(corum_enrichment[frozenset(
-                             proteins[module])].items(),
+                             proteins[community])].items(),
                                             key=lambda item: item[1]):
-                        if p <= configuration["module detection"][
+                        if p <= configuration["community detection"][
                                 "CORUM enrichment"].get("p", 1.0):
-                            export[module] = True
+                            export[community] = True
                             logger.info(f"{k}\t{protein_complex}\t{p:.2e}\t"
                                         f"{name}")
             else:
                 corum_enrichment = corum.get_enrichment(
-                    [frozenset(module.nodes()) for module in modules],
+                    [frozenset(community.nodes()) for community in communities],
                     enrichment_test=test.ENRICHMENT_TEST[
-                        configuration["module detection"]
+                        configuration["community detection"]
                         ["CORUM enrichment"].get("test", "hypergeometric")],
                     multiple_testing_correction=correction.CORRECTION[
-                        configuration["module detection"]
+                        configuration["community detection"]
                         ["CORUM enrichment"].get("correction",
                                                  "Benjamini-Hochberg")],
-                    purification_methods=configuration["module detection"]
+                    purification_methods=configuration["community detection"]
                     ["CORUM enrichment"].get("purification methods", []),
-                    organism=configuration["module detection"]
+                    organism=configuration["community detection"]
                     ["CORUM enrichment"].get("organism", 9606),
-                    annotation_as_reference=configuration["module detection"]
+                    annotation_as_reference=configuration["community detection"]
                     ["CORUM enrichment"].get("annotation", False))
 
-                for k, module in enumerate(sorted(
-                        modules,
-                        key=lambda module: module.number_of_nodes(),
+                for k, community in enumerate(sorted(
+                        communities,
+                        key=lambda community: community.number_of_nodes(),
                         reverse=True),
-                                           start=1):
-                    for (protein_complex, name), p in sorted(
-                            corum_enrichment[frozenset(module.nodes())].items(),
-                            key=lambda item: item[1]):
-                        if p <= configuration["module detection"][
+                                              start=1):
+                    for (protein_complex,
+                         name), p in sorted(corum_enrichment[frozenset(
+                             community.nodes())].items(),
+                                            key=lambda item: item[1]):
+                        if p <= configuration["community detection"][
                                 "CORUM enrichment"].get("p", 1.0):
-                            export[module] = True
+                            export[community] = True
                             logger.info(f"{k}\t{protein_complex}\t{p:.2e}\t"
                                         f"{name}")
 
-        if "Gene Ontology enrichment" in configuration["module detection"]:
-            if "union" in configuration["module detection"][
+        if "Gene Ontology enrichment" in configuration["community detection"]:
+            if "union" in configuration["community detection"][
                     "Gene Ontology enrichment"] or "intersection" in configuration[
-                        "module detection"]["Gene Ontology enrichment"]:
-                if "union" in configuration["module detection"][
+                        "community detection"]["Gene Ontology enrichment"]:
+                if "union" in configuration["community detection"][
                         "Gene Ontology enrichment"]:
-                    proteins = {module: set() for module in modules}
-                    for subset in configuration["module detection"][
+                    proteins = {community: set() for community in communities}
+                    for subset in configuration["community detection"][
                             "Gene Ontology enrichment"]["union"]:
                         if subset.get(
                                 "time"
@@ -1286,7 +1293,7 @@ def process_workflow(configuration: Mapping[str],
                                 "post-translational modification"
                         ) in protein_protein_interaction_network.get_post_translational_modifications(
                                 network, subset["time"]):
-                            for module in proteins:
+                            for community in proteins:
                                 measurement_range = (
                                     conversion.MEASUREMENT_CONVERSION[
                                         subset.get("conversion")]
@@ -1296,7 +1303,7 @@ def process_workflow(configuration: Mapping[str],
                                             "conversion")])[0],
                                      protein_protein_interaction_network.
                                      get_measurements(
-                                         module, subset["time"], subset[
+                                         community, subset["time"], subset[
                                              "post-translational modification"],
                                          combination.SITE_COMBINATION[
                                              subset.get("site combination",
@@ -1309,16 +1316,16 @@ def process_workflow(configuration: Mapping[str],
                                             "conversion")])[1],
                                      protein_protein_interaction_network.
                                      get_measurements(
-                                         module, subset["time"], subset[
+                                         community, subset["time"], subset[
                                              "post-translational modification"],
                                          combination.SITE_COMBINATION[
                                              subset.get("site combination",
                                                         "maxabs")])))
 
-                                proteins[module].update(
+                                proteins[community].update(
                                     protein_protein_interaction_network.
                                     get_proteins(
-                                        module, subset["time"], subset[
+                                        community, subset["time"], subset[
                                             "post-translational modification"],
                                         combination.SITE_COMBINATION[subset.get(
                                             "site combination",
@@ -1326,12 +1333,13 @@ def process_workflow(configuration: Mapping[str],
                                         measurement <= measurement_range[0] or
                                         measurement >= measurement_range[1]))
 
-                if "intersection" in configuration["module detection"][
+                elif "intersection" in configuration["community detection"][
                         "Gene Ontology enrichment"]:
                     proteins = {
-                        module: set(module.nodes()) for module in modules
+                        community: set(community.nodes())
+                        for community in communities
                     }
-                    for subset in configuration["module detection"][
+                    for subset in configuration["community detection"][
                             "Gene Ontology enrichment"]["intersection"]:
                         if subset.get(
                                 "time"
@@ -1341,7 +1349,7 @@ def process_workflow(configuration: Mapping[str],
                                 "post-translational modification"
                         ) in protein_protein_interaction_network.get_post_translational_modifications(
                                 network, subset["time"]):
-                            for module in proteins:
+                            for community in proteins:
                                 measurement_range = (
                                     conversion.MEASUREMENT_CONVERSION[
                                         subset.get("conversion")]
@@ -1351,7 +1359,7 @@ def process_workflow(configuration: Mapping[str],
                                             "conversion")])[0],
                                      protein_protein_interaction_network.
                                      get_measurements(
-                                         module, subset["time"], subset[
+                                         community, subset["time"], subset[
                                              "post-translational modification"],
                                          combination.SITE_COMBINATION[
                                              subset.get("site combination",
@@ -1364,16 +1372,16 @@ def process_workflow(configuration: Mapping[str],
                                             "conversion")])[1],
                                      protein_protein_interaction_network.
                                      get_measurements(
-                                         module, subset["time"], subset[
+                                         community, subset["time"], subset[
                                              "post-translational modification"],
                                          combination.SITE_COMBINATION[
                                              subset.get("site combination",
                                                         "maxabs")])))
 
-                                proteins[module].intersection_update(
+                                proteins[community].intersection_update(
                                     protein_protein_interaction_network.
                                     get_proteins(
-                                        module, subset["time"], subset[
+                                        community, subset["time"], subset[
                                             "post-translational modification"],
                                         combination.SITE_COMBINATION[subset.get(
                                             "site combination",
@@ -1382,80 +1390,83 @@ def process_workflow(configuration: Mapping[str],
                                         measurement >= measurement_range[1]))
 
                 gene_ontology_enrichment = gene_ontology.get_enrichment(
-                    [frozenset(proteins[module]) for module in modules],
+                    [
+                        frozenset(proteins[community])
+                        for community in communities
+                    ],
                     enrichment_test=test.ENRICHMENT_TEST[configuration[
-                        "module detection"]["Gene Ontology enrichment"].get(
+                        "community detection"]["Gene Ontology enrichment"].get(
                             "test", "hypergeometric")],
                     multiple_testing_correction=correction.CORRECTION[
-                        configuration["module detection"]
+                        configuration["community detection"]
                         ["Gene Ontology enrichment"].get(
                             "correction", "Benjamini-Hochberg")],
-                    organism=configuration["module detection"]
+                    organism=configuration["community detection"]
                     ["Gene Ontology enrichment"].get("organism", 9606),
-                    namespaces=configuration["module detection"]
+                    namespaces=configuration["community detection"]
                     ["Gene Ontology enrichment"].get("namespaces", [
                         "cellular_component", "molecular_function",
                         "biological_process"
                     ]),
-                    annotation_as_reference=configuration["module detection"]
+                    annotation_as_reference=configuration["community detection"]
                     ["Gene Ontology enrichment"].get("annotation", False))
 
-                for k, module in enumerate(sorted(
-                        modules,
-                        key=lambda module: module.number_of_nodes(),
+                for k, community in enumerate(sorted(
+                        communities,
+                        key=lambda community: community.number_of_nodes(),
                         reverse=True),
-                                           start=1):
+                                              start=1):
                     for (term,
                          name), p in sorted(gene_ontology_enrichment[frozenset(
-                             proteins[module])].items(),
+                             proteins[community])].items(),
                                             key=lambda item: item[1]):
-                        if p <= configuration["module detection"][
+                        if p <= configuration["community detection"][
                                 "Gene Ontology enrichment"].get("p", 1.0):
-                            export[module] = True
+                            export[community] = True
                             logger.info(f"{k}\t{term}\t{p:.2e}\t{name}")
 
             else:
                 gene_ontology_enrichment = gene_ontology.get_enrichment(
-                    [frozenset(module.nodes()) for module in modules],
+                    [frozenset(community.nodes()) for community in communities],
                     enrichment_test=test.ENRICHMENT_TEST[configuration[
-                        "module detection"]["Gene Ontology enrichment"].get(
+                        "community detection"]["Gene Ontology enrichment"].get(
                             "test", "hypergeometric")],
                     multiple_testing_correction=correction.CORRECTION[
-                        configuration["module detection"]
+                        configuration["community detection"]
                         ["Gene Ontology enrichment"].get(
                             "correction", "Benjamini-Hochberg")],
-                    organism=configuration["module detection"]
+                    organism=configuration["community detection"]
                     ["Gene Ontology enrichment"].get("organism", 9606),
-                    namespaces=configuration["module detection"]
+                    namespaces=configuration["community detection"]
                     ["Gene Ontology enrichment"].get("namespaces", [
                         "cellular_component", "molecular_function",
                         "biological_process"
                     ]),
-                    annotation_as_reference=configuration["module detection"]
+                    annotation_as_reference=configuration["community detection"]
                     ["Gene Ontology enrichment"].get("annotation", False))
 
-                for k, module in enumerate(sorted(
-                        modules,
-                        key=lambda module: module.number_of_nodes(),
+                for k, community in enumerate(sorted(
+                        communities,
+                        key=lambda community: community.number_of_nodes(),
                         reverse=True),
-                                           start=1):
+                                              start=1):
                     for (term,
                          name), p in sorted(gene_ontology_enrichment[frozenset(
-                             module.nodes())].items(),
+                             community.nodes())].items(),
                                             key=lambda item: item[1]):
-                        if p <= configuration["module detection"][
+                        if p <= configuration["community detection"][
                                 "Gene Ontology enrichment"].get("p", 1.0):
-                            export[module] = True
+                            export[community] = True
                             logger.info(f"{k}\t{term}\t{p:.2e}\t{name}")
 
-        if "Reactome enrichment" in configuration["module detection"]:
-            if "union" in configuration["module detection"][
+        if "Reactome enrichment" in configuration["community detection"]:
+            if "union" in configuration["community detection"][
                     "Reactome enrichment"] or "intersection" in configuration[
-                        "module detection"]["Gene Ontology enrichment"]:
-                if "union" in configuration["module detection"][
+                        "community detection"]["Reactome enrichment"]:
+                if "union" in configuration["community detection"][
                         "Reactome enrichment"]:
-                    proteins = {module: set() for module in modules}
-                    for subset in configuration["module detection"][
+                    proteins = {community: set() for community in communities}
+                    for subset in configuration["community detection"][
                             "Reactome enrichment"]["union"]:
                         if subset.get(
                                 "time"
@@ -1465,7 +1476,7 @@ def process_workflow(configuration: Mapping[str],
                                 "post-translational modification"
                         ) in protein_protein_interaction_network.get_post_translational_modifications(
                                 network, subset["time"]):
-                            for module in proteins:
+                            for community in proteins:
                                 measurement_range = (
                                     conversion.MEASUREMENT_CONVERSION[
                                         subset.get("conversion")]
@@ -1475,7 +1486,7 @@ def process_workflow(configuration: Mapping[str],
                                             "conversion")])[0],
                                      protein_protein_interaction_network.
                                      get_measurements(
-                                         module, subset["time"], subset[
+                                         community, subset["time"], subset[
                                              "post-translational modification"],
                                          combination.SITE_COMBINATION[
                                              subset.get("site combination",
@@ -1488,16 +1499,16 @@ def process_workflow(configuration: Mapping[str],
                                             "conversion")])[1],
                                      protein_protein_interaction_network.
                                      get_measurements(
-                                         module, subset["time"], subset[
+                                         community, subset["time"], subset[
                                              "post-translational modification"],
                                          combination.SITE_COMBINATION[
                                              subset.get("site combination",
                                                         "maxabs")])))
 
-                                proteins[module].update(
+                                proteins[community].update(
                                     protein_protein_interaction_network.
                                     get_proteins(
-                                        module, subset["time"], subset[
+                                        community, subset["time"], subset[
                                             "post-translational modification"],
                                         combination.SITE_COMBINATION[subset.get(
                                             "site combination",
@@ -1505,12 +1516,13 @@ def process_workflow(configuration: Mapping[str],
                                         measurement <= measurement_range[0] or
                                         measurement >= measurement_range[1]))
 
-                if "intersection" in configuration["module detection"][
+                elif "intersection" in configuration["community detection"][
                         "Reactome enrichment"]:
                     proteins = {
-                        module: set(module.nodes()) for module in modules
+                        community: set(community.nodes())
+                        for community in communities
                     }
-                    for subset in configuration["module detection"][
+                    for subset in configuration["community detection"][
                             "Reactome enrichment"]["intersection"]:
                         if subset.get(
                                 "time"
@@ -1520,7 +1532,7 @@ def process_workflow(configuration: Mapping[str],
                                 "post-translational modification"
                         ) in protein_protein_interaction_network.get_post_translational_modifications(
                                 network, subset["time"]):
-                            for module in proteins:
+                            for community in proteins:
                                 measurement_range = (
                                     conversion.MEASUREMENT_CONVERSION[
                                         subset.get("conversion")]
@@ -1530,7 +1542,7 @@ def process_workflow(configuration: Mapping[str],
                                             "conversion")])[0],
                                      protein_protein_interaction_network.
                                      get_measurements(
-                                         module, subset["time"], subset[
+                                         community, subset["time"], subset[
                                              "post-translational modification"],
                                          combination.SITE_COMBINATION[
                                              subset.get("site combination",
@@ -1543,16 +1555,16 @@ def process_workflow(configuration: Mapping[str],
                                             "conversion")])[1],
                                      protein_protein_interaction_network.
                                      get_measurements(
-                                         module, subset["time"], subset[
+                                         community, subset["time"], subset[
                                              "post-translational modification"],
                                          combination.SITE_COMBINATION[
                                              subset.get("site combination",
                                                         "maxabs")])))
 
-                                proteins[module].intersection_update(
+                                proteins[community].intersection_update(
                                     protein_protein_interaction_network.
                                     get_proteins(
-                                        module, subset["time"], subset[
+                                        community, subset["time"], subset[
                                             "post-translational modification"],
                                         combination.SITE_COMBINATION[subset.get(
                                             "site combination",
@@ -1561,139 +1573,146 @@ def process_workflow(configuration: Mapping[str],
                                         measurement >= measurement_range[1]))
 
                 reactome_enrichment = reactome.get_enrichment(
-                    [frozenset(proteins[module]) for module in modules],
+                    [
+                        frozenset(proteins[community])
+                        for community in communities
+                    ],
                     enrichment_test=test.ENRICHMENT_TEST[
-                        configuration["module detection"]
+                        configuration["community detection"]
                         ["Reactome enrichment"].get("test", "hypergeometric")],
                     multiple_testing_correction=correction.CORRECTION[
-                        configuration["module detection"]
+                        configuration["community detection"]
                         ["Reactome enrichment"].get("correction",
                                                     "Benjamini-Hochberg")],
-                    organism=configuration["module detection"]
+                    organism=configuration["community detection"]
                     ["Reactome enrichment"].get("organism", 9606),
-                    annotation_as_reference=configuration["module detection"]
+                    annotation_as_reference=configuration["community detection"]
                     ["Reactome enrichment"].get("annotation", False))
 
-                for k, module in enumerate(sorted(
-                        modules,
-                        key=lambda module: module.number_of_nodes(),
+                for k, community in enumerate(sorted(
+                        communities,
+                        key=lambda community: community.number_of_nodes(),
                         reverse=True),
-                                           start=1):
+                                              start=1):
                     for (pathway,
                          name), p in sorted(reactome_enrichment[frozenset(
-                             proteins[module])].items(),
+                             proteins[community])].items(),
                                             key=lambda item: item[1]):
-                        if p <= configuration["module detection"][
+                        if p <= configuration["community detection"][
                                 "Reactome enrichment"].get("p", 1.0):
-                            export[module] = True
+                            export[community] = True
                             logger.info(f"{k}\t{pathway}\t{p:.2e}\t{name}")
 
             else:
                 reactome_enrichment = reactome.get_enrichment(
-                    [frozenset(module.nodes()) for module in modules],
+                    [frozenset(community.nodes()) for community in communities],
                     enrichment_test=test.ENRICHMENT_TEST[
-                        configuration["module detection"]
+                        configuration["community detection"]
                         ["Reactome enrichment"].get("test", "hypergeometric")],
                     multiple_testing_correction=correction.CORRECTION[
-                        configuration["module detection"]
+                        configuration["community detection"]
                         ["Reactome enrichment"].get("correction",
                                                     "Benjamini-Hochberg")],
-                    organism=configuration["module detection"]
+                    organism=configuration["community detection"]
                     ["Reactome enrichment"].get("organism", 9606),
-                    annotation_as_reference=configuration["module detection"]
+                    annotation_as_reference=configuration["community detection"]
                     ["Reactome enrichment"].get("annotation", False))
 
-                for k, module in enumerate(sorted(
-                        modules,
-                        key=lambda module: module.number_of_nodes(),
+                for k, community in enumerate(sorted(
+                        communities,
+                        key=lambda community: community.number_of_nodes(),
                         reverse=True),
-                                           start=1):
+                                              start=1):
                     for (pathway,
-                         name), p in sorted(gene_ontology_enrichment[frozenset(
-                             module.nodes())].items(),
+                         name), p in sorted(reactome_enrichment[frozenset(
+                             community.nodes())].items(),
                                             key=lambda item: item[1]):
-                        if p <= configuration["module detection"][
+                        if p <= configuration["community detection"][
                                 "Reactome enrichment"].get("p", 1.0):
-                            export[module] = True
+                            export[community] = True
                             logger.info(f"{k}\t{pathway}\t{p:.2e}\t{name}")
 
-        if "measurement enrichment" in configuration["module detection"]:
+        if "measurement enrichment" in configuration["community detection"]:
             measurement_enrichment = protein_protein_interaction_network.get_measurement_enrichment(
                 network,
-                modules,
+                communities,
                 measurements=default.MEASUREMENT_RANGE[
-                    configuration["module detection"]
+                    configuration["community detection"]
                     ["measurement enrichment"].get("conversion")],
                 convert_measurement=conversion.MEASUREMENT_CONVERSION[
-                    configuration["module detection"]
+                    configuration["community detection"]
                     ["measurement enrichment"].get("conversion")],
                 site_combination=combination.SITE_COMBINATION[
-                    configuration["module detection"]
+                    configuration["community detection"]
                     ["measurement enrichment"].get("site combination",
                                                    "maxabs")],
                 enrichment_test=test.ENRICHMENT_TEST[
-                    configuration["module detection"]
+                    configuration["community detection"]
                     ["measurement enrichment"].get("test", "hypergeometric")],
                 multiple_testing_correction=correction.CORRECTION[
-                    configuration["module detection"]
+                    configuration["community detection"]
                     ["measurement enrichment"].get("correction",
                                                    "Benjamini-Hochberg")])
 
-            for k, module in enumerate(sorted(
-                    modules,
-                    key=lambda module: module.number_of_nodes(),
+            for k, community in enumerate(sorted(
+                    communities,
+                    key=lambda community: community.number_of_nodes(),
                     reverse=True),
-                                       start=1):
-                for time in measurement_enrichment[module]:
+                                          start=1):
+                for time in measurement_enrichment[community]:
                     for modification, p in sorted(
-                            measurement_enrichment[module][time].items(),
+                            measurement_enrichment[community][time].items(),
                             key=lambda item: item[1]):
-                        if p <= configuration["module detection"][
+                        if p <= configuration["community detection"][
                                 "measurement enrichment"].get("p", 1.0):
-                            export[module] = True
+                            export[community] = True
                             logger.info(f"{k}\tmeasurement enrichment\t{time} "
                                         f"{modification}\t{p:.2e}")
 
-        if "measurement location" in configuration["module detection"]:
+        if "measurement location" in configuration["community detection"]:
             measurement_location = protein_protein_interaction_network.get_measurement_location(
                 network,
-                modules,
-                combination.SITE_COMBINATION[configuration["module detection"]
-                                             ["measurement location"].get(
-                                                 "site combination", "maxabs")],
+                communities,
+                combination.SITE_COMBINATION[
+                    configuration["community detection"]
+                    ["measurement location"].get("site combination", "maxabs")],
                 location_test=test.LOCATION_TEST[
-                    configuration["module detection"]
+                    configuration["community detection"]
                     ["measurement location"].get("test", "Wilcoxon")],
                 multiple_testing_correction=correction.CORRECTION[
-                    configuration["module detection"]
+                    configuration["community detection"]
                     ["measurement location"].get("correction",
                                                  "Benjamini-Hochberg")])
 
-            for k, module in enumerate(sorted(
-                    modules,
-                    key=lambda module: module.number_of_nodes(),
+            for k, community in enumerate(sorted(
+                    communities,
+                    key=lambda community: community.number_of_nodes(),
                     reverse=True),
-                                       start=1):
-                for time in measurement_location[module]:
+                                          start=1):
+                for time in measurement_location[community]:
                     for modification, p in sorted(
-                            measurement_location[module][time].items(),
+                            measurement_location[community][time].items(),
                             key=lambda item: item[1]):
-                        if p <= configuration["module detection"][
+                        if p <= configuration["community detection"][
                                 "measurement location"].get("p", 1.0):
-                            export[module] = True
+                            export[community] = True
                             logger.info(f"{k}\tmeasurement location\t{time} "
                                         f"{modification}\t{p:.2e}")
 
-        for module in modules:
-            if export[module]:
+        for k, community in enumerate(sorted(
+                communities,
+                key=lambda community: community.number_of_nodes(),
+                reverse=True),
+                                      start=1):
+            if export[community]:
                 protein_protein_interaction_network.export(
-                    module,
+                    community,
                     f"{logger.name}.{index}.{k}"
                     if index else f"{logger.name}.{k}",
                 )
 
 
-def process_configuration(configurations: Collection[Mapping[str]],
+def process_configuration(configurations: Collection[dict[str]],
                           logger: logging.Logger) -> None:
     """
     Executes workflows specified in configurations sequentially.

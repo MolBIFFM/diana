@@ -1044,24 +1044,24 @@ def remove_edge_weights(network: nx.Graph, attribute: str = "weight") -> None:
             del data[attribute]
 
 
-def get_modules(network: nx.Graph,
-                module_size: int,
-                module_size_combination: Callable[[Collection[int]],
-                                                  float] = statistics.mean,
-                algorithm: Callable[
-                    [nx.Graph],
-                    Iterable[set[Hashable]]] = modularization.louvain,
-                resolution: float = 1.0,
-                weight: str = "weight") -> tuple[nx.Graph, ...]:
+def get_communities(
+        network: nx.Graph,
+        community_size: int,
+        community_size_combination: Callable[[Collection[int]],
+                                             float] = statistics.mean,
+        algorithm: Callable[[nx.Graph],
+                            Iterable[set[Hashable]]] = modularization.louvain,
+        resolution: float = 1.0,
+        weight: str = "weight") -> tuple[nx.Graph, ...]:
     """
-    Returns modules of a protein-protein interaction network.
+    Returns communities of a protein-protein interaction network.
 
     Args:
         network: The protein-protein interaction network.
-        module_size: The maximum module size. Community detection continues.
+        community_size: The maximum community size. Community detection continues.
             subdivision of modles iteratively until it is met.
-        module_size_combination: The function to derive a representative value
-            from module sizes.
+        community_size_combination: The function to derive a representative value
+            from community sizes.
         algorithm: The community detection algorithm.
         resolution: The resolution parameter for modularity.
         weight: The attribute name of the edge weight.
@@ -1077,8 +1077,8 @@ def get_modules(network: nx.Graph,
 
     communities = algorithm(copied_network, resolution, weight)
 
-    while (module_size_combination(len(community) for community in communities)
-           > module_size):
+    while (community_size_combination(
+            len(community) for community in communities) > community_size):
         subdivision = False
         for i, subdivided_community in enumerate(
                 algorithm(copied_network.subgraph(communities[j]), resolution,
@@ -1137,7 +1137,7 @@ def get_measurements(
 
 def get_measurement_enrichment(
     network: nx.Graph,
-    modules: Iterable[nx.Graph],
+    communities: Iterable[nx.Graph],
     measurements: tuple[float, float] = (-1.0, 1.0),
     convert_measurement: Callable[
         [float, Collection[float]],
@@ -1152,13 +1152,13 @@ def get_measurement_enrichment(
                                   float]] = correction.benjamini_hochberg,
 ) -> dict[nx.Graph, dict[int, dict[str, float]]]:
     """
-    Test modules for enrichment of large protein-specific measurements for each
+    Test communities for enrichment of large protein-specific measurements for each
     time of measurement and type of post-translational modification with respect
     to the protein-protein interaction network.
 
     Args:
         network: The protein-protein interaction network.
-        modules: The modules of the protein-protein interaction network.
+        communities: The communities of the protein-protein interaction network.
         measurements: Proteins are classified by whether their representative
             measurement exceeds this range.
         convert_measurement: The function used convert the bounds to log2-fold
@@ -1166,14 +1166,14 @@ def get_measurement_enrichment(
         site_combination: An optional function to derive protein-specific
             measurements from site-specific measurements.
         enrichment_test: The statistical test used to assess enrichment of
-            proteins with large measurements by a module.
+            proteins with large measurements by a community.
         multiple_testing_correction: The procedure to correct for multiple
-            testing of multiple modules, times of measurement and types of
+            testing of multiple communities, times of measurement and types of
             post-translational modification.
 
     Returns:
         Corrected p-values for the enrichment of large protein-specific
-        measurements by each module for each time of measurement and type of
+        measurements by each community for each time of measurement and type of
         post-translational modification.
     """
     p_values = {}
@@ -1195,14 +1195,14 @@ def get_measurement_enrichment(
                 if measurement
             ])
 
-            modified_module_proteins = [
+            modified_community_proteins = [
                 len([
                     measurement
                     for measurement in get_measurements(
-                        module, time, modification, site_combination)
+                        community, time, modification, site_combination)
                     if measurement
                 ])
-                for module in modules
+                for community in communities
             ]
 
             target_proteins = len([
@@ -1212,39 +1212,39 @@ def get_measurement_enrichment(
                 measurement >= measurement_range[1]
             ])
 
-            target_module_proteins = [
+            target_community_proteins = [
                 len([
                     measurement
                     for measurement in get_measurements(
-                        module, time, modification, site_combination)
+                        community, time, modification, site_combination)
                     if measurement <= measurement_range[0] or
                     measurement >= measurement_range[1]
                 ])
-                for module in modules
+                for community in communities
             ]
 
-            p_values.update({(module, time, modification):
-                             enrichment_test(target_module_proteins[i],
+            p_values.update({(community, time, modification):
+                             enrichment_test(target_community_proteins[i],
                                              modified_proteins, target_proteins,
-                                             modified_module_proteins[i])
-                             for i, module in enumerate(modules)})
+                                             modified_community_proteins[i])
+                             for i, community in enumerate(communities)})
 
     p_values = multiple_testing_correction(p_values)
 
     return {
-        module: {
+        community: {
             time: {
-                modification: p_values[(module, time, modification)]
+                modification: p_values[(community, time, modification)]
                 for modification in get_post_translational_modifications(
                     network, time)
             } for time in get_times(network)
-        } for module in modules
+        } for community in communities
     }
 
 
 def get_measurement_location(
     network: nx.Graph,
-    modules: Iterable[nx.Graph],
+    communities: Iterable[nx.Graph],
     site_combination: Optional[Callable[[Collection[float]], float]] = None,
     location_test: Callable[
         [Collection[float], Collection[float]],
@@ -1255,24 +1255,24 @@ def get_measurement_location(
                                   float]] = correction.benjamini_hochberg,
 ) -> dict[nx.Graph, dict[int, dict[str, float]]]:
     """
-    Test modules for difference tendencies in protein-specific measurements for
+    Test communities for difference tendencies in protein-specific measurements for
     each time of measurement and type of post-translational modification with
     respect to the remaining protein-protein interaction network.
 
     Args:
         network: The protein-protein interaction network.
-        modules: The modules of the protein-protein interaction network.
+        communities: The communities of the protein-protein interaction network.
         site_combination: An optional function to derive protein-specific
             measurements from site-specific measurements.
         location_test: The statistical test used to assess location of
-            proteins with large measurements by a module.
+            proteins with large measurements by a community.
         multiple_testing_correction: The procedure to correct for multiple
-            testing of multiple modules, times of measurement and types of
+            testing of multiple communities, times of measurement and types of
             post-translational modification.
 
     Returns:
         Corrected p-values for the difference in central tendencies in
-        protein-specific measurements of modules for each time of measurement
+        protein-specific measurements of communities for each time of measurement
         and type of post-translational modification.
     """
     p_values = {}
@@ -1280,32 +1280,35 @@ def get_measurement_location(
         for modification in get_post_translational_modifications(network, time):
             network_measurements = [
                 get_measurements(
-                    nx.union_all([m for m in modules if m != module]), time,
-                    modification, site_combination) for module in modules
+                    nx.union_all([m
+                                  for m in communities
+                                  if m != community]), time, modification,
+                    site_combination)
+                for community in communities
             ]
 
-            module_measurements = [
-                get_measurements(module, time, modification, site_combination)
-                for module in modules
+            community_measurements = [
+                get_measurements(community, time, modification,
+                                 site_combination) for community in communities
             ]
 
-            p_values.update({(module, time, modification):
-                             location_test(module_measurements[i],
+            p_values.update({(community, time, modification):
+                             location_test(community_measurements[i],
                                            network_measurements[i])
-                             for i, module in enumerate(modules)
-                             if module_measurements[i]})
+                             for i, community in enumerate(communities)
+                             if community_measurements[i]})
 
     p_values = multiple_testing_correction(p_values)
 
     return {
-        module: {
+        community: {
             time: {
-                modification: p_values[(module, time, modification)]
+                modification: p_values[(community, time, modification)]
                 for modification in get_post_translational_modifications(
                     network, time)
-                if (module, time, modification) in p_values
+                if (community, time, modification) in p_values
             } for time in get_times(network)
-        } for module in modules
+        } for community in communities
     }
 
 

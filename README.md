@@ -1318,7 +1318,7 @@ The specification of community detection the protein-protein interaction network
 ```json
 [
     {
-      "module detection": {
+      "community detection": {
         "algorithm": "Louvain"
       }
     }
@@ -1329,7 +1329,7 @@ The community detection algorithm. The default setting is `"Louvain"`. Available
 ```json
 [
     {
-      "module detection": {
+      "community detection": {
         "resolution": 1.0
       }
     }
@@ -1340,50 +1340,50 @@ The resolution parameter of modularity which is maximized. The default setting i
 ```json
 [
     {
-      "module detection": {
+      "community detection": {
         "edge weight": null
       }
     }
 ]
 ```
-The function used to derive a combined edge score from confidence scores in IntAct, MINT, and STRING as well as 1.0 used for BioGRID, CORUM and Reactome, respectively, for a lack of a corresponding score. The combined score is utilized as edge weight in module detection. By default any edge receives a score of 1.0, corresponding to an unweighted network. Available settings are `null`, `"mean"`, `"median"`, `"max"`, `"min"`, `"sum"`, `"number"`, the number of queried databases supporting the interaction. Further, `"BioGRID"`, `"CORUM"`, `"IntAct"`, `"MINT"`, `"Reactome"`, and `"STRING"` refer to the score in that particular database.
+The function used to derive a combined edge score from confidence scores in IntAct, MINT, and STRING as well as 1.0 used for BioGRID, CORUM and Reactome, respectively, for a lack of a corresponding score. The combined score is utilized as edge weight in community detection. By default any edge receives a score of 1.0, corresponding to an unweighted network. Available settings are `null`, `"mean"`, `"median"`, `"max"`, `"min"`, `"sum"`, `"number"`, the number of queried databases supporting the interaction. Further, `"BioGRID"`, `"CORUM"`, `"IntAct"`, `"MINT"`, `"Reactome"`, and `"STRING"` refer to the score in that particular database.
 
 ```json
 [
     {
-      "module detection": {
-        "module size": null
+      "community detection": {
+        "community size": null
       }
     }
 ]
 ```
-An additional upper bound on the number of proteins per module. Modules are iteratively subdivided until this threshold is met. The default setting is the number of proteins in the network, resulting in a single iteration of the community detection algorithm.
+An additional upper bound on the number of proteins per community. Modules are iteratively subdivided until this threshold is met. The default setting is the number of proteins in the network, resulting in a single iteration of the community detection algorithm.
 
 ```json
 [
     {
-      "module detection": {
-        "module size combination": "mean"
+      "community detection": {
+        "community size combination": "mean"
       }
     }
 ]
 ```
-The function to combine sizes of modules into a value compared to the module size threshold. The default setting is `"mean"`. Available settings are `"mean"`, `"median"`, `"max"`, and `"min"`.
+The function to combine sizes of communities into a value compared to the community size threshold. The default setting is `"mean"`. Available settings are `"mean"`, `"median"`, `"max"`, and `"min"`.
 
 ---
 
-The specification of statistical tests on individual modules with respect to either Gene Ontology or Reactome enrichment or the distribution of measurements across the protein-protein interaction network. 
+The specification of statistical tests on individual communities with respect to either Gene Ontology or Reactome enrichment or the distribution of measurements across the protein-protein interaction network. 
 
 CORUM, Gene Ontology and Reactome enrichment can be assessed with respect to the respective annotation or the protein-protein interaction network. The proteins considered can be restricted, based on associated measurements, either by a union or intersection of specified subsets.
 
-To assess the distribution of measurements, these can be classified in a binary way to measure the modules' enrichment of proteins which exhibit measurements exceeding a specified threshold. Alternatively, the distribution of measurements within separate modules can be compared with the remaining network.
+To assess the distribution of measurements, these can be classified in a binary way to measure the communities' enrichment of proteins which exhibit measurements exceeding a specified threshold. Alternatively, the distribution of measurements within separate communities can be compared with the remaining network.
 
-These tests act as filter on the exported modules of the protein-protein interaction network. A module is exported if it is significant according to any of the specified tests.
+These tests act as filter on the exported communities of the protein-protein interaction network. A community is exported if it is significant according to any of the specified tests.
 
 ```json
 [
     {
-      "module detection": {
+      "community detection": {
         "CORUM enrichment": {
           "test": "hypergeometric"
         },
@@ -1406,7 +1406,7 @@ Available settings are `"binomial"` and `"hypergeometric"`.
 ```json
 [
     {
-      "module detection": {
+      "community detection": {
         "measurement location": {
           "test": "Wilcoxon"
         }
@@ -1414,12 +1414,12 @@ Available settings are `"binomial"` and `"hypergeometric"`.
     }
 ]
 ```
-The statistical test to compare modification- and time-specific measurement distributions of each module in with the remaining network. The default and setting is `"Wilcoxon"`. Available settings are `"Welch"` and `"Wilcoxon"`.
+The statistical test to compare modification- and time-specific measurement distributions of each community in with the remaining network. The default and setting is `"Wilcoxon"`. Available settings are `"Welch"` and `"Wilcoxon"`.
 
 ```json
 [
     {
-      "module detection": {
+      "community detection": {
         "CORUM enrichment": {
           "correction": "Benjamini-Hochberg"
         },
@@ -1445,7 +1445,7 @@ Available settings are `"Benjamini-Hochberg"` and `"Bonferroni"`.
 ```json
 [
     {
-      "module detection": {
+      "community detection": {
         "CORUM enrichment": {
           "p": 1.0
         },
@@ -1470,7 +1470,7 @@ The corrected p-value threshold. The default setting is `1.0`.
 ```json
 [
     {
-      "module detection": {
+      "community detection": {
         "CORUM enrichment": {
           "organism": 9606
         },
@@ -1489,7 +1489,7 @@ The NCBI taxonomy ID of the organism of interest. The default and currently only
 ```json
 [
     {
-      "module detection": {
+      "community detection": {
         "CORUM enrichment": {
           "annotation": false
         },
@@ -1508,7 +1508,7 @@ If true, compute enrichment with respect to the entire annotation, specific to t
 ```json
 [
     {
-      "module detection": {
+      "community detection": {
         "CORUM enrichment": {
           "union": [
             {
@@ -1554,7 +1554,7 @@ The time of measurement considered to determine a subset of proteins.
 ```json
 [
     { 
-      "module detection": {  
+      "community detection": {  
         "CORUM enrichment": {
           "union": [
             {
@@ -1600,7 +1600,7 @@ The modification considered to determine a subset of proteins.
 ```json
 [
     {
-      "module detection": {
+      "community detection": {
         "CORUM enrichment": {
           "union": [
             {
@@ -1646,7 +1646,7 @@ The function used to derive a protein-specific measurement from a its individual
 ```json
 [
     {
-      "module detection": {
+      "community detection": {
         "CORUM enrichment": {
           "union": [
             {
@@ -1687,12 +1687,12 @@ The function used to derive a protein-specific measurement from a its individual
     }
 ]
 ```
-The conversion of measurements that a range refers to. It defaults to the log2-fold measurement but may be set to `"standard score"` or `"quantile"` with respect to the distribution of a particular modification at a particular time of measurement across the protein-protein interaction network. Conversions are computed with respect to individual modules.
+The conversion of measurements that a range refers to. It defaults to the log2-fold measurement but may be set to `"standard score"` or `"quantile"` with respect to the distribution of a particular modification at a particular time of measurement across the protein-protein interaction network. Conversions are computed with respect to individual communities.
 
 ```json
 [
     {
-      "module detection": {
+      "community detection": {
         "CORUM enrichment": {
           "union": [
             {
@@ -1738,7 +1738,7 @@ The range of combined measurements categorizing proteins by whether the range is
 ```json
 [
     {
-      "module detection": {
+      "community detection": {
         "CORUM enrichment": {
           "purification methods": []
         }
@@ -1751,7 +1751,7 @@ A list of accepted PSI-MI identifiers or terms for protein complex purification 
 ```json
 [
     {
-      "module detection": {
+      "community detection": {
         "Gene Ontology enrichment": {
           "namespaces": [
               "cellular_component",
@@ -1768,7 +1768,7 @@ The Gene Ontology namespaces to consider. The default setting is `["cellular_com
 ```json
 [
     {
-      "module detection": {
+      "community detection": {
         "measurement enrichment": {
           "measurement": [-1.0, 1.0]
         }
@@ -1781,7 +1781,7 @@ The range of measurements categorizing proteins by whether the range is exceeded
 ```json
 [
     {
-      "module detection": {
+      "community detection": {
         "measurement enrichment": {
           "conversion": null
         }
@@ -1794,7 +1794,7 @@ The conversion of measurements that a range refers to. It defaults to the log2-f
 ```json
 [
     {
-      "module detection": {
+      "community detection": {
         "measurement enrichment": {
           "proteins": {
             "site combination": "maxabs"
