@@ -256,18 +256,18 @@ def add_proteins_from_table(
                 f"{time} {modification} {i + 1}"] = measurement
 
 
-def map_proteins(network: nx.Graph) -> None:
+def map_proteins(network: nx.Graph, organism: int = 9606) -> None:
     """
     Map proteins in a protein-protein interaction network to their primary
     UniProt identifiers and remove proteins not present in Swiss-Prot. Isoform
     identifiers are maintained, but not transferred.
 
     Args:
-        network: The protein-protein interaction network to map proteins
-            from.
+        network: The protein-protein interaction network to map proteins from.
+        organism: The NCBI taxonomy identifier for the organism of interest.
     """
     mapping, gene_name, protein_name = {}, {}, {}
-    for accessions, gene, protein in uniprot.get_swiss_prot_entries():
+    for accessions, gene, protein in uniprot.get_swiss_prot_entries(organism):
         for node in network.nodes():
             if node.split("-")[0] in accessions:
                 if "-" in node and node.split("-")[1].isnumeric(

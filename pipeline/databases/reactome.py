@@ -68,7 +68,7 @@ def get_protein_protein_interactions(
                         yield (primary_interactor_a, primary_interactor_b)
 
 
-def get_pathways(organism: Optional[int] = None) -> Iterator[tuple[str, str]]:
+def get_pathways(organism: int = 9606) -> Iterator[tuple[str, str]]:
     """
     Yields Reactome pathways.
 
@@ -82,7 +82,7 @@ def get_pathways(organism: Optional[int] = None) -> Iterator[tuple[str, str]]:
             "https://reactome.org/download/current/ReactomePathways.txt",
             delimiter="\t",
             usecols=[0, 1, 2]):
-        if not organism or row[2] == ORGANISM["data"].get(organism):
+        if row[2] == ORGANISM["data"][organism]:
             yield (row[0], row[1])
 
 
@@ -101,8 +101,7 @@ def get_pathway_relations() -> Iterator[tuple[str, str]]:
         yield (row[0], row[1])
 
 
-def get_pathway_annotation(
-        organism: Optional[int] = None) -> Iterator[tuple[str, str]]:
+def get_pathway_annotation(organism: int = 9606) -> Iterator[tuple[str, str]]:
     """
     Yields Reactome pathway annotations.
 
@@ -119,7 +118,7 @@ def get_pathway_annotation(
             "UniProt2Reactome_All_Levels.txt",
             delimiter="\t",
             usecols=[0, 1, 5]):
-        if not organism or row[2] == ORGANISM["data"].get(organism):
+        if row[2] == ORGANISM["data"][organism]:
             for protein in primary_accession.get(row[0], {row[0]}):
                 yield protein, row[1]
 

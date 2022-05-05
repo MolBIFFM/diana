@@ -43,14 +43,15 @@ def process_workflow(configuration: dict[str],
                 sheet_name=entry.get("sheet", 1) -
                 1 if isinstance(entry.get("sheet", 1), int) else entry["sheet"],
                 header=entry.get("header", 1) - 1,
-                organism=entry.get("organism", 9606),
             )
 
         elif "accessions" in entry:
             network.add_nodes_from(entry["accessions"])
 
-        protein_protein_interaction_network.map_genes(
-            network, entry.get("organism", 9606))
+    for organism in set(
+            entry.get("organism", 9606)
+            for entry in configuration.get("genes", {})):
+        protein_protein_interaction_network.map_genes(network, organism)
 
     for entry in configuration.get("proteins", {}):
         if "file" in entry and "accession column" in entry:
@@ -79,11 +80,13 @@ def process_workflow(configuration: dict[str],
         elif "accessions" in entry:
             network.add_nodes_from(entry["accessions"])
 
+    for organism in set(
+            entry.get("organism", 9606)
+            for entry in configuration.get("proteins", {})):
+        protein_protein_interaction_network.map_proteins(network, organism)
+
     for entry in configuration.get("networks", []):
         network = nx.compose(network, nx.readwrite.graphml.read_graphml(entry))
-
-    if configuration.get("proteins", {}) or configuration.get("networks", {}):
-        protein_protein_interaction_network.map_proteins(network)
 
     if "protein-protein interactions" in configuration:
         for neighbors in range(

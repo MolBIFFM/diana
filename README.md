@@ -149,6 +149,11 @@ A list of input gene or protein accessions, alternative to extraction from tabul
         {
           "organism": 9606
         }
+      ],
+      "proteins": [
+        {
+          "organism": 9606
+        }
       ]
     }
 ]
@@ -279,7 +284,7 @@ The base of the logarithm that measured measurements are expressed as. By defaul
     }
 ]
 ```
-A list of input protein-protein interaction networks as output by a workflow. If multiple networks are specified, they are combined.
+A list of input protein-protein interaction networks as output by a workflow. If multiple networks are specified, they are combined. Protein accessions are not mapped to primary identifiers.
 
 ---
 

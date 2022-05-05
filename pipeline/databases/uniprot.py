@@ -1,12 +1,13 @@
 """The interface for the UniProt database."""
-from typing import Iterator, Optional
+from typing import Iterator
 
 from access import iterate
 
+ORGANISM = {"files": {9606: "human"}}
+
 
 def get_swiss_prot_entries(
-        organism: Optional[int] = None
-) -> Iterator[tuple[tuple[str], str, str]]:
+        organism: int = 9606) -> Iterator[tuple[tuple[str], str, str]]:
     """
     Yields Swiss-Prot entries.
 
@@ -20,7 +21,8 @@ def get_swiss_prot_entries(
     rec_name, tax_id = False, 0
     for line in iterate.txt(
             "https://ftp.uniprot.org/pub/databases/uniprot/current_release/"
-            "knowledgebase/complete/uniprot_sprot.dat.gz"):
+            "knowledgebase/taxonomic_divisions/"
+            f"uniprot_sprot_{ORGANISM['files'][organism]}.dat.gz"):
         if not line.strip():
             continue
 
@@ -91,8 +93,7 @@ def get_swiss_prot_entries(
             rec_name, tax_id = False, 0
 
 
-def get_primary_accession(
-        organism: Optional[int] = None) -> dict[str, frozenset[str]]:
+def get_primary_accession(organism: int = 9606) -> dict[str, frozenset[str]]:
     """
     Returns a map of primary UniProt accessions.
 
