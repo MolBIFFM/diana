@@ -145,12 +145,30 @@ A list of input gene or protein accessions, alternative to extraction from tabul
 ```json
 [
     {
+      "networks": [
+        {
+          "network": null
+        }
+      ]
+    }
+]
+```
+A protein-protein interaction network as output by a workflow. The union of input protein-protein interaction networks with proteins and genes is used.
+
+```json
+[
+    {
       "genes": [
         {
           "organism": 9606
         }
       ],
       "proteins": [
+        {
+          "organism": 9606
+        }
+      ],
+      "networks": [
         {
           "organism": 9606
         }
@@ -276,15 +294,6 @@ A function to combine individual replicates into a single measurement. The funct
 ]
 ```
 The base of the logarithm that measured measurements are expressed as. By default, ratios are assumed. Available settings are `null`, `2` and `10`.
-
-```json
-[
-    {
-      "networks": []
-    }
-]
-```
-A list of input protein-protein interaction networks as output by a workflow. If multiple networks are specified, they are combined. Protein accessions are not mapped to primary identifiers.
 
 ---
 

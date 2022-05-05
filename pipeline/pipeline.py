@@ -18,6 +18,7 @@ from interface import (combination, conversion, correction, default,
                        modularization, test)
 from networks import (gene_ontology_network,
                       protein_protein_interaction_network, reactome_network)
+from pipeline.networks.protein_protein_interaction_network import get_network
 
 
 def process_workflow(configuration: dict[str],
@@ -80,13 +81,19 @@ def process_workflow(configuration: dict[str],
         elif "accessions" in entry:
             network.add_nodes_from(entry["accessions"])
 
+    for entry in configuration.get("networks", {}):
+        network = nx.compose(
+            network,
+            nx.readwrite.graphml.read_graphml(entry["network"])
+            if entry.get("network") else
+            protein_protein_interaction_network.get_network())
+
     for organism in set(
             entry.get("organism", 9606)
-            for entry in configuration.get("proteins", {})):
+            for entry in configuration.get("proteins", {})) | set(
+                entry.get("organism", 9606)
+                for entry in configuration.get("networks", {})):
         protein_protein_interaction_network.map_proteins(network, organism)
-
-    for entry in configuration.get("networks", []):
-        network = nx.compose(network, nx.readwrite.graphml.read_graphml(entry))
 
     if "protein-protein interactions" in configuration:
         for neighbors in range(
