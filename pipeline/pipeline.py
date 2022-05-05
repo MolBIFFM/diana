@@ -417,45 +417,44 @@ def process_workflow(configuration: dict[str],
         )
 
     if "CORUM enrichment" in configuration:
-        if "union" in configuration[
-                "CORUM enrichment"] or "intersection" in configuration[
-                    "CORUM enrichment"]:
-            if "union" in configuration["CORUM enrichment"]:
-                proteins = set()
-                for subset in configuration["CORUM enrichment"]["union"]:
-                    if subset.get(
-                            "time"
-                    ) in protein_protein_interaction_network.get_times(
-                            network
-                    ) and subset.get(
-                            "post-translational modification"
-                    ) in protein_protein_interaction_network.get_post_translational_modifications(
-                            network, subset["time"]):
-                        measurement_range = (
-                            conversion.
-                            MEASUREMENT_CONVERSION[subset.get("conversion")](
-                                subset.get(
-                                    "measurement", default.MEASUREMENT_RANGE[
-                                        subset.get("conversion")])[0],
-                                protein_protein_interaction_network.
-                                get_measurements(
-                                    network, subset["time"],
-                                    subset["post-translational modification"],
-                                    combination.SITE_COMBINATION[subset.get(
-                                        "site combination", "maxabs")])),
-                            conversion.MEASUREMENT_CONVERSION[subset.get(
-                                "conversion")]
-                            (subset.get(
-                                "measurement", default.MEASUREMENT_RANGE[
-                                    subset.get("conversion")])[1],
-                             protein_protein_interaction_network.
-                             get_measurements(
-                                 network, subset["time"],
-                                 subset["post-translational modification"],
-                                 combination.SITE_COMBINATION[subset.get(
-                                     "site combination", "maxabs")])))
+        if "subsets" in configuration["CORUM enrichment"]:
+            proteins = set(
+                network.nodes()) if configuration["CORUM enrichment"].get(
+                    "intersection", False) else set()
+            for subset in configuration["CORUM enrichment"]["subsets"]:
+                if subset.get(
+                        "time"
+                ) in protein_protein_interaction_network.get_times(
+                        network
+                ) and subset.get(
+                        "post-translational modification"
+                ) in protein_protein_interaction_network.get_post_translational_modifications(
+                        network, subset["time"]):
+                    measurement_range = (
+                        conversion.MEASUREMENT_CONVERSION[subset.get(
+                            "conversion")]
+                        (subset.get(
+                            "measurement", default.MEASUREMENT_RANGE[subset.get(
+                                "conversion")])[0],
+                         protein_protein_interaction_network.get_measurements(
+                             network, subset["time"],
+                             subset["post-translational modification"],
+                             combination.SITE_COMBINATION[subset.get(
+                                 "site combination", "maxabs")])),
+                        conversion.MEASUREMENT_CONVERSION[subset.get(
+                            "conversion")]
+                        (subset.get(
+                            "measurement", default.MEASUREMENT_RANGE[subset.get(
+                                "conversion")])[1],
+                         protein_protein_interaction_network.get_measurements(
+                             network, subset["time"],
+                             subset["post-translational modification"],
+                             combination.SITE_COMBINATION[subset.get(
+                                 "site combination", "maxabs")])))
 
-                        proteins.update(
+                    if configuration["CORUM enrichment"].get(
+                            "intersection", False):
+                        proteins.intersection_update(
                             protein_protein_interaction_network.get_proteins(
                                 network, subset["time"],
                                 subset["post-translational modification"],
@@ -464,42 +463,8 @@ def process_workflow(configuration: dict[str],
                                 measurement: measurement <= measurement_range[
                                     0] or measurement >= measurement_range[1]))
 
-            elif "intersection" in configuration["CORUM enrichment"]:
-                proteins = set(network.nodes())
-                for subset in configuration["CORUM enrichment"]["intersection"]:
-                    if subset.get(
-                            "time"
-                    ) in protein_protein_interaction_network.get_times(
-                            network
-                    ) and subset.get(
-                            "post-translational modification"
-                    ) in protein_protein_interaction_network.get_post_translational_modifications(
-                            network, subset["time"]):
-                        measurement_range = (
-                            conversion.
-                            MEASUREMENT_CONVERSION[subset.get("conversion")](
-                                subset.get(
-                                    "measurement", default.MEASUREMENT_RANGE[
-                                        subset.get("conversion")])[0],
-                                protein_protein_interaction_network.
-                                get_measurements(
-                                    network, subset["time"],
-                                    subset["post-translational modification"],
-                                    combination.SITE_COMBINATION[subset.get(
-                                        "site combination", "maxabs")])),
-                            conversion.MEASUREMENT_CONVERSION[subset.get(
-                                "conversion")]
-                            (subset.get(
-                                "measurement", default.MEASUREMENT_RANGE[
-                                    subset.get("conversion")])[1],
-                             protein_protein_interaction_network.
-                             get_measurements(
-                                 network, subset["time"],
-                                 subset["post-translational modification"],
-                                 combination.SITE_COMBINATION[subset.get(
-                                     "site combination", "maxabs")])))
-
-                        proteins.intersection_update(
+                    else:
+                        proteins.update(
                             protein_protein_interaction_network.get_proteins(
                                 network, subset["time"],
                                 subset["post-translational modification"],
@@ -548,46 +513,44 @@ def process_workflow(configuration: dict[str],
                     logger.info(f"{protein_complex}\t{p:.2e}\t{name}")
 
     if "Gene Ontology enrichment" in configuration:
-        if "union" in configuration[
-                "Gene Ontology enrichment"] or "intersection" in configuration[
-                    "Gene Ontology enrichment"]:
-            if "union" in configuration["Gene Ontology enrichment"]:
-                proteins = set()
-                for subset in configuration["Gene Ontology enrichment"][
-                        "union"]:
-                    if subset.get(
-                            "time"
-                    ) in protein_protein_interaction_network.get_times(
-                            network
-                    ) and subset.get(
-                            "post-translational modification"
-                    ) in protein_protein_interaction_network.get_post_translational_modifications(
-                            network, subset["time"]):
-                        measurement_range = (
-                            conversion.
-                            MEASUREMENT_CONVERSION[subset.get("conversion")](
-                                subset.get(
-                                    "measurement", default.MEASUREMENT_RANGE[
-                                        subset.get("conversion")])[0],
-                                protein_protein_interaction_network.
-                                get_measurements(
-                                    network, subset["time"],
-                                    subset["post-translational modification"],
-                                    combination.SITE_COMBINATION[subset.get(
-                                        "site combination", "maxabs")])),
-                            conversion.MEASUREMENT_CONVERSION[subset.get(
-                                "conversion")]
-                            (subset.get(
-                                "measurement", default.MEASUREMENT_RANGE[
-                                    subset.get("conversion")])[1],
-                             protein_protein_interaction_network.
-                             get_measurements(
-                                 network, subset["time"],
-                                 subset["post-translational modification"],
-                                 combination.SITE_COMBINATION[subset.get(
-                                     "site combination", "maxabs")])))
+        if "subsets" in configuration["Gene Ontology enrichment"]:
+            proteins = set(network.nodes()
+                          ) if configuration["Gene Ontology enrichment"].get(
+                              "intersection", False) else set()
+            for subset in configuration["Gene Ontology enrichment"]["subsets"]:
+                if subset.get(
+                        "time"
+                ) in protein_protein_interaction_network.get_times(
+                        network
+                ) and subset.get(
+                        "post-translational modification"
+                ) in protein_protein_interaction_network.get_post_translational_modifications(
+                        network, subset["time"]):
+                    measurement_range = (
+                        conversion.MEASUREMENT_CONVERSION[subset.get(
+                            "conversion")]
+                        (subset.get(
+                            "measurement", default.MEASUREMENT_RANGE[subset.get(
+                                "conversion")])[0],
+                         protein_protein_interaction_network.get_measurements(
+                             network, subset["time"],
+                             subset["post-translational modification"],
+                             combination.SITE_COMBINATION[subset.get(
+                                 "site combination", "maxabs")])),
+                        conversion.MEASUREMENT_CONVERSION[subset.get(
+                            "conversion")]
+                        (subset.get(
+                            "measurement", default.MEASUREMENT_RANGE[subset.get(
+                                "conversion")])[1],
+                         protein_protein_interaction_network.get_measurements(
+                             network, subset["time"],
+                             subset["post-translational modification"],
+                             combination.SITE_COMBINATION[subset.get(
+                                 "site combination", "maxabs")])))
 
-                        proteins.update(
+                    if configuration["Gene Ontology enrichment"].get(
+                            "intersection", False):
+                        proteins.intersection_update(
                             protein_protein_interaction_network.get_proteins(
                                 network, subset["time"],
                                 subset["post-translational modification"],
@@ -596,43 +559,8 @@ def process_workflow(configuration: dict[str],
                                 measurement: measurement <= measurement_range[
                                     0] or measurement >= measurement_range[1]))
 
-            elif "intersection" in configuration["Gene Ontology enrichment"]:
-                proteins = set(network.nodes())
-                for subset in configuration["Gene Ontology enrichment"][
-                        "intersection"]:
-                    if subset.get(
-                            "time"
-                    ) in protein_protein_interaction_network.get_times(
-                            network
-                    ) and subset.get(
-                            "post-translational modification"
-                    ) in protein_protein_interaction_network.get_post_translational_modifications(
-                            network, subset["time"]):
-                        measurement_range = (
-                            conversion.
-                            MEASUREMENT_CONVERSION[subset.get("conversion")](
-                                subset.get(
-                                    "measurement", default.MEASUREMENT_RANGE[
-                                        subset.get("conversion")])[0],
-                                protein_protein_interaction_network.
-                                get_measurements(
-                                    network, subset["time"],
-                                    subset["post-translational modification"],
-                                    combination.SITE_COMBINATION[subset.get(
-                                        "site combination", "maxabs")])),
-                            conversion.MEASUREMENT_CONVERSION[subset.get(
-                                "conversion")]
-                            (subset.get(
-                                "measurement", default.MEASUREMENT_RANGE[
-                                    subset.get("conversion")])[1],
-                             protein_protein_interaction_network.
-                             get_measurements(
-                                 network, subset["time"],
-                                 subset["post-translational modification"],
-                                 combination.SITE_COMBINATION[subset.get(
-                                     "site combination", "maxabs")])))
-
-                        proteins.intersection_update(
+                    else:
+                        proteins.update(
                             protein_protein_interaction_network.get_proteins(
                                 network, subset["time"],
                                 subset["post-translational modification"],
@@ -687,45 +615,44 @@ def process_workflow(configuration: dict[str],
                     logger.info(f"{term}\t{p:.2e}\t{name}")
 
     if "Reactome enrichment" in configuration:
-        if "union" in configuration[
-                "Reactome enrichment"] or "intersection" in configuration[
-                    "Reactome enrichment"]:
-            if "union" in configuration["Reactome enrichment"]:
-                proteins = set()
-                for subset in configuration["Reactome enrichment"]["union"]:
-                    if subset.get(
-                            "time"
-                    ) in protein_protein_interaction_network.get_times(
-                            network
-                    ) and subset.get(
-                            "post-translational modification"
-                    ) in protein_protein_interaction_network.get_post_translational_modifications(
-                            network, subset["time"]):
-                        measurement_range = (
-                            conversion.
-                            MEASUREMENT_CONVERSION[subset.get("conversion")](
-                                subset.get(
-                                    "measurement", default.MEASUREMENT_RANGE[
-                                        subset.get("conversion")])[0],
-                                protein_protein_interaction_network.
-                                get_measurements(
-                                    network, subset["time"],
-                                    subset["post-translational modification"],
-                                    combination.SITE_COMBINATION[subset.get(
-                                        "site combination", "maxabs")])),
-                            conversion.MEASUREMENT_CONVERSION[subset.get(
-                                "conversion")]
-                            (subset.get(
-                                "measurement", default.MEASUREMENT_RANGE[
-                                    subset.get("conversion")])[1],
-                             protein_protein_interaction_network.
-                             get_measurements(
-                                 network, subset["time"],
-                                 subset["post-translational modification"],
-                                 combination.SITE_COMBINATION[subset.get(
-                                     "site combination", "maxabs")])))
+        if "subsets" in configuration["Reactome enrichment"]:
+            proteins = set(
+                network.nodes()) if configuration["Reactome enrichment"].get(
+                    "intersection", False) else set()
+            for subset in configuration["Reactome enrichment"]["subsets"]:
+                if subset.get(
+                        "time"
+                ) in protein_protein_interaction_network.get_times(
+                        network
+                ) and subset.get(
+                        "post-translational modification"
+                ) in protein_protein_interaction_network.get_post_translational_modifications(
+                        network, subset["time"]):
+                    measurement_range = (
+                        conversion.MEASUREMENT_CONVERSION[subset.get(
+                            "conversion")]
+                        (subset.get(
+                            "measurement", default.MEASUREMENT_RANGE[subset.get(
+                                "conversion")])[0],
+                         protein_protein_interaction_network.get_measurements(
+                             network, subset["time"],
+                             subset["post-translational modification"],
+                             combination.SITE_COMBINATION[subset.get(
+                                 "site combination", "maxabs")])),
+                        conversion.MEASUREMENT_CONVERSION[subset.get(
+                            "conversion")]
+                        (subset.get(
+                            "measurement", default.MEASUREMENT_RANGE[subset.get(
+                                "conversion")])[1],
+                         protein_protein_interaction_network.get_measurements(
+                             network, subset["time"],
+                             subset["post-translational modification"],
+                             combination.SITE_COMBINATION[subset.get(
+                                 "site combination", "maxabs")])))
 
-                        proteins.update(
+                    if configuration["Reactome enrichment"].get(
+                            "intersection", False):
+                        proteins.intersection_update(
                             protein_protein_interaction_network.get_proteins(
                                 network, subset["time"],
                                 subset["post-translational modification"],
@@ -734,43 +661,8 @@ def process_workflow(configuration: dict[str],
                                 measurement: measurement <= measurement_range[
                                     0] or measurement >= measurement_range[1]))
 
-            elif "intersection" in configuration["Reactome enrichment"]:
-                proteins = set(network.nodes())
-                for subset in configuration["Reactome enrichment"][
-                        "intersection"]:
-                    if subset.get(
-                            "time"
-                    ) in protein_protein_interaction_network.get_times(
-                            network
-                    ) and subset.get(
-                            "post-translational modification"
-                    ) in protein_protein_interaction_network.get_post_translational_modifications(
-                            network, subset["time"]):
-                        measurement_range = (
-                            conversion.
-                            MEASUREMENT_CONVERSION[subset.get("conversion")](
-                                subset.get(
-                                    "measurement", default.MEASUREMENT_RANGE[
-                                        subset.get("conversion")])[0],
-                                protein_protein_interaction_network.
-                                get_measurements(
-                                    network, subset["time"],
-                                    subset["post-translational modification"],
-                                    combination.SITE_COMBINATION[subset.get(
-                                        "site combination", "maxabs")])),
-                            conversion.MEASUREMENT_CONVERSION[subset.get(
-                                "conversion")]
-                            (subset.get(
-                                "measurement", default.MEASUREMENT_RANGE[
-                                    subset.get("conversion")])[1],
-                             protein_protein_interaction_network.
-                             get_measurements(
-                                 network, subset["time"],
-                                 subset["post-translational modification"],
-                                 combination.SITE_COMBINATION[subset.get(
-                                     "site combination", "maxabs")])))
-
-                        proteins.intersection_update(
+                    else:
+                        proteins.update(
                             protein_protein_interaction_network.get_proteins(
                                 network, subset["time"],
                                 subset["post-translational modification"],
@@ -814,45 +706,44 @@ def process_workflow(configuration: dict[str],
                     logger.info(f"{pathway}\t{p:.2e}\t{name}")
 
     if "Gene Ontology network" in configuration:
-        if "union" in configuration[
-                "Gene Ontology network"] or "intersection" in configuration[
-                    "Gene Ontology network"]:
-            if "union" in configuration["Gene Ontology network"]:
-                proteins = set()
-                for subset in configuration["Gene Ontology network"]["union"]:
-                    if subset.get(
-                            "time"
-                    ) in protein_protein_interaction_network.get_times(
-                            network
-                    ) and subset.get(
-                            "post-translational modification"
-                    ) in protein_protein_interaction_network.get_post_translational_modifications(
-                            network, subset["time"]):
-                        measurement_range = (
-                            conversion.
-                            MEASUREMENT_CONVERSION[subset.get("conversion")](
-                                subset.get(
-                                    "measurement", default.MEASUREMENT_RANGE[
-                                        subset.get("conversion")])[0],
-                                protein_protein_interaction_network.
-                                get_measurements(
-                                    network, subset["time"],
-                                    subset["post-translational modification"],
-                                    combination.SITE_COMBINATION[subset.get(
-                                        "site combination", "maxabs")])),
-                            conversion.MEASUREMENT_CONVERSION[subset.get(
-                                "conversion")]
-                            (subset.get(
-                                "measurement", default.MEASUREMENT_RANGE[
-                                    subset.get("conversion")])[1],
-                             protein_protein_interaction_network.
-                             get_measurements(
-                                 network, subset["time"],
-                                 subset["post-translational modification"],
-                                 combination.SITE_COMBINATION[subset.get(
-                                     "site combination", "maxabs")])))
+        if "subsets" in configuration["Gene Ontology network"]:
+            proteins = set(
+                network.nodes()) if configuration["Gene Ontology network"].get(
+                    "intersection", False) else set()
+            for subset in configuration["Gene Ontology network"]["subsets"]:
+                if subset.get(
+                        "time"
+                ) in protein_protein_interaction_network.get_times(
+                        network
+                ) and subset.get(
+                        "post-translational modification"
+                ) in protein_protein_interaction_network.get_post_translational_modifications(
+                        network, subset["time"]):
+                    measurement_range = (
+                        conversion.MEASUREMENT_CONVERSION[subset.get(
+                            "conversion")]
+                        (subset.get(
+                            "measurement", default.MEASUREMENT_RANGE[subset.get(
+                                "conversion")])[0],
+                         protein_protein_interaction_network.get_measurements(
+                             network, subset["time"],
+                             subset["post-translational modification"],
+                             combination.SITE_COMBINATION[subset.get(
+                                 "site combination", "maxabs")])),
+                        conversion.MEASUREMENT_CONVERSION[subset.get(
+                            "conversion")]
+                        (subset.get(
+                            "measurement", default.MEASUREMENT_RANGE[subset.get(
+                                "conversion")])[1],
+                         protein_protein_interaction_network.get_measurements(
+                             network, subset["time"],
+                             subset["post-translational modification"],
+                             combination.SITE_COMBINATION[subset.get(
+                                 "site combination", "maxabs")])))
 
-                        proteins.update(
+                    if configuration["Gene Ontology network"].get(
+                            "intersection", False):
+                        proteins.intersection_update(
                             protein_protein_interaction_network.get_proteins(
                                 network, subset["time"],
                                 subset["post-translational modification"],
@@ -861,43 +752,8 @@ def process_workflow(configuration: dict[str],
                                 measurement: measurement <= measurement_range[
                                     0] or measurement >= measurement_range[1]))
 
-            elif "intersection" in configuration["Gene Ontology network"]:
-                proteins = set(network.nodes())
-                for subset in configuration["Gene Ontology network"][
-                        "intersection"]:
-                    if subset.get(
-                            "time"
-                    ) in protein_protein_interaction_network.get_times(
-                            network
-                    ) and subset.get(
-                            "post-translational modification"
-                    ) in protein_protein_interaction_network.get_post_translational_modifications(
-                            network, subset["time"]):
-                        measurement_range = (
-                            conversion.
-                            MEASUREMENT_CONVERSION[subset.get("conversion")](
-                                subset.get(
-                                    "measurement", default.MEASUREMENT_RANGE[
-                                        subset.get("conversion")])[0],
-                                protein_protein_interaction_network.
-                                get_measurements(
-                                    network, subset["time"],
-                                    subset["post-translational modification"],
-                                    combination.SITE_COMBINATION[subset.get(
-                                        "site combination", "maxabs")])),
-                            conversion.MEASUREMENT_CONVERSION[subset.get(
-                                "conversion")]
-                            (subset.get(
-                                "measurement", default.MEASUREMENT_RANGE[
-                                    subset.get("conversion")])[1],
-                             protein_protein_interaction_network.
-                             get_measurements(
-                                 network, subset["time"],
-                                 subset["post-translational modification"],
-                                 combination.SITE_COMBINATION[subset.get(
-                                     "site combination", "maxabs")])))
-
-                        proteins.intersection_update(
+                    else:
+                        proteins.update(
                             protein_protein_interaction_network.get_proteins(
                                 network, subset["time"],
                                 subset["post-translational modification"],
@@ -951,45 +807,44 @@ def process_workflow(configuration: dict[str],
                 f"{logger.name}.go.{index}" if index else f"{logger.name}.go")
 
     if "Reactome network" in configuration:
-        if "union" in configuration[
-                "Reactome network"] or "intersection" in configuration[
-                    "Reactome network"]:
-            if "union" in configuration["Reactome network"]:
-                proteins = set()
-                for subset in configuration["Reactome network"]["union"]:
-                    if subset.get(
-                            "time"
-                    ) in protein_protein_interaction_network.get_times(
-                            network
-                    ) and subset.get(
-                            "post-translational modification"
-                    ) in protein_protein_interaction_network.get_post_translational_modifications(
-                            network, subset["time"]):
-                        measurement_range = (
-                            conversion.
-                            MEASUREMENT_CONVERSION[subset.get("conversion")](
-                                subset.get(
-                                    "measurement", default.MEASUREMENT_RANGE[
-                                        subset.get("conversion")])[0],
-                                protein_protein_interaction_network.
-                                get_measurements(
-                                    network, subset["time"],
-                                    subset["post-translational modification"],
-                                    combination.SITE_COMBINATION[subset.get(
-                                        "site combination", "maxabs")])),
-                            conversion.MEASUREMENT_CONVERSION[subset.get(
-                                "conversion")]
-                            (subset.get(
-                                "measurement", default.MEASUREMENT_RANGE[
-                                    subset.get("conversion")])[1],
-                             protein_protein_interaction_network.
-                             get_measurements(
-                                 network, subset["time"],
-                                 subset["post-translational modification"],
-                                 combination.SITE_COMBINATION[subset.get(
-                                     "site combination", "maxabs")])))
+        if "subsets" in configuration["Reactome network"]:
+            proteins = set(
+                network.nodes()) if configuration["Reactome network"].get(
+                    "intersection", False) else set()
+            for subset in configuration["Reactome network"]["subsets"]:
+                if subset.get(
+                        "time"
+                ) in protein_protein_interaction_network.get_times(
+                        network
+                ) and subset.get(
+                        "post-translational modification"
+                ) in protein_protein_interaction_network.get_post_translational_modifications(
+                        network, subset["time"]):
+                    measurement_range = (
+                        conversion.MEASUREMENT_CONVERSION[subset.get(
+                            "conversion")]
+                        (subset.get(
+                            "measurement", default.MEASUREMENT_RANGE[subset.get(
+                                "conversion")])[0],
+                         protein_protein_interaction_network.get_measurements(
+                             network, subset["time"],
+                             subset["post-translational modification"],
+                             combination.SITE_COMBINATION[subset.get(
+                                 "site combination", "maxabs")])),
+                        conversion.MEASUREMENT_CONVERSION[subset.get(
+                            "conversion")]
+                        (subset.get(
+                            "measurement", default.MEASUREMENT_RANGE[subset.get(
+                                "conversion")])[1],
+                         protein_protein_interaction_network.get_measurements(
+                             network, subset["time"],
+                             subset["post-translational modification"],
+                             combination.SITE_COMBINATION[subset.get(
+                                 "site combination", "maxabs")])))
 
-                        proteins.update(
+                    if configuration["Reactome network"].get(
+                            "intersection", False):
+                        proteins.intersection_update(
                             protein_protein_interaction_network.get_proteins(
                                 network, subset["time"],
                                 subset["post-translational modification"],
@@ -998,42 +853,8 @@ def process_workflow(configuration: dict[str],
                                 measurement: measurement <= measurement_range[
                                     0] or measurement >= measurement_range[1]))
 
-            elif "intersection" in configuration["Reactome network"]:
-                proteins = set(network.nodes())
-                for subset in configuration["Reactome network"]["intersection"]:
-                    if subset.get(
-                            "time"
-                    ) in protein_protein_interaction_network.get_times(
-                            network
-                    ) and subset.get(
-                            "post-translational modification"
-                    ) in protein_protein_interaction_network.get_post_translational_modifications(
-                            network, subset["time"]):
-                        measurement_range = (
-                            conversion.
-                            MEASUREMENT_CONVERSION[subset.get("conversion")](
-                                subset.get(
-                                    "measurement", default.MEASUREMENT_RANGE[
-                                        subset.get("conversion")])[0],
-                                protein_protein_interaction_network.
-                                get_measurements(
-                                    network, subset["time"],
-                                    subset["post-translational modification"],
-                                    combination.SITE_COMBINATION[subset.get(
-                                        "site combination", "maxabs")])),
-                            conversion.MEASUREMENT_CONVERSION[subset.get(
-                                "conversion")]
-                            (subset.get(
-                                "measurement", default.MEASUREMENT_RANGE[
-                                    subset.get("conversion")])[1],
-                             protein_protein_interaction_network.
-                             get_measurements(
-                                 network, subset["time"],
-                                 subset["post-translational modification"],
-                                 combination.SITE_COMBINATION[subset.get(
-                                     "site combination", "maxabs")])))
-
-                        proteins.intersection_update(
+                    else:
+                        proteins.update(
                             protein_protein_interaction_network.get_proteins(
                                 network, subset["time"],
                                 subset["post-translational modification"],
@@ -1100,52 +921,54 @@ def process_workflow(configuration: dict[str],
         export = {community: False for community in communities}
 
         if "CORUM enrichment" in configuration["community detection"]:
-            if "union" in configuration["community detection"][
-                    "CORUM enrichment"] or "intersection" in configuration[
-                        "community detection"]["CORUM enrichment"]:
-                if "union" in configuration["community detection"][
-                        "CORUM enrichment"]:
-                    proteins = {community: set() for community in communities}
-                    for subset in configuration["community detection"][
-                            "CORUM enrichment"]["union"]:
-                        if subset.get(
-                                "time"
-                        ) in protein_protein_interaction_network.get_times(
-                                network
-                        ) and subset.get(
-                                "post-translational modification"
-                        ) in protein_protein_interaction_network.get_post_translational_modifications(
-                                network, subset["time"]):
-                            for community in proteins:
-                                measurement_range = (
-                                    conversion.MEASUREMENT_CONVERSION[
-                                        subset.get("conversion")]
-                                    (subset.get(
-                                        "measurement",
-                                        default.MEASUREMENT_RANGE[subset.get(
-                                            "conversion")])[0],
-                                     protein_protein_interaction_network.
-                                     get_measurements(
-                                         community, subset["time"], subset[
-                                             "post-translational modification"],
-                                         combination.SITE_COMBINATION[
-                                             subset.get("site combination",
-                                                        "maxabs")])),
-                                    conversion.MEASUREMENT_CONVERSION[
-                                        subset.get("conversion")]
-                                    (subset.get(
-                                        "measurement",
-                                        default.MEASUREMENT_RANGE[subset.get(
-                                            "conversion")])[1],
-                                     protein_protein_interaction_network.
-                                     get_measurements(
-                                         community, subset["time"], subset[
-                                             "post-translational modification"],
-                                         combination.SITE_COMBINATION[
-                                             subset.get("site combination",
-                                                        "maxabs")])))
+            if "subsets" in configuration["community detection"][
+                    "CORUM enrichment"]:
+                proteins = {
+                    community: set(community.nodes())
+                    for community in communities
+                } if configuration["community detection"][
+                    "CORUM enrichment"].get("intersection", False) else {
+                        community: set() for community in communities
+                    }
+                for subset in configuration["community detection"][
+                        "CORUM enrichment"]["subsets"]:
+                    if subset.get(
+                            "time"
+                    ) in protein_protein_interaction_network.get_times(
+                            network
+                    ) and subset.get(
+                            "post-translational modification"
+                    ) in protein_protein_interaction_network.get_post_translational_modifications(
+                            network, subset["time"]):
+                        for community in proteins:
+                            measurement_range = (
+                                conversion.MEASUREMENT_CONVERSION[subset.get(
+                                    "conversion")]
+                                (subset.get(
+                                    "measurement", default.MEASUREMENT_RANGE[
+                                        subset.get("conversion")])[0],
+                                 protein_protein_interaction_network.
+                                 get_measurements(
+                                     community, subset["time"],
+                                     subset["post-translational modification"],
+                                     combination.SITE_COMBINATION[subset.get(
+                                         "site combination", "maxabs")])),
+                                conversion.MEASUREMENT_CONVERSION[subset.get(
+                                    "conversion")]
+                                (subset.get(
+                                    "measurement", default.MEASUREMENT_RANGE[
+                                        subset.get("conversion")])[1],
+                                 protein_protein_interaction_network.
+                                 get_measurements(
+                                     community, subset["time"],
+                                     subset["post-translational modification"],
+                                     combination.SITE_COMBINATION[subset.get(
+                                         "site combination", "maxabs")])))
 
-                                proteins[community].update(
+                            if configuration["community detection"][
+                                    "CORUM enrichment"].get(
+                                        "intersection", False):
+                                proteins[community].intersection_update(
                                     protein_protein_interaction_network.
                                     get_proteins(
                                         community, subset["time"], subset[
@@ -1156,52 +979,8 @@ def process_workflow(configuration: dict[str],
                                         measurement <= measurement_range[0] or
                                         measurement >= measurement_range[1]))
 
-                elif "intersection" in configuration["community detection"][
-                        "CORUM enrichment"]:
-                    proteins = {
-                        community: set(community.nodes())
-                        for community in communities
-                    }
-                    for subset in configuration["community detection"][
-                            "CORUM enrichment"]["intersection"]:
-                        if subset.get(
-                                "time"
-                        ) in protein_protein_interaction_network.get_times(
-                                network
-                        ) and subset.get(
-                                "post-translational modification"
-                        ) in protein_protein_interaction_network.get_post_translational_modifications(
-                                network, subset["time"]):
-                            for community in proteins:
-                                measurement_range = (
-                                    conversion.MEASUREMENT_CONVERSION[
-                                        subset.get("conversion")]
-                                    (subset.get(
-                                        "measurement",
-                                        default.MEASUREMENT_RANGE[subset.get(
-                                            "conversion")])[0],
-                                     protein_protein_interaction_network.
-                                     get_measurements(
-                                         community, subset["time"], subset[
-                                             "post-translational modification"],
-                                         combination.SITE_COMBINATION[
-                                             subset.get("site combination",
-                                                        "maxabs")])),
-                                    conversion.MEASUREMENT_CONVERSION[
-                                        subset.get("conversion")]
-                                    (subset.get(
-                                        "measurement",
-                                        default.MEASUREMENT_RANGE[subset.get(
-                                            "conversion")])[1],
-                                     protein_protein_interaction_network.
-                                     get_measurements(
-                                         community, subset["time"], subset[
-                                             "post-translational modification"],
-                                         combination.SITE_COMBINATION[
-                                             subset.get("site combination",
-                                                        "maxabs")])))
-
-                                proteins[community].intersection_update(
+                            else:
+                                proteins[community].update(
                                     protein_protein_interaction_network.
                                     get_proteins(
                                         community, subset["time"], subset[
@@ -1277,52 +1056,55 @@ def process_workflow(configuration: dict[str],
                                         f"{name}")
 
         if "Gene Ontology enrichment" in configuration["community detection"]:
-            if "union" in configuration["community detection"][
-                    "Gene Ontology enrichment"] or "intersection" in configuration[
-                        "community detection"]["Gene Ontology enrichment"]:
-                if "union" in configuration["community detection"][
-                        "Gene Ontology enrichment"]:
-                    proteins = {community: set() for community in communities}
-                    for subset in configuration["community detection"][
-                            "Gene Ontology enrichment"]["union"]:
-                        if subset.get(
-                                "time"
-                        ) in protein_protein_interaction_network.get_times(
-                                network
-                        ) and subset.get(
-                                "post-translational modification"
-                        ) in protein_protein_interaction_network.get_post_translational_modifications(
-                                network, subset["time"]):
-                            for community in proteins:
-                                measurement_range = (
-                                    conversion.MEASUREMENT_CONVERSION[
-                                        subset.get("conversion")]
-                                    (subset.get(
-                                        "measurement",
-                                        default.MEASUREMENT_RANGE[subset.get(
-                                            "conversion")])[0],
-                                     protein_protein_interaction_network.
-                                     get_measurements(
-                                         community, subset["time"], subset[
-                                             "post-translational modification"],
-                                         combination.SITE_COMBINATION[
-                                             subset.get("site combination",
-                                                        "maxabs")])),
-                                    conversion.MEASUREMENT_CONVERSION[
-                                        subset.get("conversion")]
-                                    (subset.get(
-                                        "measurement",
-                                        default.MEASUREMENT_RANGE[subset.get(
-                                            "conversion")])[1],
-                                     protein_protein_interaction_network.
-                                     get_measurements(
-                                         community, subset["time"], subset[
-                                             "post-translational modification"],
-                                         combination.SITE_COMBINATION[
-                                             subset.get("site combination",
-                                                        "maxabs")])))
+            if "subsets" in configuration["community detection"][
+                    "Gene Ontology enrichment"]:
+                proteins = {
+                    community: set(community.nodes())
+                    for community in communities
+                } if configuration[
+                    "community detection"]["Gene Ontology enrichment"].get(
+                        "intersection", False) else {
+                            community: set() for community in communities
+                        }
+                for subset in configuration["community detection"][
+                        "Gene Ontology enrichment"]["subsets"]:
+                    if subset.get(
+                            "time"
+                    ) in protein_protein_interaction_network.get_times(
+                            network
+                    ) and subset.get(
+                            "post-translational modification"
+                    ) in protein_protein_interaction_network.get_post_translational_modifications(
+                            network, subset["time"]):
+                        for community in proteins:
+                            measurement_range = (
+                                conversion.MEASUREMENT_CONVERSION[subset.get(
+                                    "conversion")]
+                                (subset.get(
+                                    "measurement", default.MEASUREMENT_RANGE[
+                                        subset.get("conversion")])[0],
+                                 protein_protein_interaction_network.
+                                 get_measurements(
+                                     community, subset["time"],
+                                     subset["post-translational modification"],
+                                     combination.SITE_COMBINATION[subset.get(
+                                         "site combination", "maxabs")])),
+                                conversion.MEASUREMENT_CONVERSION[subset.get(
+                                    "conversion")]
+                                (subset.get(
+                                    "measurement", default.MEASUREMENT_RANGE[
+                                        subset.get("conversion")])[1],
+                                 protein_protein_interaction_network.
+                                 get_measurements(
+                                     community, subset["time"],
+                                     subset["post-translational modification"],
+                                     combination.SITE_COMBINATION[subset.get(
+                                         "site combination", "maxabs")])))
 
-                                proteins[community].update(
+                            if configuration["community detection"][
+                                    "Gene Ontology enrichment"].get(
+                                        "intersection", False):
+                                proteins[community].intersection_update(
                                     protein_protein_interaction_network.
                                     get_proteins(
                                         community, subset["time"], subset[
@@ -1333,52 +1115,8 @@ def process_workflow(configuration: dict[str],
                                         measurement <= measurement_range[0] or
                                         measurement >= measurement_range[1]))
 
-                elif "intersection" in configuration["community detection"][
-                        "Gene Ontology enrichment"]:
-                    proteins = {
-                        community: set(community.nodes())
-                        for community in communities
-                    }
-                    for subset in configuration["community detection"][
-                            "Gene Ontology enrichment"]["intersection"]:
-                        if subset.get(
-                                "time"
-                        ) in protein_protein_interaction_network.get_times(
-                                network
-                        ) and subset.get(
-                                "post-translational modification"
-                        ) in protein_protein_interaction_network.get_post_translational_modifications(
-                                network, subset["time"]):
-                            for community in proteins:
-                                measurement_range = (
-                                    conversion.MEASUREMENT_CONVERSION[
-                                        subset.get("conversion")]
-                                    (subset.get(
-                                        "measurement",
-                                        default.MEASUREMENT_RANGE[subset.get(
-                                            "conversion")])[0],
-                                     protein_protein_interaction_network.
-                                     get_measurements(
-                                         community, subset["time"], subset[
-                                             "post-translational modification"],
-                                         combination.SITE_COMBINATION[
-                                             subset.get("site combination",
-                                                        "maxabs")])),
-                                    conversion.MEASUREMENT_CONVERSION[
-                                        subset.get("conversion")]
-                                    (subset.get(
-                                        "measurement",
-                                        default.MEASUREMENT_RANGE[subset.get(
-                                            "conversion")])[1],
-                                     protein_protein_interaction_network.
-                                     get_measurements(
-                                         community, subset["time"], subset[
-                                             "post-translational modification"],
-                                         combination.SITE_COMBINATION[
-                                             subset.get("site combination",
-                                                        "maxabs")])))
-
-                                proteins[community].intersection_update(
+                            else:
+                                proteins[community].update(
                                     protein_protein_interaction_network.
                                     get_proteins(
                                         community, subset["time"], subset[
@@ -1460,52 +1198,54 @@ def process_workflow(configuration: dict[str],
                             logger.info(f"{k}\t{term}\t{p:.2e}\t{name}")
 
         if "Reactome enrichment" in configuration["community detection"]:
-            if "union" in configuration["community detection"][
-                    "Reactome enrichment"] or "intersection" in configuration[
-                        "community detection"]["Reactome enrichment"]:
-                if "union" in configuration["community detection"][
-                        "Reactome enrichment"]:
-                    proteins = {community: set() for community in communities}
-                    for subset in configuration["community detection"][
-                            "Reactome enrichment"]["union"]:
-                        if subset.get(
-                                "time"
-                        ) in protein_protein_interaction_network.get_times(
-                                network
-                        ) and subset.get(
-                                "post-translational modification"
-                        ) in protein_protein_interaction_network.get_post_translational_modifications(
-                                network, subset["time"]):
-                            for community in proteins:
-                                measurement_range = (
-                                    conversion.MEASUREMENT_CONVERSION[
-                                        subset.get("conversion")]
-                                    (subset.get(
-                                        "measurement",
-                                        default.MEASUREMENT_RANGE[subset.get(
-                                            "conversion")])[0],
-                                     protein_protein_interaction_network.
-                                     get_measurements(
-                                         community, subset["time"], subset[
-                                             "post-translational modification"],
-                                         combination.SITE_COMBINATION[
-                                             subset.get("site combination",
-                                                        "maxabs")])),
-                                    conversion.MEASUREMENT_CONVERSION[
-                                        subset.get("conversion")]
-                                    (subset.get(
-                                        "measurement",
-                                        default.MEASUREMENT_RANGE[subset.get(
-                                            "conversion")])[1],
-                                     protein_protein_interaction_network.
-                                     get_measurements(
-                                         community, subset["time"], subset[
-                                             "post-translational modification"],
-                                         combination.SITE_COMBINATION[
-                                             subset.get("site combination",
-                                                        "maxabs")])))
+            if "subsets" in configuration["community detection"][
+                    "Reactome enrichment"]:
+                proteins = {
+                    community: set(community.nodes())
+                    for community in communities
+                } if configuration["community detection"][
+                    "Reactome enrichment"].get("intersection", False) else {
+                        community: set() for community in communities
+                    }
+                for subset in configuration["community detection"][
+                        "Reactome enrichment"]["subsets"]:
+                    if subset.get(
+                            "time"
+                    ) in protein_protein_interaction_network.get_times(
+                            network
+                    ) and subset.get(
+                            "post-translational modification"
+                    ) in protein_protein_interaction_network.get_post_translational_modifications(
+                            network, subset["time"]):
+                        for community in proteins:
+                            measurement_range = (
+                                conversion.MEASUREMENT_CONVERSION[subset.get(
+                                    "conversion")]
+                                (subset.get(
+                                    "measurement", default.MEASUREMENT_RANGE[
+                                        subset.get("conversion")])[0],
+                                 protein_protein_interaction_network.
+                                 get_measurements(
+                                     community, subset["time"],
+                                     subset["post-translational modification"],
+                                     combination.SITE_COMBINATION[subset.get(
+                                         "site combination", "maxabs")])),
+                                conversion.MEASUREMENT_CONVERSION[subset.get(
+                                    "conversion")]
+                                (subset.get(
+                                    "measurement", default.MEASUREMENT_RANGE[
+                                        subset.get("conversion")])[1],
+                                 protein_protein_interaction_network.
+                                 get_measurements(
+                                     community, subset["time"],
+                                     subset["post-translational modification"],
+                                     combination.SITE_COMBINATION[subset.get(
+                                         "site combination", "maxabs")])))
 
-                                proteins[community].update(
+                            if configuration["community detection"][
+                                    "Reactome enrichment"].get(
+                                        "intersection", False):
+                                proteins[community].intersection_update(
                                     protein_protein_interaction_network.
                                     get_proteins(
                                         community, subset["time"], subset[
@@ -1516,52 +1256,8 @@ def process_workflow(configuration: dict[str],
                                         measurement <= measurement_range[0] or
                                         measurement >= measurement_range[1]))
 
-                elif "intersection" in configuration["community detection"][
-                        "Reactome enrichment"]:
-                    proteins = {
-                        community: set(community.nodes())
-                        for community in communities
-                    }
-                    for subset in configuration["community detection"][
-                            "Reactome enrichment"]["intersection"]:
-                        if subset.get(
-                                "time"
-                        ) in protein_protein_interaction_network.get_times(
-                                network
-                        ) and subset.get(
-                                "post-translational modification"
-                        ) in protein_protein_interaction_network.get_post_translational_modifications(
-                                network, subset["time"]):
-                            for community in proteins:
-                                measurement_range = (
-                                    conversion.MEASUREMENT_CONVERSION[
-                                        subset.get("conversion")]
-                                    (subset.get(
-                                        "measurement",
-                                        default.MEASUREMENT_RANGE[subset.get(
-                                            "conversion")])[0],
-                                     protein_protein_interaction_network.
-                                     get_measurements(
-                                         community, subset["time"], subset[
-                                             "post-translational modification"],
-                                         combination.SITE_COMBINATION[
-                                             subset.get("site combination",
-                                                        "maxabs")])),
-                                    conversion.MEASUREMENT_CONVERSION[
-                                        subset.get("conversion")]
-                                    (subset.get(
-                                        "measurement",
-                                        default.MEASUREMENT_RANGE[subset.get(
-                                            "conversion")])[1],
-                                     protein_protein_interaction_network.
-                                     get_measurements(
-                                         community, subset["time"], subset[
-                                             "post-translational modification"],
-                                         combination.SITE_COMBINATION[
-                                             subset.get("site combination",
-                                                        "maxabs")])))
-
-                                proteins[community].intersection_update(
+                            else:
+                                proteins[community].update(
                                     protein_protein_interaction_network.
                                     get_proteins(
                                         community, subset["time"], subset[

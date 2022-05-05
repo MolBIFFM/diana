@@ -843,36 +843,21 @@ The NCBI taxonomy ID of the organism of interest. The default and currently only
 [
     {
       "CORUM enrichment": {
-        "union": [
-          {
-            "time": null
-          }
-        ],
-        "intersection": [
+        "subsets": [
           {
             "time": null
           }
         ]
       },
       "Gene Ontology enrichment": {
-        "union": [
-          {
-            "time": null
-          }
-        ],
-        "intersection": [
+        "subsets": [
           {
             "time": null
           }
         ]
       },
       "Reactome enrichment": {
-        "union": [
-          {
-            "time": null
-          }
-        ],
-        "intersection": [
+        "subsets": [
           {
             "time": null
           }
@@ -887,36 +872,21 @@ The time of measurement considered to determine a subset of proteins.
 [
     {   
       "CORUM enrichment": {
-        "union": [
-          {
-            "post-translational modification": null
-          }
-        ],
-        "intersection": [
+        "subsets": [
           {
             "post-translational modification": null
           }
         ]
       },
       "Gene Ontology enrichment": {
-        "union": [
-          {
-            "post-translational modification": null
-          }
-        ],
-        "intersection": [
+        "subsets": [
           {
             "post-translational modification": null
           }
         ]
       },
       "Reactome enrichment": {
-        "union": [
-          {
-            "post-translational modification": null
-          }
-        ],
-        "intersection": [
+        "subsets": [
           {
             "post-translational modification": null
           }
@@ -931,38 +901,23 @@ The modification considered to determine a subset of proteins.
 [
     {
       "CORUM enrichment": {
-        "union": [
+        "subsets": [
           {
             "site combination": "maxabs"
-          }
-        ],
-        "intersection": [
-          {
-            "site combination": "maxabs",
           }
         ]
       },
       "Gene Ontology enrichment": {
-        "union": [
+        "subsets": [
           {
             "site combination": "maxabs"
-          }
-        ],
-        "intersection": [
-          {
-            "site combination": "maxabs",
           }
         ]
       },
       "Reactome enrichment": {
-        "union": [
+        "subsets": [
           {
             "site combination": "maxabs"
-          }
-        ],
-        "intersection": [
-          {
-            "site combination": "maxabs",
           }
         ]
       }
@@ -975,36 +930,21 @@ The function used to derive a protein-specific measurement from a its individual
 [
     {
       "CORUM enrichment": {
-        "union": [
-          {
-            "conversion": null
-          }
-        ],
-        "intersection": [
+        "subsets": [
           {
             "conversion": null
           }
         ]
       },
       "Gene Ontology enrichment": {
-        "union": [
-          {
-            "conversion": null
-          }
-        ],
-        "intersection": [
+        "subsets": [
           {
             "conversion": null
           }
         ]
       },
       "Reactome enrichment": {
-        "union": [
-          {
-            "conversion": null
-          }
-        ],
-        "intersection": [
+        "subsets": [
           {
             "conversion": null
           }
@@ -1019,36 +959,21 @@ The conversion of measurements that a range refers to. It defaults to the log2-f
 [
     {
       "CORUM enrichment": {
-        "union": [
-          {
-            "measurement": [-1.0, 1.0]
-          }
-        ],
-        "intersection": [
+        "subsets": [
           {
             "measurement": [-1.0, 1.0]
           }
         ]
       },
       "Gene Ontology enrichment": {
-        "union": [
-          {
-            "measurement": [-1.0, 1.0]
-          }
-        ],
-        "intersection": [
+        "subsets": [
           {
             "measurement": [-1.0, 1.0]
           }
         ]
       },
       "Reactome enrichment": {
-        "union": [
-          {
-            "measurement": [-1.0, 1.0]
-          }
-        ],
-        "intersection": [
+        "subsets": [
           {
             "measurement": [-1.0, 1.0]
           }
@@ -1058,6 +983,23 @@ The conversion of measurements that a range refers to. It defaults to the log2-f
 ]
 ```
 The range of combined measurements categorizing proteins by whether the range is exceeded or not. The default setting is `[-1.0, 1.0]` if `"conversion"` is not set, `[-2.0, 2.0]` if `"conversion"` is set to `"standard score"` and `[0.025, 0.975]` if `"conversion"` is set to `"quantile"`.
+
+```json
+[
+    {
+      "CORUM enrichment": {
+        "intersection": false
+      },
+      "Gene Ontology enrichment": {
+        "intersection": false
+      },
+      "Reactome enrichment": {
+        "intersection": false
+      }
+    }
+]
+```
+If true, compute enrichment with respect to the intersection of specified subsets instead of their union. The default setting is `false`.
 
 ```json
 [
@@ -1095,24 +1037,14 @@ The proteins considered can be restricted, based on associated measurements, eit
 [
     {
       "Gene Ontology network": {
-        "union": [
-          {
-            "time": null
-          }
-        ],
-        "intersection": [
+        "subsets": [
           {
             "time": null
           }
         ]
       },
       "Reactome network": {
-        "union": [
-          {
-            "time": null
-          }
-        ],
-        "intersection": [
+        "subsets": [
           {
             "time": null
           }
@@ -1127,24 +1059,14 @@ The time of measurement considered to determine a subset of proteins.
 [
     {   
       "Gene Ontology network": {
-        "union": [
-          {
-            "post-translational modification": null
-          }
-        ],
-        "intersection": [
+        "subsets": [
           {
             "post-translational modification": null
           }
         ]
       },
       "Reactome network": {
-        "union": [
-          {
-            "post-translational modification": null
-          }
-        ],
-        "intersection": [
+        "subsets": [
           {
             "post-translational modification": null
           }
@@ -1159,26 +1081,16 @@ The modification considered to determine a subset of proteins.
 [
     {
       "Gene Ontology network": {
-        "union": [
+        "subsets": [
           {
             "site combination": "maxabs"
-          }
-        ],
-        "intersection": [
-          {
-            "site combination": "maxabs",
           }
         ]
       },
       "Reactome network": {
-        "union": [
+        "subsets": [
           {
             "site combination": "maxabs"
-          }
-        ],
-        "intersection": [
-          {
-            "site combination": "maxabs",
           }
         ]
       }
@@ -1191,24 +1103,14 @@ The function used to derive a protein-specific measurement from a its individual
 [
     {
       "Gene Ontology network": {
-        "union": [
-          {
-            "conversion": null
-          }
-        ],
-        "intersection": [
+        "subsets": [
           {
             "conversion": null
           }
         ]
       },
       "Reactome network": {
-        "union": [
-          {
-            "conversion": null
-          }
-        ],
-        "intersection": [
+        "subsets": [
           {
             "conversion": null
           }
@@ -1223,24 +1125,14 @@ The conversion of measurements that a range refers to. It defaults to the log2-f
 [
     {
       "Gene Ontology network": {
-        "union": [
-          {
-            "measurement": [-1.0, 1.0]
-          }
-        ],
-        "intersection": [
+        "subsets": [
           {
             "measurement": [-1.0, 1.0]
           }
         ]
       },
       "Reactome network": {
-        "union": [
-          {
-            "measurement": [-1.0, 1.0]
-          }
-        ],
-        "intersection": [
+        "subsets": [
           {
             "measurement": [-1.0, 1.0]
           }
@@ -1250,6 +1142,20 @@ The conversion of measurements that a range refers to. It defaults to the log2-f
 ]
 ```
 The range of combined measurements categorizing proteins by whether the range is exceeded or not. The default setting is `[-1.0, 1.0]` if `"conversion"` is not set, `[-2.0, 2.0]` if `"conversion"` is set to `"standard score"` and `[0.025, 0.975]` if `"conversion"` is set to `"quantile"`.
+
+```json
+[
+    {
+      "Gene Ontology network": {
+        "intersection": false
+      },
+      "Reactome network": {
+        "intersection": false
+      }
+    }
+]
+```
+If true, compute enrichment with respect to the intersection of specified subsets instead of their union. The default setting is `false`.
 
 ```json
 [
@@ -1510,36 +1416,21 @@ If true, compute enrichment with respect to the entire annotation, specific to t
     {
       "community detection": {
         "CORUM enrichment": {
-          "union": [
-            {
-              "time": null
-            }
-          ],
-          "intersection": [
+          "subsets": [
             {
               "time": null
             }
           ]
         },
         "Gene Ontology enrichment": {
-          "union": [
-            {
-              "time": null
-            }
-          ],
-          "intersection": [
+          "subsets": [
             {
               "time": null
             }
           ]
         },
         "Reactome enrichment": {
-          "union": [
-            {
-              "time": null
-            }
-          ],
-          "intersection": [
+          "subsets": [
             {
               "time": null
             }
@@ -1556,36 +1447,21 @@ The time of measurement considered to determine a subset of proteins.
     { 
       "community detection": {  
         "CORUM enrichment": {
-          "union": [
-            {
-              "post-translational modification": null
-            }
-          ],
-          "intersection": [
+          "subsets": [
             {
               "post-translational modification": null
             }
           ]
         },
         "Gene Ontology enrichment": {
-          "union": [
-            {
-              "post-translational modification": null
-            }
-          ],
-          "intersection": [
+          "subsets": [
             {
               "post-translational modification": null
             }
           ]
         },
         "Reactome enrichment": {
-          "union": [
-            {
-              "post-translational modification": null
-            }
-          ],
-          "intersection": [
+          "subsets": [
             {
               "post-translational modification": null
             }
@@ -1602,38 +1478,23 @@ The modification considered to determine a subset of proteins.
     {
       "community detection": {
         "CORUM enrichment": {
-          "union": [
+          "subsets": [
             {
               "site combination": "maxabs"
-            }
-          ],
-          "intersection": [
-            {
-              "site combination": "maxabs",
             }
           ]
         },
         "Gene Ontology enrichment": {
-          "union": [
+          "subsets": [
             {
               "site combination": "maxabs"
-            }
-          ],
-          "intersection": [
-            {
-              "site combination": "maxabs",
             }
           ]
         },
         "Reactome enrichment": {
-          "union": [
+          "subsets": [
             {
               "site combination": "maxabs"
-            }
-          ],
-          "intersection": [
-            {
-              "site combination": "maxabs",
             }
           ]
         }
@@ -1648,36 +1509,21 @@ The function used to derive a protein-specific measurement from a its individual
     {
       "community detection": {
         "CORUM enrichment": {
-          "union": [
-            {
-              "conversion": null
-            }
-          ],
-          "intersection": [
+          "subsets": [
             {
               "conversion": null
             }
           ]
         },
         "Gene Ontology enrichment": {
-          "union": [
-            {
-              "conversion": null
-            }
-          ],
-          "intersection": [
+          "subsets": [
             {
               "conversion": null
             }
           ]
         },
         "Reactome enrichment": {
-          "union": [
-            {
-              "conversion": null
-            }
-          ],
-          "intersection": [
+          "subsets": [
             {
               "conversion": null
             }
@@ -1694,36 +1540,21 @@ The conversion of measurements that a range refers to. It defaults to the log2-f
     {
       "community detection": {
         "CORUM enrichment": {
-          "union": [
-            {
-              "measurement": [-1.0, 1.0]
-            }
-          ],
-          "intersection": [
+          "subsets": [
             {
               "measurement": [-1.0, 1.0]
             }
           ]
         },
         "Gene Ontology enrichment": {
-          "union": [
-            {
-              "measurement": [-1.0, 1.0]
-            }
-          ],
-          "intersection": [
+          "subsets": [
             {
               "measurement": [-1.0, 1.0]
             }
           ]
         },
         "Reactome enrichment": {
-          "union": [
-            {
-              "measurement": [-1.0, 1.0]
-            }
-          ],
-          "intersection": [
+          "subsets": [
             {
               "measurement": [-1.0, 1.0]
             }
@@ -1734,6 +1565,25 @@ The conversion of measurements that a range refers to. It defaults to the log2-f
 ]
 ```
 The range of combined measurements categorizing proteins by whether the range is exceeded or not. The default setting is `[-1.0, 1.0]` if `"conversion"` is not set, `[-2.0, 2.0]` if `"conversion"` is set to `"standard score"` and `[0.025, 0.975]` if `"conversion"` is set to `"quantile"`.
+
+```json
+[
+    {
+      "community detection": {
+        "CORUM enrichment": {
+          "intersection": false
+        },
+        "Gene Ontology enrichment": {
+          "intersection": false
+        },
+        "Reactome enrichment": {
+          "intersection": false
+        }
+      }
+    }
+]
+```
+If true, compute enrichment with respect to the intersection of specified subsets instead of their union. The default setting is `false`.
 
 ```json
 [

@@ -116,7 +116,7 @@
         "p": 0.05
       },
       "Gene Ontology network": {
-        "union": [
+        "subsets": [
           {
             "time": 30,
             "post-translational modification": "P",
@@ -140,7 +140,7 @@
         ]
       },
       "Reactome network": {
-        "union": [
+        "subsets": [
           {
             "time": 30,
             "post-translational modification": "P",
