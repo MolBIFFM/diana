@@ -18,7 +18,6 @@ from interface import (combination, conversion, correction, default,
                        modularization, test)
 from networks import (gene_ontology_network,
                       protein_protein_interaction_network, reactome_network)
-from pipeline.networks.protein_protein_interaction_network import get_network
 
 
 def process_workflow(configuration: dict[str],
@@ -28,7 +27,7 @@ def process_workflow(configuration: dict[str],
     Executes a workflow specified in configuration.
 
     Args:
-        configurations: The specification of a workflow.
+        configuration: The specification of a workflow.
         logger: A logger.
     """
     network = protein_protein_interaction_network.get_network()
