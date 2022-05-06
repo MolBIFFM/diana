@@ -30,7 +30,7 @@ def get_protein_interactions(
             interactions.
         organism: The NCBI taxonomy identifier for the organism of interest.
         version: The version of the BioGRID database, if not passed, the latest.
-
+            Missing numbers are set to 0 towards the minor version.
     Yields:
         Pairs of interacting proteins.
     """

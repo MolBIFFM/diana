@@ -554,6 +554,7 @@ def get_neighbors_from_biogrid(
             physical interactions.
         organism: The NCBI taxonomy identifier for the organism of interest.
         version: The version of the BioGRID database, if not passed, the latest.
+            Missing numbers are set to 0 towards the minor version.
 
     Returns:
         Neighbors of the protein-protein interaction network in BioGRID.
