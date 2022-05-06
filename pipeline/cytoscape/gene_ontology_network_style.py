@@ -440,11 +440,11 @@ def get_style(network: nx.Graph) -> ET.ElementTree:
                                              "visualStyle",
                                              attrib={"name": "Gene Ontology"})
 
-    for component in COMPONENTS:
+    for component, properties in COMPONENTS.items():
         component_sub_element = ET.SubElement(visual_style_sub_element,
                                               component)
 
-        for name, dependency in COMPONENTS[component]["dependency"].items():
+        for name, dependency in properties["dependency"].items():
             ET.SubElement(
                 component_sub_element,
                 "dependency",
@@ -454,8 +454,7 @@ def get_style(network: nx.Graph) -> ET.ElementTree:
                 },
             )
 
-        for name, visual_property in COMPONENTS[component][
-                "visualProperty"].items():
+        for name, visual_property in properties["visualProperty"].items():
             visual_property_sub_element = ET.SubElement(
                 component_sub_element,
                 "visualProperty",

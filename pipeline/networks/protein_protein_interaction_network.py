@@ -45,7 +45,7 @@ def add_genes_from_table(
             from an entry.
         sheet_name: The sheet to parse gene accessions from.
         header: The index of the header row.
-        organism: The NCBI taxonomy identifier for the organism of interest. 
+        organism: The NCBI taxonomy identifier for the organism of interest.
     """
     if os.path.splitext(file_name)[1].lstrip(".") in (
             "xls",
@@ -91,7 +91,7 @@ def map_genes(network: nx.Graph, organism: int = 9606) -> None:
 
     Args:
         network: The protein-protein interaction network to map genes from.
-        organism: The NCBI taxonomy identifier for the organism of interest. 
+        organism: The NCBI taxonomy identifier for the organism of interest.
     """
     mapping, gene_name, protein_name = {}, {}, {}
     for accessions, gene, protein in uniprot.get_swiss_prot_entries(organism):
@@ -244,10 +244,10 @@ def add_proteins_from_table(
                     proteins[protein_accession] = []
 
     network.add_nodes_from(proteins)
-    for protein in proteins:
+    for protein, sites in proteins.items():
         measurements = sorted(
             sorted(
-                proteins[protein],
+                sites,
                 key=lambda item: abs(item[1]),
             )[-number_sites:])
 
@@ -472,21 +472,21 @@ def set_measurements(
                 ]
 
                 if sites:
-                    combined_measurement = site_combination(sites)
+                    combined_sites = site_combination(sites)
 
-                    if combined_measurement >= 1.0 * measurement_range[time][
+                    if combined_sites >= 1.0 * measurement_range[time][
                             modification][1]:
                         classification[modification] = "up"
                     elif 1.0 * measurement_range[time][modification][
-                            1] > combined_measurement >= 0.5 * measurement_range[
+                            1] > combined_sites >= 0.5 * measurement_range[
                                 time][modification][1]:
                         classification[modification] = "mid up"
                     elif 0.5 * measurement_range[time][modification][
-                            1] > combined_measurement > 0.5 * measurement_range[
-                                time][modification][0]:
+                            1] > combined_sites > 0.5 * measurement_range[time][
+                                modification][0]:
                         classification[modification] = "mid"
                     elif 0.5 * measurement_range[time][modification][
-                            0] >= combined_measurement > 1.0 * measurement_range[
+                            0] >= combined_sites > 1.0 * measurement_range[
                                 time][modification][0]:
                         classification[modification] = "mid down"
                     else:
@@ -551,7 +551,7 @@ def get_neighbors_from_biogrid(
             If none are specified, any are accepted.
         multi-validated physical: If True, consider only multi-validated
             physical interactions.
-        organism: The NCBI taxonomy identifier for the organism of interest. 
+        organism: The NCBI taxonomy identifier for the organism of interest.
         version: The version of the BioGRID database, if not passed, the latest.
 
     Returns:
@@ -593,7 +593,7 @@ def add_protein_protein_interactions_from_biogrid(
             If none are specified, any are accepted.
         multi-validated physical: If True, add only multi-validated physical
             interactions.
-        organism: The NCBI taxonomy identifier for the organism of interest. 
+        organism: The NCBI taxonomy identifier for the organism of interest.
         version: The version of the BioGRID database, if not passed, the latest.
     """
     for interactor_a, interactor_b in biogrid.get_protein_protein_interactions(
@@ -619,7 +619,7 @@ def get_neighbors_from_corum(network: nx.Graph,
         purification_methods: The accepted PSI-MI identifiers or terms for the
             protein complex purification method. If none are specified, any are
             accepted.
-        organism: The NCBI taxonomy identifier for the organism of interest. 
+        organism: The NCBI taxonomy identifier for the organism of interest.
 
     Returns:
         Neighbors of the protein-protein interaction network in CORUM.
@@ -649,7 +649,7 @@ def add_protein_protein_interactions_from_corum(network: nx.Graph,
         purification_methods: The accepted PSI-MI identifiers or terms for the
             protein complex purification method. If none are specified, any are
             accepted.
-        organism: The NCBI taxonomy identifier for the organism of interest. 
+        organism: The NCBI taxonomy identifier for the organism of interest.
     """
     for interactor_a, interactor_b in corum.get_protein_protein_interactions(
             purification_methods, organism):
@@ -677,7 +677,7 @@ def get_neighbors_from_intact(
         interaction_types: The accepted PSI-MI identifiers or terms for
             interaction type. If none are specified, any are accepted.
         psi_mi_score: The PSI-MI score threshold.
-        organism: The NCBI taxonomy identifier for the organism of interest. 
+        organism: The NCBI taxonomy identifier for the organism of interest.
 
     Returns:
         Neighbors of the protein-protein interaction network in IntAct.
@@ -713,7 +713,7 @@ def add_protein_protein_interactions_from_intact(
         interaction_types: The accepted PSI-MI identifiers or terms for
             interaction type. If none are specified, any are accepted.
         psi_mi_score: The PSI-MI score threshold.
-        organism: The NCBI taxonomy identifier for the organism of interest. 
+        organism: The NCBI taxonomy identifier for the organism of interest.
     """
     for interactor_a, interactor_b, score in intact.get_protein_protein_interactions(
             interaction_detection_methods, interaction_types, psi_mi_score,
@@ -747,7 +747,7 @@ def get_neighbors_from_mint(network: nx.Graph,
         interaction_types: The accepted PSI-MI identifiers or terms for
             interaction type. If none are specified, any are accepted.
         psi_mi_score: The PSI-MI score threshold.
-        organism: The NCBI taxonomy identifier for the organism of interest. 
+        organism: The NCBI taxonomy identifier for the organism of interest.
 
     Returns:
         Neighbors of the protein-protein interaction network in MINT.
@@ -783,7 +783,7 @@ def add_protein_protein_interactions_from_mint(
         interaction_types: The accepted PSI-MI identifiers or terms for
             interaction type. If none are specified, any are accepted.
         psi_mi_score: The PSI-MI score threshold.
-        organism: The NCBI taxonomy identifier for the organism of interest. 
+        organism: The NCBI taxonomy identifier for the organism of interest.
     """
     for interactor_a, interactor_b, score in mint.get_protein_protein_interactions(
             interaction_detection_methods, interaction_types, psi_mi_score,
@@ -814,7 +814,7 @@ def get_neighbors_from_reactome(
             If none are specified, any are accepted.
         interaction_context: The accepted interaction context annotation.
             If none are specified, any are accepted.
-        organism: The NCBI taxonomy identifier for the organism of interest. 
+        organism: The NCBI taxonomy identifier for the organism of interest.
 
     Returns:
         Neighbors of the protein-protein interaction network in Reactome.
@@ -848,7 +848,7 @@ def add_protein_protein_interactions_from_reactome(
             If none are specified, any are accepted.
         interaction_context: The accepted interaction context annotation.
             If none are specified, any are accepted.
-        organism: The NCBI taxonomy identifier for the organism of interest. 
+        organism: The NCBI taxonomy identifier for the organism of interest.
     """
     for interactor_a, interactor_b in reactome.get_protein_protein_interactions(
             interaction_type, interaction_context, organism):
@@ -898,7 +898,7 @@ def get_neighbors_from_string(network: nx.Graph,
         textmining_transferred: The transferred textmining score threshold.
         combined_score: The combined score threshold.
         physical: If True, consider only physical interactions.
-        organism: The NCBI taxonomy identifier for the organism of interest. 
+        organism: The NCBI taxonomy identifier for the organism of interest.
         version: The version of the STRING database.
 
     Returns:
@@ -962,7 +962,7 @@ def add_protein_protein_interactions_from_string(
         textmining_transferred: The transferred textmining score threshold.
         combined_score: The combined score threshold.
         physical: If True, add only physical interactions.
-        organism: The NCBI taxonomy identifier for the organism of interest. 
+        organism: The NCBI taxonomy identifier for the organism of interest.
         version: The version of the STRING database.
     """
     for interactor_a, interactor_b, score in string.get_protein_protein_interactions(
@@ -999,9 +999,9 @@ def get_databases(network: nx.Graph) -> tuple[str, ...]:
     return tuple(
         sorted(
             set(database for edge in network.edges()
-                for database in network.edges[edge]).intersection(
-                    ("BioGRID", "CORUM", "IntAct", "MINT", "Reactome",
-                     "STRING"))))
+                for database in network.edges[edge]).intersection({
+                    "BioGRID", "CORUM", "IntAct", "MINT", "Reactome", "STRING"
+                })))
 
 
 def set_edge_weights(
@@ -1057,10 +1057,10 @@ def get_communities(
 
     Args:
         network: The protein-protein interaction network.
-        community_size: The maximum community size. Community detection continues.
-            subdivision of modles iteratively until it is met.
-        community_size_combination: The function to derive a representative value
-            from community sizes.
+        community_size: The maximum community size. Communities are iteratively
+            subdivided until it is met.
+        community_size_combination: The function to derive a decisive value to
+            from meeting the threshhold from the community sizes.
         algorithm: The community detection algorithm.
         resolution: The resolution parameter for modularity.
         weight: The attribute name of the edge weight.
@@ -1151,9 +1151,9 @@ def get_measurement_enrichment(
                                   float]] = correction.benjamini_hochberg,
 ) -> dict[nx.Graph, dict[int, dict[str, float]]]:
     """
-    Test communities for enrichment of large protein-specific measurements for each
-    time of measurement and type of post-translational modification with respect
-    to the protein-protein interaction network.
+    Test communities for enrichment of large protein-specific measurements for
+    each time of measurement and type of post-translational modification with
+    respect to the protein-protein interaction network.
 
     Args:
         network: The protein-protein interaction network.
@@ -1254,9 +1254,9 @@ def get_measurement_location(
                                   float]] = correction.benjamini_hochberg,
 ) -> dict[nx.Graph, dict[int, dict[str, float]]]:
     """
-    Test communities for difference tendencies in protein-specific measurements for
-    each time of measurement and type of post-translational modification with
-    respect to the remaining protein-protein interaction network.
+    Test communities for difference tendencies in protein-specific measurements
+    for each time of measurement and type of post-translational modification
+    with respect to the remaining protein-protein interaction network.
 
     Args:
         network: The protein-protein interaction network.
@@ -1271,8 +1271,8 @@ def get_measurement_location(
 
     Returns:
         Corrected p-values for the difference in central tendencies in
-        protein-specific measurements of communities for each time of measurement
-        and type of post-translational modification.
+        protein-specific measurements of communities for each time of
+        measurement and type of post-translational modification.
     """
     p_values = {}
     for time in get_times(network):

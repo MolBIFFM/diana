@@ -24,7 +24,7 @@ def get_protein_protein_interactions(
         interaction_types: The accepted PSI-MI identifiers or terms for
             interaction type. If none are specified, any are accepted.
         psi_mi_score: The PSI-MI score threshold.
-        organism: The NCBI taxonomy identifier for the organism of interest. 
+        organism: The NCBI taxonomy identifier for the organism of interest.
 
     Yields:
         Pairs of interacting proteins and the PSI-MI score associated with the

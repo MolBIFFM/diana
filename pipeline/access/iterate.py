@@ -71,7 +71,8 @@ def txt(url: str,
         except (gzip.BadGzipFile, zipfile.BadZipFile):
             time.sleep(pause)
 
-    with open(local_file_name, buffering=buffering) as local_file:
+    with open(local_file_name, buffering=buffering,
+              encoding="utf-8") as local_file:
         for line in local_file:
             yield line.rstrip("\n")
 

@@ -66,7 +66,7 @@ def get_annotation(
     Yields Gene Ontology annotations within specified namespaces.
 
     Args:
-        organism: The NCBI taxonomy identifier for the organism of interest. 
+        organism: The NCBI taxonomy identifier for the organism of interest.
         namespace: The Gene Ontology namespace identifiers.
 
     Yields:
@@ -136,7 +136,7 @@ def get_enrichment(
             Ontology terms.
         multiple_testing_correction: The procedure to correct for multiple
             testing of multiple terms and sets of proteins.
-        organism: The NCBI taxonomy identifier for the organism of interest. 
+        organism: The NCBI taxonomy identifier for the organism of interest.
         namespaces: The Gene Ontology namespaces.
         annotation_as_reference: If True, compute enrichment with respect to the
             species-specific Gene Ontology annotation in namespaces, else with

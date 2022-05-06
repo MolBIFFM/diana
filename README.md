@@ -1,12 +1,18 @@
 # pipeline
 
-protein-protein interaction network analysis of mass spectrometric measurements of differential post-translational modification
+pipeline is a command line tool for protein-protein interaction network analysis of mass spectrometric measurements capturing differential post-translational modification.
+
+The tool assembles protein-protein interaction networks from input genes or proteins associated with mass spectrometry data,
+and, optionally, interacting proteins, querying protein-protein interaction data from BioGRID, CORUM, IntAct, MINT, Reactome, and STRING.
+
+The enrichment of CORUM protein complexes, Gene Ontology terms, and Reactome pathways by as well as the distribution of mass spectrometry measurements across the protein-protein interaction network, its individual communities and subsets of them, based on mass spectrometry measurements, can be assessed. The protein-protein interaction network and networks of Gene Ontology terms or Reactome pathways capturing enrichment can be exported along corresponding Cytoscape style specifications.
 
 ## Setup
+
 ```
-pip3 install -r pipeline/requirements.txt 
+pip3 install -r pipeline/requirements.txt
 ```
-External dependencies consist of NetworkX, pandas, and SciPy as well as openpyxl, pyxlsb, and xlrd which are required by pandas. Developed using Python 3.10.4, Ubuntu 22.04 and Cytoscape 3.9.1.
+External dependencies consist of NetworkX, pandas, and SciPy as well as openpyxl, pyxlsb, and xlrd which are required by pandas to read from different spreadsheet formats. pipeline is developed using Python 3.10.4, Ubuntu 22.04 and Cytoscape 3.9.1.
 
 ## Command Line Interface
 ```
@@ -21,17 +27,13 @@ optional arguments:
   -p PROCESSES, --processes PROCESSES
                         maximum number of concurrent processes (default: 4)
 ```
-A configuration file specifies a list of workflows processed sequentially. Multiple configuration files are processed concurrently. 
+A configuration file specifies a list of workflows processed sequentially. Multiple configuration files are processed concurrently.
 
 ---
 
-A workflow defines the assembly of a protein-protein interaction network from a set of input genes or proteins, optionally associated with mass spectrometry data, using protein-protein interaction data from BioGRID, CORUM, IntAct, MINT, Reactome, and STRING, optionally extending to proteins neighboring the input.
-
-The distribution of mass spectrometry measurements across and enrichment of CORUM protein complexes, Gene Ontology terms, and Reactome pathways by the protein-protein interaction network and its individual communities as well as subsets of proteins from them based on measurements can be assessed. The protein-protein interaction network as well as networks derived from the Gene Ontology or Reactome, capturing enrichment by the input proteins, can be exported along comprehensive Cytoscape style specifications.
-
 ## Configuration
 
-The specification of input genes or proteins.
+Specification of input genes or proteins.
 
 ```json
 [
@@ -49,7 +51,7 @@ The specification of input genes or proteins.
     }
 ]
 ```
-The tabular input file.
+The tabular input file with UniProt gene or protein accessions and, optionally, additional mass spectrometry data.
 
 ```json
 [
@@ -311,7 +313,7 @@ The specification of sources of protein-protein interactions for the assembly of
         },
         "IntAct": {
           "neighbors": 0
-        }, 
+        },
         "MINT": {
           "neighbors": 0
         },
@@ -339,7 +341,7 @@ An integer k specifying the extension of the network using species-specific prot
         },
         "IntAct": {
           "organism": 9606
-        }, 
+        },
         "MINT": {
           "organism": 9606
         },
@@ -775,13 +777,11 @@ The range of combined measurements categorizing proteins by whether the range is
     }
 ]
 ```
-The function used to derive a combined edge confidence score from scores in IntAct, MINT and STRING. For lack of corresponding score, 1.0 is used for all interactions from BioGRID, CORUM and Reactome. The combined score is reflected by edge transparency. By default any edge receives a score of 1.0. Available settings are `null`,  `"mean"`, `"median"`, `"max"`, `"min"`, `"sum"`, `"number"`, the number of queried databases supporting the interaction. Further, `"BioGRID"`, `"CORUM"`, `"IntAct"`, `"MINT"`, `"Reactome"`, and `"STRING"` refer to the score in the particular database.
+The function used to derive a combined edge confidence score from scores in IntAct, MINT and STRING. For lack of corresponding score, 1.0 is used for all interactions from BioGRID, CORUM and Reactome. The combined score is reflected by edge transparency. By default any edge receives a score of 1.0. Available settings are `null`, `"mean"`, `"median"`, `"max"`, `"min"`, `"sum"`, `"number"`, the number of queried databases supporting the interaction. Further, `"BioGRID"`, `"CORUM"`, `"IntAct"`, `"MINT"`, `"Reactome"`, and `"STRING"` refer to the score in the particular database.
 
 ---
 
-The specification of CORUM, Gene Ontology and Reactome enrichment analysis of the protein-protein interaction network.
-
-The proteins considered can be restricted, based on associated measurements, either by a union or intersection of specified subsets.
+CORUM protein complex, Gene Ontology term and Reactome pathway enrichment of the protein-protein interaction network can be assessed. The proteins considered can be restricted, based on associated measurements, either by a union or intersection of specified subsets of proteins from the protein-protein interaction network.
 
 ```json
 [
@@ -816,8 +816,7 @@ Available settings are `"binomial"` and `"hypergeometric"`.
     }
 ]
 ```
-The procedure to correct p-values for multiple testing. The default setting is `"Benjamini-Hochberg"`.
-Available settings are `"Benjamini-Hochberg"` and `"Bonferroni"`.
+The procedure to correct p-values for multiple testing. The default setting is `"Benjamini-Hochberg"`. Available settings are `"Benjamini-Hochberg"` and `"Bonferroni"`.
 
 ```json
 [
@@ -884,7 +883,7 @@ The time of measurement considered to determine a subset of proteins.
 
 ```json
 [
-    {   
+    {
       "CORUM enrichment": {
         "subsets": [
           {
@@ -1013,7 +1012,7 @@ The range of combined measurements categorizing proteins by whether the range is
     }
 ]
 ```
-If true, compute enrichment with respect to the intersection of specified subsets instead of their union. The default setting is `false`.
+If true, compute enrichment with respect to the intersection of specified subsets of proteins from the protein-protein interaction network instead of their union. The default setting is `false`.
 
 ```json
 [
@@ -1043,9 +1042,7 @@ The Gene Ontology namespaces to consider. The default setting is `["cellular_com
 
 ---
 
-The specification of the assembly of a Gene Ontology or Reactome network. A Gene Ontology network is composed of terms, a Reactome network of pathways. Both report the enrichment of each respective entity by proteins in the protein-protein interaction network, along with their relations in these databases.
-
-The proteins considered can be restricted, based on associated measurements, either by a union or intersection of specified subsets.
+Networks of Gene Ontology terms or Reactome pathways can be assembled. Both report the enrichment of each respective entity by proteins in the protein-protein interaction network with respect to the annotation specific to an organism of interest, along with their hierarchical relations in these databases. The proteins considered can be restricted, based on associated measurements, either by a union or intersection of specified subsets of proteins from the protein-protein interaction network.
 
 ```json
 [
@@ -1071,7 +1068,7 @@ The time of measurement considered to determine a subset of proteins.
 
 ```json
 [
-    {   
+    {
       "Gene Ontology network": {
         "subsets": [
           {
@@ -1169,7 +1166,7 @@ The range of combined measurements categorizing proteins by whether the range is
     }
 ]
 ```
-If true, compute enrichment with respect to the intersection of specified subsets instead of their union. The default setting is `false`.
+If true, compute enrichment with respect to the intersection of specified subsets of proteins from the protein-protein interaction network instead of their union. The default setting is `false`.
 
 ```json
 [
@@ -1233,7 +1230,7 @@ The Gene Ontology namespaces to consider. The default setting is `["cellular_com
 
 ---
 
-The specification of community detection the protein-protein interaction network.
+The specification of community detection in the protein-protein interaction network.
 
 ```json
 [
@@ -1292,13 +1289,11 @@ The function to combine sizes of communities into a value compared to the commun
 
 ---
 
-The specification of statistical tests on individual communities with respect to either Gene Ontology or Reactome enrichment or the distribution of measurements across the protein-protein interaction network. 
+CORUM protein complex, Gene Ontology term  and Reactome pathway enrichment of individual communities can be assessed. The proteins considered can be restricted, based on associated measurements, either by a union or intersection of specified subsets of proteins from the protein-protein interaction network.
 
-CORUM, Gene Ontology and Reactome enrichment can be assessed with respect to the respective annotation or the protein-protein interaction network. The proteins considered can be restricted, based on associated measurements, either by a union or intersection of specified subsets.
+To assess the distribution of mass spectrometry measurements, these can be classified in a binary way to measure the communities' enrichment of proteins which exhibit measurements exceeding a specified threshold. Alternatively, the distribution of measurements within separate communities can be compared with the remaining network.
 
-To assess the distribution of measurements, these can be classified in a binary way to measure the communities' enrichment of proteins which exhibit measurements exceeding a specified threshold. Alternatively, the distribution of measurements within separate communities can be compared with the remaining network.
-
-These tests act as filter on the exported communities of the protein-protein interaction network. A community is exported if it is significant according to any of the specified tests.
+The tests effectively filter the communities of the protein-protein interaction network. A community is exported if it appears significant according to any of the specified tests.
 
 ```json
 [
@@ -1458,8 +1453,8 @@ The time of measurement considered to determine a subset of proteins.
 
 ```json
 [
-    { 
-      "community detection": {  
+    {
+      "community detection": {
         "CORUM enrichment": {
           "subsets": [
             {
@@ -1597,7 +1592,7 @@ The range of combined measurements categorizing proteins by whether the range is
     }
 ]
 ```
-If true, compute enrichment with respect to the intersection of specified subsets instead of their union. The default setting is `false`.
+If true, compute enrichment with respect to the intersection of specified subsets of proteins from the protein-protein interaction network instead of their union. The default setting is `false`.
 
 ```json
 [
@@ -1662,7 +1657,7 @@ The conversion of measurements that a range refers to. It defaults to the log2-f
         "measurement enrichment": {
           "proteins": {
             "site combination": "maxabs"
-          } 
+          }
         }
       }
     }
@@ -1671,7 +1666,7 @@ The conversion of measurements that a range refers to. It defaults to the log2-f
 The function used to derive a protein-specific measurement from a its sites. The default setting is `"maxabs"`, corresponding to the largest absolute value. Available settings are `"mean"`, `"median"`, `"max"`, `"maxabs"`, `"min"`, `"minabs"`, `"sum"` and `"sumabs"` as well as `"increase"` and `"decrease"`, referring to the proportion of a proteins' sites exhibiting either, and `null`, so that sites are considered individually.
 
 ## References
-   
+
 The configuration files in this repository refer to data sets supplemented with the following publications.
 
 - Fiskin, E. et al. (2016) **Global Analysis of Host and Bacterial Ubiquitinome in Response to *Salmonella* Typhimurium Infection**, *Mol. Cell*, 62, 967-981.
@@ -1691,17 +1686,17 @@ The following resources can be accessed.
 - The Gene Ontology Consortium (2021) **The Gene Ontology resource: enriching a GOld mine**, *Nucleic Acids Res.*, 49, D325-D334.
 
 - Gillespie, M. et al. (2022) **The reactome pathway knowledgebase 2022**, *Nucleic Acids Res.*, 50, D687-D692.
-  
+
 - Giurgiu, M et al. (2019) **CORUM: the comprehensive resource of mammalian protein complexes-2019**, *Nucleic Acids Res.*, 47, D559-D563
-  
+
 - Licata, L. et al. (2012) **MINT, the molecular interaction database: 2012 update**, *Nucleic Acids Res.*, 40, D857-D861.
 
 - Orchard, S. et al. (2014) **The MIntAct project-IntAct as a common curation platform for 11 molecular interaction databases**, *Nucleic Acids Res.*, 42, D358-D363.
- 
+
 - Oughtred, R. et al. (2018) **The BioGRID database: A comprehensive biomedical resource of curated protein, genetic, and chemical interactions**, *Protein Sci.*, 30, 187-200.
-   
+
 - Szklarczyk, D. et al. (2019) **STRING v11: protein-protein association networks with increased coverage, supporting functional discovery in genome-wide experimental datasets**, *Nucleic Acids Res.*, 47, D607-D613.
-    
+
 - The UniProt Consortium (2021) **UniProt: the universal protein knowledgebase in 2021**, *Nucleic Acids Res.*, 49, D480-D489.
 
 ---
@@ -1715,7 +1710,7 @@ The following applications are targeted.
 The following external libraries are utilized.
 
 - Hagberg, A. A. et al. (2008) **Exploring network structure, dynamics, and function using NetworkX**, *Proceedings of the 7th Python in Science Conference*, 11-15.
-   
+
 - McKinney, W. (2010) **Data Structures for Statistical Computing in Python**, *Proceedings of the 9th Python in Science Conference*, 56-61.
 
 - Virtanen, P. et al. (2020)  **SciPy 1.0: Fundamental Algorithms for Scientific Computing in Python**, *Nat. Methods*, 17, 261-272.
@@ -1723,13 +1718,13 @@ The following external libraries are utilized.
 ---
 
 Development was inspired by previous work combining the following applications.
- 
+
 - Maere, S. et al. (2005) ***BiNGO*: a Cytoscape plugin to assess overrepresentation of Gene Ontology categories in Biological Networks**, *Bioinformatics*, 21, 3448-3449.
 
 - Morris, J. H. et al. (2011) ***clusterMaker*: a multi-algorithm clustering plugin for Cytoscape**, *BMC Bioinform.*, 12.
-  
+
 - Su, G. et al. (2010) **GLay: community structure analysis of biological networks**, *Bioinformatics*, 26, 3135-3137.
-  
+
 
 ---
 

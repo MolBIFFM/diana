@@ -1,7 +1,7 @@
 """
 Gene Ontology network
 
-Nodes are Gene Ontology terms annotated with proteins from a species of 
+Nodes are Gene Ontology terms annotated with proteins from a species of
 interest. Edges are directed term relationships within the Gene Ontology.
 """
 
@@ -33,7 +33,7 @@ def get_network(proteins: Container[str] = frozenset(),
             term by the protein-protein interaction network.
         multiple_testing_correction: The procedure to correct for testing of
             multiple terms.
-        organism: The NCBI taxonomy identifier for the organism of interest. 
+        organism: The NCBI taxonomy identifier for the organism of interest.
 
     Returns:
         The Gene Ontology network.
@@ -66,7 +66,8 @@ def get_network(proteins: Container[str] = frozenset(),
     annotated_proteins = set.union(*annotation.values())
 
     network_intersection = {
-        term: annotation[term].intersection(proteins) for term in annotation
+        term: term_proteins.intersection(proteins)
+        for term, term_proteins in annotation.items()
     }
 
     p_value = multiple_testing_correction({

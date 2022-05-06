@@ -44,7 +44,7 @@ def get_protein_protein_interactions(
         textmining_transferred: The transferred textmining score threshold.
         combined_score: The combined score threshold.
         physical: If True, yield only physical interactions.
-        organism: The NCBI taxonomy identifier for the organism of interest. 
+        organism: The NCBI taxonomy identifier for the organism of interest.
         version: The version of the STRING database.
 
     Yields:

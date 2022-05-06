@@ -23,7 +23,7 @@ def get_protein_protein_interactions(
             specified, any are accepted.
         interaction_context: The accepted interaction context annotation. If
             none are specified, any are accepted.
-        organism: The NCBI taxonomy identifier for the organism of interest. 
+        organism: The NCBI taxonomy identifier for the organism of interest.
 
     Yields:
         Pairs of interacting proteins.
@@ -73,7 +73,7 @@ def get_pathways(organism: int = 9606) -> Iterator[tuple[str, str]]:
     Yields Reactome pathways.
 
     Args:
-        organism: The NCBI taxonomy identifier for the organism of interest. 
+        organism: The NCBI taxonomy identifier for the organism of interest.
 
     Yields:
         Pairs of stable pathway identifier and pathway name.
@@ -106,7 +106,7 @@ def get_pathway_annotation(organism: int = 9606) -> Iterator[tuple[str, str]]:
     Yields Reactome pathway annotations.
 
     Args:
-        organism: The NCBI taxonomy identifier for the organism of interest. 
+        organism: The NCBI taxonomy identifier for the organism of interest.
 
     Yields:
         Pairs of protein accession and stable pathway identifier.
@@ -144,7 +144,7 @@ def get_enrichment(
             Reactome pathways.
         multiple_testing_correction: The procedure to correct for multiple
             testing of multiple pathways and sets of proteins.
-        organism: The NCBI taxonomy identifier for the organism of interest. 
+        organism: The NCBI taxonomy identifier for the organism of interest.
         annotation_as_reference: If True, compute enrichment with respect to the
             species-specific Reactome pathway annotation, else with respect to
             the union of the sets of proteins.

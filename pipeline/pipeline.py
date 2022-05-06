@@ -465,21 +465,27 @@ def process_workflow(configuration: dict[str],
                             "intersection", False):
                         proteins.intersection_update(
                             protein_protein_interaction_network.get_proteins(
-                                network, subset["time"],
+                                network,
+                                subset["time"],
                                 subset["post-translational modification"],
                                 combination.SITE_COMBINATION[subset.get(
-                                    "site combination", "maxabs")], lambda
-                                measurement: measurement <= measurement_range[
+                                    "site combination", "maxabs")],
+                                lambda measurement, measurement_range=
+                                measurement_range: measurement <=
+                                measurement_range[
                                     0] or measurement >= measurement_range[1]))
 
                     else:
                         proteins.update(
                             protein_protein_interaction_network.get_proteins(
-                                network, subset["time"],
+                                network,
+                                subset["time"],
                                 subset["post-translational modification"],
                                 combination.SITE_COMBINATION[subset.get(
-                                    "site combination", "maxabs")], lambda
-                                measurement: measurement <= measurement_range[
+                                    "site combination", "maxabs")],
+                                lambda measurement, measurement_range=
+                                measurement_range: measurement <=
+                                measurement_range[
                                     0] or measurement >= measurement_range[1]))
 
             corum_enrichment = corum.get_enrichment(
@@ -561,21 +567,27 @@ def process_workflow(configuration: dict[str],
                             "intersection", False):
                         proteins.intersection_update(
                             protein_protein_interaction_network.get_proteins(
-                                network, subset["time"],
+                                network,
+                                subset["time"],
                                 subset["post-translational modification"],
                                 combination.SITE_COMBINATION[subset.get(
-                                    "site combination", "maxabs")], lambda
-                                measurement: measurement <= measurement_range[
+                                    "site combination", "maxabs")],
+                                lambda measurement, measurement_range=
+                                measurement_range: measurement <=
+                                measurement_range[
                                     0] or measurement >= measurement_range[1]))
 
                     else:
                         proteins.update(
                             protein_protein_interaction_network.get_proteins(
-                                network, subset["time"],
+                                network,
+                                subset["time"],
                                 subset["post-translational modification"],
                                 combination.SITE_COMBINATION[subset.get(
-                                    "site combination", "maxabs")], lambda
-                                measurement: measurement <= measurement_range[
+                                    "site combination", "maxabs")],
+                                lambda measurement, measurement_range=
+                                measurement_range: measurement <=
+                                measurement_range[
                                     0] or measurement >= measurement_range[1]))
 
             gene_ontology_enrichment = gene_ontology.get_enrichment(
@@ -663,21 +675,27 @@ def process_workflow(configuration: dict[str],
                             "intersection", False):
                         proteins.intersection_update(
                             protein_protein_interaction_network.get_proteins(
-                                network, subset["time"],
+                                network,
+                                subset["time"],
                                 subset["post-translational modification"],
                                 combination.SITE_COMBINATION[subset.get(
-                                    "site combination", "maxabs")], lambda
-                                measurement: measurement <= measurement_range[
+                                    "site combination", "maxabs")],
+                                lambda measurement, measurement_range=
+                                measurement_range: measurement <=
+                                measurement_range[
                                     0] or measurement >= measurement_range[1]))
 
                     else:
                         proteins.update(
                             protein_protein_interaction_network.get_proteins(
-                                network, subset["time"],
+                                network,
+                                subset["time"],
                                 subset["post-translational modification"],
                                 combination.SITE_COMBINATION[subset.get(
-                                    "site combination", "maxabs")], lambda
-                                measurement: measurement <= measurement_range[
+                                    "site combination", "maxabs")],
+                                lambda measurement, measurement_range=
+                                measurement_range: measurement <=
+                                measurement_range[
                                     0] or measurement >= measurement_range[1]))
 
             reactome_enrichment = reactome.get_enrichment(
@@ -754,21 +772,27 @@ def process_workflow(configuration: dict[str],
                             "intersection", False):
                         proteins.intersection_update(
                             protein_protein_interaction_network.get_proteins(
-                                network, subset["time"],
+                                network,
+                                subset["time"],
                                 subset["post-translational modification"],
                                 combination.SITE_COMBINATION[subset.get(
-                                    "site combination", "maxabs")], lambda
-                                measurement: measurement <= measurement_range[
+                                    "site combination", "maxabs")],
+                                lambda measurement, measurement_range=
+                                measurement_range: measurement <=
+                                measurement_range[
                                     0] or measurement >= measurement_range[1]))
 
                     else:
                         proteins.update(
                             protein_protein_interaction_network.get_proteins(
-                                network, subset["time"],
+                                network,
+                                subset["time"],
                                 subset["post-translational modification"],
                                 combination.SITE_COMBINATION[subset.get(
-                                    "site combination", "maxabs")], lambda
-                                measurement: measurement <= measurement_range[
+                                    "site combination", "maxabs")],
+                                lambda measurement, measurement_range=
+                                measurement_range: measurement <=
+                                measurement_range[
                                     0] or measurement >= measurement_range[1]))
 
             ontology_network = gene_ontology_network.get_network(
@@ -855,21 +879,27 @@ def process_workflow(configuration: dict[str],
                             "intersection", False):
                         proteins.intersection_update(
                             protein_protein_interaction_network.get_proteins(
-                                network, subset["time"],
+                                network,
+                                subset["time"],
                                 subset["post-translational modification"],
                                 combination.SITE_COMBINATION[subset.get(
-                                    "site combination", "maxabs")], lambda
-                                measurement: measurement <= measurement_range[
+                                    "site combination", "maxabs")],
+                                lambda measurement, measurement_range=
+                                measurement_range: measurement <=
+                                measurement_range[
                                     0] or measurement >= measurement_range[1]))
 
                     else:
                         proteins.update(
                             protein_protein_interaction_network.get_proteins(
-                                network, subset["time"],
+                                network,
+                                subset["time"],
                                 subset["post-translational modification"],
                                 combination.SITE_COMBINATION[subset.get(
-                                    "site combination", "maxabs")], lambda
-                                measurement: measurement <= measurement_range[
+                                    "site combination", "maxabs")],
+                                lambda measurement, measurement_range=
+                                measurement_range: measurement <=
+                                measurement_range[
                                     0] or measurement >= measurement_range[1]))
 
             pathway_network = reactome_network.get_network(
@@ -980,25 +1010,31 @@ def process_workflow(configuration: dict[str],
                                 proteins[community].intersection_update(
                                     protein_protein_interaction_network.
                                     get_proteins(
-                                        community, subset["time"], subset[
+                                        community,
+                                        subset["time"],
+                                        subset[
                                             "post-translational modification"],
                                         combination.SITE_COMBINATION[subset.get(
-                                            "site combination",
-                                            "maxabs")], lambda measurement:
-                                        measurement <= measurement_range[0] or
-                                        measurement >= measurement_range[1]))
+                                            "site combination", "maxabs")],
+                                        lambda measurement, measurement_range=
+                                        measurement_range: measurement <=
+                                        measurement_range[0] or measurement >=
+                                        measurement_range[1]))
 
                             else:
                                 proteins[community].update(
                                     protein_protein_interaction_network.
                                     get_proteins(
-                                        community, subset["time"], subset[
+                                        community,
+                                        subset["time"],
+                                        subset[
                                             "post-translational modification"],
                                         combination.SITE_COMBINATION[subset.get(
-                                            "site combination",
-                                            "maxabs")], lambda measurement:
-                                        measurement <= measurement_range[0] or
-                                        measurement >= measurement_range[1]))
+                                            "site combination", "maxabs")],
+                                        lambda measurement, measurement_range=
+                                        measurement_range: measurement <=
+                                        measurement_range[0] or measurement >=
+                                        measurement_range[1]))
 
                 corum_enrichment = corum.get_enrichment(
                     [
@@ -1116,25 +1152,31 @@ def process_workflow(configuration: dict[str],
                                 proteins[community].intersection_update(
                                     protein_protein_interaction_network.
                                     get_proteins(
-                                        community, subset["time"], subset[
+                                        community,
+                                        subset["time"],
+                                        subset[
                                             "post-translational modification"],
                                         combination.SITE_COMBINATION[subset.get(
-                                            "site combination",
-                                            "maxabs")], lambda measurement:
-                                        measurement <= measurement_range[0] or
-                                        measurement >= measurement_range[1]))
+                                            "site combination", "maxabs")],
+                                        lambda measurement, measurement_range=
+                                        measurement_range: measurement <=
+                                        measurement_range[0] or measurement >=
+                                        measurement_range[1]))
 
                             else:
                                 proteins[community].update(
                                     protein_protein_interaction_network.
                                     get_proteins(
-                                        community, subset["time"], subset[
+                                        community,
+                                        subset["time"],
+                                        subset[
                                             "post-translational modification"],
                                         combination.SITE_COMBINATION[subset.get(
-                                            "site combination",
-                                            "maxabs")], lambda measurement:
-                                        measurement <= measurement_range[0] or
-                                        measurement >= measurement_range[1]))
+                                            "site combination", "maxabs")],
+                                        lambda measurement, measurement_range=
+                                        measurement_range: measurement <=
+                                        measurement_range[0] or measurement >=
+                                        measurement_range[1]))
 
                 gene_ontology_enrichment = gene_ontology.get_enrichment(
                     [
@@ -1257,25 +1299,31 @@ def process_workflow(configuration: dict[str],
                                 proteins[community].intersection_update(
                                     protein_protein_interaction_network.
                                     get_proteins(
-                                        community, subset["time"], subset[
+                                        community,
+                                        subset["time"],
+                                        subset[
                                             "post-translational modification"],
                                         combination.SITE_COMBINATION[subset.get(
-                                            "site combination",
-                                            "maxabs")], lambda measurement:
-                                        measurement <= measurement_range[0] or
-                                        measurement >= measurement_range[1]))
+                                            "site combination", "maxabs")],
+                                        lambda measurement, measurement_range=
+                                        measurement_range: measurement <=
+                                        measurement_range[0] or measurement >=
+                                        measurement_range[1]))
 
                             else:
                                 proteins[community].update(
                                     protein_protein_interaction_network.
                                     get_proteins(
-                                        community, subset["time"], subset[
+                                        community,
+                                        subset["time"],
+                                        subset[
                                             "post-translational modification"],
                                         combination.SITE_COMBINATION[subset.get(
-                                            "site combination",
-                                            "maxabs")], lambda measurement:
-                                        measurement <= measurement_range[0] or
-                                        measurement >= measurement_range[1]))
+                                            "site combination", "maxabs")],
+                                        lambda measurement, measurement_range=
+                                        measurement_range: measurement <=
+                                        measurement_range[0] or measurement >=
+                                        measurement_range[1]))
 
                 reactome_enrichment = reactome.get_enrichment(
                     [
@@ -1440,7 +1488,7 @@ def process_configuration_file(configuration_file: str) -> None:
     Args:
         configuration_file: file name of configuration file.
     """
-    with open(configuration_file) as configuration:
+    with open(configuration_file, encoding="utf-8") as configuration:
         process_configuration(
             json.load(configuration),
             logging.getLogger(
@@ -1448,6 +1496,7 @@ def process_configuration_file(configuration_file: str) -> None:
 
 
 def main() -> None:
+    """Launches workflow execution."""
     parser = argparse.ArgumentParser()
 
     parser.add_argument("-c",

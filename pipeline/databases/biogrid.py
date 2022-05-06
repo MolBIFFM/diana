@@ -29,7 +29,7 @@ def get_protein_protein_interactions(
             If none are specified, any are accepted.
         multi-validated physical: If True, yield only multi-validated physical
             interactions.
-        organism: The NCBI taxonomy identifier for the organism of interest. 
+        organism: The NCBI taxonomy identifier for the organism of interest.
         version: The version of the BioGRID database, if not passed, the latest.
 
     Yields:

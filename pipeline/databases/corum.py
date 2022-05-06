@@ -1,7 +1,6 @@
 """The interface for the CORUM database."""
 import re
-from typing import (Callable, Collection, Container, Iterable, Iterator,
-                    Mapping, Optional)
+from typing import Callable, Container, Iterable, Iterator, Mapping, Optional
 
 import scipy.stats
 from access import iterate
@@ -23,7 +22,7 @@ def get_protein_protein_interactions(
         purification_methods: The accepted PSI-MI identifiers or terms for the
             protein complex purification method. If none are specified, any are
             accepted.
-        organism: The NCBI taxonomy identifier for the organism of interest. 
+        organism: The NCBI taxonomy identifier for the organism of interest.
 
     Yields:
         Pairs of interacting proteins.
@@ -81,7 +80,7 @@ def get_protein_complexes(
         purification_methods: The accepted PSI-MI identifiers or terms for the
             protein complex purification method. If none are specified, any are
             accepted.
-        organism: The NCBI taxonomy identifier for the organism of interest. 
+        organism: The NCBI taxonomy identifier for the organism of interest.
 
     Yields:
         Identifier, name and subunits of protein complexes.
@@ -144,7 +143,7 @@ def get_enrichment(
         purification_methods: The accepted PSI-MI identifiers or terms for the
             protein complex purification method. If none are specified, any are
             accepted.
-        organism: The NCBI taxonomy identifier for the organism of interest. 
+        organism: The NCBI taxonomy identifier for the organism of interest.
         annotation_as_reference: If True, compute enrichment with respect to the
             species-specific set of protein complexes, else with respect to
             the union of the sets of proteins.
@@ -169,18 +168,17 @@ def get_enrichment(
 
     network_intersection = {
         prt: {
-            protein_complex: len(annotation[protein_complex].intersection(prt))
-            for protein_complex in annotation
+            protein_complex: len(subunits.intersection(prt))
+            for protein_complex, subunits in annotation.items()
         } for prt in proteins
     }
 
     p_value = multiple_testing_correction({
         (prt, protein_complex):
         enrichment_test(network_intersection[prt][protein_complex],
-                        len(annotated_proteins),
-                        len(annotation[protein_complex]),
+                        len(annotated_proteins), len(subunits),
                         annotated_network_proteins[prt])
-        for protein_complex in annotation for prt in proteins
+        for protein_complex, subunits in annotation.items() for prt in proteins
     })
 
     return {

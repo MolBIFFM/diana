@@ -1,7 +1,7 @@
 """
 Reactome network
 
-Nodes are Reactome pathways annotated with proteins from a species of interest. 
+Nodes are Reactome pathways annotated with proteins from a species of interest.
 Edges are directed pathway relationships within Reactome.
 """
 
@@ -29,7 +29,7 @@ def get_network(proteins: Container[str] = frozenset(),
             pathway by the protein-protein interaction network.
         multiple_testing_correction: The procedure to correct for testing of
             multiple pathways.
-        organism: The NCBI taxonomy identifier for the organism of interest. 
+        organism: The NCBI taxonomy identifier for the organism of interest.
 
     Returns:
         The Reactome network.
@@ -55,8 +55,8 @@ def get_network(proteins: Container[str] = frozenset(),
     annotated_proteins = set.union(*annotation.values())
 
     network_intersection = {
-        pathway: annotation[pathway].intersection(proteins)
-        for pathway in annotation
+        pathway: pathway_proteins.intersection(proteins)
+        for pathway, pathway_proteins in annotation.items()
     }
 
     p_value = multiple_testing_correction({

@@ -12,7 +12,7 @@ def get_swiss_prot_entries(
     Yields Swiss-Prot entries.
 
     Args:
-        organism: The NCBI taxonomy identifier for the organism of interest. 
+        organism: The NCBI taxonomy identifier for the organism of interest.
 
     Yields:
         An entries UniProt accessions, gene name and protein name.
@@ -98,7 +98,7 @@ def get_primary_accession(organism: int = 9606) -> dict[str, frozenset[str]]:
     Returns a map of primary UniProt accessions.
 
     Args:
-        organism: The NCBI taxonomy identifier for the organism of interest. 
+        organism: The NCBI taxonomy identifier for the organism of interest.
 
     Returns:
         A map of any secondary UniProt accessions to its primary equivalents.
