@@ -9,7 +9,7 @@ from databases import uniprot
 ORGANISM = {"files": {9606: "Homo_sapiens"}}
 
 
-def get_protein_protein_interactions(
+def get_protein_interactions(
     experimental_system: Optional[Container[str]] = None,
     experimental_system_type: Optional[Container[str]] = None,
     interaction_throughput: Optional[Container[str]] = None,

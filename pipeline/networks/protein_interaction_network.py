@@ -350,8 +350,7 @@ def get_times(network: nx.Graph) -> tuple[int, ...]:
                 measurement.split(" ")[0].isnumeric())))
 
 
-def get_post_translational_modifications(network: nx.Graph,
-                                         time: int) -> tuple[str, ...]:
+def get_modifications(network: nx.Graph, time: int) -> tuple[str, ...]:
     """
     Returns the types of post-translational modification represented in a
     protein-protein interaction network at a particular time of measurement.
@@ -440,10 +439,7 @@ def set_measurements(
             measurements.
     """
     times = get_times(network)
-    modifications = {
-        time: get_post_translational_modifications(network, time)
-        for time in times
-    }
+    modifications = {time: get_modifications(network, time) for time in times}
 
     measurement_range = {
         time: {
@@ -558,7 +554,7 @@ def get_neighbors_from_biogrid(
         Neighbors of the protein-protein interaction network in BioGRID.
     """
     neighbors = set()
-    for interactor_a, interactor_b in biogrid.get_protein_protein_interactions(
+    for interactor_a, interactor_b in biogrid.get_protein_interactions(
             experimental_system, experimental_system_type,
             interaction_throughput, multi_validated_physical, organism,
             version):
@@ -571,7 +567,7 @@ def get_neighbors_from_biogrid(
     return neighbors
 
 
-def add_protein_protein_interactions_from_biogrid(
+def add_protein_interactions_from_biogrid(
         network: nx.Graph,
         experimental_system: Optional[Container[str]] = None,
         experimental_system_type: Optional[Container[str]] = None,
@@ -596,7 +592,7 @@ def add_protein_protein_interactions_from_biogrid(
         organism: The NCBI taxonomy identifier for the organism of interest.
         version: The version of the BioGRID database, if not passed, the latest.
     """
-    for interactor_a, interactor_b in biogrid.get_protein_protein_interactions(
+    for interactor_a, interactor_b in biogrid.get_protein_interactions(
             experimental_system, experimental_system_type,
             interaction_throughput, multi_validated_physical, organism,
             version):
@@ -625,7 +621,7 @@ def get_neighbors_from_corum(network: nx.Graph,
         Neighbors of the protein-protein interaction network in CORUM.
     """
     neighbors = set()
-    for interactor_a, interactor_b in corum.get_protein_protein_interactions(
+    for interactor_a, interactor_b in corum.get_protein_interactions(
             purification_methods, organism):
         if (interactor_a in network and interactor_b not in network):
             neighbors.add(interactor_b)
@@ -636,10 +632,10 @@ def get_neighbors_from_corum(network: nx.Graph,
     return neighbors
 
 
-def add_protein_protein_interactions_from_corum(network: nx.Graph,
-                                                purification_methods: Optional[
-                                                    Container[str]] = None,
-                                                organism: int = 9606) -> None:
+def add_protein_interactions_from_corum(network: nx.Graph,
+                                        purification_methods: Optional[
+                                            Container[str]] = None,
+                                        organism: int = 9606) -> None:
     """
     Adds protein-protein interactions from CORUM to a protein-protein
     interaction network.
@@ -651,7 +647,7 @@ def add_protein_protein_interactions_from_corum(network: nx.Graph,
             accepted.
         organism: The NCBI taxonomy identifier for the organism of interest.
     """
-    for interactor_a, interactor_b in corum.get_protein_protein_interactions(
+    for interactor_a, interactor_b in corum.get_protein_interactions(
             purification_methods, organism):
         if (interactor_a in network and interactor_b in network and
                 interactor_a != interactor_b):
@@ -683,7 +679,7 @@ def get_neighbors_from_intact(
         Neighbors of the protein-protein interaction network in IntAct.
     """
     neighbors = set()
-    for interactor_a, interactor_b, _ in intact.get_protein_protein_interactions(
+    for interactor_a, interactor_b, _ in intact.get_protein_interactions(
             interaction_detection_methods, interaction_types, psi_mi_score,
             organism):
         if (interactor_a in network and interactor_b not in network):
@@ -695,7 +691,7 @@ def get_neighbors_from_intact(
     return neighbors
 
 
-def add_protein_protein_interactions_from_intact(
+def add_protein_interactions_from_intact(
         network: nx.Graph,
         interaction_detection_methods: Optional[Container[str]] = None,
         interaction_types: Optional[Container[str]] = None,
@@ -715,7 +711,7 @@ def add_protein_protein_interactions_from_intact(
         psi_mi_score: The PSI-MI score threshold.
         organism: The NCBI taxonomy identifier for the organism of interest.
     """
-    for interactor_a, interactor_b, score in intact.get_protein_protein_interactions(
+    for interactor_a, interactor_b, score in intact.get_protein_interactions(
             interaction_detection_methods, interaction_types, psi_mi_score,
             organism):
         if (interactor_a in network and interactor_b in network and
@@ -753,7 +749,7 @@ def get_neighbors_from_mint(network: nx.Graph,
         Neighbors of the protein-protein interaction network in MINT.
     """
     neighbors = set()
-    for interactor_a, interactor_b, _ in mint.get_protein_protein_interactions(
+    for interactor_a, interactor_b, _ in mint.get_protein_interactions(
             interaction_detection_methods, interaction_types, psi_mi_score,
             organism):
         if (interactor_a in network and interactor_b not in network):
@@ -765,7 +761,7 @@ def get_neighbors_from_mint(network: nx.Graph,
     return neighbors
 
 
-def add_protein_protein_interactions_from_mint(
+def add_protein_interactions_from_mint(
         network: nx.Graph,
         interaction_detection_methods: Optional[Container[str]] = None,
         interaction_types: Optional[Container[str]] = None,
@@ -785,7 +781,7 @@ def add_protein_protein_interactions_from_mint(
         psi_mi_score: The PSI-MI score threshold.
         organism: The NCBI taxonomy identifier for the organism of interest.
     """
-    for interactor_a, interactor_b, score in mint.get_protein_protein_interactions(
+    for interactor_a, interactor_b, score in mint.get_protein_interactions(
             interaction_detection_methods, interaction_types, psi_mi_score,
             organism):
         if (interactor_a in network and interactor_b in network and
@@ -821,7 +817,7 @@ def get_neighbors_from_reactome(
     """
     neighbors = set()
 
-    for interactor_a, interactor_b in reactome.get_protein_protein_interactions(
+    for interactor_a, interactor_b in reactome.get_protein_interactions(
             interaction_type, interaction_context, organism):
         if (interactor_a in network and interactor_b not in network):
             neighbors.add(interactor_b)
@@ -832,7 +828,7 @@ def get_neighbors_from_reactome(
     return neighbors
 
 
-def add_protein_protein_interactions_from_reactome(
+def add_protein_interactions_from_reactome(
     network: nx.Graph,
     interaction_type: Optional[Container[str]] = None,
     interaction_context: Optional[Container[str]] = None,
@@ -850,7 +846,7 @@ def add_protein_protein_interactions_from_reactome(
             If none are specified, any are accepted.
         organism: The NCBI taxonomy identifier for the organism of interest.
     """
-    for interactor_a, interactor_b in reactome.get_protein_protein_interactions(
+    for interactor_a, interactor_b in reactome.get_protein_interactions(
             interaction_type, interaction_context, organism):
         if (interactor_a in network and interactor_b in network and
                 interactor_a != interactor_b):
@@ -906,7 +902,7 @@ def get_neighbors_from_string(network: nx.Graph,
     """
     neighbors = set()
 
-    for interactor_a, interactor_b, _ in string.get_protein_protein_interactions(
+    for interactor_a, interactor_b, _ in string.get_protein_interactions(
             neighborhood, neighborhood_transferred, fusion, cooccurence,
             homology, coexpression, coexpression_transferred, experiments,
             experiments_transferred, database, database_transferred, textmining,
@@ -921,25 +917,24 @@ def get_neighbors_from_string(network: nx.Graph,
     return neighbors
 
 
-def add_protein_protein_interactions_from_string(
-        network: nx.Graph,
-        neighborhood: float = 0.0,
-        neighborhood_transferred: float = 0.0,
-        fusion: float = 0.0,
-        cooccurence: float = 0.0,
-        homology: float = 0.0,
-        coexpression: float = 0.0,
-        coexpression_transferred: float = 0.0,
-        experiments: float = 0.0,
-        experiments_transferred: float = 0.0,
-        database: float = 0.0,
-        database_transferred: float = 0.0,
-        textmining: float = 0.0,
-        textmining_transferred: float = 0.0,
-        combined_score: float = 0.0,
-        physical: bool = False,
-        organism: int = 9606,
-        version: float = 11.5) -> None:
+def add_protein_interactions_from_string(network: nx.Graph,
+                                         neighborhood: float = 0.0,
+                                         neighborhood_transferred: float = 0.0,
+                                         fusion: float = 0.0,
+                                         cooccurence: float = 0.0,
+                                         homology: float = 0.0,
+                                         coexpression: float = 0.0,
+                                         coexpression_transferred: float = 0.0,
+                                         experiments: float = 0.0,
+                                         experiments_transferred: float = 0.0,
+                                         database: float = 0.0,
+                                         database_transferred: float = 0.0,
+                                         textmining: float = 0.0,
+                                         textmining_transferred: float = 0.0,
+                                         combined_score: float = 0.0,
+                                         physical: bool = False,
+                                         organism: int = 9606,
+                                         version: float = 11.5) -> None:
     """
     Adds protein-protein interactions from STRING to a protein-protein
     interaction network.
@@ -965,7 +960,7 @@ def add_protein_protein_interactions_from_string(
         organism: The NCBI taxonomy identifier for the organism of interest.
         version: The version of the STRING database.
     """
-    for interactor_a, interactor_b, score in string.get_protein_protein_interactions(
+    for interactor_a, interactor_b, score in string.get_protein_interactions(
             neighborhood, neighborhood_transferred, fusion, cooccurence,
             homology, coexpression, coexpression_transferred, experiments,
             experiments_transferred, database, database_transferred, textmining,
@@ -999,9 +994,9 @@ def get_databases(network: nx.Graph) -> tuple[str, ...]:
     return tuple(
         sorted(
             set(database for edge in network.edges()
-                for database in network.edges[edge]).intersection({
-                    "BioGRID", "CORUM", "IntAct", "MINT", "Reactome", "STRING"
-                })))
+                for database in network.edges[edge]).intersection(
+                    ("BioGRID", "CORUM", "IntAct", "MINT", "Reactome",
+                     "STRING"))))
 
 
 def set_edge_weights(
@@ -1177,7 +1172,7 @@ def get_measurement_enrichment(
     """
     p_values = {}
     for time in get_times(network):
-        for modification in get_post_translational_modifications(network, time):
+        for modification in get_modifications(network, time):
             measurement_range = (convert_measurement(
                 measurements[0],
                 get_measurements(network, time, modification,
@@ -1234,8 +1229,7 @@ def get_measurement_enrichment(
         community: {
             time: {
                 modification: p_values[(community, time, modification)]
-                for modification in get_post_translational_modifications(
-                    network, time)
+                for modification in get_modifications(network, time)
             } for time in get_times(network)
         } for community in communities
     }
@@ -1276,7 +1270,7 @@ def get_measurement_location(
     """
     p_values = {}
     for time in get_times(network):
-        for modification in get_post_translational_modifications(network, time):
+        for modification in get_modifications(network, time):
             network_measurements = [
                 get_measurements(
                     nx.union_all([m
@@ -1303,8 +1297,7 @@ def get_measurement_location(
         community: {
             time: {
                 modification: p_values[(community, time, modification)]
-                for modification in get_post_translational_modifications(
-                    network, time)
+                for modification in get_modifications(network, time)
                 if (community, time, modification) in p_values
             } for time in get_times(network)
         } for community in communities

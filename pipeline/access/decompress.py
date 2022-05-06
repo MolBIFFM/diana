@@ -23,10 +23,8 @@ def decompress_gzip_file(compressed_file_name: str, size: int = 8192) -> str:
 
     if not os.path.exists(decompressed_file_name):
         with gzip.open(compressed_file_name, "rb") as compressed_file:
-            with open(decompressed_file_name,
-                      "wb",
-                      buffering=size,
-                      encoding="utf-8") as decompressed_file:
+            with open(decompressed_file_name, "wb",
+                      buffering=size) as decompressed_file:
                 while chunk := compressed_file.read(size):
                     decompressed_file.write(chunk)
 

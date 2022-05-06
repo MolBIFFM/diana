@@ -11,7 +11,7 @@ from databases import uniprot
 ORGANISM = {"data": {9606: "Homo sapiens"}}
 
 
-def get_protein_protein_interactions(
+def get_protein_interactions(
     purification_methods: Optional[Container[str]] = None,
     organism: int = 9606,
 ) -> Iterator[tuple[str, str, float]]:

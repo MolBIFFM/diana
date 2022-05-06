@@ -8,7 +8,7 @@ import xml.etree.ElementTree as ET
 from typing import Callable, Collection, Mapping
 
 import networkx as nx
-from networks import protein_protein_interaction_network
+from networks import protein_interaction_network
 
 COMPONENTS = [
     {
@@ -956,8 +956,8 @@ def get_style(
             "documentVersion": "3.0"
         }))
 
-    for time in protein_protein_interaction_network.get_times(network):
-        modifications = protein_protein_interaction_network.get_post_translational_modifications(
+    for time in protein_interaction_network.get_times(network):
+        modifications = protein_interaction_network.get_modifications(
             network, time)
         visual_style_sub_element = ET.SubElement(styles.getroot(),
                                                  "visualStyle",
@@ -1014,8 +1014,8 @@ def get_style(
                                         key.format(max=float(
                                             confidence_score_combination({
                                                 database: 1.0 for database in
-                                                protein_protein_interaction_network
-                                                .get_databases(network)
+                                                protein_interaction_network.
+                                                get_databases(network)
                                             }))),
                                     "equalValue":
                                         values["equalValue"],
@@ -1115,21 +1115,20 @@ def get_style(
                             get_bar_chart(
                                 time,
                                 modification,
-                                protein_protein_interaction_network.get_sites(
+                                protein_interaction_network.get_sites(
                                     network, time, modification),
-                                cy_range=(
-                                    convert_measurement(
-                                        bar_chart_range[0],
-                                        protein_protein_interaction_network.
-                                        get_measurements(
-                                            network, time, modification,
-                                            site_combination)),
-                                    convert_measurement(
-                                        bar_chart_range[1],
-                                        protein_protein_interaction_network.
-                                        get_measurements(
-                                            network, time, modification,
-                                            site_combination)))))
+                                cy_range=(convert_measurement(
+                                    bar_chart_range[0],
+                                    protein_interaction_network.
+                                    get_measurements(network, time,
+                                                     modification,
+                                                     site_combination)),
+                                          convert_measurement(
+                                              bar_chart_range[1],
+                                              protein_interaction_network.
+                                              get_measurements(
+                                                  network, time, modification,
+                                                  site_combination)))))
 
                     elif visual_property_sub_element.get(
                             "name") == f"NODE_CUSTOMGRAPHICS_POSITION_{i + 1}":

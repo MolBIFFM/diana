@@ -6,7 +6,7 @@ from access import iterate
 from databases import uniprot
 
 
-def get_protein_protein_interactions(
+def get_protein_interactions(
         neighborhood: float = 0.0,
         neighborhood_transferred: float = 0.0,
         fusion: float = 0.0,
