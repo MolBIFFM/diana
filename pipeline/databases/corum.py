@@ -1,6 +1,6 @@
 """The interface for the CORUM database."""
 import re
-from typing import Callable, Container, Iterable, Iterator, Mapping, Optional
+from typing import Callable, Container, Iterable, Iterator, Optional
 
 import scipy.stats
 from access import iterate
@@ -14,7 +14,7 @@ ORGANISM = {"data": {9606: "Homo sapiens"}}
 def get_protein_interactions(
     purification_methods: Optional[Container[str]] = None,
     organism: int = 9606,
-) -> Iterator[tuple[str, str, float]]:
+) -> Iterator[tuple[str, str]]:
     """
     Yields protein-protein interactions from CORUM.
 
@@ -124,13 +124,13 @@ def get_enrichment(
         [int, int, int, int],
         float] = lambda k, M, n, N: scipy.stats.hypergeom.sf(k - 1, M, n, N),
     multiple_testing_correction: Callable[
-        [Mapping[tuple[frozenset[str], str],
-                 float]], Mapping[tuple[frozenset[str], str],
-                                  float]] = correction.benjamini_hochberg,
+        [dict[tuple[frozenset[str], int],
+              float]], dict[tuple[frozenset[str], int],
+                            float]] = correction.benjamini_hochberg,
     purification_methods: Optional[Container[str]] = None,
     organism: int = 9606,
     annotation_as_reference: bool = True
-) -> dict[frozenset[str], dict[tuple[str, str], float]]:
+) -> dict[frozenset[str], dict[tuple[int, str], float]]:
     """
     Test sets of proteins for enrichment of CORUM protein complexes.
 

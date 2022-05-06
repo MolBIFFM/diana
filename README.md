@@ -421,7 +421,7 @@ If true, restrict query to multi-validated physical protein-protein interactions
     }
 ]
 ```
-The version of the BioGRID database to use. The default setting is `null`, corresponding to the latest version.
+The version of the BioGRID database to use. The default setting is `null`, corresponding to the latest version. Missing numbers are set to 0 towards the right.
 
 ```json
 [

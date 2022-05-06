@@ -5,7 +5,7 @@ Nodes are Reactome pathways annotated with proteins from a species of interest.
 Edges are directed pathway relationships within Reactome.
 """
 
-from typing import Callable, Container, Mapping
+from typing import Callable, Iterable
 
 import networkx as nx
 import scipy.stats
@@ -13,12 +13,11 @@ from analysis import correction
 from databases import reactome
 
 
-def get_network(proteins: Container[str] = frozenset(),
+def get_network(proteins: Iterable[str] = frozenset(),
                 enrichment_test: Callable[[int, int, int, int], float] = lambda
                 k, M, n, N: scipy.stats.hypergeom.sf(k - 1, M, n, N),
-                multiple_testing_correction: Callable[
-                    [Mapping[str, float]],
-                    Mapping[str, float]] = correction.benjamini_hochberg,
+                multiple_testing_correction: Callable[[dict[str, float]], dict[
+                    str, float]] = correction.benjamini_hochberg,
                 organism: int = 9606) -> nx.DiGraph:
     """
     Assemble a Reactome network from proteins.

@@ -7,7 +7,7 @@ ORGANISM = {"files": {9606: "human"}}
 
 
 def get_swiss_prot_entries(
-        organism: int = 9606) -> Iterator[tuple[tuple[str], str, str]]:
+        organism: int = 9606) -> Iterator[tuple[tuple[str, ...], str, str]]:
     """
     Yields Swiss-Prot entries.
 

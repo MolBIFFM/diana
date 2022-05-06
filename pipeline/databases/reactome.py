@@ -1,5 +1,5 @@
 """The interface for the Reactome database."""
-from typing import Callable, Container, Iterable, Iterator, Mapping, Optional
+from typing import Callable, Container, Iterable, Iterator, Optional
 
 import scipy.stats
 from access import iterate
@@ -14,7 +14,7 @@ def get_protein_interactions(
     interaction_type: Optional[Container[str]] = None,
     interaction_context: Optional[Container[str]] = None,
     organism: int = 9606,
-) -> Iterator[tuple[str, str, float]]:
+) -> Iterator[tuple[str, str]]:
     """
     Yields protein-protein interactions from Reactome.
 
@@ -129,9 +129,9 @@ def get_enrichment(
         [int, int, int, int],
         float] = lambda k, M, n, N: scipy.stats.hypergeom.sf(k - 1, M, n, N),
     multiple_testing_correction: Callable[
-        [Mapping[tuple[frozenset[str], str],
-                 float]], Mapping[tuple[frozenset[str], str],
-                                  float]] = correction.benjamini_hochberg,
+        [dict[tuple[frozenset[str], str],
+              float]], dict[tuple[frozenset[str], str],
+                            float]] = correction.benjamini_hochberg,
     organism: int = 9606,
     annotation_as_reference: bool = True
 ) -> dict[frozenset[str], dict[tuple[str, str], float]]:

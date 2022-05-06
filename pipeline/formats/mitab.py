@@ -1,7 +1,9 @@
 """Utilities to parse the PSI-MI TAB file format."""
 
+from typing import Iterable, Optional
 
-def parse(entry: str) -> dict[str, str]:
+
+def parse(entry: str) -> dict[str, tuple[tuple[str, Optional[str]], ...]]:
     """
     Parse an entry in PSI-MI TAB format.
 
@@ -35,7 +37,10 @@ def parse(entry: str) -> dict[str, str]:
             else:
                 values[namespace] = [(identifier, term)]
 
-        return values
+        return {
+            ns: tuple(identifiers_terms)
+            for ns, identifiers_terms in values.items()
+        }
 
 
 def get_identifiers_from_namespace(entry: str,
@@ -71,7 +76,7 @@ def get_terms_from_namespace(entry: str, namespace: str) -> tuple[str, ...]:
 
 
 def namespace_has_identifier(entry: str, namespace: str,
-                             identifier: str) -> bool:
+                             identifier: int | str) -> bool:
     """
     Returns whether an identifier exists in namespace.
 
@@ -86,7 +91,7 @@ def namespace_has_identifier(entry: str, namespace: str,
     return str(identifier) in get_identifiers_from_namespace(entry, namespace)
 
 
-def namespace_has_term(entry: str, namespace: str, term: str) -> bool:
+def namespace_has_term(entry: str, namespace: str, term: int | str) -> bool:
     """
     Returns whether a term exists in namespace.
 
@@ -102,7 +107,7 @@ def namespace_has_term(entry: str, namespace: str, term: str) -> bool:
 
 
 def namespace_has_any_identifier_from(entry: str, namespace: str,
-                                      identifiers: list[str]) -> bool:
+                                      identifiers: Iterable[int | str]) -> bool:
     """
     Returns whether any identifier exists in namespace.
 
@@ -120,7 +125,7 @@ def namespace_has_any_identifier_from(entry: str, namespace: str,
 
 
 def namespace_has_any_term_from(entry: str, namespace: str,
-                                terms: list[str]) -> bool:
+                                terms: Iterable[int | str]) -> bool:
     """
     Returns whether any term exists in namespace.
 

@@ -1,5 +1,5 @@
 """The interface for the Gene Ontology database."""
-from typing import Callable, Container, Iterable, Iterator, Mapping
+from typing import Callable, Collection, Container, Iterable, Iterator
 
 import scipy.stats
 from access import iterate
@@ -96,7 +96,7 @@ def get_annotation(
             yield (row[4].split(":")[1], row[1])
 
 
-def convert_namespaces(namespaces: Container[str]) -> tuple[str]:
+def convert_namespaces(namespaces: Iterable[str]) -> tuple[str, ...]:
     """
     Converts Gene Ontology namespace identifiers.
 
@@ -119,12 +119,12 @@ def get_enrichment(
         [int, int, int, int],
         float] = lambda k, M, n, N: scipy.stats.hypergeom.sf(k - 1, M, n, N),
     multiple_testing_correction: Callable[
-        [Mapping[tuple[frozenset[str], str],
-                 float]], Mapping[tuple[frozenset[str], str],
-                                  float]] = correction.benjamini_hochberg,
+        [dict[tuple[frozenset[str], str],
+              float]], dict[tuple[frozenset[str], str],
+                            float]] = correction.benjamini_hochberg,
     organism: int = 9606,
-    namespaces: Container[str] = ("cellular_component", "molecular_function",
-                                  "biological_process"),
+    namespaces: Collection[str] = ("cellular_component", "molecular_function",
+                                   "biological_process"),
     annotation_as_reference: bool = True
 ) -> dict[frozenset, dict[tuple[str, str], float]]:
     """

@@ -2,10 +2,10 @@
 
 import math
 import statistics
-from typing import Callable, Collection, Optional
+from typing import Callable, Collection, Iterable, Optional
 
 LOGARITHM: dict[Optional[int], Callable[
-    [Collection[float], Callable[[Collection[float]], float]], float]] = {
+    [Iterable[float], Callable[[Iterable[float]], float]], float]] = {
         None:
             lambda measurements, combination: math.log2(
                 combination(measurements)),

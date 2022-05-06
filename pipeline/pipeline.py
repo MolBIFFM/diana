@@ -6,7 +6,7 @@ import logging
 import os
 import re
 import sys
-from typing import Collection, Optional
+from typing import Any, Optional
 
 import networkx as nx
 
@@ -20,7 +20,7 @@ from networks import (gene_ontology_network, protein_interaction_network,
                       reactome_network)
 
 
-def process_workflow(configuration: dict[str],
+def process_workflow(configuration: dict[str, Any],
                      logger: logging.Logger,
                      index: Optional[int] = None) -> None:
     """
@@ -124,9 +124,9 @@ def process_workflow(configuration: dict[str],
                         version=tuple(
                             int(v) for v in
                             configuration["protein-protein interactions"]
-                            ["BioGRID"].get("version").split(".")) if "version"
-                        in configuration["protein-protein interactions"]
-                        ["BioGRID"] else None))
+                            ["BioGRID"]["version"].split("."))[:3]
+                        if configuration["protein-protein interactions"].get(
+                            "version")["BioGRID"] else None))
 
             if "CORUM" in configuration[
                     "protein-protein interactions"] and configuration[
@@ -272,9 +272,9 @@ def process_workflow(configuration: dict[str],
                 version=tuple(
                     int(v)
                     for v in configuration["protein-protein interactions"]
-                    ["BioGRID"].get("version").split(".")) if "version"
-                in configuration["protein-protein interactions"]["BioGRID"] else
-                None)
+                    ["BioGRID"]["version"].split("."))[:3]
+                if configuration["protein-protein interactions"]["BioGRID"].get(
+                    "version") else None)
 
         if "CORUM" in configuration["protein-protein interactions"]:
             protein_interaction_network.add_protein_interactions_from_corum(
@@ -1427,7 +1427,7 @@ def process_workflow(configuration: dict[str],
                 )
 
 
-def process_configuration(configurations: Collection[dict[str]],
+def process_configuration(configurations: list[dict[str, Any]],
                           logger: logging.Logger) -> None:
     """
     Executes workflows specified in configurations sequentially.

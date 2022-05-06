@@ -5,7 +5,7 @@ import os
 import re
 import statistics
 from typing import (Callable, Collection, Container, Hashable, Iterable,
-                    Mapping, Optional)
+                    MutableSequence, Optional)
 
 import networkx as nx
 import pandas as pd
@@ -14,7 +14,7 @@ from analysis import correction, modularization
 from databases import biogrid, corum, intact, mint, reactome, string, uniprot
 
 
-def get_network() -> nx.Graph():
+def get_network() -> nx.Graph:
     """
     Returns an initialized protein-protein interaction network.
 
@@ -115,17 +115,16 @@ def add_proteins_from_table(
     protein_accession_format: re.Pattern = re.compile("^(.+?)$"),
     time: int = 0,
     modification: str = "",
-    position_column: str = int | str,
+    position_column: int | str = "",
     position_format: re.Pattern = re.compile("^(.+?)$"),
     replicates: Optional[Collection[int | str]] = None,
     sheet_name: int | str = 0,
     header: int = 0,
     number_sites: int = 100,
     number_replicates: int = 1,
-    replicate_combination: Callable[[Collection[float]],
-                                    float] = statistics.mean,
+    replicate_combination: Callable[[Iterable[float]], float] = statistics.mean,
     measurement_conversion: Callable[
-        [Collection[float], Callable[[Collection[float]], float]],
+        [Iterable[float], Callable[[Iterable[float]], float]],
         float] = lambda measurements, combination: math.log2(
             combination(measurements))
 ) -> None:
@@ -172,10 +171,12 @@ def add_proteins_from_table(
             sheet_name=sheet_name,
             header=header,
             usecols=[protein_accession_column] +
-            [column for column in (position_column,) if column] + replicates,
+            ([position_column] if position_column else []) + list(replicates),
             dtype={
                 protein_accession_column: str,
-                **{column: str for column in (position_column,) if column},
+                **{
+                    position_column: str if position_column else {}
+                },
                 **{column: float for column in replicates},
             },
         )
@@ -184,10 +185,12 @@ def add_proteins_from_table(
             file_name,
             header=header,
             usecols=[protein_accession_column] +
-            [column for column in (position_column,) if column] + replicates,
+            ([position_column] if position_column else []) + list(replicates),
             dtype={
                 protein_accession_column: str,
-                **{column: str for column in (position_column,) if column},
+                **{
+                    position_column: str if position_column else {}
+                },
                 **{column: float for column in replicates},
             },
         )
@@ -292,7 +295,8 @@ def get_proteins(
     network: nx.Graph,
     time: int,
     modification: str,
-    site_combination: Optional[Callable[[Collection[float]], float]] = None,
+    site_combination: Callable[[Collection[float]],
+                               float] = lambda sites: max(sites, key=abs),
     combined_measurement_filter: Callable[[float],
                                           bool] = bool) -> frozenset[str]:
     """
@@ -419,7 +423,8 @@ def set_post_translational_modification(network: nx.Graph) -> None:
 
 def set_measurements(
     network: nx.Graph,
-    site_combination: Optional[Callable[[Collection[float]], float]] = None,
+    site_combination: Callable[[Collection[float]],
+                               float] = lambda sites: max(sites, key=abs),
     measurements: tuple[float, float] = (-1.0, 1.0),
     convert_measurement: Callable[
         [float, Collection[float]],
@@ -532,7 +537,7 @@ def get_neighbors_from_biogrid(
         interaction_throughput: Optional[Container[str]] = None,
         multi_validated_physical: bool = False,
         organism: int = 9606,
-        version: Optional[tuple[int, int, int]] = None) -> set[str]:
+        version: Optional[tuple[int, ...]] = None) -> set[str]:
     """
     Returns proteins interacting with proteins in a protein-protein interaction
     network from BioGRID.
@@ -574,7 +579,7 @@ def add_protein_interactions_from_biogrid(
         interaction_throughput: Optional[Container[str]] = None,
         multi_validated_physical: bool = False,
         organism: int = 9606,
-        version: Optional[tuple[int, int, int]] = None) -> None:
+        version: Optional[tuple[int, ...]] = None) -> None:
     """
     Adds protein-protein interactions from BioGRID to a protein-protein
     interaction network.
@@ -655,12 +660,12 @@ def add_protein_interactions_from_corum(network: nx.Graph,
             network.edges[interactor_a, interactor_b]["CORUM"] = 1.0
 
 
-def get_neighbors_from_intact(
-        network: nx.Graph,
-        interaction_detection_methods: Optional[Container[str]] = None,
-        interaction_types: Optional[Container[str]] = None,
-        psi_mi_score: float = 0.0,
-        organism: int = 9606) -> set[str]:
+def get_neighbors_from_intact(network: nx.Graph,
+                              interaction_detection_methods: Optional[
+                                  Iterable[str]] = None,
+                              interaction_types: Optional[Iterable[str]] = None,
+                              psi_mi_score: float = 0.0,
+                              organism: int = 9606) -> set[str]:
     """
     Returns proteins interacting with proteins in a protein-protein interaction
     network from IntAct to the network.
@@ -693,8 +698,8 @@ def get_neighbors_from_intact(
 
 def add_protein_interactions_from_intact(
         network: nx.Graph,
-        interaction_detection_methods: Optional[Container[str]] = None,
-        interaction_types: Optional[Container[str]] = None,
+        interaction_detection_methods: Optional[Iterable[str]] = None,
+        interaction_types: Optional[Iterable[str]] = None,
         psi_mi_score: float = 0.0,
         organism: int = 9606) -> None:
     """
@@ -727,8 +732,8 @@ def add_protein_interactions_from_intact(
 
 def get_neighbors_from_mint(network: nx.Graph,
                             interaction_detection_methods: Optional[
-                                Container[str]] = None,
-                            interaction_types: Optional[Container[str]] = None,
+                                Iterable[str]] = None,
+                            interaction_types: Optional[Iterable[str]] = None,
                             psi_mi_score: float = 0.0,
                             organism: int = 9606) -> set[str]:
     """
@@ -763,8 +768,8 @@ def get_neighbors_from_mint(network: nx.Graph,
 
 def add_protein_interactions_from_mint(
         network: nx.Graph,
-        interaction_detection_methods: Optional[Container[str]] = None,
-        interaction_types: Optional[Container[str]] = None,
+        interaction_detection_methods: Optional[Iterable[str]] = None,
+        interaction_types: Optional[Iterable[str]] = None,
         psi_mi_score: float = 0.0,
         organism: int = 9606) -> None:
     """
@@ -1001,9 +1006,8 @@ def get_databases(network: nx.Graph) -> tuple[str, ...]:
 
 def set_edge_weights(
     network: nx.Graph,
-    weight: Callable[[Mapping[str, float]],
-                     float] = lambda confidence_scores: int(
-                         bool(confidence_scores.values())),
+    weight: Callable[[dict[str, float]], float] = lambda confidence_scores: int(
+        bool(confidence_scores.values())),
     attribute: str = "weight",
 ) -> None:
     """
@@ -1041,10 +1045,11 @@ def remove_edge_weights(network: nx.Graph, attribute: str = "weight") -> None:
 def get_communities(
         network: nx.Graph,
         community_size: int,
-        community_size_combination: Callable[[Collection[int]],
+        community_size_combination: Callable[[Iterable[int]],
                                              float] = statistics.mean,
-        algorithm: Callable[[nx.Graph],
-                            Iterable[set[Hashable]]] = modularization.louvain,
+        algorithm: Callable[
+            [nx.Graph, float, str],
+            MutableSequence[set[Hashable]]] = modularization.louvain,
         resolution: float = 1.0,
         weight: str = "weight") -> tuple[nx.Graph, ...]:
     """
@@ -1064,15 +1069,15 @@ def get_communities(
         Modules of the protein-protein interaction network.
     """
     if not network.number_of_edges():
-        return []
+        return tuple()
 
     copied_network = network.copy()
     copied_network.remove_nodes_from(list(nx.isolates(copied_network)))
 
     communities = algorithm(copied_network, resolution, weight)
 
-    while (community_size_combination(
-            len(community) for community in communities) > community_size):
+    while community_size_combination(
+            len(community) for community in communities) > community_size:
         subdivision = False
         for i, subdivided_community in enumerate(
                 algorithm(copied_network.subgraph(communities[j]), resolution,
@@ -1122,7 +1127,7 @@ def get_measurements(
                 measurements.append(
                     math.log2(
                         site_combination(
-                            math.pow(2.0, site) for site in sites)))
+                            [math.pow(2.0, site) for site in sites])))
             else:
                 measurements.extend(sites)
 
@@ -1141,9 +1146,8 @@ def get_measurement_enrichment(
         [int, int, int, int],
         float] = lambda k, M, n, N: scipy.stats.hypergeom.sf(k - 1, M, n, N),
     multiple_testing_correction: Callable[
-        [Mapping[tuple[nx.Graph, int, str],
-                 float]], Mapping[tuple[nx.Graph, int, str],
-                                  float]] = correction.benjamini_hochberg,
+        [dict[tuple[nx.Graph, int, str], float]],
+        dict[tuple[nx.Graph, int, str], float]] = correction.benjamini_hochberg,
 ) -> dict[nx.Graph, dict[int, dict[str, float]]]:
     """
     Test communities for enrichment of large protein-specific measurements for
@@ -1243,9 +1247,8 @@ def get_measurement_location(
         [Collection[float], Collection[float]],
         float] = lambda x, y: scipy.stats.ranksums(x, y).pvalue,
     multiple_testing_correction: Callable[
-        [Mapping[tuple[nx.Graph, int, str],
-                 float]], Mapping[tuple[nx.Graph, int, str],
-                                  float]] = correction.benjamini_hochberg,
+        [dict[tuple[nx.Graph, int, str], float]],
+        dict[tuple[nx.Graph, int, str], float]] = correction.benjamini_hochberg,
 ) -> dict[nx.Graph, dict[int, dict[str, float]]]:
     """
     Test communities for difference tendencies in protein-specific measurements
