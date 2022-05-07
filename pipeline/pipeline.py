@@ -99,12 +99,12 @@ def process_workflow(configuration: Mapping[str, Any],
                     database, {}).get("neighbors", 0)
                     for database in ("BioGRID", "CORUM", "IntAct", "MINT",
                                      "Reactome", "STRING"))):
-            proteins = set()
+            interacting_proteins = set()
             if "BioGRID" in configuration[
                     "protein-protein interactions"] and configuration[
                         "protein-protein interactions"]["BioGRID"].get(
                             "neighbors", 0) > neighbors:
-                proteins.update(
+                interacting_proteins.update(
                     protein_interaction_network.get_neighbors_from_biogrid(
                         network,
                         interaction_throughput=configuration[
@@ -121,18 +121,18 @@ def process_workflow(configuration: Mapping[str, Any],
                                 "multi-validated physical", False),
                         organism=configuration["protein-protein interactions"]
                         ["BioGRID"].get("organism", 9606),
-                        version=tuple(
+                        version=[
                             int(v) for v in
                             configuration["protein-protein interactions"]
-                            ["BioGRID"]["version"].split("."))[:3]
-                        if configuration["protein-protein interactions"].get(
-                            "version")["BioGRID"] else None))
+                            ["BioGRID"]["version"].split(".")
+                        ][:3] if configuration["protein-protein interactions"].
+                        get("version")["BioGRID"] else None))
 
             if "CORUM" in configuration[
                     "protein-protein interactions"] and configuration[
                         "protein-protein interactions"]["CORUM"].get(
                             "neighbors", 0) > neighbors:
-                proteins.update(
+                interacting_proteins.update(
                     protein_interaction_network.get_neighbors_from_corum(
                         network,
                         purification_methods=configuration[
@@ -143,7 +143,7 @@ def process_workflow(configuration: Mapping[str, Any],
                     "protein-protein interactions"] and configuration[
                         "protein-protein interactions"]["IntAct"].get(
                             "neighbors", 0) > neighbors:
-                proteins.update(
+                interacting_proteins.update(
                     protein_interaction_network.get_neighbors_from_intact(
                         network,
                         interaction_detection_methods=configuration[
@@ -163,7 +163,7 @@ def process_workflow(configuration: Mapping[str, Any],
                     "protein-protein interactions"] and configuration[
                         "protein-protein interactions"]["MINT"].get(
                             "neighbors", 0) > neighbors:
-                proteins.update(
+                interacting_proteins.update(
                     protein_interaction_network.get_neighbors_from_mint(
                         network,
                         interaction_detection_methods=configuration[
@@ -183,7 +183,7 @@ def process_workflow(configuration: Mapping[str, Any],
                     "protein-protein interactions"] and configuration[
                         "protein-protein interactions"]["Reactome"].get(
                             "neighbors", 0) > neighbors:
-                proteins.update(
+                interacting_proteins.update(
                     protein_interaction_network.get_neighbors_from_reactome(
                         network,
                         interaction_context=configuration[
@@ -200,7 +200,7 @@ def process_workflow(configuration: Mapping[str, Any],
                     "protein-protein interactions"] and configuration[
                         "protein-protein interactions"]["STRING"].get(
                             "neighbors", 0) > neighbors:
-                proteins.update(
+                interacting_proteins.update(
                     protein_interaction_network.get_neighbors_from_string(
                         network,
                         neighborhood=configuration[
@@ -249,7 +249,7 @@ def process_workflow(configuration: Mapping[str, Any],
                         ["STRING"].get("version", 11.5),
                     ))
 
-            network.add_nodes_from(proteins)
+            network.add_nodes_from(interacting_proteins)
             protein_interaction_network.map_proteins(network)
 
         if "BioGRID" in configuration["protein-protein interactions"]:
@@ -269,12 +269,12 @@ def process_workflow(configuration: Mapping[str, Any],
                         "multi-validated physical", False),
                 organism=configuration["protein-protein interactions"]
                 ["BioGRID"].get("organism", 9606),
-                version=tuple(
+                version=[
                     int(v)
                     for v in configuration["protein-protein interactions"]
-                    ["BioGRID"]["version"].split("."))[:3]
-                if configuration["protein-protein interactions"]["BioGRID"].get(
-                    "version") else None)
+                    ["BioGRID"]["version"].split(".")
+                ][:3] if configuration["protein-protein interactions"]
+                ["BioGRID"].get("version") else None)
 
         if "CORUM" in configuration["protein-protein interactions"]:
             protein_interaction_network.add_protein_interactions_from_corum(
@@ -419,9 +419,11 @@ def process_workflow(configuration: Mapping[str, Any],
 
     if "CORUM enrichment" in configuration:
         if "subsets" in configuration["CORUM enrichment"]:
-            proteins = set(
-                network.nodes()) if configuration["CORUM enrichment"].get(
-                    "intersection", False) else set()
+            if configuration["CORUM enrichment"].get("intersection", False):
+                proteins = set(network.nodes())
+            else:
+                proteins = set()
+
             for subset in configuration["CORUM enrichment"]["subsets"]:
                 if subset.get("time") in protein_interaction_network.get_times(
                         network) and subset.get(
@@ -518,9 +520,12 @@ def process_workflow(configuration: Mapping[str, Any],
 
     if "Gene Ontology enrichment" in configuration:
         if "subsets" in configuration["Gene Ontology enrichment"]:
-            proteins = set(network.nodes()
-                          ) if configuration["Gene Ontology enrichment"].get(
-                              "intersection", False) else set()
+            if configuration["Gene Ontology enrichment"].get(
+                    "intersection", False):
+                proteins = set(network.nodes())
+            else:
+                set()
+
             for subset in configuration["Gene Ontology enrichment"]["subsets"]:
                 if subset.get("time") in protein_interaction_network.get_times(
                         network) and subset.get(
@@ -623,9 +628,11 @@ def process_workflow(configuration: Mapping[str, Any],
 
     if "Reactome enrichment" in configuration:
         if "subsets" in configuration["Reactome enrichment"]:
-            proteins = set(
-                network.nodes()) if configuration["Reactome enrichment"].get(
-                    "intersection", False) else set()
+            if configuration["Reactome enrichment"].get("intersection", False):
+                proteins = set(network.nodes())
+            else:
+                proteins = set()
+
             for subset in configuration["Reactome enrichment"]["subsets"]:
                 if subset.get("time") in protein_interaction_network.get_times(
                         network) and subset.get(
@@ -941,12 +948,14 @@ def process_workflow(configuration: Mapping[str, Any],
                     "CORUM enrichment"]:
                 if configuration["community detection"]["CORUM enrichment"].get(
                         "intersection", False):
-                    proteins = {
+                    cmty_proteins = {
                         community: set(community.nodes())
                         for community in communities
                     }
                 else:
-                    proteins = {community: set() for community in communities}
+                    cmty_proteins = {
+                        community: set() for community in communities
+                    }
 
                 for subset in configuration["community detection"][
                         "CORUM enrichment"]["subsets"]:
@@ -957,7 +966,7 @@ def process_workflow(configuration: Mapping[str, Any],
                                 "post-translational modification"
                             ) in protein_interaction_network.get_modifications(
                                 network, subset["time"]):
-                        for community in proteins:
+                        for community in cmty_proteins:
                             measurement_range = (
                                 conversion.MEASUREMENT_CONVERSION[subset.get(
                                     "conversion")]
@@ -983,7 +992,7 @@ def process_workflow(configuration: Mapping[str, Any],
                             if configuration["community detection"][
                                     "CORUM enrichment"].get(
                                         "intersection", False):
-                                proteins[community].intersection_update(
+                                cmty_proteins[community].intersection_update(
                                     protein_interaction_network.get_proteins(
                                         community,
                                         subset["time"],
@@ -997,7 +1006,7 @@ def process_workflow(configuration: Mapping[str, Any],
                                         measurement_range[1]))
 
                             else:
-                                proteins[community].update(
+                                cmty_proteins[community].update(
                                     protein_interaction_network.get_proteins(
                                         community,
                                         subset["time"],
@@ -1012,7 +1021,7 @@ def process_workflow(configuration: Mapping[str, Any],
 
                 corum_enrichment = corum.get_enrichment(
                     [
-                        frozenset(proteins[community])
+                        frozenset(cmty_proteins[community])
                         for community in communities
                     ],
                     enrichment_test=test.ENRICHMENT_TEST[
@@ -1035,7 +1044,7 @@ def process_workflow(configuration: Mapping[str, Any],
                                               start=1):
                     for (protein_complex,
                          name), p in sorted(corum_enrichment[frozenset(
-                             proteins[community])].items(),
+                             cmty_proteins[community])].items(),
                                             key=lambda item: item[1]):
                         if p <= configuration["community detection"][
                                 "CORUM enrichment"].get("p", 1.0):
@@ -1079,12 +1088,14 @@ def process_workflow(configuration: Mapping[str, Any],
                     "Gene Ontology enrichment"]:
                 if configuration["community detection"][
                         "Gene Ontology enrichment"].get("intersection", False):
-                    proteins = {
+                    cmty_proteins = {
                         community: set(community.nodes())
                         for community in communities
                     }
                 else:
-                    proteins = {community: set() for community in communities}
+                    cmty_proteins = {
+                        community: set() for community in communities
+                    }
 
                 for subset in configuration["community detection"][
                         "Gene Ontology enrichment"]["subsets"]:
@@ -1095,7 +1106,7 @@ def process_workflow(configuration: Mapping[str, Any],
                                 "post-translational modification"
                             ) in protein_interaction_network.get_modifications(
                                 network, subset["time"]):
-                        for community in proteins:
+                        for community in cmty_proteins:
                             measurement_range = (
                                 conversion.MEASUREMENT_CONVERSION[subset.get(
                                     "conversion")]
@@ -1121,7 +1132,7 @@ def process_workflow(configuration: Mapping[str, Any],
                             if configuration["community detection"][
                                     "Gene Ontology enrichment"].get(
                                         "intersection", False):
-                                proteins[community].intersection_update(
+                                cmty_proteins[community].intersection_update(
                                     protein_interaction_network.get_proteins(
                                         community,
                                         subset["time"],
@@ -1135,7 +1146,7 @@ def process_workflow(configuration: Mapping[str, Any],
                                         measurement_range[1]))
 
                             else:
-                                proteins[community].update(
+                                cmty_proteins[community].update(
                                     protein_interaction_network.get_proteins(
                                         community,
                                         subset["time"],
@@ -1150,7 +1161,7 @@ def process_workflow(configuration: Mapping[str, Any],
 
                 gene_ontology_enrichment = gene_ontology.get_enrichment(
                     [
-                        frozenset(proteins[community])
+                        frozenset(cmty_proteins[community])
                         for community in communities
                     ],
                     enrichment_test=test.ENRICHMENT_TEST[configuration[
@@ -1177,7 +1188,7 @@ def process_workflow(configuration: Mapping[str, Any],
                                               start=1):
                     for (term,
                          name), p in sorted(gene_ontology_enrichment[frozenset(
-                             proteins[community])].items(),
+                             cmty_proteins[community])].items(),
                                             key=lambda item: item[1]):
                         if p <= configuration["community detection"][
                                 "Gene Ontology enrichment"].get("p", 1.0):
@@ -1223,12 +1234,14 @@ def process_workflow(configuration: Mapping[str, Any],
                     "Reactome enrichment"]:
                 if configuration["community detection"][
                         "Reactome enrichment"].get("intersection", False):
-                    proteins = {
+                    cmty_proteins = {
                         community: set(community.nodes())
                         for community in communities
                     }
                 else:
-                    proteins = {community: set() for community in communities}
+                    cmty_proteins = {
+                        community: set() for community in communities
+                    }
 
                 for subset in configuration["community detection"][
                         "Reactome enrichment"]["subsets"]:
@@ -1239,7 +1252,7 @@ def process_workflow(configuration: Mapping[str, Any],
                                 "post-translational modification"
                             ) in protein_interaction_network.get_modifications(
                                 network, subset["time"]):
-                        for community in proteins:
+                        for community in cmty_proteins:
                             measurement_range = (
                                 conversion.MEASUREMENT_CONVERSION[subset.get(
                                     "conversion")]
@@ -1265,7 +1278,7 @@ def process_workflow(configuration: Mapping[str, Any],
                             if configuration["community detection"][
                                     "Reactome enrichment"].get(
                                         "intersection", False):
-                                proteins[community].intersection_update(
+                                cmty_proteins[community].intersection_update(
                                     protein_interaction_network.get_proteins(
                                         community,
                                         subset["time"],
@@ -1279,7 +1292,7 @@ def process_workflow(configuration: Mapping[str, Any],
                                         measurement_range[1]))
 
                             else:
-                                proteins[community].update(
+                                cmty_proteins[community].update(
                                     protein_interaction_network.get_proteins(
                                         community,
                                         subset["time"],
@@ -1294,7 +1307,7 @@ def process_workflow(configuration: Mapping[str, Any],
 
                 reactome_enrichment = reactome.get_enrichment(
                     [
-                        frozenset(proteins[community])
+                        frozenset(cmty_proteins[community])
                         for community in communities
                     ],
                     enrichment_test=test.ENRICHMENT_TEST[
@@ -1316,7 +1329,7 @@ def process_workflow(configuration: Mapping[str, Any],
                                               start=1):
                     for (pathway,
                          name), p in sorted(reactome_enrichment[frozenset(
-                             proteins[community])].items(),
+                             cmty_proteins[community])].items(),
                                             key=lambda item: item[1]):
                         if p <= configuration["community detection"][
                                 "Reactome enrichment"].get("p", 1.0):
@@ -1353,7 +1366,7 @@ def process_workflow(configuration: Mapping[str, Any],
                             logger.info(f"{k}\t{pathway}\t{p:.2e}\t{name}")
 
         if "measurement enrichment" in configuration["community detection"]:
-            measurement_enrichment = protein_interaction_network.get_measurement_enrichment(
+            enrichment = protein_interaction_network.get_measurement_enrichment(
                 network,
                 communities,
                 measurements=default.MEASUREMENT_RANGE[
@@ -1379,9 +1392,9 @@ def process_workflow(configuration: Mapping[str, Any],
                     key=lambda community: community.number_of_nodes(),
                     reverse=True),
                                           start=1):
-                for time in measurement_enrichment[community]:
+                for time in enrichment[community]:
                     for modification, p in sorted(
-                            measurement_enrichment[community][time].items(),
+                            enrichment[community][time].items(),
                             key=lambda item: item[1]):
                         if p <= configuration["community detection"][
                                 "measurement enrichment"].get("p", 1.0):
@@ -1390,7 +1403,7 @@ def process_workflow(configuration: Mapping[str, Any],
                                         f"{modification}\t{p:.2e}")
 
         if "measurement location" in configuration["community detection"]:
-            measurement_location = protein_interaction_network.get_measurement_location(
+            location = protein_interaction_network.get_measurement_location(
                 network,
                 communities,
                 combination.SITE_COMBINATION[
@@ -1409,9 +1422,9 @@ def process_workflow(configuration: Mapping[str, Any],
                     key=lambda community: community.number_of_nodes(),
                     reverse=True),
                                           start=1):
-                for time in measurement_location[community]:
+                for time in location[community]:
                     for modification, p in sorted(
-                            measurement_location[community][time].items(),
+                            location[community][time].items(),
                             key=lambda item: item[1]):
                         if p <= configuration["community detection"][
                                 "measurement location"].get("p", 1.0):

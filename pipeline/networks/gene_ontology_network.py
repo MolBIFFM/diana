@@ -20,7 +20,7 @@ def get_network(proteins: Iterable[str] = frozenset(),
                 enrichment_test: Callable[[int, int, int, int], float] = lambda
                 k, M, n, N: scipy.stats.hypergeom.sf(k - 1, M, n, N),
                 multiple_testing_correction: Callable[
-                    [Mapping[str, float]],
+                    [dict[str, float]],
                     Mapping[str, float]] = correction.benjamini_hochberg,
                 organism: int = 9606) -> nx.DiGraph:
     """

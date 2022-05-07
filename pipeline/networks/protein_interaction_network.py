@@ -5,7 +5,7 @@ import os
 import re
 import statistics
 from typing import (Callable, Collection, Container, Hashable, Iterable,
-                    Mapping, MutableSequence, Optional)
+                    MutableSequence, Optional, Sequence)
 
 import networkx as nx
 import pandas as pd
@@ -171,13 +171,15 @@ def add_proteins_from_table(
             sheet_name=sheet_name,
             header=header,
             usecols=[protein_accession_column] +
-            ([position_column] if position_column else []) + list(replicates),
+            ([position_column] if position_column else []) + (
+                list(replicates) if replicates is not None else []),
             dtype={
                 protein_accession_column: str,
-                **{
-                    position_column: str if position_column else {}
-                },
-                **{column: float for column in replicates},
+                **({
+                    position_column: str
+                } if position_column else {}),
+                **({column: float for column in replicates}
+                    if replicates is not None else {}),
             },
         )
     else:
@@ -185,13 +187,15 @@ def add_proteins_from_table(
             file_name,
             header=header,
             usecols=[protein_accession_column] +
-            ([position_column] if position_column else []) + list(replicates),
+            ([position_column] if position_column else []) + (
+                list(replicates) if replicates is not None else []),
             dtype={
                 protein_accession_column: str,
-                **{
-                    position_column: str if position_column else {}
-                },
-                **{column: float for column in replicates},
+                **({
+                    position_column: str
+                } if position_column else {}),
+                **({column: float for column in replicates}
+                    if replicates is not None else {}),
             },
         )
 
@@ -537,7 +541,7 @@ def get_neighbors_from_biogrid(
         interaction_throughput: Optional[Container[str]] = None,
         multi_validated_physical: bool = False,
         organism: int = 9606,
-        version: Optional[tuple[int, int, int]] = None) -> set[str]:
+        version: Optional[Sequence[int]] = None) -> set[str]:
     """
     Returns proteins interacting with proteins in a protein-protein interaction
     network from BioGRID.
@@ -580,7 +584,7 @@ def add_protein_interactions_from_biogrid(
         interaction_throughput: Optional[Container[str]] = None,
         multi_validated_physical: bool = False,
         organism: int = 9606,
-        version: Optional[tuple[int, int, int]] = None) -> None:
+        version: Optional[Sequence[int]] = None) -> None:
     """
     Adds protein-protein interactions from BioGRID to a protein-protein
     interaction network.
@@ -1008,9 +1012,8 @@ def get_databases(network: nx.Graph) -> tuple[str, ...]:
 
 def set_edge_weights(
     network: nx.Graph,
-    weight: Callable[[Mapping[str, float]],
-                     float] = lambda confidence_scores: int(
-                         bool(confidence_scores.values())),
+    weight: Callable[[dict[str, float]], float] = lambda confidence_scores: int(
+        bool(confidence_scores.values())),
     attribute: str = "weight",
 ) -> None:
     """
@@ -1149,9 +1152,8 @@ def get_measurement_enrichment(
         [int, int, int, int],
         float] = lambda k, M, n, N: scipy.stats.hypergeom.sf(k - 1, M, n, N),
     multiple_testing_correction: Callable[
-        [Mapping[tuple[nx.Graph, int, str],
-                 float]], Mapping[tuple[nx.Graph, int, str],
-                                  float]] = correction.benjamini_hochberg,
+        [dict[tuple[nx.Graph, int, str], float]],
+        dict[tuple[nx.Graph, int, str], float]] = correction.benjamini_hochberg,
 ) -> dict[nx.Graph, dict[int, dict[str, float]]]:
     """
     Test communities for enrichment of large protein-specific measurements for
@@ -1251,9 +1253,8 @@ def get_measurement_location(
         [Collection[float], Collection[float]],
         float] = lambda x, y: scipy.stats.ranksums(x, y).pvalue,
     multiple_testing_correction: Callable[
-        [Mapping[tuple[nx.Graph, int, str],
-                 float]], Mapping[tuple[nx.Graph, int, str],
-                                  float]] = correction.benjamini_hochberg,
+        [dict[tuple[nx.Graph, int, str], float]],
+        dict[tuple[nx.Graph, int, str], float]] = correction.benjamini_hochberg,
 ) -> dict[nx.Graph, dict[int, dict[str, float]]]:
     """
     Test communities for difference tendencies in protein-specific measurements

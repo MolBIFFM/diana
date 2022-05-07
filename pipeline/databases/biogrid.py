@@ -1,6 +1,6 @@
 """The interface for the BioGRID database."""
 import re
-from typing import Container, Iterator, Optional
+from typing import Container, Iterator, Optional, Sequence
 
 from access import iterate
 
@@ -10,13 +10,12 @@ ORGANISM: dict[str, dict[int, str]] = {"files": {9606: "Homo_sapiens"}}
 
 
 def get_protein_interactions(
-    experimental_system: Optional[Container[str]] = None,
-    experimental_system_type: Optional[Container[str]] = None,
-    interaction_throughput: Optional[Container[str]] = None,
-    multi_validated_physical: bool = False,
-    organism: int = 9606,
-    version: Optional[tuple[int, int,
-                            int]] = None) -> Iterator[tuple[str, str]]:
+        experimental_system: Optional[Container[str]] = None,
+        experimental_system_type: Optional[Container[str]] = None,
+        interaction_throughput: Optional[Container[str]] = None,
+        multi_validated_physical: bool = False,
+        organism: int = 9606,
+        version: Optional[Sequence[int]] = None) -> Iterator[tuple[str, str]]:
     """
     Yields protein-protein interactions from BioGRID.
 

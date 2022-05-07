@@ -10,8 +10,8 @@ from typing import Callable, Collection
 import networkx as nx
 from networks import protein_interaction_network
 
-COMPONENTS: dict[str, dict[str, dict[str, dict[
-    str, str | dict[str, str | dict[str, str | dict[str, str]]]]]]] = [
+COMPONENTS: list[dict[str, dict[str, dict[str, dict[
+    str, str | dict[str, str | dict[str, str | dict[str, str]]]]]]]] = [
         {
             "edge": {
                 "dependency": {
@@ -1087,11 +1087,11 @@ def get_style(
                         },
                     )
 
-        visual_property_sub_elements = visual_style_sub_element.find(
-            "node").findall("visualProperty")
+        if node_sub_elements := visual_style_sub_element.find("node"):
+            visual_property_sub_elements = node_sub_elements.findall(
+                "visualProperty")
 
-        for i, modification in enumerate(modifications):
-            if i < 2:
+            for i, modification in enumerate(modifications[:2]):
                 for visual_property_sub_element in visual_property_sub_elements:
                     if visual_property_sub_element.get(
                             "name") == f"NODE_CUSTOMGRAPHICS_{i+1}":

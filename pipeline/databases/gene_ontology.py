@@ -119,13 +119,13 @@ def get_enrichment(
         [int, int, int, int],
         float] = lambda k, M, n, N: scipy.stats.hypergeom.sf(k - 1, M, n, N),
     multiple_testing_correction: Callable[
-        [Mapping[tuple[frozenset[str], str],
-                 float]], Mapping[tuple[frozenset[str], str],
-                                  float]] = correction.benjamini_hochberg,
+        [dict[tuple[frozenset[str], str],
+              float]], Mapping[tuple[frozenset[str], str],
+                               float]] = correction.benjamini_hochberg,
     organism: int = 9606,
     namespaces: Collection[str] = ("cellular_component", "molecular_function",
                                    "biological_process"),
-    annotation_as_reference: bool = True
+    annotation_as_reference: bool = False
 ) -> dict[frozenset, dict[tuple[str, str], float]]:
     """
     Test sets of proteins for enrichment of Gene Ontology terms.
@@ -139,8 +139,8 @@ def get_enrichment(
         organism: The NCBI taxonomy identifier for the organism of interest.
         namespaces: The Gene Ontology namespaces.
         annotation_as_reference: If True, compute enrichment with respect to the
-            species-specific Gene Ontology annotation in namespaces, else with
-            respect to the union of the sets of proteins.
+            species-specific Gene Ontology annotation in namespaces, otherwise
+            with respect to the union of the sets of proteins.
 
     Returns:
         Corrected p-value for the enrichment of each Gene Ontology term by each
