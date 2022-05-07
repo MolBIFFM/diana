@@ -6,7 +6,7 @@ from formats import mitab
 
 from databases import uniprot
 
-ORGANISM = {"files": {9606: "species:human"}}
+ORGANISM: dict[str, dict[int, str]] = {"files": {9606: "species:human"}}
 
 
 def get_protein_interactions(

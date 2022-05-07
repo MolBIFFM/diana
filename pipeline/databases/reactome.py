@@ -1,5 +1,5 @@
 """The interface for the Reactome database."""
-from typing import Callable, Container, Iterable, Iterator, Optional
+from typing import Callable, Container, Iterable, Iterator, Mapping, Optional
 
 import scipy.stats
 from access import iterate
@@ -7,7 +7,14 @@ from analysis import correction
 
 from databases import uniprot
 
-ORGANISM = {"data": {9606: "Homo sapiens"}, "files": {9606: "homo_sapiens"}}
+ORGANISM: dict[str, dict[int, str]] = {
+    "data": {
+        9606: "Homo sapiens"
+    },
+    "files": {
+        9606: "homo_sapiens"
+    }
+}
 
 
 def get_protein_interactions(
@@ -129,9 +136,9 @@ def get_enrichment(
         [int, int, int, int],
         float] = lambda k, M, n, N: scipy.stats.hypergeom.sf(k - 1, M, n, N),
     multiple_testing_correction: Callable[
-        [dict[tuple[frozenset[str], str],
-              float]], dict[tuple[frozenset[str], str],
-                            float]] = correction.benjamini_hochberg,
+        [Mapping[tuple[frozenset[str], str],
+                 float]], Mapping[tuple[frozenset[str], str],
+                                  float]] = correction.benjamini_hochberg,
     organism: int = 9606,
     annotation_as_reference: bool = True
 ) -> dict[frozenset[str], dict[tuple[str, str], float]]:

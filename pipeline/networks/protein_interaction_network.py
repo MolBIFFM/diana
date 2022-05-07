@@ -5,7 +5,7 @@ import os
 import re
 import statistics
 from typing import (Callable, Collection, Container, Hashable, Iterable,
-                    MutableSequence, Optional)
+                    Mapping, MutableSequence, Optional)
 
 import networkx as nx
 import pandas as pd
@@ -1008,8 +1008,9 @@ def get_databases(network: nx.Graph) -> tuple[str, ...]:
 
 def set_edge_weights(
     network: nx.Graph,
-    weight: Callable[[dict[str, float]], float] = lambda confidence_scores: int(
-        bool(confidence_scores.values())),
+    weight: Callable[[Mapping[str, float]],
+                     float] = lambda confidence_scores: int(
+                         bool(confidence_scores.values())),
     attribute: str = "weight",
 ) -> None:
     """
@@ -1148,8 +1149,9 @@ def get_measurement_enrichment(
         [int, int, int, int],
         float] = lambda k, M, n, N: scipy.stats.hypergeom.sf(k - 1, M, n, N),
     multiple_testing_correction: Callable[
-        [dict[tuple[nx.Graph, int, str], float]],
-        dict[tuple[nx.Graph, int, str], float]] = correction.benjamini_hochberg,
+        [Mapping[tuple[nx.Graph, int, str],
+                 float]], Mapping[tuple[nx.Graph, int, str],
+                                  float]] = correction.benjamini_hochberg,
 ) -> dict[nx.Graph, dict[int, dict[str, float]]]:
     """
     Test communities for enrichment of large protein-specific measurements for
@@ -1249,8 +1251,9 @@ def get_measurement_location(
         [Collection[float], Collection[float]],
         float] = lambda x, y: scipy.stats.ranksums(x, y).pvalue,
     multiple_testing_correction: Callable[
-        [dict[tuple[nx.Graph, int, str], float]],
-        dict[tuple[nx.Graph, int, str], float]] = correction.benjamini_hochberg,
+        [Mapping[tuple[nx.Graph, int, str],
+                 float]], Mapping[tuple[nx.Graph, int, str],
+                                  float]] = correction.benjamini_hochberg,
 ) -> dict[nx.Graph, dict[int, dict[str, float]]]:
     """
     Test communities for difference tendencies in protein-specific measurements

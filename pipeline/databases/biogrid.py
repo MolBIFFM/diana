@@ -6,7 +6,7 @@ from access import iterate
 
 from databases import uniprot
 
-ORGANISM = {"files": {9606: "Homo_sapiens"}}
+ORGANISM: dict[str, dict[int, str]] = {"files": {9606: "Homo_sapiens"}}
 
 
 def get_protein_interactions(

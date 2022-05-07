@@ -6,7 +6,7 @@ import logging
 import os
 import re
 import sys
-from typing import Any, Optional
+from typing import Any, Mapping, Optional, Sequence
 
 import networkx as nx
 
@@ -20,7 +20,7 @@ from networks import (gene_ontology_network, protein_interaction_network,
                       reactome_network)
 
 
-def process_workflow(configuration: dict[str, Any],
+def process_workflow(configuration: Mapping[str, Any],
                      logger: logging.Logger,
                      index: Optional[int] = None) -> None:
     """
@@ -939,13 +939,15 @@ def process_workflow(configuration: dict[str, Any],
         if "CORUM enrichment" in configuration["community detection"]:
             if "subsets" in configuration["community detection"][
                     "CORUM enrichment"]:
-                proteins = {
-                    community: set(community.nodes())
-                    for community in communities
-                } if configuration["community detection"][
-                    "CORUM enrichment"].get("intersection", False) else {
-                        community: set() for community in communities
+                if configuration["community detection"]["CORUM enrichment"].get(
+                        "intersection", False):
+                    proteins = {
+                        community: set(community.nodes())
+                        for community in communities
                     }
+                else:
+                    proteins = {community: set() for community in communities}
+
                 for subset in configuration["community detection"][
                         "CORUM enrichment"]["subsets"]:
                     if subset.get(
@@ -1075,14 +1077,15 @@ def process_workflow(configuration: dict[str, Any],
         if "Gene Ontology enrichment" in configuration["community detection"]:
             if "subsets" in configuration["community detection"][
                     "Gene Ontology enrichment"]:
-                proteins = {
-                    community: set(community.nodes())
-                    for community in communities
-                } if configuration[
-                    "community detection"]["Gene Ontology enrichment"].get(
-                        "intersection", False) else {
-                            community: set() for community in communities
-                        }
+                if configuration["community detection"][
+                        "Gene Ontology enrichment"].get("intersection", False):
+                    proteins = {
+                        community: set(community.nodes())
+                        for community in communities
+                    }
+                else:
+                    proteins = {community: set() for community in communities}
+
                 for subset in configuration["community detection"][
                         "Gene Ontology enrichment"]["subsets"]:
                     if subset.get(
@@ -1218,13 +1221,15 @@ def process_workflow(configuration: dict[str, Any],
         if "Reactome enrichment" in configuration["community detection"]:
             if "subsets" in configuration["community detection"][
                     "Reactome enrichment"]:
-                proteins = {
-                    community: set(community.nodes())
-                    for community in communities
-                } if configuration["community detection"][
-                    "Reactome enrichment"].get("intersection", False) else {
-                        community: set() for community in communities
+                if configuration["community detection"][
+                        "Reactome enrichment"].get("intersection", False):
+                    proteins = {
+                        community: set(community.nodes())
+                        for community in communities
                     }
+                else:
+                    proteins = {community: set() for community in communities}
+
                 for subset in configuration["community detection"][
                         "Reactome enrichment"]["subsets"]:
                     if subset.get(
@@ -1427,7 +1432,7 @@ def process_workflow(configuration: dict[str, Any],
                 )
 
 
-def process_configuration(configurations: list[dict[str, Any]],
+def process_configuration(configurations: Sequence[Mapping[str, Any]],
                           logger: logging.Logger) -> None:
     """
     Executes workflows specified in configurations sequentially.

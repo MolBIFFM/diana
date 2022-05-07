@@ -1,5 +1,5 @@
 """The interface for the Gene Ontology database."""
-from typing import Callable, Collection, Container, Iterable, Iterator
+from typing import Callable, Collection, Container, Iterable, Iterator, Mapping
 
 import scipy.stats
 from access import iterate
@@ -7,7 +7,7 @@ from analysis import correction
 
 from databases import uniprot
 
-ORGANISM = {"files": {9606: "human"}}
+ORGANISM: dict[str, dict[int, str]] = {"files": {9606: "human"}}
 
 
 def get_ontology(namespaces: Container[str] = (
@@ -119,9 +119,9 @@ def get_enrichment(
         [int, int, int, int],
         float] = lambda k, M, n, N: scipy.stats.hypergeom.sf(k - 1, M, n, N),
     multiple_testing_correction: Callable[
-        [dict[tuple[frozenset[str], str],
-              float]], dict[tuple[frozenset[str], str],
-                            float]] = correction.benjamini_hochberg,
+        [Mapping[tuple[frozenset[str], str],
+                 float]], Mapping[tuple[frozenset[str], str],
+                                  float]] = correction.benjamini_hochberg,
     organism: int = 9606,
     namespaces: Collection[str] = ("cellular_component", "molecular_function",
                                    "biological_process"),

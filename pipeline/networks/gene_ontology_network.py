@@ -5,7 +5,7 @@ Nodes are Gene Ontology terms annotated with proteins from a species of
 interest. Edges are directed term relationships within the Gene Ontology.
 """
 
-from typing import Callable, Collection, Iterable
+from typing import Callable, Collection, Iterable, Mapping
 
 import networkx as nx
 import scipy.stats
@@ -19,8 +19,9 @@ def get_network(proteins: Iterable[str] = frozenset(),
                                                "biological_process"),
                 enrichment_test: Callable[[int, int, int, int], float] = lambda
                 k, M, n, N: scipy.stats.hypergeom.sf(k - 1, M, n, N),
-                multiple_testing_correction: Callable[[dict[str, float]], dict[
-                    str, float]] = correction.benjamini_hochberg,
+                multiple_testing_correction: Callable[
+                    [Mapping[str, float]],
+                    Mapping[str, float]] = correction.benjamini_hochberg,
                 organism: int = 9606) -> nx.DiGraph:
     """
     Assemble a Gene Ontology network from proteins.
