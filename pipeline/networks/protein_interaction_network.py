@@ -553,8 +553,8 @@ def get_neighbors_from_biogrid(
         multi-validated physical: If True, consider only multi-validated
             physical interactions.
         organism: The NCBI taxonomy identifier for the organism of interest.
-        version: The version of the BioGRID database, if not specified, the 
-            latest.
+        version: The version of the BioGRID database, if not specified or not
+            consisting of three entries, the latest.
 
     Returns:
         Neighbors of the protein-protein interaction network in BioGRID.
@@ -596,8 +596,8 @@ def add_protein_interactions_from_biogrid(
         multi-validated physical: If True, add only multi-validated physical
             interactions.
         organism: The NCBI taxonomy identifier for the organism of interest.
-        version: The version of the BioGRID database, if not specified, the 
-            latest.
+        version: The version of the BioGRID database, if not specified or not
+            consisting of three entries, the latest.
     """
     for interactor_a, interactor_b in biogrid.get_protein_interactions(
             experimental_system, experimental_system_type,

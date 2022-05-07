@@ -30,8 +30,8 @@ def get_protein_interactions(
         multi-validated physical: If True, yield only multi-validated physical
             interactions.
         organism: The NCBI taxonomy identifier for the organism of interest.
-        version: The version of the BioGRID database, if not specified, the 
-            latest.
+        version: The version of the BioGRID database, if not specified or not
+            consisting of three entries, the latest.
 
     Yields:
         Pairs of interacting proteins.
@@ -46,7 +46,7 @@ def get_protein_interactions(
          "https://downloads.thebiogrid.org/Download/BioGRID/Release-Archive/"
          f"BIOGRID-{version[0]}.{version[1]}.{version[2]}/"
          f"BIOGRID-ORGANISM-{version[0]}.{version[1]}.{version[2]}.tab3.zip")
-            if version else
+            if version and len(version) == 3 else
         ("https://downloads.thebiogrid.org/Download/BioGRID/Latest-Release/"
          "BIOGRID-MV-Physical-LATEST.tab3.zip" if multi_validated_physical else
          "https://downloads.thebiogrid.org/Download/BioGRID/Latest-Release/"
