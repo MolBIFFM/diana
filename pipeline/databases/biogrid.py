@@ -10,12 +10,13 @@ ORGANISM = {"files": {9606: "Homo_sapiens"}}
 
 
 def get_protein_interactions(
-        experimental_system: Optional[Container[str]] = None,
-        experimental_system_type: Optional[Container[str]] = None,
-        interaction_throughput: Optional[Container[str]] = None,
-        multi_validated_physical: bool = False,
-        organism: int = 9606,
-        version: Optional[tuple[int, ...]] = None) -> Iterator[tuple[str, str]]:
+    experimental_system: Optional[Container[str]] = None,
+    experimental_system_type: Optional[Container[str]] = None,
+    interaction_throughput: Optional[Container[str]] = None,
+    multi_validated_physical: bool = False,
+    organism: int = 9606,
+    version: Optional[tuple[int, int,
+                            int]] = None) -> Iterator[tuple[str, str]]:
     """
     Yields protein-protein interactions from BioGRID.
 
@@ -29,15 +30,13 @@ def get_protein_interactions(
         multi-validated physical: If True, yield only multi-validated physical
             interactions.
         organism: The NCBI taxonomy identifier for the organism of interest.
-        version: The version of the BioGRID database, if not passed, the latest.
-            Missing numbers are set to 0 towards the minor version.
+        version: The version of the BioGRID database, if not specified, the 
+            latest.
+
     Yields:
         Pairs of interacting proteins.
     """
     primary_accession = uniprot.get_primary_accession(organism)
-
-    if version is not None:
-        version = (version + (0, 0, 0))[:3]
 
     for row in iterate.tabular_txt(
         ("https://downloads.thebiogrid.org/Download/BioGRID/Release-Archive/"

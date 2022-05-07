@@ -537,7 +537,7 @@ def get_neighbors_from_biogrid(
         interaction_throughput: Optional[Container[str]] = None,
         multi_validated_physical: bool = False,
         organism: int = 9606,
-        version: Optional[tuple[int, ...]] = None) -> set[str]:
+        version: Optional[tuple[int, int, int]] = None) -> set[str]:
     """
     Returns proteins interacting with proteins in a protein-protein interaction
     network from BioGRID.
@@ -553,8 +553,8 @@ def get_neighbors_from_biogrid(
         multi-validated physical: If True, consider only multi-validated
             physical interactions.
         organism: The NCBI taxonomy identifier for the organism of interest.
-        version: The version of the BioGRID database, if not passed, the latest.
-            Missing numbers are set to 0 towards the minor version.
+        version: The version of the BioGRID database, if not specified, the 
+            latest.
 
     Returns:
         Neighbors of the protein-protein interaction network in BioGRID.
@@ -580,7 +580,7 @@ def add_protein_interactions_from_biogrid(
         interaction_throughput: Optional[Container[str]] = None,
         multi_validated_physical: bool = False,
         organism: int = 9606,
-        version: Optional[tuple[int, ...]] = None) -> None:
+        version: Optional[tuple[int, int, int]] = None) -> None:
     """
     Adds protein-protein interactions from BioGRID to a protein-protein
     interaction network.
@@ -596,7 +596,8 @@ def add_protein_interactions_from_biogrid(
         multi-validated physical: If True, add only multi-validated physical
             interactions.
         organism: The NCBI taxonomy identifier for the organism of interest.
-        version: The version of the BioGRID database, if not passed, the latest.
+        version: The version of the BioGRID database, if not specified, the 
+            latest.
     """
     for interactor_a, interactor_b in biogrid.get_protein_interactions(
             experimental_system, experimental_system_type,
