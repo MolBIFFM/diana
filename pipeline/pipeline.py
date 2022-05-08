@@ -129,7 +129,7 @@ def process_workflow(configuration: Mapping[str, Any],
                         version=[
                             int(v) for v in
                             configuration["protein-protein interactions"]
-                            ["BioGRID"]["version"].split(".")
+                            ["BioGRID"]["version"].split(".") if v.isnumeric()
                         ][:3] if configuration["protein-protein interactions"].
                         get("version")["BioGRID"] else None))
 
@@ -278,6 +278,7 @@ def process_workflow(configuration: Mapping[str, Any],
                     int(v)
                     for v in configuration["protein-protein interactions"]
                     ["BioGRID"]["version"].split(".")
+                    if v.isnumeric()
                 ][:3] if configuration["protein-protein interactions"]
                 ["BioGRID"].get("version") else None)
 
