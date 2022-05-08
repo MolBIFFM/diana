@@ -1005,9 +1005,14 @@ def get_databases(network: nx.Graph) -> tuple[str, ...]:
     return tuple(
         sorted(
             set(database for edge in network.edges()
-                for database in network.edges[edge]).intersection(
-                    ("BioGRID", "CORUM", "IntAct", "MINT", "Reactome",
-                     "STRING"))))
+                for database in network.edges[edge]).intersection((
+                    "BioGRID",
+                    "CORUM",
+                    "IntAct",
+                    "MINT",
+                    "Reactome",
+                    "STRING",
+                ))))
 
 
 def set_edge_weights(

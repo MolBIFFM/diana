@@ -96,9 +96,14 @@ def process_workflow(configuration: Mapping[str, Any],
     if "protein-protein interactions" in configuration:
         for neighbors in range(
                 max(configuration["protein-protein interactions"].get(
-                    database, {}).get("neighbors", 0)
-                    for database in ("BioGRID", "CORUM", "IntAct", "MINT",
-                                     "Reactome", "STRING"))):
+                    database, {}).get("neighbors", 0) for database in (
+                        "BioGRID",
+                        "CORUM",
+                        "IntAct",
+                        "MINT",
+                        "Reactome",
+                        "STRING",
+                    ))):
             interacting_proteins = set()
             if "BioGRID" in configuration[
                     "protein-protein interactions"] and configuration[
