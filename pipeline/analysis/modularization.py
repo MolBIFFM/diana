@@ -29,26 +29,26 @@ def clauset_newman_moore(network: nx.Graph,
     """
     communities = {i: {i} for i in network.nodes()}
 
-    adjacency = {
+    adj_matrix = {
         i: {j: network.edges[i, j][weight] for j in nx.neighbors(network, i)
            } for i in network.nodes()
     }
 
-    connected = {i: set(adjacency[i]) - {i} for i in adjacency}
+    connected = {i: set(adj_matrix[i]) - {i} for i in adj_matrix}
 
-    k = {i: sum(adjacency[i].values()) for i in adjacency}
+    k = {i: sum(adj_matrix[i].values()) for i in adj_matrix}
     m = sum(k.values()) / 2.0
 
     delta_q = {
         i: {
             j: (1.0 / (2.0 * m) - resolution * k[i] * k[j] /
-                ((2.0 * m)**2.0) if j in adjacency[i] else 0.0)
-            for j in adjacency
+                ((2.0 * m)**2.0) if j in adj_matrix[i] else 0.0)
+            for j in adj_matrix
             if j < i
-        } for i in adjacency
+        } for i in adj_matrix
     }
 
-    a = {i: k[i] / (2.0 * m) for i in adjacency}
+    a = {i: k[i] / (2.0 * m) for i in adj_matrix}
 
     max_entry = -1.0
     for i in delta_q:
@@ -148,24 +148,24 @@ def louvain(network: nx.Graph,
         community = {i: i for i in network.nodes()}
         communities.append({i: {i} for i in network.nodes()})
 
-        adjacency = {
+        adj_matrix = {
             i:
             {j: network.edges[i, j][weight] for j in nx.neighbors(network, i)}
             for i in network.nodes()
         }
 
-        sigma_in = {i: adjacency[i].get(i, 0.0) for i in network.nodes()}
-        sigma_tot = {i: sum(adjacency[i].values()) for i in network.nodes()}
+        sigma_in = {i: adj_matrix[i].get(i, 0.0) for i in network.nodes()}
+        sigma_tot = {i: sum(adj_matrix[i].values()) for i in network.nodes()}
 
-        k = {i: sum(adjacency[i].values()) for i in adjacency}
+        k = {i: sum(adj_matrix[i].values()) for i in adj_matrix}
 
         k_in = {
             i: {
                 **{
                     community[i]: 0.0
                 },
-                **{community[j]: adjacency[i][j] for j in adjacency[i]}
-            } for i in adjacency
+                **{community[j]: adj_matrix[i][j] for j in adj_matrix[i]}
+            } for i in adj_matrix
         }
 
         m = sum(k.values()) / 2.0
@@ -175,17 +175,17 @@ def louvain(network: nx.Graph,
         while modularity_optimization:
             modularity_optimization = False
 
-            for i in adjacency:
-                for n in adjacency[i]:
-                    sigma_tot[community[i]] -= adjacency[i][n]
+            for i in adj_matrix:
+                for n in adj_matrix[i]:
+                    sigma_tot[community[i]] -= adj_matrix[i][n]
 
                     if community[n] == community[i]:
-                        sigma_in[community[i]] -= adjacency[i][n]
+                        sigma_in[community[i]] -= adj_matrix[i][n]
 
-                k_in[i][community[i]] -= adjacency[i].get(i, 0.0)
+                k_in[i][community[i]] -= adj_matrix[i].get(i, 0.0)
 
                 delta_q = {}
-                for j in adjacency[i]:
+                for j in adj_matrix[i]:
                     if community[i] != community[j]:
                         delta_q[j] = (
                             ((sigma_in[community[j]] + k_in[i][community[j]]) /
@@ -205,13 +205,13 @@ def louvain(network: nx.Graph,
                                (2.0 * m))**2.0 - resolution * (k[i] /
                                                                (2.0 * m))**2.0))
 
-                for n in adjacency[i]:
-                    sigma_tot[community[i]] += adjacency[i][n]
+                for n in adj_matrix[i]:
+                    sigma_tot[community[i]] += adj_matrix[i][n]
 
                     if community[n] == community[i]:
-                        sigma_in[community[i]] += adjacency[i][n]
+                        sigma_in[community[i]] += adj_matrix[i][n]
 
-                k_in[i][community[i]] += adjacency[i].get(i, 0.0)
+                k_in[i][community[i]] += adj_matrix[i].get(i, 0.0)
 
                 if delta_q:
                     max_j = max(delta_q.items(), key=lambda item: item[1])[0]
@@ -220,21 +220,21 @@ def louvain(network: nx.Graph,
                         modularity_optimization = True
                         community_aggregation = True
 
-                        for n in adjacency[i]:
-                            sigma_tot[community[i]] -= adjacency[i][n]
-                            sigma_tot[community[max_j]] += adjacency[i][n]
+                        for n in adj_matrix[i]:
+                            sigma_tot[community[i]] -= adj_matrix[i][n]
+                            sigma_tot[community[max_j]] += adj_matrix[i][n]
 
                             if community[n] == community[i]:
-                                sigma_in[community[i]] -= adjacency[i][n]
+                                sigma_in[community[i]] -= adj_matrix[i][n]
                             elif community[n] == community[max_j]:
-                                sigma_in[community[max_j]] += adjacency[i][n]
+                                sigma_in[community[max_j]] += adj_matrix[i][n]
 
-                            k_in[n][community[i]] -= adjacency[n][i]
+                            k_in[n][community[i]] -= adj_matrix[n][i]
 
                             if community[max_j] not in k_in[n]:
                                 k_in[n][community[max_j]] = 0.0
 
-                            k_in[n][community[max_j]] += adjacency[n][i]
+                            k_in[n][community[max_j]] += adj_matrix[n][i]
 
                         communities[1][community[i]].remove(i)
                         communities[1][community[max_j]].add(i)
@@ -249,7 +249,7 @@ def louvain(network: nx.Graph,
             communities = communities[1:2]
 
             weights = {ci: {} for ci in community.values()}
-            for i in adjacency:
+            for i in adj_matrix:
                 for cj in k_in[i]:
                     if cj not in weights[community[i]]:
                         weights[community[i]][cj] = 0.0
