@@ -882,7 +882,7 @@ def get_neighbors_from_string(network: nx.Graph,
                               combined_score: float = 0.0,
                               physical: bool = False,
                               organism: int = 9606,
-                              version: float | str = 11.5) -> set[str]:
+                              version: float | str = "11.5") -> set[str]:
     """
     Add proteins interacting with proteins in a protein-protein interaction
     network from STRING to the network.
@@ -945,7 +945,7 @@ def add_protein_interactions_from_string(network: nx.Graph,
                                          combined_score: float = 0.0,
                                          physical: bool = False,
                                          organism: int = 9606,
-                                         version: float | str = 11.5) -> None:
+                                         version: float | str = "11.5") -> None:
     """
     Adds protein-protein interactions from STRING to a protein-protein
     interaction network.

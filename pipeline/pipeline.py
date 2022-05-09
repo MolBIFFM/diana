@@ -247,7 +247,7 @@ def process_workflow(configuration: Mapping[str, Any],
                         organism=configuration["protein-protein interactions"]
                         ["STRING"].get("organism", 9606),
                         version=configuration["protein-protein interactions"]
-                        ["STRING"].get("version", 11.5),
+                        ["STRING"].get("version", "11.5"),
                     ))
 
             network.add_nodes_from(interacting_proteins)
@@ -361,7 +361,7 @@ def process_workflow(configuration: Mapping[str, Any],
                 organism=configuration["protein-protein interactions"]
                 ["STRING"].get("organism", 9606),
                 version=configuration["protein-protein interactions"]
-                ["STRING"].get("version", 11.5),
+                ["STRING"].get("version", "11.5"),
             )
 
         if "Cytoscape" in configuration and any(
