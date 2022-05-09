@@ -127,7 +127,7 @@ def process_workflow(configuration: Mapping[str, Any],
                         organism=configuration["protein-protein interactions"]
                         ["BioGRID"].get("organism", 9606),
                         version=[
-                            int(v) for v in
+                            v for v in
                             configuration["protein-protein interactions"]
                             ["BioGRID"]["version"].split(".") if v.isnumeric()
                         ][:3] if configuration["protein-protein interactions"].
@@ -251,7 +251,7 @@ def process_workflow(configuration: Mapping[str, Any],
                         organism=configuration["protein-protein interactions"]
                         ["STRING"].get("organism", 9606),
                         version=configuration["protein-protein interactions"]
-                        ["STRING"].get("version", 11.5),
+                        ["STRING"].get("version", "11.5"),
                     ))
 
             network.add_nodes_from(interacting_proteins)
@@ -275,10 +275,8 @@ def process_workflow(configuration: Mapping[str, Any],
                 organism=configuration["protein-protein interactions"]
                 ["BioGRID"].get("organism", 9606),
                 version=[
-                    int(v)
-                    for v in configuration["protein-protein interactions"]
-                    ["BioGRID"]["version"].split(".")
-                    if v.isnumeric()
+                    v for v in configuration["protein-protein interactions"]
+                    ["BioGRID"]["version"].split(".") if v.isnumeric()
                 ][:3] if configuration["protein-protein interactions"]
                 ["BioGRID"].get("version") else None)
 
@@ -370,7 +368,7 @@ def process_workflow(configuration: Mapping[str, Any],
                 organism=configuration["protein-protein interactions"]
                 ["STRING"].get("organism", 9606),
                 version=configuration["protein-protein interactions"]
-                ["STRING"].get("version", 11.5),
+                ["STRING"].get("version", "11.5"),
             )
 
         if "Cytoscape" in configuration and any(

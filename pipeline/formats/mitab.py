@@ -1,6 +1,6 @@
 """Utilities to parse the PSI-MI TAB file format."""
 
-from typing import Iterable, Optional
+from typing import Container, Optional
 
 
 def parse(entry: str) -> dict[str, tuple[tuple[str, Optional[str]], ...]]:
@@ -106,8 +106,8 @@ def namespace_has_term(entry: str, namespace: str, term: int | str) -> bool:
     return str(term) in get_terms_from_namespace(entry, namespace)
 
 
-def namespace_has_any_identifier_from(entry: str, namespace: str,
-                                      identifiers: Iterable[int | str]) -> bool:
+def namespace_has_any_identifier_from(
+        entry: str, namespace: str, identifiers: Container[int | str]) -> bool:
     """
     Returns whether any identifier exists in namespace.
 
@@ -120,12 +120,12 @@ def namespace_has_any_identifier_from(entry: str, namespace: str,
         True, if any identifier is in namespace, else False.
     """
     return any(
-        namespace_has_identifier(entry, namespace, str(identifier))
-        for identifier in identifiers)
+        identifier in identifiers
+        for identifier in get_identifiers_from_namespace(entry, namespace))
 
 
 def namespace_has_any_term_from(entry: str, namespace: str,
-                                terms: Iterable[int | str]) -> bool:
+                                terms: Container[int | str]) -> bool:
     """
     Returns whether any term exists in namespace.
 
@@ -138,4 +138,4 @@ def namespace_has_any_term_from(entry: str, namespace: str,
         True, if any term is in namespace, else False.
     """
     return any(
-        namespace_has_term(entry, namespace, str(term)) for term in terms)
+        term in terms for term in get_terms_from_namespace(entry, namespace))

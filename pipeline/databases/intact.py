@@ -1,6 +1,6 @@
 """The interface for the IntAct database."""
 import re
-from typing import Iterable, Iterator, Optional
+from typing import Container, Iterator, Optional
 
 from access import iterate
 from formats import mitab
@@ -9,10 +9,10 @@ from databases import uniprot
 
 
 def get_protein_interactions(
-        interaction_detection_methods: Optional[Iterable[str]] = None,
-        interaction_types: Optional[Iterable[str]] = None,
+        interaction_detection_methods: Optional[Container[str]] = None,
+        interaction_types: Optional[Container[str]] = None,
         psi_mi_score: float = 0.0,
-        organism: int = 9606) -> Iterator[tuple[str, str, float]]:
+        organism: int | str = 9606) -> Iterator[tuple[str, str, float]]:
     """
     Yields protein-protein interactions from IntAct.
 

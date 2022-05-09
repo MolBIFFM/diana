@@ -1,5 +1,5 @@
 """The interface for the MINT database."""
-from typing import Iterable, Iterator, Optional
+from typing import Container, Iterator, Optional
 
 from access import iterate
 from formats import mitab
@@ -10,8 +10,8 @@ ORGANISM: dict[str, dict[int, str]] = {"files": {9606: "species:human"}}
 
 
 def get_protein_interactions(
-        interaction_detection_methods: Optional[Iterable[str]] = None,
-        interaction_types: Optional[Iterable[str]] = None,
+        interaction_detection_methods: Optional[Container[str]] = None,
+        interaction_types: Optional[Container[str]] = None,
         psi_mi_score: float = 0.0,
         organism: int = 9606) -> Iterator[tuple[str, str, float]]:
     """

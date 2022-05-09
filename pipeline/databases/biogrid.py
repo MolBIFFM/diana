@@ -15,7 +15,8 @@ def get_protein_interactions(
         interaction_throughput: Optional[Container[str]] = None,
         multi_validated_physical: bool = False,
         organism: int = 9606,
-        version: Optional[Sequence[int]] = None) -> Iterator[tuple[str, str]]:
+        version: Optional[Sequence[int | str]] = None
+) -> Iterator[tuple[str, str]]:
     """
     Yields protein-protein interactions from BioGRID.
 

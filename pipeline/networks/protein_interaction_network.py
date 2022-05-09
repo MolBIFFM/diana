@@ -541,7 +541,7 @@ def get_neighbors_from_biogrid(
         interaction_throughput: Optional[Container[str]] = None,
         multi_validated_physical: bool = False,
         organism: int = 9606,
-        version: Optional[Sequence[int]] = None) -> set[str]:
+        version: Optional[Sequence[int | str]] = None) -> set[str]:
     """
     Returns proteins interacting with proteins in a protein-protein interaction
     network from BioGRID.
@@ -584,7 +584,7 @@ def add_protein_interactions_from_biogrid(
         interaction_throughput: Optional[Container[str]] = None,
         multi_validated_physical: bool = False,
         organism: int = 9606,
-        version: Optional[Sequence[int]] = None) -> None:
+        version: Optional[Sequence[int | str]] = None) -> None:
     """
     Adds protein-protein interactions from BioGRID to a protein-protein
     interaction network.
@@ -666,12 +666,12 @@ def add_protein_interactions_from_corum(network: nx.Graph,
             network.edges[interactor_a, interactor_b]["CORUM"] = 1.0
 
 
-def get_neighbors_from_intact(network: nx.Graph,
-                              interaction_detection_methods: Optional[
-                                  Iterable[str]] = None,
-                              interaction_types: Optional[Iterable[str]] = None,
-                              psi_mi_score: float = 0.0,
-                              organism: int = 9606) -> set[str]:
+def get_neighbors_from_intact(
+        network: nx.Graph,
+        interaction_detection_methods: Optional[Container[str]] = None,
+        interaction_types: Optional[Container[str]] = None,
+        psi_mi_score: float = 0.0,
+        organism: int | str = 9606) -> set[str]:
     """
     Returns proteins interacting with proteins in a protein-protein interaction
     network from IntAct to the network.
@@ -704,10 +704,10 @@ def get_neighbors_from_intact(network: nx.Graph,
 
 def add_protein_interactions_from_intact(
         network: nx.Graph,
-        interaction_detection_methods: Optional[Iterable[str]] = None,
-        interaction_types: Optional[Iterable[str]] = None,
+        interaction_detection_methods: Optional[Container[str]] = None,
+        interaction_types: Optional[Container[str]] = None,
         psi_mi_score: float = 0.0,
-        organism: int = 9606) -> None:
+        organism: int | str = 9606) -> None:
     """
     Adds protein-protein interactions from IntAct to a protein-protein
     interaction network.
@@ -738,8 +738,8 @@ def add_protein_interactions_from_intact(
 
 def get_neighbors_from_mint(network: nx.Graph,
                             interaction_detection_methods: Optional[
-                                Iterable[str]] = None,
-                            interaction_types: Optional[Iterable[str]] = None,
+                                Container[str]] = None,
+                            interaction_types: Optional[Container[str]] = None,
                             psi_mi_score: float = 0.0,
                             organism: int = 9606) -> set[str]:
     """
@@ -774,8 +774,8 @@ def get_neighbors_from_mint(network: nx.Graph,
 
 def add_protein_interactions_from_mint(
         network: nx.Graph,
-        interaction_detection_methods: Optional[Iterable[str]] = None,
-        interaction_types: Optional[Iterable[str]] = None,
+        interaction_detection_methods: Optional[Container[str]] = None,
+        interaction_types: Optional[Container[str]] = None,
         psi_mi_score: float = 0.0,
         organism: int = 9606) -> None:
     """
@@ -882,7 +882,7 @@ def get_neighbors_from_string(network: nx.Graph,
                               combined_score: float = 0.0,
                               physical: bool = False,
                               organism: int = 9606,
-                              version: str = "11.5") -> set[str]:
+                              version: float | str = "11.5") -> set[str]:
     """
     Add proteins interacting with proteins in a protein-protein interaction
     network from STRING to the network.
@@ -945,7 +945,7 @@ def add_protein_interactions_from_string(network: nx.Graph,
                                          combined_score: float = 0.0,
                                          physical: bool = False,
                                          organism: int = 9606,
-                                         version: str = "11.5") -> None:
+                                         version: float | str = "11.5") -> None:
     """
     Adds protein-protein interactions from STRING to a protein-protein
     interaction network.
