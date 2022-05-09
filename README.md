@@ -697,14 +697,14 @@ If true, restrict query to physical protein-protein interactions. The default se
     {
       "protein-protein interactions": {
         "STRING": {
-          "version": "11.5"
+          "version": 11.5
         }
       }
     }
 ]
 
 ```
-The version of STRING to query. The default setting is `"11.5"`.
+The version of STRING to query. The default setting is `11.5`.
 
 ---
 
