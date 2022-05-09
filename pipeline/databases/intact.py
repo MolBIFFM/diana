@@ -12,7 +12,7 @@ def get_protein_interactions(
         interaction_detection_methods: Optional[Container[str]] = None,
         interaction_types: Optional[Container[str]] = None,
         psi_mi_score: float = 0.0,
-        organism: int | str = 9606) -> Iterator[tuple[str, str, float]]:
+        organism: int = 9606) -> Iterator[tuple[str, str, float]]:
     """
     Yields protein-protein interactions from IntAct.
 
