@@ -22,7 +22,7 @@ from networks import (gene_ontology_network, protein_interaction_network,
 
 def process_workflow(configuration: Mapping[str, Any],
                      logger: logging.Logger,
-                     index: Optional[int] = None) -> None:
+                     index: Optional[int | str] = None) -> None:
     """
     Executes a workflow specified in configuration.
 

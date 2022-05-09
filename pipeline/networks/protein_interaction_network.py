@@ -671,7 +671,7 @@ def get_neighbors_from_intact(
         interaction_detection_methods: Optional[Container[str]] = None,
         interaction_types: Optional[Container[str]] = None,
         psi_mi_score: float = 0.0,
-        organism: int = 9606) -> set[str]:
+        organism: int | str = 9606) -> set[str]:
     """
     Returns proteins interacting with proteins in a protein-protein interaction
     network from IntAct to the network.
@@ -707,7 +707,7 @@ def add_protein_interactions_from_intact(
         interaction_detection_methods: Optional[Container[str]] = None,
         interaction_types: Optional[Container[str]] = None,
         psi_mi_score: float = 0.0,
-        organism: int = 9606) -> None:
+        organism: int | str = 9606) -> None:
     """
     Adds protein-protein interactions from IntAct to a protein-protein
     interaction network.
@@ -882,7 +882,7 @@ def get_neighbors_from_string(network: nx.Graph,
                               combined_score: float = 0.0,
                               physical: bool = False,
                               organism: int = 9606,
-                              version: float = 11.5) -> set[str]:
+                              version: float | str = 11.5) -> set[str]:
     """
     Add proteins interacting with proteins in a protein-protein interaction
     network from STRING to the network.
@@ -945,7 +945,7 @@ def add_protein_interactions_from_string(network: nx.Graph,
                                          combined_score: float = 0.0,
                                          physical: bool = False,
                                          organism: int = 9606,
-                                         version: float = 11.5) -> None:
+                                         version: float | str = 11.5) -> None:
     """
     Adds protein-protein interactions from STRING to a protein-protein
     interaction network.

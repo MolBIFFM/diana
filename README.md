@@ -2,17 +2,19 @@
 
 pipeline is a command line tool for protein-protein interaction network analysis of mass spectrometric measurements capturing differential post-translational modification.
 
-The tool assembles protein-protein interaction networks from input genes or proteins associated with mass spectrometry data,
-and, optionally, interacting proteins, querying protein-protein interaction data from BioGRID, CORUM, IntAct, MINT, Reactome, and STRING.
+The tool assembles protein-protein interaction networks from genes or proteins associated with mass spectrometric measurements,
+and, optionally, extends to proteins neighboring the input, querying protein-protein interaction data from BioGRID, CORUM, IntAct, MINT, Reactome, and STRING.
 
-The enrichment of CORUM protein complexes, Gene Ontology terms, and Reactome pathways by as well as the distribution of mass spectrometry measurements across the protein-protein interaction network, its individual communities and subsets of them, based on mass spectrometry measurements, can be assessed. The protein-protein interaction network and networks of Gene Ontology terms or Reactome pathways capturing enrichment can be exported along corresponding Cytoscape style specifications.
+The enrichment of CORUM protein complexes, Gene Ontology terms, and Reactome pathways by the protein-protein interaction network as well as the distribution of mass spectrometric measurements across it, its communities and subsets of proteins derived from mass spectrometric measurements can be assessed. 
+
+In addition to a protein-protein interaction network and its individual communities, networks of Gene Ontology terms or Reactome pathways, capturing their respective hierarchical dependencies and enrichment by the protein-protein interaction network, can each be exported along corresponding Cytoscape style specifications.
 
 ## Setup
 
 ```
 pip3 install -r pipeline/requirements.txt
 ```
-External dependencies consist of NetworkX, pandas, and SciPy as well as openpyxl, pyxlsb, and xlrd which are required by pandas to read from different spreadsheet formats. pipeline is developed using Python 3.10.4, Ubuntu 22.04 and Cytoscape 3.9.1.
+External dependencies consist of NetworkX, pandas, and SciPy as well as openpyxl, pyxlsb, and xlrd which are required by pandas to read from different spreadsheet formats. pipeline is currently developed using Python 3.10.4, Ubuntu 22.04 and Cytoscape 3.9.1.
 
 ## Command Line Interface
 ```
@@ -33,7 +35,7 @@ A configuration file specifies a list of workflows processed sequentially. Multi
 
 ## Configuration
 
-Specification of input genes or proteins.
+Input genes or proteins can be read from tabular input files.
 
 ```json
 [
@@ -327,7 +329,7 @@ The specification of sources of protein-protein interactions for the assembly of
     }
 ]
 ```
-An integer k specifying the extension of the network using species-specific proteins which are separated by up to k protein-protein interactions from the input proteins in the corresponding database. The default setting is 0, corresponding to no extension.
+An integer specifying the extension of the network using species-specific proteins which are separated by up to `"neighbors"` protein-protein interactions from the input proteins in the corresponding database. The default setting is 0, corresponding to no extension.
 
 ```json
 [
@@ -408,7 +410,7 @@ A list of accepted experimental system type annotations. The default setting is 
     }
 ]
 ```
-If true, restrict query to multi-validated physical protein-protein interactions. The default setting is `false`.
+If `true`, restrict query to multi-validated physical protein-protein interactions. The default setting is `false`.
 
 ```json
 [
@@ -690,7 +692,7 @@ The STRING combined score threshold. The default setting is `0.0`.
     }
 ]
 ```
-If true, restrict query to physical protein-protein interactions. The default setting is `false`.
+If `true`, restrict query to physical protein-protein interactions. The default setting is `false`.
 
 ```json
 [
@@ -781,7 +783,9 @@ The function used to derive a combined edge confidence score from scores in IntA
 
 ---
 
-CORUM protein complex, Gene Ontology term and Reactome pathway enrichment of the protein-protein interaction network can be assessed. The proteins considered can be restricted, based on associated measurements, either by a union or intersection of specified subsets of proteins from the protein-protein interaction network.
+CORUM protein complex, Gene Ontology term and Reactome pathway enrichment of the protein-protein interaction network can be assessed. 
+
+The proteins considered can be restricted, based on mass spectrometric associated measurements, either by a union or intersection of specified subsets of proteins from the protein-protein interaction network.
 
 ```json
 [
@@ -1012,7 +1016,7 @@ The range of combined measurements categorizing proteins by whether the range is
     }
 ]
 ```
-If true, compute enrichment with respect to the intersection of specified subsets of proteins from the protein-protein interaction network instead of their union. The default setting is `false`.
+If `true`, compute enrichment with respect to the intersection of specified subsets of proteins from the protein-protein interaction network instead of their union. The default setting is `false`.
 
 ```json
 [
@@ -1042,7 +1046,9 @@ The Gene Ontology namespaces to consider. The default setting is `["cellular_com
 
 ---
 
-Networks of Gene Ontology terms or Reactome pathways can be assembled. Both report the enrichment of each respective entity by proteins in the protein-protein interaction network with respect to the annotation specific to an organism of interest, along with their hierarchical relations in these databases. The proteins considered can be restricted, based on associated measurements, either by a union or intersection of specified subsets of proteins from the protein-protein interaction network.
+Networks of Gene Ontology terms or Reactome pathways can be assembled. Both incorporate the enrichment of each respective entity by the protein-protein interaction network with respect to the annotation specific to an organism of interest along the respective hierarchical relations of entities in these databases. 
+
+The proteins considered can be restricted, based on mass spectrometric associated measurements, either by a union or intersection of specified subsets of proteins from the protein-protein interaction network.
 
 ```json
 [
@@ -1166,7 +1172,7 @@ The range of combined measurements categorizing proteins by whether the range is
     }
 ]
 ```
-If true, compute enrichment with respect to the intersection of specified subsets of proteins from the protein-protein interaction network instead of their union. The default setting is `false`.
+If `true`, compute enrichment with respect to the intersection of specified subsets of proteins from the protein-protein interaction network instead of their union. The default setting is `false`.
 
 ```json
 [
@@ -1230,7 +1236,7 @@ The Gene Ontology namespaces to consider. The default setting is `["cellular_com
 
 ---
 
-The specification of community detection in the protein-protein interaction network.
+Communities of the protein-protein interaction network can be detected by parameterized modularity maximization and iterative subdivision.
 
 ```json
 [
@@ -1289,11 +1295,11 @@ The function to combine sizes of communities into a value compared to the commun
 
 ---
 
-CORUM protein complex, Gene Ontology term  and Reactome pathway enrichment of individual communities can be assessed. The proteins considered can be restricted, based on associated measurements, either by a union or intersection of specified subsets of proteins from the protein-protein interaction network.
+CORUM protein complex, Gene Ontology term and Reactome pathway enrichment b<> individual communities can be assessed. The proteins considered can be restricted, based on mass spectrometric associated measurements, either by a union or intersection of specified subsets of proteins from the protein-protein interaction network.
 
-To assess the distribution of mass spectrometry measurements, these can be classified in a binary way to measure the communities' enrichment of proteins which exhibit measurements exceeding a specified threshold. Alternatively, the distribution of measurements within separate communities can be compared with the remaining network.
+To assess the distribution of mass spectrometry measurements, these are either categorized to measure the communities' enrichment of proteins which exhibit measurements exceeding a specified absolute or relative threshold. Alternatively, the distribution of measurements within separate communities can be compared with the remaining network with respect to either proteins or modification sites.
 
-The tests effectively filter the communities of the protein-protein interaction network. A community is exported if it appears significant according to any of the specified tests.
+The statistical tests act as filter on the communities of the protein-protein interaction network in that a community is exported only if it appears significant with respect to any of the specified tests.
 
 ```json
 [
@@ -1418,7 +1424,7 @@ The NCBI taxonomy ID of the organism of interest. The default and currently only
     }
 ]
 ```
-If true, compute enrichment with respect to the entire annotation, specific to the organism of interest, otherwise with respect to the protein-protein interaction network. The default setting is `false`.
+If `true`, compute enrichment with respect to the entire annotation, specific to the organism of interest, otherwise with respect to the protein-protein interaction network. The default setting is `false`.
 
 ```json
 [
@@ -1592,7 +1598,7 @@ The range of combined measurements categorizing proteins by whether the range is
     }
 ]
 ```
-If true, compute enrichment with respect to the intersection of specified subsets of proteins from the protein-protein interaction network instead of their union. The default setting is `false`.
+If `true`, compute enrichment with respect to the intersection of specified subsets of proteins from the protein-protein interaction network instead of their union. The default setting is `false`.
 
 ```json
 [
@@ -1725,7 +1731,6 @@ Development was inspired by previous work combining the following applications.
 
 - Su, G. et al. (2010) **GLay: community structure analysis of biological networks**, *Bioinformatics*, 26, 3135-3137.
 
-
 ---
 
-References for implemented algorithms are listed in the corresponding source code.
+References for implemented algorithms are supplied in the corresponding source code.
