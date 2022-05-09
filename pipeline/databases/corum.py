@@ -32,7 +32,7 @@ def get_protein_interactions(
     for row in iterate.tabular_txt(
             "http://mips.helmholtz-muenchen.de/corum/download/"
             "allComplexes.txt.zip",
-            file_from_zip_archive=re.compile(r"allComplexes\.txt\.zip"),
+            file_from_zip_archive=re.compile(r"^allComplexes\.txt\.zip$"),
             delimiter="\t",
             header=0,
             usecols=[

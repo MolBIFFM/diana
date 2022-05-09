@@ -23,7 +23,7 @@ def get_protein_interactions(
         combined_score: float = 0.0,
         physical: bool = False,
         organism: int = 9606,
-        version: float | str = "11.5") -> Iterator[tuple[str, str, float]]:
+        version: float | str = 11.5) -> Iterator[tuple[str, str, float]]:
     """
     Yields protein-protein interactions from STRING.
 

@@ -421,7 +421,7 @@ If true, restrict query to multi-validated physical protein-protein interactions
     }
 ]
 ```
-The version of the BioGRID database to query, consisting of three dot-separated integers. The default or fallback setting is `null`, corresponding to the latest version.
+The version of the BioGRID database to query. The default setting is `null`, corresponding to the latest version.
 
 ```json
 [
@@ -697,14 +697,14 @@ If true, restrict query to physical protein-protein interactions. The default se
     {
       "protein-protein interactions": {
         "STRING": {
-          "version": "11.5"
+          "version": 11.5
         }
       }
     }
 ]
 
 ```
-The version of STRING to query. The default setting is `"11.5"`.
+The version of STRING to query. The default setting is `11.5`.
 
 ---
 

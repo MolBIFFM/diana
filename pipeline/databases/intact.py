@@ -34,7 +34,7 @@ def get_protein_interactions(
     for row in iterate.tabular_txt(
             "ftp://ftp.ebi.ac.uk/pub/databases/intact/current/psimitab/"
             "intact.zip",
-            file_from_zip_archive=re.compile(r"intact\.txt"),
+            file_from_zip_archive=re.compile(r"^intact\.txt$"),
             delimiter="\t",
             header=0,
             usecols=[

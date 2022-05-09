@@ -1,6 +1,6 @@
 """The interface for the BioGRID database."""
 import re
-from typing import Container, Iterator, Optional, Sequence
+from typing import Container, Iterator, Optional
 
 from access import iterate
 
@@ -15,8 +15,7 @@ def get_protein_interactions(
         interaction_throughput: Optional[Container[str]] = None,
         multi_validated_physical: bool = False,
         organism: int = 9606,
-        version: Optional[Sequence[int | str]] = None
-) -> Iterator[tuple[str, str]]:
+        version: Optional[str] = None) -> Iterator[tuple[str, str]]:
     """
     Yields protein-protein interactions from BioGRID.
 
@@ -40,22 +39,21 @@ def get_protein_interactions(
 
     for row in iterate.tabular_txt(
         ("https://downloads.thebiogrid.org/Download/BioGRID/Release-Archive/"
-         f"BIOGRID-{version[0]}.{version[1]}.{version[2]}/"
-         f"BIOGRID-MV-Physical-{version[0]}.{version[1]}.{version[2]}.tab3.zip"
+         f"BIOGRID-{version}/BIOGRID-MV-Physical-{version}.tab3.zip"
          if multi_validated_physical else
          "https://downloads.thebiogrid.org/Download/BioGRID/Release-Archive/"
-         f"BIOGRID-{version[0]}.{version[1]}.{version[2]}/"
-         f"BIOGRID-ORGANISM-{version[0]}.{version[1]}.{version[2]}.tab3.zip")
-            if version and len(version) == 3 else
+         f"BIOGRID-{version}/BIOGRID-ORGANISM-{version}.tab3.zip")
+            if version is not None and
+            re.match(r"^[0-9]\.[0-9]\.[0-9]{2,3}$", version) else
         ("https://downloads.thebiogrid.org/Download/BioGRID/Latest-Release/"
          "BIOGRID-MV-Physical-LATEST.tab3.zip" if multi_validated_physical else
          "https://downloads.thebiogrid.org/Download/BioGRID/Latest-Release/"
          "BIOGRID-ORGANISM-LATEST.tab3.zip"),
             file_from_zip_archive=re.compile(
-                r"BIOGRID-MV-Physical-[0-9]\.[0-9]\.[0-9]{3}\.tab3\.txt"
+                r"^BIOGRID-MV-Physical-[0-9]\.[0-9]\.[0-9]{2,3}\.tab3\.txt$"
                 if multi_validated_physical else
-                f"BIOGRID-ORGANISM-{ORGANISM['files'][organism]}-"
-                r"[0-9]\.[0-9]\.[0-9][0-9][0-9]\.tab3\.txt"),
+                f"^BIOGRID-ORGANISM-{ORGANISM['files'][organism]}-"
+                r"[0-9]\.[0-9]\.[0-9]{2,3}\.tab3\.txt$"),
             delimiter="\t",
             header=0,
             usecols=[

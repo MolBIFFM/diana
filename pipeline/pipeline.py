@@ -126,12 +126,8 @@ def process_workflow(configuration: Mapping[str, Any],
                                 "multi-validated physical", False),
                         organism=configuration["protein-protein interactions"]
                         ["BioGRID"].get("organism", 9606),
-                        version=[
-                            v for v in
-                            configuration["protein-protein interactions"]
-                            ["BioGRID"]["version"].split(".") if v.isnumeric()
-                        ][:3] if configuration["protein-protein interactions"].
-                        get("version")["BioGRID"] else None))
+                        version=configuration["protein-protein interactions"]
+                        ["BioGRID"].get("version")))
 
             if "CORUM" in configuration[
                     "protein-protein interactions"] and configuration[
@@ -251,7 +247,7 @@ def process_workflow(configuration: Mapping[str, Any],
                         organism=configuration["protein-protein interactions"]
                         ["STRING"].get("organism", 9606),
                         version=configuration["protein-protein interactions"]
-                        ["STRING"].get("version", "11.5"),
+                        ["STRING"].get("version", 11.5),
                     ))
 
             network.add_nodes_from(interacting_proteins)
@@ -274,11 +270,8 @@ def process_workflow(configuration: Mapping[str, Any],
                         "multi-validated physical", False),
                 organism=configuration["protein-protein interactions"]
                 ["BioGRID"].get("organism", 9606),
-                version=[
-                    v for v in configuration["protein-protein interactions"]
-                    ["BioGRID"]["version"].split(".") if v.isnumeric()
-                ][:3] if configuration["protein-protein interactions"]
-                ["BioGRID"].get("version") else None)
+                version=configuration["protein-protein interactions"]
+                ["BioGRID"].get("version"))
 
         if "CORUM" in configuration["protein-protein interactions"]:
             protein_interaction_network.add_protein_interactions_from_corum(
@@ -368,7 +361,7 @@ def process_workflow(configuration: Mapping[str, Any],
                 organism=configuration["protein-protein interactions"]
                 ["STRING"].get("organism", 9606),
                 version=configuration["protein-protein interactions"]
-                ["STRING"].get("version", "11.5"),
+                ["STRING"].get("version", 11.5),
             )
 
         if "Cytoscape" in configuration and any(

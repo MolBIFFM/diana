@@ -5,7 +5,7 @@ import os
 import re
 import statistics
 from typing import (Callable, Collection, Container, Hashable, Iterable,
-                    MutableSequence, Optional, Sequence)
+                    MutableSequence, Optional)
 
 import networkx as nx
 import pandas as pd
@@ -541,7 +541,7 @@ def get_neighbors_from_biogrid(
         interaction_throughput: Optional[Container[str]] = None,
         multi_validated_physical: bool = False,
         organism: int = 9606,
-        version: Optional[Sequence[int | str]] = None) -> set[str]:
+        version: Optional[str] = None) -> set[str]:
     """
     Returns proteins interacting with proteins in a protein-protein interaction
     network from BioGRID.
@@ -584,7 +584,7 @@ def add_protein_interactions_from_biogrid(
         interaction_throughput: Optional[Container[str]] = None,
         multi_validated_physical: bool = False,
         organism: int = 9606,
-        version: Optional[Sequence[int | str]] = None) -> None:
+        version: Optional[str] = None) -> None:
     """
     Adds protein-protein interactions from BioGRID to a protein-protein
     interaction network.
@@ -882,7 +882,7 @@ def get_neighbors_from_string(network: nx.Graph,
                               combined_score: float = 0.0,
                               physical: bool = False,
                               organism: int = 9606,
-                              version: float | str = "11.5") -> set[str]:
+                              version: float | str = 11.5) -> set[str]:
     """
     Add proteins interacting with proteins in a protein-protein interaction
     network from STRING to the network.
@@ -945,7 +945,7 @@ def add_protein_interactions_from_string(network: nx.Graph,
                                          combined_score: float = 0.0,
                                          physical: bool = False,
                                          organism: int = 9606,
-                                         version: float | str = "11.5") -> None:
+                                         version: float | str = 11.5) -> None:
     """
     Adds protein-protein interactions from STRING to a protein-protein
     interaction network.
