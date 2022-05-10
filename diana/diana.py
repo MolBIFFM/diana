@@ -1,5 +1,5 @@
 """
-DIANA: Data Integration And Network-based Analysis for posttranslational 
+DIANA: Data Integration And Network-based Analysis for post-translational 
 modification mass spectrometry data
 """
 import argparse
