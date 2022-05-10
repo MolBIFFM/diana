@@ -99,14 +99,8 @@ def process_workflow(configuration: Mapping[str, Any],
     if "protein-protein interactions" in configuration:
         for neighbors in range(
                 max(configuration["protein-protein interactions"].get(
-                    database, {}).get("neighbors", 0) for database in (
-                        "BioGRID",
-                        "CORUM",
-                        "IntAct",
-                        "MINT",
-                        "Reactome",
-                        "STRING",
-                    ))):
+                    database, {}).get("neighbors", 0) for database in
+                    configuration["protein-protein interactions"])):
             interacting_proteins = set()
             if "BioGRID" in configuration[
                     "protein-protein interactions"] and configuration[
@@ -254,7 +248,10 @@ def process_workflow(configuration: Mapping[str, Any],
                     ))
 
             network.add_nodes_from(interacting_proteins)
-            protein_interaction_network.map_proteins(network)
+            for organism in set(configuration["protein-protein interactions"]
+                                [database].get("organism", 9606) for database in
+                                configuration["protein-protein interactions"]):
+                protein_interaction_network.map_proteins(network, organism)
 
         if "BioGRID" in configuration["protein-protein interactions"]:
             protein_interaction_network.add_protein_interactions_from_biogrid(
