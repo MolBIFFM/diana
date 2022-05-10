@@ -1,6 +1,6 @@
-# pipeline
+# DIANA
 
-pipeline is a command line tool for protein-protein interaction network analysis of mass spectrometric measurements capturing differential post-translational modification.
+DIANA is a command line tool for **D**ata **I**ntegration **A**nd **N**etwork-based **A**nalysis for posttranslational modification mass spectrometry data.
 
 The tool assembles protein-protein interaction networks from genes or proteins associated with mass spectrometric measurements,
 and, optionally, extends to proteins neighboring the input, querying protein-protein interaction data from BioGRID, CORUM, IntAct, MINT, Reactome, and STRING.
@@ -12,13 +12,13 @@ In addition to a protein-protein interaction network and its individual communit
 ## Setup
 
 ```
-pip3 install -r pipeline/requirements.txt
+pip3 install -r diana/requirements.txt
 ```
-External dependencies consist of NetworkX, pandas, and SciPy as well as openpyxl, pyxlsb, and xlrd which are required by pandas to read from different spreadsheet formats. pipeline is currently developed using Python 3.10.4, Ubuntu 22.04 and Cytoscape 3.9.1.
+External dependencies consist of NetworkX, pandas, and SciPy as well as openpyxl, pyxlsb, and xlrd which are required by pandas to read from different spreadsheet formats. DIANA is currently developed using Python 3.10.4, Ubuntu 22.04 and Cytoscape 3.9.1.
 
 ## Command Line Interface
 ```
-usage: pipeline.py [-h] -c CONFIGURATIONS [CONFIGURATIONS ...] [-l {CRITICAL,ERROR,WARNING,INFO,DEBUG}] [-p PROCESSES]
+usage: diana.py [-h] -c CONFIGURATIONS [CONFIGURATIONS ...] [-l {CRITICAL,ERROR,WARNING,INFO,DEBUG}] [-p PROCESSES]
 
 optional arguments:
   -h, --help            show this help message and exit
