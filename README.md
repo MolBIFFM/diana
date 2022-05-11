@@ -33,7 +33,7 @@ spreadsheet formats. DIANA is currently developed using Python 3.10.4, Ubuntu
 ## Command Line Interface
 
 ```
-diana/diana.py -h
+python3 diana/diana.py --help
 ```
 
 ---
