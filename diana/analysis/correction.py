@@ -25,8 +25,8 @@ def benjamini_hochberg(
             sorted_p_values[i - 1][1] = sorted_p_values[i][1] * i / (i + 1)
 
     return {
-        key: min(m * p_value / (i + 1), 1.0)
-        for i, (key, p_value) in enumerate(sorted_p_values)
+        key: min(m * p_value / i, 1.0)
+        for i, (key, p_value) in enumerate(sorted_p_values, start=1)
     }
 
 
