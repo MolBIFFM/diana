@@ -31,20 +31,10 @@ spreadsheet formats. DIANA is currently developed using Python 3.10.4, Ubuntu
 22.04 and Cytoscape 3.9.1.
 
 ## Command Line Interface
-```
-  usage: diana.py [-h] -c CONFIGURATIONS [CONFIGURATIONS ...] [-l {CRITICAL,ERROR,WARNING,INFO,DEBUG}] [-p PROCESSES]
 
-  optional arguments:
-    -h, --help            show this help message and exit
-    -c CONFIGURATIONS [CONFIGURATIONS ...], --configurations CONFIGURATIONS [CONFIGURATIONS ...]
-                          configuration files
-    -l {CRITICAL,ERROR,WARNING,INFO,DEBUG}, --level {CRITICAL,ERROR,WARNING,INFO,DEBUG}
-                          logging level (default: INFO)
-    -p PROCESSES, --processes PROCESSES
-                          maximum number of concurrent processes (default: 4)
 ```
-A configuration file specifies a list of workflows processed sequentially.
-Multiple configuration files are processed concurrently.
+diana/diana.py -h
+```
 
 ---
 

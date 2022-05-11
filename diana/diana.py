@@ -1478,7 +1478,9 @@ def main() -> None:
 
     parser.add_argument("-c",
                         "--configurations",
-                        help="configuration files",
+                        help="concurrently processed configuration files each "
+                        "specifying an array of workflows processed "
+                        "sequentially",
                         nargs="+",
                         required=True)
 
