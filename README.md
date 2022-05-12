@@ -5,7 +5,7 @@ DIANA is a command line tool for **D**ata **I**ntegration **A**nd
 spectrometry data.
 
 The tool assembles protein-protein interaction networks from genes or proteins
-associated with mass spectrometric measurements,and, optionally, extends to
+associated with mass spectrometric measurements and, optionally, extends to
 proteins neighboring the input, querying protein-protein interaction data from
 BioGRID, CORUM, IntAct, MINT, Reactome, and STRING.
 
