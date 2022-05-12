@@ -25,10 +25,8 @@ specifications.
 ```
 pip3 install -r diana/requirements.txt
 ```
-External dependencies consist of NetworkX, pandas, and SciPy as well as
-openpyxl, pyxlsb, and xlrd which are required by pandas to read from different
-spreadsheet formats. DIANA is currently developed using Python 3.10.4, Ubuntu
-22.04 and Cytoscape 3.9.1.
+External dependencies consist of NetworkX, pandas, and SciPy. DIANA is currently
+developed using Python 3.10.4, Ubuntu 22.04 and Cytoscape 3.9.1.
 
 ## Command Line Interface
 
