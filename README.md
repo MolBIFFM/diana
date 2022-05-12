@@ -34,8 +34,6 @@ developed using Python 3.10.4, Ubuntu 22.04 and Cytoscape 3.9.1.
 python3 diana/diana.py --help
 ```
 
----
-
 ## Configuration
 
 Input genes or proteins can be read from tabular input files.
