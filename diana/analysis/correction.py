@@ -17,16 +17,17 @@ def benjamini_hochberg(
         Benjamini-Hochberg-adjusted p-values.
     """
     m = len(p_values)
-    sorted_p_values = sorted([list(item) for item in p_values.items()],
-                             key=lambda item: item[1])
+    sorted_p_values = dict(
+        sorted(p_values.items(), key=lambda item: item[1], reverse=True))
 
-    for i in range(m - 1, 0, -1):
-        if sorted_p_values[i - 1][1] / i > sorted_p_values[i][1] / (i + 1):
-            sorted_p_values[i - 1][1] = sorted_p_values[i][1] * i / (i + 1)
+    for i, (key, p_value) in enumerate(sorted_p_values.items()):
+        if i and p_value / (m - i) > previous / (m - i + 1):
+            sorted_p_values[key] = previous * (m - i) / (m - i + 1)
+        previous = sorted_p_values[key]
 
     return {
-        key: min(m * p_value / i, 1.0)
-        for i, (key, p_value) in enumerate(sorted_p_values, start=1)
+        key: min(m * p_value / (m - i), 1.0)
+        for i, (key, p_value) in enumerate(sorted_p_values.items())
     }
 
 
