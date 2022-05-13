@@ -1,6 +1,6 @@
 """The interface for the CORUM database."""
 import re
-from typing import Callable, Container, Iterable, Iterator, Optional, Mapping
+from typing import Callable, Container, Hashable, Iterable, Iterator, Optional, Mapping
 
 import scipy.stats
 from access import iterate
@@ -123,10 +123,8 @@ def get_enrichment(
     enrichment_test: Callable[
         [int, int, int, int],
         float] = lambda k, M, n, N: scipy.stats.hypergeom.sf(k - 1, M, n, N),
-    multiple_testing_correction: Callable[
-        [dict[tuple[frozenset[str], int],
-              float]], Mapping[tuple[frozenset[str], int],
-                               float]] = correction.benjamini_hochberg,
+    multiple_testing_correction: Callable[[dict[Hashable, float]], Mapping[
+        Hashable, float]] = correction.benjamini_hochberg,
     purification_methods: Optional[Container[str]] = None,
     organism: int = 9606,
     annotation_as_reference: bool = False

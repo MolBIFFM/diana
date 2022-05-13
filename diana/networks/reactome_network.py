@@ -5,7 +5,7 @@ Nodes are Reactome pathways annotated with proteins from a species of interest.
 Edges are directed pathway relationships within Reactome.
 """
 
-from typing import Callable, Iterable, Mapping
+from typing import Callable, Hashable, Iterable, Mapping
 
 import networkx as nx
 import scipy.stats
@@ -17,8 +17,8 @@ def get_network(proteins: Iterable[str] = frozenset(),
                 enrichment_test: Callable[[int, int, int, int], float] = lambda
                 k, M, n, N: scipy.stats.hypergeom.sf(k - 1, M, n, N),
                 multiple_testing_correction: Callable[
-                    [dict[str, float]],
-                    Mapping[str, float]] = correction.benjamini_hochberg,
+                    [dict[Hashable, float]],
+                    Mapping[Hashable, float]] = correction.benjamini_hochberg,
                 organism: int = 9606) -> nx.DiGraph:
     """
     Assemble a Reactome network from proteins.
@@ -43,7 +43,7 @@ def get_network(proteins: Iterable[str] = frozenset(),
         if child in network and parent in network:
             network.add_edge(child, parent)
 
-    annotation = {}
+    annotation: dict[str, set[str]] = {}
     for protein, pathway in reactome.get_pathway_annotation(organism):
         if pathway not in annotation:
             annotation[pathway] = set()
@@ -67,12 +67,12 @@ def get_network(proteins: Iterable[str] = frozenset(),
         for pathway in network
     })
 
-    for pathway in network:
-        network.nodes[pathway]["p-value"] = p_value[pathway]
-        network.nodes[pathway]["number of proteins"] = len(
-            network_intersection[pathway])
-        network.nodes[pathway]["proteins"] = " ".join(
-            sorted(network_intersection[pathway]))
+    for node in network:
+        network.nodes[node]["p-value"] = p_value[node]
+        network.nodes[node]["number of proteins"] = len(
+            network_intersection[node])
+        network.nodes[node]["proteins"] = " ".join(
+            sorted(network_intersection[node]))
 
     return network
 

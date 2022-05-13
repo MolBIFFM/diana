@@ -23,7 +23,7 @@ def get_protein_interactions(
         combined_score: float = 0.0,
         physical: bool = False,
         organism: int = 9606,
-        version: float | str = 11.5) -> Iterator[tuple[str, str, float]]:
+        version: float = 11.5) -> Iterator[tuple[str, str, float]]:
     """
     Yields protein-protein interactions from STRING.
 
@@ -51,7 +51,7 @@ def get_protein_interactions(
         Pairs of interacting proteins and the combined STRING score associated
             with the interaction.
     """
-    uniprot_id = {}
+    uniprot_id: dict[str, set[str]] = {}
     for row in iterate.tabular_txt(
             f"https://stringdb-static.org/download/protein.aliases.v{version}/"
             f"{organism}.protein.aliases.v{version}.txt.gz",
@@ -94,7 +94,7 @@ def get_protein_interactions(
             f"{organism}.protein.links.full.v{version}.txt.gz",
             delimiter=" ",
             header=0,
-            usecols=["protein1", "protein2"] + list(thresholds.keys()),
+            usecols=["protein1", "protein2"] + list(thresholds),
     ):
         if all(row[column] / 1000 >= thresholds[column]
                for column in thresholds):

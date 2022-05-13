@@ -95,15 +95,15 @@ def map_genes(network: nx.Graph, organism: int = 9606) -> None:
     """
     mapping, gene_name, protein_name = {}, {}, {}
     for accessions, gene, protein in uniprot.get_swiss_prot_entries(organism):
-        if gene in network.nodes():
+        if gene in network:
             mapping[gene] = accessions[0]
             gene_name[accessions[0]] = gene
             protein_name[accessions[0]] = protein
 
-    network.remove_nodes_from(set(network.nodes()).difference(mapping))
+    network.remove_nodes_from(set(network).difference(mapping))
     nx.relabel_nodes(network, mapping, copy=False)
 
-    for protein in network.nodes():
+    for protein in network:
         network.nodes[protein]["gene"] = gene_name[protein]
         network.nodes[protein]["protein"] = protein_name[protein]
 
@@ -178,7 +178,7 @@ def add_proteins_from_table(
                 **({
                     position_column: str
                 } if position_column else {}),
-                **({column: float for column in replicates}
+                **({column: str for column in replicates}
                     if replicates is not None else {}),
             },
         )
@@ -194,12 +194,12 @@ def add_proteins_from_table(
                 **({
                     position_column: str
                 } if position_column else {}),
-                **({column: float for column in replicates}
+                **({column: str for column in replicates}
                     if replicates is not None else {}),
             },
         )
 
-    proteins = {}
+    proteins: dict[str, list[tuple[int, float]]] = {}
     for _, row in table.iterrows():
         if pd.isna(row[protein_accession_column]):
             continue
@@ -228,7 +228,7 @@ def add_proteins_from_table(
                     positions = positions[:len(protein_accessions)]
 
             measurements = [
-                row[replicate]
+                float(row[replicate])
                 for replicate in replicates
                 if not pd.isna(row[replicate])
             ]
@@ -252,13 +252,13 @@ def add_proteins_from_table(
 
     network.add_nodes_from(proteins)
     for protein, sites in proteins.items():
-        measurements = sorted(
+        sorted_measurements = sorted(
             sorted(
                 sites,
                 key=lambda item: abs(item[1]),
             )[-number_sites:])
 
-        for i, (_, measurement) in enumerate(measurements):
+        for i, (_, measurement) in enumerate(sorted_measurements):
             network.nodes[protein][
                 f"{time} {modification} {i + 1}"] = measurement
 
@@ -275,7 +275,7 @@ def map_proteins(network: nx.Graph, organism: int = 9606) -> None:
     """
     mapping, gene_name, protein_name = {}, {}, {}
     for accessions, gene, protein in uniprot.get_swiss_prot_entries(organism):
-        for node in network.nodes():
+        for node in network:
             if node.split("-")[0] in accessions:
                 if "-" in node and node.split("-")[1].isnumeric(
                 ) and accessions.index(node.split("-")[0]) == 0:
@@ -287,10 +287,10 @@ def map_proteins(network: nx.Graph, organism: int = 9606) -> None:
                     gene_name[accessions[0]] = gene
                     protein_name[accessions[0]] = protein
 
-    network.remove_nodes_from(set(network.nodes()).difference(mapping))
+    network.remove_nodes_from(set(network).difference(mapping))
     nx.relabel_nodes(network, mapping, copy=False)
 
-    for protein in network.nodes():
+    for protein in network:
         network.nodes[protein]["gene"] = gene_name[protein]
         network.nodes[protein]["protein"] = protein_name[protein]
 
@@ -301,11 +301,11 @@ def get_proteins(
     modification: str,
     site_combination: Callable[[Collection[float]],
                                float] = lambda sites: max(sites, key=abs),
-    combined_measurement_filter: Callable[[float],
-                                          bool] = bool) -> frozenset[str]:
+    combined_measurement_range: tuple[float, float] = (0.0, 0.0)
+) -> frozenset[str]:
     """
-    Returns proteins of a protein-protein interaction network with specified
-    measurements.
+    Returns proteins of a protein-protein interaction network exceeding a
+    specified range of measurements.
 
     Args:
         network: The protein-protein interaction network.
@@ -313,13 +313,13 @@ def get_proteins(
         modification: The type of post-translational modification.
         site_combination: An optional function to derive protein-specific
             measurements from site-specific measurements.
-        combined_measurement_filter: The predicate to filter combined
-            measurements.
+        combined_measurement_range: A range that is to be exceeded by combined
+            measurements of the proteins.
 
     Returns:
         Proteins whose combined measurement of a particular type of
         post-translational modification at a particular time of measurement
-        fulfil the predicate.
+        exceeds the specified range.
     """
     proteins = []
     for protein in network:
@@ -330,7 +330,8 @@ def get_proteins(
             str(time) and measurement.split(" ")[1] == modification
         ]
 
-        if sites and combined_measurement_filter(site_combination(sites)):
+        if sites and not (combined_measurement_range[0] < site_combination(
+                sites) < combined_measurement_range[1]):
             proteins.append(protein)
 
     return frozenset(proteins)
@@ -671,7 +672,7 @@ def get_neighbors_from_intact(
         interaction_detection_methods: Optional[Container[str]] = None,
         interaction_types: Optional[Container[str]] = None,
         psi_mi_score: float = 0.0,
-        organism: int | str = 9606) -> set[str]:
+        organism: int = 9606) -> set[str]:
     """
     Returns proteins interacting with proteins in a protein-protein interaction
     network from IntAct to the network.
@@ -707,7 +708,7 @@ def add_protein_interactions_from_intact(
         interaction_detection_methods: Optional[Container[str]] = None,
         interaction_types: Optional[Container[str]] = None,
         psi_mi_score: float = 0.0,
-        organism: int | str = 9606) -> None:
+        organism: int = 9606) -> None:
     """
     Adds protein-protein interactions from IntAct to a protein-protein
     interaction network.
@@ -882,7 +883,7 @@ def get_neighbors_from_string(network: nx.Graph,
                               combined_score: float = 0.0,
                               physical: bool = False,
                               organism: int = 9606,
-                              version: float | str = 11.5) -> set[str]:
+                              version: float = 11.5) -> set[str]:
     """
     Add proteins interacting with proteins in a protein-protein interaction
     network from STRING to the network.
@@ -945,7 +946,7 @@ def add_protein_interactions_from_string(network: nx.Graph,
                                          combined_score: float = 0.0,
                                          physical: bool = False,
                                          organism: int = 9606,
-                                         version: float | str = 11.5) -> None:
+                                         version: float = 11.5) -> None:
     """
     Adds protein-protein interactions from STRING to a protein-protein
     interaction network.
@@ -1156,9 +1157,8 @@ def get_measurement_enrichment(
     enrichment_test: Callable[
         [int, int, int, int],
         float] = lambda k, M, n, N: scipy.stats.hypergeom.sf(k - 1, M, n, N),
-    multiple_testing_correction: Callable[
-        [dict[tuple[nx.Graph, int, str], float]],
-        dict[tuple[nx.Graph, int, str], float]] = correction.benjamini_hochberg,
+    multiple_testing_correction: Callable[[dict[Hashable, float]], dict[
+        Hashable, float]] = correction.benjamini_hochberg,
 ) -> dict[nx.Graph, dict[int, dict[str, float]]]:
     """
     Test communities for enrichment of large protein-specific measurements for
@@ -1185,7 +1185,8 @@ def get_measurement_enrichment(
         measurements by each community for each time of measurement and type of
         post-translational modification.
     """
-    p_values = {}
+    p_values: dict[Hashable, float] = {}
+
     for time in get_times(network):
         for modification in get_modifications(network, time):
             measurement_range = (convert_measurement(
@@ -1257,9 +1258,8 @@ def get_measurement_location(
     location_test: Callable[
         [Collection[float], Collection[float]],
         float] = lambda x, y: scipy.stats.ranksums(x, y).pvalue,
-    multiple_testing_correction: Callable[
-        [dict[tuple[nx.Graph, int, str], float]],
-        dict[tuple[nx.Graph, int, str], float]] = correction.benjamini_hochberg,
+    multiple_testing_correction: Callable[[dict[Hashable, float]], dict[
+        Hashable, float]] = correction.benjamini_hochberg,
 ) -> dict[nx.Graph, dict[int, dict[str, float]]]:
     """
     Test communities for difference tendencies in protein-specific measurements
@@ -1282,7 +1282,8 @@ def get_measurement_location(
         protein-specific measurements of communities for each time of
         measurement and type of post-translational modification.
     """
-    p_values = {}
+    p_values: dict[Hashable, float] = {}
+
     for time in get_times(network):
         for modification in get_modifications(network, time):
             network_measurements = [

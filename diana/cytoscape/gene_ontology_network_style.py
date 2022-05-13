@@ -437,117 +437,157 @@ def get_style(network: nx.Graph) -> ET.ElementTree:
                                               component)
 
         for name, dependency in properties["dependency"].items():
-            ET.SubElement(
-                component_sub_element,
-                "dependency",
-                attrib={
-                    "name": name,
-                    "value": dependency["value"]
-                },
-            )
+            if isinstance(dependency["value"], str):
+                ET.SubElement(
+                    component_sub_element,
+                    "dependency",
+                    attrib={
+                        "name": name,
+                        "value": dependency["value"]
+                    },
+                )
 
         for name, visual_property in properties["visualProperty"].items():
-            visual_property_sub_element = ET.SubElement(
-                component_sub_element,
-                "visualProperty",
-                attrib={
-                    "name": name,
-                    "default": visual_property["default"]
-                },
-            )
+            if isinstance(visual_property["default"], str):
+                visual_property_sub_element = ET.SubElement(
+                    component_sub_element,
+                    "visualProperty",
+                    attrib={
+                        "name": name,
+                        "default": visual_property["default"]
+                    },
+                )
 
             if visual_property.get("continuousMapping"):
-                continuous_mapping_sub_element = ET.SubElement(
-                    visual_property_sub_element,
-                    "continuousMapping",
-                    attrib={
-                        "attributeName":
+                if isinstance(visual_property["continuousMapping"], dict):
+                    if isinstance(
                             visual_property["continuousMapping"]
-                            ["attributeName"],
-                        "attributeType":
+                        ["attributeName"], str) and isinstance(
                             visual_property["continuousMapping"]
-                            ["attributeType"]
-                    })
+                            ["attributeType"], str):
+                        continuous_mapping_sub_element = ET.SubElement(
+                            visual_property_sub_element,
+                            "continuousMapping",
+                            attrib={
+                                "attributeName":
+                                    visual_property["continuousMapping"]
+                                    ["attributeName"],
+                                "attributeType":
+                                    visual_property["continuousMapping"]
+                                    ["attributeType"]
+                            })
 
-                for key, values in visual_property["continuousMapping"][
-                        "continuousMappingPoint"].items():
-                    if name == "NODE_SIZE":
-                        ET.SubElement(
-                            continuous_mapping_sub_element,
-                            "continuousMappingPoint",
-                            attrib={
-                                "attrValue":
-                                    key.format(max=float(
-                                        max(
-                                            gene_ontology_network.
-                                            get_term_sizes(network).values()))),
-                                "equalValue":
-                                    values["equalValue"].
-                                    format(size=35.0 + float(
-                                        max(
-                                            gene_ontology_network.
-                                            get_term_sizes(network).values()))),
-                                "greaterValue":
-                                    values["greaterValue"].
-                                    format(size=35.0 + float(
-                                        max(
-                                            gene_ontology_network.
-                                            get_term_sizes(network).values()))),
-                                "lesserValue":
-                                    values["lesserValue"].
-                                    format(size=35.0 + float(
-                                        max(
-                                            gene_ontology_network.
-                                            get_term_sizes(network).values())))
-                            },
-                        )
-                    else:
-                        ET.SubElement(
-                            continuous_mapping_sub_element,
-                            "continuousMappingPoint",
-                            attrib={
-                                "attrValue": key,
-                                "greaterValue": values["greaterValue"],
-                                "lesserValue": values["lesserValue"]
-                            },
-                        )
+                    if isinstance(
+                            visual_property["continuousMapping"]
+                        ["continuousMappingPoint"], dict):
+                        for key, values in visual_property["continuousMapping"][
+                                "continuousMappingPoint"].items():
+                            if isinstance(values, dict):
+                                if name == "NODE_SIZE":
+                                    ET.SubElement(
+                                        continuous_mapping_sub_element,
+                                        "continuousMappingPoint",
+                                        attrib={
+                                            "attrValue":
+                                                key.format(max=float(
+                                                    max(
+                                                        gene_ontology_network.
+                                                        get_term_sizes(
+                                                            network).values()))
+                                                          ),
+                                            "equalValue":
+                                                values["equalValue"].
+                                                format(size=35.0 + float(
+                                                    max(
+                                                        gene_ontology_network.
+                                                        get_term_sizes(
+                                                            network).values()))
+                                                      ),
+                                            "greaterValue":
+                                                values["greaterValue"].
+                                                format(size=35.0 + float(
+                                                    max(
+                                                        gene_ontology_network.
+                                                        get_term_sizes(
+                                                            network).values()))
+                                                      ),
+                                            "lesserValue":
+                                                values["lesserValue"].
+                                                format(size=35.0 + float(
+                                                    max(
+                                                        gene_ontology_network.
+                                                        get_term_sizes(
+                                                            network).values())))
+                                        },
+                                    )
+                                else:
+                                    ET.SubElement(
+                                        continuous_mapping_sub_element,
+                                        "continuousMappingPoint",
+                                        attrib={
+                                            "attrValue":
+                                                key,
+                                            "greaterValue":
+                                                values["greaterValue"],
+                                            "lesserValue":
+                                                values["lesserValue"]
+                                        },
+                                    )
 
             elif visual_property.get("discreteMapping"):
-                discrete_mapping_sub_element = ET.SubElement(
-                    visual_property_sub_element,
-                    "discreteMapping",
-                    attrib={
-                        "attributeName":
-                            visual_property["discreteMapping"]["attributeName"],
-                        "attributeType":
+                if isinstance(visual_property["discreteMapping"], dict):
+                    if isinstance(
+                            visual_property["discreteMapping"]
+                        ["attributeName"], str) and isinstance(
                             visual_property["discreteMapping"]["attributeType"],
-                    },
-                )
+                            str):
+                        discrete_mapping_sub_element = ET.SubElement(
+                            visual_property_sub_element,
+                            "discreteMapping",
+                            attrib={
+                                "attributeName":
+                                    visual_property["discreteMapping"]
+                                    ["attributeName"],
+                                "attributeType":
+                                    visual_property["discreteMapping"]
+                                    ["attributeType"],
+                            },
+                        )
 
-                for key, value in visual_property["discreteMapping"][
-                        "discreteMappingEntry"].items():
-                    ET.SubElement(
-                        discrete_mapping_sub_element,
-                        "discreteMappingEntry",
-                        attrib={
-                            "attributeValue": key,
-                            "value": value,
-                        },
-                    )
+                    if isinstance(
+                            visual_property["discreteMapping"]
+                        ["discreteMappingEntry"], dict):
+                        for key, value in visual_property["discreteMapping"][
+                                "discreteMappingEntry"].items():
+                            if isinstance(value, str):
+                                ET.SubElement(
+                                    discrete_mapping_sub_element,
+                                    "discreteMappingEntry",
+                                    attrib={
+                                        "attributeValue": key,
+                                        "value": value,
+                                    },
+                                )
 
             elif visual_property.get("passthroughMapping"):
-                ET.SubElement(
-                    visual_property_sub_element,
-                    "passthroughMapping",
-                    attrib={
-                        "attributeName":
+                if isinstance(visual_property["passthroughMapping"], dict):
+                    if isinstance(
                             visual_property["passthroughMapping"]
-                            ["attributeName"],
-                        "attributeType":
+                        ["attributeName"], str) and isinstance(
                             visual_property["passthroughMapping"]
-                            ["attributeType"],
-                    },
-                )
+                            ["attributeType"], str):
+                        ET.SubElement(
+                            visual_property_sub_element,
+                            "passthroughMapping",
+                            attrib={
+                                "attributeName":
+                                    visual_property["passthroughMapping"]
+                                    ["attributeName"],
+                                "attributeType":
+                                    visual_property["passthroughMapping"]
+                                    ["attributeType"],
+                            },
+                        )
 
     ET.indent(style)
     return style

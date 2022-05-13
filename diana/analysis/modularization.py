@@ -248,7 +248,9 @@ def louvain(network: nx.Graph,
                         *(communities[0][node] for node in communities[1][ci]))
             communities = communities[1:2]
 
-            weights = {ci: {} for ci in community.values()}
+            weights: dict[Hashable,
+                          dict[Hashable,
+                               float]] = {ci: {} for ci in community.values()}
             for i in adj_matrix:
                 for cj in k_in[i]:
                     if cj not in weights[community[i]]:

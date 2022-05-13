@@ -43,15 +43,10 @@ CONFIDENCE_SCORE_COMBINATION: dict[Optional[str], Callable[[dict[
         "min": lambda scores: min(scores.values()),
         "number": len,
         "sum": lambda scores: math.fsum(scores.values()),
-        **{
-            database: lambda scores, database=database: scores.get(
-                database, 0.0) for database in (
-                "BioGRID",
-                "CORUM",
-                "IntAct",
-                "MINT",
-                "Reactome",
-                "STRING",
-            )
-        }
+        "BioGRID": lambda scores: scores.get("BioGRID", 0.0),
+        "CORUM": lambda scores: scores.get("CORUM", 0.0),
+        "IntAct": lambda scores: scores.get("IntAct", 0.0),
+        "MINT": lambda scores: scores.get("MINT", 0.0),
+        "Reactome": lambda scores: scores.get("Reactome", 0.0),
+        "STRING": lambda scores: scores.get("STRING", 0.0),
     }

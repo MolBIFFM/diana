@@ -5,7 +5,7 @@ Nodes are Gene Ontology terms annotated with proteins from a species of
 interest. Edges are directed term relationships within the Gene Ontology.
 """
 
-from typing import Callable, Collection, Iterable, Mapping
+from typing import Callable, Collection, Hashable, Iterable, Mapping
 
 import networkx as nx
 import scipy.stats
@@ -20,8 +20,8 @@ def get_network(proteins: Iterable[str] = frozenset(),
                 enrichment_test: Callable[[int, int, int, int], float] = lambda
                 k, M, n, N: scipy.stats.hypergeom.sf(k - 1, M, n, N),
                 multiple_testing_correction: Callable[
-                    [dict[str, float]],
-                    Mapping[str, float]] = correction.benjamini_hochberg,
+                    [dict[Hashable, float]],
+                    Mapping[Hashable, float]] = correction.benjamini_hochberg,
                 organism: int = 9606) -> nx.DiGraph:
     """
     Assemble a Gene Ontology network from proteins.
@@ -38,24 +38,26 @@ def get_network(proteins: Iterable[str] = frozenset(),
     Returns:
         The Gene Ontology network.
     """
-    network, go_id = nx.DiGraph(), {}
+    network = nx.DiGraph()
+    go_id: dict[str, set[str]] = {}
     for term in gene_ontology.get_ontology(namespaces):
-        network.add_node(term["id"])
-        network.nodes[term["id"]]["term"] = term["name"]
-        network.nodes[term["id"]]["namespace"] = term["namespace"]
+        if isinstance(term["id"], str):
+            network.add_node(term["id"])
+            network.nodes[term["id"]]["term"] = term["name"]
+            network.nodes[term["id"]]["namespace"] = term["namespace"]
 
-        for parent in term.get("is_a", []):
-            network.add_edge(term["id"], parent)
+            for parent in term.get("is_a", []):
+                network.add_edge(term["id"], parent)
 
-        for alt_id in term["alt_id"]:
-            if alt_id not in go_id:
-                go_id[alt_id] = set()
-            go_id[alt_id].add(term["id"])
+            for alt_id in term["alt_id"]:
+                if alt_id not in go_id:
+                    go_id[alt_id] = set()
+                go_id[alt_id].add(term["id"])
 
-    annotation = {}
-    for protein, term in gene_ontology.get_annotation(
+    annotation: dict[str, set[str]] = {}
+    for protein, annotated_term in gene_ontology.get_annotation(
             organism, gene_ontology.convert_namespaces(namespaces)):
-        for primary_term in go_id.get(term, {term}):
+        for primary_term in go_id.get(annotated_term, {annotated_term}):
             if primary_term not in annotation:
                 annotation[primary_term] = set()
             annotation[primary_term].add(protein)
@@ -77,12 +79,12 @@ def get_network(proteins: Iterable[str] = frozenset(),
         for term in network
     })
 
-    for term in network:
-        network.nodes[term]["p-value"] = p_value[term]
-        network.nodes[term]["number of proteins"] = len(
-            network_intersection[term])
-        network.nodes[term]["proteins"] = " ".join(
-            sorted(network_intersection[term]))
+    for node in network:
+        network.nodes[node]["p-value"] = p_value[node]
+        network.nodes[node]["number of proteins"] = len(
+            network_intersection[node])
+        network.nodes[node]["proteins"] = " ".join(
+            sorted(network_intersection[node]))
 
     return network
 

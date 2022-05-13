@@ -941,6 +941,11 @@ def get_style(
             "documentVersion": "3.0"
         }))
 
+    max_edge_score = confidence_score_combination({
+        database: 1.0
+        for database in protein_interaction_network.get_databases(network)
+    })
+
     for time in protein_interaction_network.get_times(network):
         modifications = protein_interaction_network.get_modifications(
             network, time)
@@ -954,138 +959,171 @@ def get_style(
 
             for name, dependency in COMPONENTS[
                     len(modifications) - 1][component]["dependency"].items():
-                ET.SubElement(
-                    component_sub_element,
-                    "dependency",
-                    attrib={
-                        "name": name,
-                        "value": dependency["value"]
-                    },
-                )
+                if isinstance(dependency["value"], str):
+                    ET.SubElement(
+                        component_sub_element,
+                        "dependency",
+                        attrib={
+                            "name": name,
+                            "value": dependency["value"]
+                        },
+                    )
 
             for name, visual_property in COMPONENTS[
                     len(modifications) -
                     1][component]["visualProperty"].items():
-                visual_property_sub_element = ET.SubElement(
-                    component_sub_element,
-                    "visualProperty",
-                    attrib={
-                        "name": name,
-                        "default": visual_property["default"]
-                    },
-                )
-
-                if visual_property.get("continuousMapping"):
-                    continuous_mapping_sub_element = ET.SubElement(
-                        visual_property_sub_element,
-                        "continuousMapping",
+                if isinstance(visual_property["default"], str):
+                    visual_property_sub_element = ET.SubElement(
+                        component_sub_element,
+                        "visualProperty",
                         attrib={
-                            "attributeName":
-                                visual_property["continuousMapping"]
-                                ["attributeName"],
-                            "attributeType":
-                                visual_property["continuousMapping"]
-                                ["attributeType"]
-                        })
-
-                    for key, values in visual_property["continuousMapping"][
-                            "continuousMappingPoint"].items():
-                        if name == "EDGE_TRANSPARENCY":
-                            ET.SubElement(
-                                continuous_mapping_sub_element,
-                                "continuousMappingPoint",
-                                attrib={
-                                    "attrValue":
-                                        key.format(max=float(
-                                            confidence_score_combination({
-                                                database: 1.0 for database in
-                                                protein_interaction_network.
-                                                get_databases(network)
-                                            }))),
-                                    "equalValue":
-                                        values["equalValue"],
-                                    "greaterValue":
-                                        values["greaterValue"],
-                                    "lesserValue":
-                                        values["lesserValue"]
-                                },
-                            )
-                        else:
-                            ET.SubElement(
-                                continuous_mapping_sub_element,
-                                "continuousMappingPoint",
-                                attrib={
-                                    "attrValue": key,
-                                    "equalValue": values["equalValue"],
-                                    "greaterValue": values["greaterValue"],
-                                    "lesserValue": values["lesserValue"]
-                                },
-                            )
-
-                elif visual_property.get("discreteMapping"):
-                    if name in ("NODE_FILL_COLOR", "NODE_SHAPE"):
-                        discrete_mapping_sub_element = ET.SubElement(
-                            visual_property_sub_element,
-                            "discreteMapping",
-                            attrib={
-                                "attributeName":
-                                    visual_property["discreteMapping"]
-                                    ["attributeName"].format(time=time),
-                                "attributeType":
-                                    visual_property["discreteMapping"]
-                                    ["attributeType"],
-                            },
-                        )
-                    else:
-                        discrete_mapping_sub_element = ET.SubElement(
-                            visual_property_sub_element,
-                            "discreteMapping",
-                            attrib={
-                                "attributeName":
-                                    visual_property["discreteMapping"]
-                                    ["attributeName"],
-                                "attributeType":
-                                    visual_property["discreteMapping"]
-                                    ["attributeType"],
-                            },
-                        )
-
-                    for key, value in visual_property["discreteMapping"][
-                            "discreteMappingEntry"].items():
-                        if name in ("NODE_FILL_COLOR", "NODE_SHAPE"):
-                            ET.SubElement(
-                                discrete_mapping_sub_element,
-                                "discreteMappingEntry",
-                                attrib={
-                                    "attributeValue":
-                                        key.format(modifications=modifications),
-                                    "value":
-                                        value,
-                                },
-                            )
-                        else:
-                            ET.SubElement(
-                                discrete_mapping_sub_element,
-                                "discreteMappingEntry",
-                                attrib={
-                                    "attributeValue": key,
-                                    "value": value,
-                                },
-                            )
-
-                elif visual_property.get("passthroughMapping"):
-                    ET.SubElement(
-                        visual_property_sub_element,
-                        "passthroughMapping",
-                        attrib={
-                            "attributeName":
-                                visual_property["passthroughMapping"]
-                                ["attributeName"],
-                            "attributeType":
-                                visual_property["passthroughMapping"]
-                                ["attributeType"],
+                            "name": name,
+                            "default": visual_property["default"]
                         },
                     )
+
+                if visual_property.get("continuousMapping"):
+                    if isinstance(visual_property["continuousMapping"], dict):
+                        if isinstance(
+                                visual_property["continuousMapping"]
+                            ["attributeName"], str) and isinstance(
+                                visual_property["continuousMapping"]
+                                ["attributeType"], str):
+                            continuous_mapping_sub_element = ET.SubElement(
+                                visual_property_sub_element,
+                                "continuousMapping",
+                                attrib={
+                                    "attributeName":
+                                        visual_property["continuousMapping"]
+                                        ["attributeName"],
+                                    "attributeType":
+                                        visual_property["continuousMapping"]
+                                        ["attributeType"]
+                                })
+
+                        if isinstance(
+                                visual_property["continuousMapping"]
+                            ["continuousMappingPoint"], dict):
+                            for key, values in visual_property[
+                                    "continuousMapping"][
+                                        "continuousMappingPoint"].items():
+                                if isinstance(values, dict):
+                                    if name == "EDGE_TRANSPARENCY":
+                                        ET.SubElement(
+                                            continuous_mapping_sub_element,
+                                            "continuousMappingPoint",
+                                            attrib={
+                                                "attrValue":
+                                                    key.format(
+                                                        max=max_edge_score),
+                                                "equalValue":
+                                                    values["equalValue"],
+                                                "greaterValue":
+                                                    values["greaterValue"],
+                                                "lesserValue":
+                                                    values["lesserValue"]
+                                            },
+                                        )
+                                    else:
+                                        ET.SubElement(
+                                            continuous_mapping_sub_element,
+                                            "continuousMappingPoint",
+                                            attrib={
+                                                "attrValue":
+                                                    key,
+                                                "equalValue":
+                                                    values["equalValue"],
+                                                "greaterValue":
+                                                    values["greaterValue"],
+                                                "lesserValue":
+                                                    values["lesserValue"]
+                                            },
+                                        )
+
+                elif visual_property.get("discreteMapping"):
+                    if isinstance(visual_property["discreteMapping"], dict):
+                        if isinstance(
+                                visual_property["discreteMapping"]
+                            ["attributeName"], str) and isinstance(
+                                visual_property["discreteMapping"]
+                                ["attributeType"], str):
+                            if name in ("NODE_FILL_COLOR", "NODE_SHAPE"):
+                                discrete_mapping_sub_element = ET.SubElement(
+                                    visual_property_sub_element,
+                                    "discreteMapping",
+                                    attrib={
+                                        "attributeName":
+                                            visual_property["discreteMapping"]
+                                            ["attributeName"].format(time=time),
+                                        "attributeType":
+                                            visual_property["discreteMapping"]
+                                            ["attributeType"],
+                                    },
+                                )
+                            else:
+                                discrete_mapping_sub_element = ET.SubElement(
+                                    visual_property_sub_element,
+                                    "discreteMapping",
+                                    attrib={
+                                        "attributeName":
+                                            visual_property["discreteMapping"]
+                                            ["attributeName"],
+                                        "attributeType":
+                                            visual_property["discreteMapping"]
+                                            ["attributeType"],
+                                    },
+                                )
+
+                        if isinstance(
+                                visual_property["discreteMapping"]
+                            ["discreteMappingEntry"], dict):
+                            for key, value in visual_property[
+                                    "discreteMapping"][
+                                        "discreteMappingEntry"].items():
+                                if isinstance(key, str) and isinstance(
+                                        value, str):
+                                    if name in ("NODE_FILL_COLOR",
+                                                "NODE_SHAPE"):
+                                        ET.SubElement(
+                                            discrete_mapping_sub_element,
+                                            "discreteMappingEntry",
+                                            attrib={
+                                                "attributeValue":
+                                                    key.format(modifications=
+                                                               modifications),
+                                                "value":
+                                                    value,
+                                            },
+                                        )
+                                    else:
+                                        ET.SubElement(
+                                            discrete_mapping_sub_element,
+                                            "discreteMappingEntry",
+                                            attrib={
+                                                "attributeValue": key,
+                                                "value": value,
+                                            },
+                                        )
+
+                elif visual_property.get("passthroughMapping"):
+                    if isinstance(visual_property["passthroughMapping"], dict):
+                        if isinstance(
+                                visual_property["passthroughMapping"]
+                            ["attributeName"], str) and isinstance(
+                                visual_property["passthroughMapping"]
+                                ["attributeType"], str):
+                            ET.SubElement(
+                                visual_property_sub_element,
+                                "passthroughMapping",
+                                attrib={
+                                    "attributeName":
+                                        visual_property["passthroughMapping"]
+                                        ["attributeName"],
+                                    "attributeType":
+                                        visual_property["passthroughMapping"]
+                                        ["attributeType"],
+                                },
+                            )
 
         if node_sub_elements := visual_style_sub_element.find("node"):
             visual_property_sub_elements = node_sub_elements.findall(

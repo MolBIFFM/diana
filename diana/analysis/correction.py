@@ -23,7 +23,7 @@ def benjamini_hochberg(
     for i, (key, p_value) in enumerate(sorted_p_values.items()):
         if i and p_value / (m - i) > previous / (m - i + 1):
             sorted_p_values[key] = previous * (m - i) / (m - i + 1)
-        previous = sorted_p_values[key]
+        previous: float = sorted_p_values[key]
 
     return {
         key: min(m * p_value / (m - i), 1.0)

@@ -1,5 +1,5 @@
 """The interface for the Reactome database."""
-from typing import Callable, Container, Iterable, Iterator, Optional, Mapping
+from typing import Callable, Container, Hashable, Iterable, Iterator, Optional, Mapping
 
 import scipy.stats
 from access import iterate
@@ -135,10 +135,8 @@ def get_enrichment(
     enrichment_test: Callable[
         [int, int, int, int],
         float] = lambda k, M, n, N: scipy.stats.hypergeom.sf(k - 1, M, n, N),
-    multiple_testing_correction: Callable[
-        [dict[tuple[frozenset[str], str],
-              float]], Mapping[tuple[frozenset[str], str],
-                               float]] = correction.benjamini_hochberg,
+    multiple_testing_correction: Callable[[dict[Hashable, float]], Mapping[
+        Hashable, float]] = correction.benjamini_hochberg,
     organism: int = 9606,
     annotation_as_reference: bool = False
 ) -> dict[frozenset[str], dict[tuple[str, str], float]]:
@@ -164,7 +162,7 @@ def get_enrichment(
     for pathway, pathway_name in get_pathways(organism):
         name[pathway] = pathway_name
 
-    annotation = {}
+    annotation: dict[str, set[str]] = {}
     for protein, pathway in get_pathway_annotation(organism):
         if annotation_as_reference or any(protein in prt for prt in proteins):
             if pathway not in annotation:

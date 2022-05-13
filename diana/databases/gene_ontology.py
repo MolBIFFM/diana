@@ -1,5 +1,5 @@
 """The interface for the Gene Ontology database."""
-from typing import Callable, Collection, Container, Iterable, Iterator, Mapping
+from typing import Callable, Collection, Container, Hashable, Iterable, Iterator, Mapping
 
 import scipy.stats
 from access import iterate
@@ -23,7 +23,6 @@ def get_ontology(namespaces: Container[str] = (
         Mappings containing a Gene Ontology terms' GO ID, name, namespace,
             related terms and alternative GO IDs.
     """
-    term = {"id": "", "name": "", "namespace": "", "is_a": [], "alt_id": []}
     for line in iterate.txt("http://purl.obolibrary.org/obo/go.obo"):
         if any(
                 line.startswith(f"{tag}:")
@@ -33,29 +32,34 @@ def get_ontology(namespaces: Container[str] = (
             continue
         elif line in ("[Term]", "[Typedef]"):
             if term.get("id") and term.get("namespace") in namespaces:
-                for attribute in ("is_a", "alt_id"):
-                    term[attribute] = tuple(term[attribute])
+                yield {
+                    **term,
+                    **{
+                        "is_a": tuple(is_a)
+                    },
+                    **{
+                        "alt_id": tuple(alt_id)
+                    }
+                }
 
-                yield term
-
-            term = {
+            term: dict[str, str] = {
                 "id": "",
                 "name": "",
                 "namespace": "",
-                "is_a": [],
-                "alt_id": []
             }
+            is_a: list[str] = []
+            alt_id: list[str] = []
 
         elif any(
                 line.startswith(f"{tag}:")
                 for tag in ("id", "name", "namespace")):
             term[line.split(":")[0]] = line.split(":", maxsplit=1)[1].strip()
+
         elif line.startswith("is_a:"):
-            term["is_a"].append(
-                line.split(":", maxsplit=1)[1].split("!")[0].strip())
+            is_a.append(line.split(":", maxsplit=1)[1].split("!")[0].strip())
 
         elif line.startswith("alt_id:"):
-            term["alt_id"].append(line.split(":", maxsplit=1)[1].strip())
+            alt_id.append(line.split(":", maxsplit=1)[1].strip())
 
 
 def get_annotation(
@@ -118,10 +122,8 @@ def get_enrichment(
     enrichment_test: Callable[
         [int, int, int, int],
         float] = lambda k, M, n, N: scipy.stats.hypergeom.sf(k - 1, M, n, N),
-    multiple_testing_correction: Callable[
-        [dict[tuple[frozenset[str], str],
-              float]], Mapping[tuple[frozenset[str], str],
-                               float]] = correction.benjamini_hochberg,
+    multiple_testing_correction: Callable[[dict[Hashable, float]], Mapping[
+        Hashable, float]] = correction.benjamini_hochberg,
     organism: int = 9606,
     namespaces: Collection[str] = ("cellular_component", "molecular_function",
                                    "biological_process"),
@@ -146,19 +148,21 @@ def get_enrichment(
         Corrected p-value for the enrichment of each Gene Ontology term by each
         network.
     """
-    name, go_id = {}, {}
+    name = {}
+    go_id: dict[str, set[str]] = {}
     for term in get_ontology(namespaces):
-        name[term["id"]] = term["name"]
-        for alt_id in term["alt_id"]:
-            if alt_id not in go_id:
-                go_id[alt_id] = set()
-            go_id[alt_id].add(term["id"])
+        if isinstance(term["id"], str) and isinstance(term["name"], str):
+            name[term["id"]] = term["name"]
+            for alt_id in term["alt_id"]:
+                if alt_id not in go_id:
+                    go_id[alt_id] = set()
+                go_id[alt_id].add(term["id"])
 
-    annotation = {}
-    for protein, term in get_annotation(organism,
-                                        convert_namespaces(namespaces)):
+    annotation: dict[str, set[str]] = {}
+    for protein, annotated_term in get_annotation(
+            organism, convert_namespaces(namespaces)):
         if annotation_as_reference or any(protein in prt for prt in proteins):
-            for primary_term in go_id.get(term, {term}):
+            for primary_term in go_id.get(annotated_term, {annotated_term}):
                 if primary_term not in annotation:
                     annotation[primary_term] = set()
                 annotation[primary_term].add(protein)

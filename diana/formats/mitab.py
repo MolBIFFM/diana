@@ -18,7 +18,7 @@ def parse(entry: str) -> dict[str, tuple[tuple[str, Optional[str]], ...]]:
     if entry == "-":
         return {}
     else:
-        values = {}
+        values: dict[str, list[tuple[str, Optional[str]]]] = {}
         for namespace, identifier_term in (namespace_identifier.split(
                 ":", 1) for namespace_identifier in entry.split("|")):
 

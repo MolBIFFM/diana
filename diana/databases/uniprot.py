@@ -103,7 +103,7 @@ def get_primary_accession(organism: int = 9606) -> dict[str, frozenset[str]]:
     Returns:
         A map of any secondary UniProt accessions to its primary equivalents.
     """
-    primary_accession = {}
+    primary_accession: dict[str, set[str]] = {}
     for accessions, _, _ in get_swiss_prot_entries(organism):
         for i, accession in enumerate(accessions):
             if i > 0:
