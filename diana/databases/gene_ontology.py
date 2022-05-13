@@ -30,6 +30,7 @@ def get_ontology(namespaces: Container[str] = (
                             "synonymtypedef", "default-namespace", "ontology",
                             "property_value")):
             continue
+
         elif line in ("[Term]", "[Typedef]"):
             if term.get("id") and term.get("namespace") in namespaces:
                 yield {
@@ -47,6 +48,7 @@ def get_ontology(namespaces: Container[str] = (
                 "name": "",
                 "namespace": "",
             }
+
             is_a: list[str] = []
             alt_id: list[str] = []
 

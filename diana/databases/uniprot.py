@@ -49,15 +49,10 @@ def get_swiss_prot_entries(
                 entries = (line.split(maxsplit=1)[1].split(
                     ":", 1)[1].lstrip().rstrip(";").split("; "))
                 rec_name = True
-            elif line.split(maxsplit=1)[1].split(":", 1)[0] == "AltName":
-                entries = []
-                rec_name = False
 
-            elif line.split(maxsplit=1)[1].split(":", 1)[0] == "Contains":
-                entries = []
-                rec_name = False
-
-            elif line.split(maxsplit=1)[1].split(":", 1)[0] == "Flags":
+            elif any(
+                    line.split(maxsplit=1)[1].split(":", 1)[0] == tag
+                    for tag in ("AltName", "Contains", "Flags")):
                 entries = []
                 rec_name = False
 
