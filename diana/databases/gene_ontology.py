@@ -23,15 +23,17 @@ def get_ontology(namespaces: Container[str] = (
         Mappings containing a Gene Ontology terms' GO ID, name, namespace,
             related terms and alternative GO IDs.
     """
-    for line in iterate.txt("http://purl.obolibrary.org/obo/go.obo"):
-        if any(
-                line.startswith(f"{tag}:")
-                for tag in ("format-version", "data-version", "subsetdef",
-                            "synonymtypedef", "default-namespace", "ontology",
-                            "property_value")):
-            continue
+    term: dict[str, str] = {
+        "id": "",
+        "name": "",
+        "namespace": "",
+    }
 
-        elif line in ("[Term]", "[Typedef]"):
+    is_a: list[str] = []
+    alt_id: list[str] = []
+
+    for line in iterate.txt("http://purl.obolibrary.org/obo/go.obo"):
+        if line in ("[Term]", "[Typedef]"):
             if term.get("id") and term.get("namespace") in namespaces:
                 yield {
                     **term,
@@ -43,14 +45,11 @@ def get_ontology(namespaces: Container[str] = (
                     }
                 }
 
-            term: dict[str, str] = {
-                "id": "",
-                "name": "",
-                "namespace": "",
-            }
+            for attribute in ("id", "name", "namespace"):
+                term[attribute] = ""
 
-            is_a: list[str] = []
-            alt_id: list[str] = []
+            is_a.clear()
+            alt_id.clear()
 
         elif any(
                 line.startswith(f"{tag}:")

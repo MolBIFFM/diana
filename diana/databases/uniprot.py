@@ -15,40 +15,28 @@ def get_swiss_prot_entries(
         organism: The NCBI taxonomy identifier for the organism of interest.
 
     Yields:
-        An entries UniProt accessions, gene name and protein name.
+        UniProt accessions, gene name and protein name of each entry.
     """
-    accessions, entry_gene_name, entry_protein_name = [], {}, {}
-    rec_name, tax_id = False, 0
+    accessions = []
+    entry_gene_name, entry_protein_name, entry_taxonomy = {}, {}, {}
+    rec_name = False
+
     for line in iterate.txt(
             "https://ftp.uniprot.org/pub/databases/uniprot/current_release/"
             "knowledgebase/taxonomic_divisions/"
             f"uniprot_sprot_{ORGANISM['files'][organism]}.dat.gz"):
-        if not line.strip():
-            continue
 
-        if line.split()[0] == "AC":
-            if len(line.split()) == 1:
-                continue
-
+        if line.startswith("AC") and len(line.split(maxsplit=1)) == 2:
             accessions.extend(line.split(maxsplit=1)[1].rstrip(";").split("; "))
 
-        elif line.split()[0] == "GN":
-            if len(line.split()) == 1:
-                continue
-
-            for entry in line.split(maxsplit=1)[1].rstrip(";").split("; "):
-                if "=" in entry:
-                    entry_gene_name[entry.split("=")[0]] = (
-                        entry.split("=")[1].split("{")[0].rstrip())
-
-        elif line.split()[0] == "DE":
-            if len(line.split()) == 1:
-                continue
-
+        elif line.startswith("DE") and len(line.split(maxsplit=1)) == 2:
             if line.split(maxsplit=1)[1].split(":", 1)[0] == "RecName":
-                entries = (line.split(maxsplit=1)[1].split(
-                    ":", 1)[1].lstrip().rstrip(";").split("; "))
+                entries = line.split(maxsplit=1)[1].split(
+                    ":", 1)[1].lstrip().rstrip(";").split("; ")
                 rec_name = True
+
+            elif rec_name:
+                entries = line.split(maxsplit=1)[1].rstrip(";").split("; ")
 
             elif any(
                     line.split(maxsplit=1)[1].split(":", 1)[0] == tag
@@ -56,36 +44,34 @@ def get_swiss_prot_entries(
                 entries = []
                 rec_name = False
 
-            elif rec_name:
-                entries = line.split(maxsplit=1)[1].rstrip(";").split("; ")
-
             for entry in entries:
                 if "=" in entry:
-                    if entry.split("=")[0] not in entry_protein_name:
-                        entry_protein_name[entry.split("=")[0]] = (
-                            entry.split("=")[1].split("{")[0].rstrip())
+                    entry_protein_name[entry.split("=")[0]] = (
+                        entry.split("=")[1].split("{")[0].rstrip())
 
-        elif line.split()[0] == "OX":
-            if len(line.split()) == 1:
-                continue
+        elif line.startswith("GN") and len(line.split(maxsplit=1)) == 2:
+            for entry in line.split(maxsplit=1)[1].rstrip(";").split("; "):
+                if "=" in entry:
+                    entry_gene_name[entry.split("=")[0]] = (
+                        entry.split("=")[1].split("{")[0].rstrip())
 
-            if line.split(
-                    maxsplit=1)[1].split(";")[0].split("=")[0] == "NCBI_TaxID":
-                if (line.split(maxsplit=1)[1].split(";")[0].split("=")[1].split(
-                        "{")[0].isnumeric()):
-                    tax_id = int(
-                        line.split(maxsplit=1)[1].split(";")[0].split("=")
-                        [1].split("{")[0])
+        elif line.startswith("OX") and len(line.split(maxsplit=1)) == 2:
+            for entry in line.split(maxsplit=1)[1].rstrip(";").split("; "):
+                if "=" in entry:
+                    entry_taxonomy[entry.split("=")[0]] = (
+                        entry.split("=")[1].split("{")[0].rstrip())
 
-        elif line == "//":
-            if not organism or tax_id == organism:
+        elif line.startswith("//"):
+            if not organism or int(entry_taxonomy.get("NCBI_TaxID",
+                                                      0)) == organism:
                 yield (tuple(accessions), entry_gene_name.get("Name", "NA"),
                        entry_protein_name.get("Full", "NA"))
 
             accessions.clear()
             entry_gene_name.clear()
             entry_protein_name.clear()
-            rec_name, tax_id = False, 0
+            entry_taxonomy.clear()
+            rec_name = False
 
 
 def get_primary_accession(organism: int = 9606) -> dict[str, frozenset[str]]:
