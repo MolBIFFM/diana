@@ -274,6 +274,21 @@ A list of columns to extract replicate measurements from. The default setting is
     {
       "proteins": [
         {
+          "replicate format": "^(.+?)$"
+        }
+      ]
+    }
+]
+```
+A regular expression used to extract all matching replicate measurements from an
+entry in the table, possibly removing additional information. The default
+setting is `"^(.+?)$"`, corresponding to the entire entry.
+
+```json
+[
+    {
+      "proteins": [
+        {
           "replicates": 1
         }
       ]
@@ -333,7 +348,8 @@ default, ratios are assumed, corresponding to `null`. Available settings are
 The specification of sources of protein-protein interactions for the assembly of
 the protein-protein interaction network. The protein-protein interaction network
 is exported if any source is specified. Database-specific requirements can be
-defined, where each must be satisfied for an interaction to be incorporated.
+specified, where each must be satisfied for an interaction to be incorporated. A
+protein-protein interaction network is only exported if any database is queried.
 
 ```json
 [

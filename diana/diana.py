@@ -64,15 +64,17 @@ def process_workflow(configuration: Mapping[str, Any],
                 protein_accession_column=entry["accession column"],
                 protein_accession_format=re.compile(
                     entry.get("accession format", "^(.+?)$")),
+                sheet_name=entry.get("sheet", 1) -
+                1 if isinstance(entry.get("sheet", 1), int) else entry["sheet"],
+                header=entry.get("header", 1) - 1,
                 time=entry.get("time", 0),
                 modification=entry.get("post-translational modification", "M"),
                 position_column=entry.get("position column", ""),
                 position_format=re.compile(
                     entry.get("position format", "^(.+?)$")),
-                replicates=entry.get("replicate columns", []),
-                sheet_name=entry.get("sheet", 1) -
-                1 if isinstance(entry.get("sheet", 1), int) else entry["sheet"],
-                header=entry.get("header", 1) - 1,
+                replicate_columns=entry.get("replicate columns", []),
+                replicate_format=re.compile(
+                    entry.get("replicate format", "^(.+?)$")),
                 number_sites=entry.get("sites", 5),
                 number_replicates=entry.get("replicates", 1),
                 replicate_combination=combination.REPLICATE_COMBINATION[

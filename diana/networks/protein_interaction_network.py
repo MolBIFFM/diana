@@ -113,13 +113,14 @@ def add_proteins_from_table(
     file_name: str,
     protein_accession_column: int | str,
     protein_accession_format: re.Pattern = re.compile("^(.+?)$"),
+    sheet_name: int | str = 0,
+    header: int = 0,
     time: int = 0,
     modification: str = "",
     position_column: int | str = "",
     position_format: re.Pattern = re.compile("^(.+?)$"),
-    replicates: Optional[Collection[int | str]] = None,
-    sheet_name: int | str = 0,
-    header: int = 0,
+    replicate_columns: Optional[Collection[int | str]] = None,
+    replicate_format: re.Pattern = re.compile("^(.+?)$"),
     number_sites: int = 100,
     number_replicates: int = 1,
     replicate_combination: Callable[[Iterable[float]], float] = statistics.mean,
@@ -140,14 +141,14 @@ def add_proteins_from_table(
             accessions.
         protein_accession_format: A regular expression to extract protein
             accessions from a corresponding entry.
+        sheet_name: The sheet to parse protein accessions from.
+        header: The index of the header row.
         time: The time of measurement to associate with measurements.
         modification: An identifier for the type of post-translational
             modification to associate with measurements.
         position_column: The column containing sites corresponding to
             measurements.
-        replicates: The columns containing replicates of measurements.
-        sheet_name: The sheet to parse protein accessions from.
-        header: The index of the header row.
+        replicate_columns: The columns containing replicates of measurements.
         number_sites: The maximum number of measurements to associate with a
             protein-accession, prioritized by largest absolute value.
         number_replicates: The minimum number of replicates to accept a
@@ -172,14 +173,15 @@ def add_proteins_from_table(
             header=header,
             usecols=[protein_accession_column] +
             ([position_column] if position_column else []) + (
-                list(replicates) if replicates is not None else []),
+                list(replicate_columns)
+                    if replicate_columns is not None else []),
             dtype={
                 protein_accession_column: str,
                 **({
                     position_column: str
                 } if position_column else {}),
-                **({column: str for column in replicates}
-                    if replicates is not None else {}),
+                **({column: str for column in replicate_columns}
+                    if replicate_columns is not None else {}),
             },
         )
     else:
@@ -188,14 +190,15 @@ def add_proteins_from_table(
             header=header,
             usecols=[protein_accession_column] +
             ([position_column] if position_column else []) + (
-                list(replicates) if replicates is not None else []),
+                list(replicate_columns)
+                    if replicate_columns is not None else []),
             dtype={
                 protein_accession_column: str,
                 **({
                     position_column: str
                 } if position_column else {}),
-                **({column: str for column in replicates}
-                    if replicates is not None else {}),
+                **({column: str for column in replicate_columns}
+                    if replicate_columns is not None else {}),
             },
         )
 
@@ -209,7 +212,7 @@ def add_proteins_from_table(
             protein_accession_format.findall(row[protein_accession_column])
         ]
 
-        if replicates:
+        if replicate_columns:
             if position_column and not pd.isna(row[position_column]):
                 positions = [
                     int(position) for position in position_format.findall(
@@ -228,12 +231,14 @@ def add_proteins_from_table(
                     positions = positions[:len(protein_accessions)]
 
             measurements = [
-                float(row[replicate])
-                for replicate in replicates
-                if not pd.isna(row[replicate])
+                float(replicate)
+                for replicate_column in replicate_columns
+                for replicate in replicate_format.findall(row[replicate_column])
+                if not pd.isna(row[replicate_columns])
             ]
 
-            if len(measurements) >= min(number_replicates, len(replicates)):
+            if len(measurements) >= min(number_replicates,
+                                        len(replicate_columns)):
                 for protein_accession, position in zip(protein_accessions,
                                                        positions):
                     if protein_accession not in proteins:
