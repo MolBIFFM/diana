@@ -816,9 +816,10 @@ individually.
 ]
 ```
 The conversion of measurements that a range refers to. It defaults to the
-log2-fold measurement but may be set to `"standard score"` or `"quantile"`,
-computed with respect to the distribution of a particular modification at a
-particular time of measurement across the protein-protein interaction network.
+log2-fold measurement but may be set to `"percentile"`, `"quantile"` or
+`"standard score"`, computed with respect to the distribution of a particular
+modification at a particular time of measurement across the protein-protein
+interaction network.
 
 ```json
 [
@@ -832,9 +833,9 @@ particular time of measurement across the protein-protein interaction network.
 ]
 ```
 The range of the bar charts reporting measurements. The default setting is
-`[-1.0, 1.0]` if `"conversion"` is not set, `[-2.0, 2.0]` if `"conversion"` is
-set to `"standard score"` and `[0.025, 0.975]` if `"conversion"` is set to
-`"quantile"`.
+`[-1.0, 1.0]` if `"conversion"` is not set, `[2.5, 97.5]` if `"conversion"` is
+set to `"percentile"`, `[0.025, 0.975]` if `"conversion"` is set to
+`"quantile"`, and `[-2.0, 2.0]` if `"conversion"` is set to `"standard score"`.
 
 ```json
 [
@@ -849,8 +850,9 @@ set to `"standard score"` and `[0.025, 0.975]` if `"conversion"` is set to
 ```
 The range of combined measurements categorizing proteins by whether the range is
 exceeded or not. The default setting is `[-1.0, 1.0]` if `"conversion"` is not
-set, `[-2.0, 2.0]` if `"conversion"` is set to `"standard score"` and
-`[0.025, 0.975]` if `"conversion"` is set to `"quantile"`.
+set, `[2.5, 97.5]` if `"conversion"` is set to `"percentile"`, `[0.025, 0.975]`
+if `"conversion"` is set to `"quantile"`, and `[-2.0, 2.0]` if `"conversion"` is
+set to `"standard score"`.
 
 ```json
 [
@@ -1073,9 +1075,10 @@ individually.
 ]
 ```
 The conversion of measurements that a range refers to. It defaults to the
-log2-fold measurement but may be set to `"standard score"` or `"quantile"`,
-computed with respect to the distribution of a particular modification at a
-particular time of measurement across the protein-protein interaction network.
+log2-fold measurement but may be set to `"percentile"`, `"quantile"` or
+`"standard score"`, computed with respect to the distribution of a particular
+modification at a particular time of measurement across the protein-protein
+interaction network.
 
 ```json
 [
@@ -1105,9 +1108,10 @@ particular time of measurement across the protein-protein interaction network.
 ]
 ```
 The range of combined measurements categorizing proteins by whether the range is
-exceeded or not. The default setting is `[-1.0, 1.0]` if `"conversion"` is not
-set, `[-2.0, 2.0]` if `"conversion"` is set to `"standard score"` and
-`[0.025, 0.975]` if `"conversion"` is set to `"quantile"`.
+exceeded or not. The default setting is`[-1.0, 1.0]` if `"conversion"` is not
+set, `[2.5, 97.5]` if `"conversion"` is set to `"percentile"`, `[0.025, 0.975]`
+if `"conversion"` is set to `"quantile"`, and `[-2.0, 2.0]` if `"conversion"` is
+set to `"standard score"`.
 
 ```json
 [
@@ -1261,9 +1265,10 @@ individually.
 ]
 ```
 The conversion of measurements that a range refers to. It defaults to the
-log2-fold measurement but may be set to `"standard score"` or `"quantile"`,
-computed with respect to the distribution of a particular modification at a
-particular time of measurement across the protein-protein interaction network.
+log2-fold measurement but may be set to `"percentile"`, `"quantile"` or
+`"standard score"`, computed with respect to the distribution of a particular
+modification at a particular time of measurement across the protein-protein
+interaction network.
 
 ```json
 [
@@ -1287,8 +1292,9 @@ particular time of measurement across the protein-protein interaction network.
 ```
 The range of combined measurements categorizing proteins by whether the range is
 exceeded or not. The default setting is `[-1.0, 1.0]` if `"conversion"` is not
-set, `[-2.0, 2.0]` if `"conversion"` is set to `"standard score"` and
-`[0.025, 0.975]` if `"conversion"` is set to `"quantile"`.
+set, `[2.5, 97.5]` if `"conversion"` is set to `"percentile"`, `[0.025, 0.975]`
+if `"conversion"` is set to `"quantile"`, and `[-2.0, 2.0]` if `"conversion"` is
+set to `"standard score"`.
 
 ```json
 [
@@ -1724,10 +1730,10 @@ individually.
 ]
 ```
 The conversion of measurements that a range refers to. It defaults to the
-log2-fold measurement but may be set to `"standard score"` or `"quantile"`,
-computed with respect to the distribution of a particular modification at a
-particular time of measurement across the protein-protein interaction network.
-Conversions refer to individual communities.
+log2-fold measurement but may be set to `"percentile"`, `"quantile"` or
+`"standard score"`, computed with respect to the distribution of a particular
+modification at a particular time of measurement across the protein-protein
+interaction network. Conversions refer to individual communities.
 
 ```json
 [
@@ -1760,8 +1766,9 @@ Conversions refer to individual communities.
 ```
 The range of combined measurements categorizing proteins by whether the range is
 exceeded or not. The default setting is `[-1.0, 1.0]` if `"conversion"` is not
-set, `[-2.0, 2.0]` if `"conversion"` is set to `"standard score"` and
-`[0.025, 0.975]` if `"conversion"` is set to `"quantile"`.
+set, `[2.5, 97.5]` if `"conversion"` is set to `"percentile"`, `[0.025, 0.975]`
+if `"conversion"` is set to `"quantile"`, and `[-2.0, 2.0]` if `"conversion"` is
+set to `"standard score"`.
 
 ```json
 [
@@ -1829,8 +1836,9 @@ The Gene Ontology namespaces to consider. The default setting is
 ```
 The range of measurements categorizing proteins by whether the range is exceeded
 or not. The default setting is `[-1.0, 1.0]` if `"conversion"` is not set,
-`[-2.0, 2.0]` if `"conversion"` is set to `"standard score"` and
-`[0.025, 0.975]` if `"conversion"` is set to `"quantile"`.
+`[2.5, 97.5]` if `"conversion"` is set to `"percentile"`, `[0.025, 0.975]` if
+`"conversion"` is set to `"quantile"`, and `[-2.0, 2.0]` if `"conversion"` is
+set to `"standard score"`.
 
 ```json
 [
@@ -1844,9 +1852,10 @@ or not. The default setting is `[-1.0, 1.0]` if `"conversion"` is not set,
 ]
 ```
 The conversion of measurements that a range refers to. It defaults to the
-log2-fold measurement but may be set to `"standard score"` or `"quantile"`,
-computed with respect to the distribution of a particular modification at a
-particular time of measurement across the protein-protein interaction network.
+log2-fold measurement but may be set to `"percentile"`, `"quantile"` or
+`"standard score"`, computed with respect to the distribution of a particular
+modification at a particular time of measurement across the protein-protein
+interaction network.
 
 ```json
 [

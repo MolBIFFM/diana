@@ -23,6 +23,9 @@ MEASUREMENT_CONVERSION: dict[Optional[str], Callable[
     [float, Collection[float]], float]] = {
         None:
         lambda measurement, measurements: measurement,
+        "percentile":
+        lambda measurement, measurements: sorted(measurements)[math.floor(
+            measurement / 100.0 * (len(measurements) - 1))],
         "quantile":
         lambda measurement, measurements: sorted(measurements)[math.floor(
             measurement * (len(measurements) - 1))],
