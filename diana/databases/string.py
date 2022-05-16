@@ -65,7 +65,8 @@ def get_protein_interactions(
             uniprot_id[row[0]].add(row[1])
 
     thresholds = {
-        column: threshold for column, threshold in {
+        column: threshold
+        for column, threshold in {
             "neighborhood": neighborhood,
             "neighborhood_transferred": neighborhood_transferred,
             "fusion": fusion,

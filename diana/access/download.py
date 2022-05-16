@@ -21,11 +21,12 @@ def download_file(url: str,
         pause: The number of seconds to wait before determining a timeout or
             reattempting a failed or timed out download.
     """
-    request = urllib.request.Request(
-        url,
-        headers={
-            "User-Agent": os.path.splitext(os.path.basename(sys.argv[0]))[0]
-        })
+    request = urllib.request.Request(url,
+                                     headers={
+                                         "User-Agent":
+                                         os.path.splitext(
+                                             os.path.basename(sys.argv[0]))[0]
+                                     })
 
     while True:
         try:

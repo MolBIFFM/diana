@@ -27,7 +27,8 @@ def get_swiss_prot_entries(
             f"uniprot_sprot_{ORGANISM['files'][organism]}.dat.gz"):
 
         if line.startswith("AC") and len(line.split(maxsplit=1)) == 2:
-            accessions.extend(line.split(maxsplit=1)[1].rstrip(";").split("; "))
+            accessions.extend(
+                line.split(maxsplit=1)[1].rstrip(";").split("; "))
 
         elif line.startswith("DE") and len(line.split(maxsplit=1)) == 2:
             if line.split(maxsplit=1)[1].split(":", 1)[0] == "RecName":

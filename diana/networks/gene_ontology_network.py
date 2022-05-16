@@ -101,7 +101,10 @@ def get_term_sizes(network: nx.Graph) -> dict[str, int]:
         network associated with any term in the Gene Ontology
         network.
     """
-    return {term: network.nodes[term]["number of proteins"] for term in network}
+    return {
+        term: network.nodes[term]["number of proteins"]
+        for term in network
+    }
 
 
 def export(network: nx.Graph, basename: str) -> None:

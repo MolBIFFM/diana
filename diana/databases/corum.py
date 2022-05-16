@@ -40,15 +40,15 @@ def get_protein_interactions(
                 "SWISSPROT organism"
             ]):
         if (not purification_methods or any(
-                purification_method.split("-")[0] in purification_methods or
-                purification_method.split(
+                purification_method.split("-")[0] in purification_methods
+                or purification_method.split(
                     "-")[1].rstrip() in purification_methods
                 for purification_method in
                 row["Protein complex purification method"].split(";"))):
 
             subunits = [
-                subunit.split("-")[0] if "-" in subunit and
-                not subunit.split("-")[1].isnumeric() else subunit
+                subunit.split("-")[0] if "-" in subunit
+                and not subunit.split("-")[1].isnumeric() else subunit
                 for subunit in row["subunits(UniProt IDs)"].split(";")
             ]
 
@@ -98,8 +98,8 @@ def get_protein_complexes(
                 "Protein complex purification method", "SWISSPROT organism"
             ]):
         if ((not purification_methods or any(
-                purification_method.split("-")[0] in purification_methods or
-                purification_method.split(
+                purification_method.split("-")[0] in purification_methods
+                or purification_method.split(
                     "-")[1].rstrip() in purification_methods
                 for purification_method in
                 row["Protein complex purification method"].split(";"))) and
@@ -107,8 +107,8 @@ def get_protein_complexes(
                     for spo in row["SWISSPROT organism"].split(";"))):
 
             subunits = [
-                subunit.split("-")[0] if "-" in subunit and
-                not subunit.split("-")[1].isnumeric() else subunit
+                subunit.split("-")[0] if "-" in subunit
+                and not subunit.split("-")[1].isnumeric() else subunit
                 for subunit in row["subunits(UniProt IDs)"].split(";")
             ]
 
@@ -161,14 +161,16 @@ def get_enrichment(
     annotated_proteins = frozenset.union(*annotation.values())
 
     annotated_network_proteins = {
-        prt: len(annotated_proteins.intersection(prt)) for prt in proteins
+        prt: len(annotated_proteins.intersection(prt))
+        for prt in proteins
     }
 
     network_intersection = {
         prt: {
             protein_complex: len(subunits.intersection(prt))
             for protein_complex, subunits in annotation.items()
-        } for prt in proteins
+        }
+        for prt in proteins
     }
 
     p_value = multiple_testing_correction({
@@ -182,5 +184,6 @@ def get_enrichment(
     return {
         prt: {(protein_complex, name[protein_complex]):
               p_value[(prt, protein_complex)]
-              for protein_complex in annotation} for prt in proteins
+              for protein_complex in annotation}
+        for prt in proteins
     }

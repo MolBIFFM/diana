@@ -158,40 +158,49 @@ COMPONENTS: dict[str, dict[str, dict[str, dict[
                     "default": "ROUND_RECTANGLE"
                 },
                 "NODE_CUSTOMGRAPHICS_1": {
-                    "default": "org.cytoscape.ding.customgraphics."
-                               "NullCustomGraphics,0,[ Remove Graphics ],"
+                    "default":
+                    "org.cytoscape.ding.customgraphics."
+                    "NullCustomGraphics,0,[ Remove Graphics ],"
                 },
                 "NODE_CUSTOMGRAPHICS_2": {
-                    "default": "org.cytoscape.ding.customgraphics."
-                               "NullCustomGraphics,0,[ Remove Graphics ],"
+                    "default":
+                    "org.cytoscape.ding.customgraphics."
+                    "NullCustomGraphics,0,[ Remove Graphics ],"
                 },
                 "NODE_CUSTOMGRAPHICS_3": {
-                    "default": "org.cytoscape.ding.customgraphics."
-                               "NullCustomGraphics,0,[ Remove Graphics ],"
+                    "default":
+                    "org.cytoscape.ding.customgraphics."
+                    "NullCustomGraphics,0,[ Remove Graphics ],"
                 },
                 "NODE_CUSTOMGRAPHICS_4": {
-                    "default": "org.cytoscape.ding.customgraphics."
-                               "NullCustomGraphics,0,[ Remove Graphics ],"
+                    "default":
+                    "org.cytoscape.ding.customgraphics."
+                    "NullCustomGraphics,0,[ Remove Graphics ],"
                 },
                 "NODE_CUSTOMGRAPHICS_5": {
-                    "default": "org.cytoscape.ding.customgraphics."
-                               "NullCustomGraphics,0,[ Remove Graphics ],"
+                    "default":
+                    "org.cytoscape.ding.customgraphics."
+                    "NullCustomGraphics,0,[ Remove Graphics ],"
                 },
                 "NODE_CUSTOMGRAPHICS_6": {
-                    "default": "org.cytoscape.ding.customgraphics."
-                               "NullCustomGraphics,0,[ Remove Graphics ],"
+                    "default":
+                    "org.cytoscape.ding.customgraphics."
+                    "NullCustomGraphics,0,[ Remove Graphics ],"
                 },
                 "NODE_CUSTOMGRAPHICS_7": {
-                    "default": "org.cytoscape.ding.customgraphics."
-                               "NullCustomGraphics,0,[ Remove Graphics ],"
+                    "default":
+                    "org.cytoscape.ding.customgraphics."
+                    "NullCustomGraphics,0,[ Remove Graphics ],"
                 },
                 "NODE_CUSTOMGRAPHICS_8": {
-                    "default": "org.cytoscape.ding.customgraphics."
-                               "NullCustomGraphics,0,[ Remove Graphics ],"
+                    "default":
+                    "org.cytoscape.ding.customgraphics."
+                    "NullCustomGraphics,0,[ Remove Graphics ],"
                 },
                 "NODE_CUSTOMGRAPHICS_9": {
-                    "default": "org.cytoscape.ding.customgraphics."
-                               "NullCustomGraphics,0,[ Remove Graphics ],"
+                    "default":
+                    "org.cytoscape.ding.customgraphics."
+                    "NullCustomGraphics,0,[ Remove Graphics ],"
                 },
                 "NODE_CUSTOMGRAPHICS_POSITION_1": {
                     "default": "C,C,c,0.00,0.00"
@@ -249,48 +258,48 @@ COMPONENTS: dict[str, dict[str, dict[str, dict[
                 },
                 "NODE_CUSTOMPAINT_1": {
                     "default":
-                        "DefaultVisualizableVisualProperty("
-                        "id=NODE_CUSTOMPAINT_1, name=Node Custom Paint 1)"
+                    "DefaultVisualizableVisualProperty("
+                    "id=NODE_CUSTOMPAINT_1, name=Node Custom Paint 1)"
                 },
                 "NODE_CUSTOMPAINT_2": {
                     "default":
-                        "DefaultVisualizableVisualProperty("
-                        "id=NODE_CUSTOMPAINT_2, name=Node Custom Paint 2)"
+                    "DefaultVisualizableVisualProperty("
+                    "id=NODE_CUSTOMPAINT_2, name=Node Custom Paint 2)"
                 },
                 "NODE_CUSTOMPAINT_3": {
                     "default":
-                        "DefaultVisualizableVisualProperty("
-                        "id=NODE_CUSTOMPAINT_3, name=Node Custom Paint 3)"
+                    "DefaultVisualizableVisualProperty("
+                    "id=NODE_CUSTOMPAINT_3, name=Node Custom Paint 3)"
                 },
                 "NODE_CUSTOMPAINT_4": {
                     "default":
-                        "DefaultVisualizableVisualProperty("
-                        "id=NODE_CUSTOMPAINT_4, name=Node Custom Paint 4)"
+                    "DefaultVisualizableVisualProperty("
+                    "id=NODE_CUSTOMPAINT_4, name=Node Custom Paint 4)"
                 },
                 "NODE_CUSTOMPAINT_5": {
                     "default":
-                        "DefaultVisualizableVisualProperty("
-                        "id=NODE_CUSTOMPAINT_5, name=Node Custom Paint 5)"
+                    "DefaultVisualizableVisualProperty("
+                    "id=NODE_CUSTOMPAINT_5, name=Node Custom Paint 5)"
                 },
                 "NODE_CUSTOMPAINT_6": {
                     "default":
-                        "DefaultVisualizableVisualProperty("
-                        "id=NODE_CUSTOMPAINT_6, name=Node Custom Paint 6)"
+                    "DefaultVisualizableVisualProperty("
+                    "id=NODE_CUSTOMPAINT_6, name=Node Custom Paint 6)"
                 },
                 "NODE_CUSTOMPAINT_7": {
                     "default":
-                        "DefaultVisualizableVisualProperty("
-                        "id=NODE_CUSTOMPAINT_7, name=Node Custom Paint 7)"
+                    "DefaultVisualizableVisualProperty("
+                    "id=NODE_CUSTOMPAINT_7, name=Node Custom Paint 7)"
                 },
                 "NODE_CUSTOMPAINT_8": {
                     "default":
-                        "DefaultVisualizableVisualProperty("
-                        "id=NODE_CUSTOMPAINT_8, name=Node Custom Paint 8)"
+                    "DefaultVisualizableVisualProperty("
+                    "id=NODE_CUSTOMPAINT_8, name=Node Custom Paint 8)"
                 },
                 "NODE_CUSTOMPAINT_9": {
                     "default":
-                        "DefaultVisualizableVisualProperty("
-                        "id=NODE_CUSTOMPAINT_9, name=Node Custom Paint 9)"
+                    "DefaultVisualizableVisualProperty("
+                    "id=NODE_CUSTOMPAINT_9, name=Node Custom Paint 9)"
                 },
                 "NODE_DEPTH": {
                     "default": "0.0"
@@ -308,7 +317,8 @@ COMPONENTS: dict[str, dict[str, dict[str, dict[
                             },
                             "1.0": {
                                 "equalValue": f"#{255:02X}{255:02X}{255:02X}",
-                                "greaterValue": f"#{255:02X}{255:02X}{255:02X}",
+                                "greaterValue":
+                                f"#{255:02X}{255:02X}{255:02X}",
                                 "lesserValue": f"#{255:02X}{255:02X}{255:02X}"
                             }
                         }
@@ -461,18 +471,19 @@ def get_style(network: nx.Graph) -> ET.ElementTree:
                             "continuousMapping",
                             attrib={
                                 "attributeName":
-                                    visual_property["continuousMapping"]
-                                    ["attributeName"],
+                                visual_property["continuousMapping"]
+                                ["attributeName"],
                                 "attributeType":
-                                    visual_property["continuousMapping"]
-                                    ["attributeType"]
+                                visual_property["continuousMapping"]
+                                ["attributeType"]
                             })
 
                     if isinstance(
                             visual_property["continuousMapping"]
                         ["continuousMappingPoint"], dict):
-                        for key, values in visual_property["continuousMapping"][
-                                "continuousMappingPoint"].items():
+                        for key, values in visual_property[
+                                "continuousMapping"][
+                                    "continuousMappingPoint"].items():
                             if isinstance(values, dict):
                                 if name == "NODE_SIZE":
                                     ET.SubElement(
@@ -480,35 +491,32 @@ def get_style(network: nx.Graph) -> ET.ElementTree:
                                         "continuousMappingPoint",
                                         attrib={
                                             "attrValue":
-                                                key.format(max=float(
-                                                    max(
-                                                        reactome_network.
-                                                        get_pathway_sizes(
-                                                            network).values()))
-                                                          ),
+                                            key.format(max=float(
+                                                max(
+                                                    reactome_network.
+                                                    get_pathway_sizes(
+                                                        network).values()))),
                                             "equalValue":
-                                                values["equalValue"].
-                                                format(size=35.0 + float(
-                                                    max(
-                                                        reactome_network.
-                                                        get_pathway_sizes(
-                                                            network).values()))
-                                                      ),
+                                            values["equalValue"].
+                                            format(size=35.0 + float(
+                                                max(
+                                                    reactome_network.
+                                                    get_pathway_sizes(
+                                                        network).values()))),
                                             "greaterValue":
-                                                values["greaterValue"].
-                                                format(size=35.0 + float(
-                                                    max(
-                                                        reactome_network.
-                                                        get_pathway_sizes(
-                                                            network).values()))
-                                                      ),
+                                            values["greaterValue"].
+                                            format(size=35.0 + float(
+                                                max(
+                                                    reactome_network.
+                                                    get_pathway_sizes(
+                                                        network).values()))),
                                             "lesserValue":
-                                                values["lesserValue"].
-                                                format(size=35.0 + float(
-                                                    max(
-                                                        reactome_network.
-                                                        get_pathway_sizes(
-                                                            network).values())))
+                                            values["lesserValue"].
+                                            format(size=35.0 + float(
+                                                max(
+                                                    reactome_network.
+                                                    get_pathway_sizes(
+                                                        network).values())))
                                         },
                                     )
                                 else:
@@ -516,14 +524,12 @@ def get_style(network: nx.Graph) -> ET.ElementTree:
                                         continuous_mapping_sub_element,
                                         "continuousMappingPoint",
                                         attrib={
-                                            "attrValue":
-                                                key,
-                                            "equalValue":
-                                                values["equalValue"],
+                                            "attrValue": key,
+                                            "equalValue": values["equalValue"],
                                             "greaterValue":
-                                                values["greaterValue"],
+                                            values["greaterValue"],
                                             "lesserValue":
-                                                values["lesserValue"]
+                                            values["lesserValue"]
                                         },
                                     )
 
@@ -539,11 +545,11 @@ def get_style(network: nx.Graph) -> ET.ElementTree:
                                 "discreteMapping",
                                 attrib={
                                     "attributeName":
-                                        visual_property["discreteMapping"]
-                                        ["attributeName"],
+                                    visual_property["discreteMapping"]
+                                    ["attributeName"],
                                     "attributeType":
-                                        visual_property["discreteMapping"]
-                                        ["attributeType"],
+                                    visual_property["discreteMapping"]
+                                    ["attributeType"],
                                 },
                             )
 
@@ -575,11 +581,11 @@ def get_style(network: nx.Graph) -> ET.ElementTree:
                                 "passthroughMapping",
                                 attrib={
                                     "attributeName":
-                                        visual_property["passthroughMapping"]
-                                        ["attributeName"],
+                                    visual_property["passthroughMapping"]
+                                    ["attributeName"],
                                     "attributeType":
-                                        visual_property["passthroughMapping"]
-                                        ["attributeType"],
+                                    visual_property["passthroughMapping"]
+                                    ["attributeType"],
                                 },
                             )
 
