@@ -63,8 +63,7 @@ def get_swiss_prot_entries(
                         entry.split("=")[1].split("{")[0].rstrip())
 
         elif line.startswith("//"):
-            if not organism or int(entry_taxonomy.get("NCBI_TaxID",
-                                                      0)) == organism:
+            if int(entry_taxonomy.get("NCBI_TaxID", 0)) == organism:
                 yield (tuple(accessions), entry_gene_name.get("Name", "NA"),
                        entry_protein_name.get("Full", "NA"))
 
