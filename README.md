@@ -832,9 +832,9 @@ interaction network.
     }
 ]
 ```
-The range of the bar charts reporting measurements. The default setting is
-`[-1.0, 1.0]` if `"conversion"` is not set, `[2.5, 97.5]` if `"conversion"` is
-set to `"percentile"`, `[0.025, 0.975]` if `"conversion"` is set to
+The range of the bar charts reporting measurements. The adaptive default setting
+is `[-1.0, 1.0]` if `"conversion"` is not set, `[2.5, 97.5]` if `"conversion"`
+is set to `"percentile"`, `[0.025, 0.975]` if `"conversion"` is set to
 `"quantile"`, and `[-2.0, 2.0]` if `"conversion"` is set to `"standard score"`.
 
 ```json
@@ -849,10 +849,10 @@ set to `"percentile"`, `[0.025, 0.975]` if `"conversion"` is set to
 ]
 ```
 The range of combined measurements categorizing proteins by whether the range is
-exceeded or not. The default setting is `[-1.0, 1.0]` if `"conversion"` is not
-set, `[2.5, 97.5]` if `"conversion"` is set to `"percentile"`, `[0.025, 0.975]`
-if `"conversion"` is set to `"quantile"`, and `[-2.0, 2.0]` if `"conversion"` is
-set to `"standard score"`.
+exceeded or not. The adaptive default setting is `[-1.0, 1.0]` if `"conversion"`
+is not set, `[2.5, 97.5]` if `"conversion"` is set to `"percentile"`,
+`[0.025, 0.975]` if `"conversion"` is set to `"quantile"`, and `[-2.0, 2.0]` if
+`"conversion"` is set to `"standard score"`.
 
 ```json
 [
@@ -1108,10 +1108,10 @@ interaction network.
 ]
 ```
 The range of combined measurements categorizing proteins by whether the range is
-exceeded or not. The default setting is`[-1.0, 1.0]` if `"conversion"` is not
-set, `[2.5, 97.5]` if `"conversion"` is set to `"percentile"`, `[0.025, 0.975]`
-if `"conversion"` is set to `"quantile"`, and `[-2.0, 2.0]` if `"conversion"` is
-set to `"standard score"`.
+exceeded or not. The adaptive default setting is `[-1.0, 1.0]` if `"conversion"`
+is not set, `[2.5, 97.5]` if `"conversion"` is set to `"percentile"`,
+`[0.025, 0.975]` if `"conversion"` is set to `"quantile"`, and `[-2.0, 2.0]`
+if `"conversion"` is set to `"standard score"`.
 
 ```json
 [
@@ -1291,10 +1291,10 @@ interaction network.
 ]
 ```
 The range of combined measurements categorizing proteins by whether the range is
-exceeded or not. The default setting is `[-1.0, 1.0]` if `"conversion"` is not
-set, `[2.5, 97.5]` if `"conversion"` is set to `"percentile"`, `[0.025, 0.975]`
-if `"conversion"` is set to `"quantile"`, and `[-2.0, 2.0]` if `"conversion"` is
-set to `"standard score"`.
+exceeded or not. The adaptive default setting is `[-1.0, 1.0]` if `"conversion"`
+is not set, `[2.5, 97.5]` if `"conversion"` is set to `"percentile"`,
+`[0.025, 0.975]` if `"conversion"` is set to `"quantile"`, and `[-2.0, 2.0]` if
+`"conversion"` is set to `"standard score"`.
 
 ```json
 [
@@ -1765,10 +1765,10 @@ interaction network. Conversions refer to individual communities.
 ]
 ```
 The range of combined measurements categorizing proteins by whether the range is
-exceeded or not. The default setting is `[-1.0, 1.0]` if `"conversion"` is not
-set, `[2.5, 97.5]` if `"conversion"` is set to `"percentile"`, `[0.025, 0.975]`
-if `"conversion"` is set to `"quantile"`, and `[-2.0, 2.0]` if `"conversion"` is
-set to `"standard score"`.
+exceeded or not. The adaptive default setting is `[-1.0, 1.0]` if `"conversion"`
+is not set, `[2.5, 97.5]` if `"conversion"` is set to `"percentile"`,
+`[0.025, 0.975]` if `"conversion"` is set to `"quantile"`, and `[-2.0, 2.0]` if
+`"conversion"` is set to `"standard score"`.
 
 ```json
 [
@@ -1835,9 +1835,9 @@ The Gene Ontology namespaces to consider. The default setting is
 ]
 ```
 The range of measurements categorizing proteins by whether the range is exceeded
-or not. The default setting is `[-1.0, 1.0]` if `"conversion"` is not set,
-`[2.5, 97.5]` if `"conversion"` is set to `"percentile"`, `[0.025, 0.975]` if
-`"conversion"` is set to `"quantile"`, and `[-2.0, 2.0]` if `"conversion"` is
+or not. The adaptive default setting is `[-1.0, 1.0]` if `"conversion"` is not
+set, `[2.5, 97.5]` if `"conversion"` is set to `"percentile"`, `[0.025, 0.975]`
+if `"conversion"` is set to `"quantile"`, and `[-2.0, 2.0]` if `"conversion"` is
 set to `"standard score"`.
 
 ```json
