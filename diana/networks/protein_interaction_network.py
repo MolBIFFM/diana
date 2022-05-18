@@ -119,7 +119,7 @@ def add_proteins_from_table(
     modification: str = "",
     position_column: int | str = "",
     position_format: re.Pattern = re.compile("^(.+?)$"),
-    replicate_columns: Optional[Collection[int | str]] = None,
+    replicate_columns: Optional[Collection[int] | Collection[str]] = None,
     replicate_format: re.Pattern = re.compile("^(.+?)$"),
     number_sites: int = 100,
     number_replicates: int = 1,
@@ -222,19 +222,17 @@ def add_proteins_from_table(
             else:
                 positions = []
 
-            if len(protein_accessions) != len(positions):
-                if len(protein_accessions) > len(positions):
-                    positions.extend([
-                        0
-                        for _ in range(len(positions), len(protein_accessions))
-                    ])
-                else:
-                    positions = positions[:len(protein_accessions)]
+            if len(protein_accessions) > len(positions):
+                positions.extend([
+                    0 for _ in range(len(positions), len(protein_accessions))
+                ])
+            elif len(protein_accessions) < len(positions):
+                positions = positions[:len(protein_accessions)]
 
             measurements = [
-                float(replicate) for replicate_column in replicate_columns for
-                replicate in replicate_format.findall(row[replicate_column])
-                if not pd.isna(row[replicate_column])
+                float(replicate) for replicate_column in replicate_columns
+                if not pd.isna(row[replicate_column]) for replicate in
+                replicate_format.findall(row[replicate_column])
             ]
 
             if len(measurements) >= min(number_replicates,

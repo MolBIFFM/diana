@@ -95,7 +95,7 @@ def tabular_txt(url: str,
                 delimiter: str = "",
                 header: int = 0,
                 skiprows: int = 0,
-                usecols: Optional[Collection[int | str]] = None,
+                usecols: Optional[Collection[int] | Collection[str]] = None,
                 chunksize: int = 8192,
                 pause: float = 60.0) -> Iterator[pd.Series]:
     """
