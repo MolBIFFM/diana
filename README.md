@@ -794,7 +794,7 @@ exported.
     }
 ]
 ```
-The function used to combine separate sites into protein-specific measurements.
+The function used to combine distinct sites into protein-specific measurements.
 The function is applied to ratios, not their logarithm. The default setting is
 `"maxabs"`, corresponding to the largest absolute value. Available settings are
 `"mean"`, `"median"`, `"max"`, `"maxabs"`, `"min"`, `"minabs"`, `"sum"`,
@@ -1040,7 +1040,7 @@ The modification considered to determine a subset of proteins.
     }
 ]
 ```
-The function used to combine separate sites into protein-specific measurements.
+The function used to combine distinct sites into protein-specific measurements.
 The function is applied to ratios, not their logarithm. The default setting is
 `"maxabs"`, corresponding to the largest absolute value. Available settings are
 `"mean"`, `"median"`, `"max"`, `"maxabs"`, `"min"`, `"minabs"`, `"sum"`,
@@ -1237,7 +1237,7 @@ The modification considered to determine a subset of proteins.
     }
 ]
 ```
-The function used to combine separate sites into protein-specific measurements.
+The function used to combine distinct sites into protein-specific measurements.
 The function is applied to ratios, not their logarithm. The default setting is
 `"maxabs"`, corresponding to the largest absolute value. Available settings are
 `"mean"`, `"median"`, `"max"`, `"maxabs"`, `"min"`, `"minabs"`, `"sum"`,
@@ -1693,7 +1693,7 @@ The modification considered to determine a subset of proteins.
     }
 ]
 ```
-The function used to combine separate sites into protein-specific measurements.
+The function used to combine distinct sites into protein-specific measurements.
 The function is applied to ratios, not their logarithm. The default setting is
 `"maxabs"`, corresponding to the largest absolute value. Available settings are
 `"mean"`, `"median"`, `"max"`, `"maxabs"`, `"min"`, `"minabs"`, `"sum"`,
@@ -1871,7 +1871,7 @@ interaction network.
     }
 ]
 ```
-The function used to combine separate sites into protein-specific measurements.
+The function used to combine distinct sites into protein-specific measurements.
 The default setting is `"maxabs"`, corresponding to the largest absolute value.
 Available settings are `"mean"`, `"median"`, `"max"`, `"maxabs"`, `"min"`,
 `"minabs"`, `"sum"` and `"sumabs"` as well as `"increase"` and `"decrease"`,
