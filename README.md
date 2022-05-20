@@ -324,10 +324,10 @@ largest absolute value. The default setting is `5`.
     }
 ]
 ```
-A function to combine individual replicates into a single measurement. The
-function is applied to ratios, not their log2. The default setting is `"mean"`.
-Available settings are `"mean"`, `"median"`, `"max"`, `"maxabs"`, `"min"`,
-`"minabs"`, `"sum"`, and `"sumabs"`.
+The function used to combine individual replicates into a single measurement.
+The function is applied to ratios, not their logarithm. The default setting is
+`"mean"`. Available settings are `"mean"`, `"median"`, `"max"`, `"maxabs"`,
+`"min"`, `"minabs"`, `"sum"`, and `"sumabs"`.
 
 ```json
 [
@@ -794,8 +794,8 @@ exported.
     }
 ]
 ```
-The function used to derive protein-specific measurements from their individual
-sites. The function is applied to ratios, not their log2. The default setting is
+The function used to combine separate sites into protein-specific measurements.
+The function is applied to ratios, not their logarithm. The default setting is
 `"maxabs"`, corresponding to the largest absolute value. Available settings are
 `"mean"`, `"median"`, `"max"`, `"maxabs"`, `"min"`, `"minabs"`, `"sum"`,
 `"sumabs"` as well as `"increase"` and `"decrease"`, referring to the proportion
@@ -864,14 +864,14 @@ is not set, `[2.5, 97.5]` if `"conversion"` is set to `"percentile"`,
     }
 ]
 ```
-The function used to derive a combined edge confidence score from scores in
-IntAct, MINT and STRING. For lack of corresponding score, 1.0 is used for all
-interactions from BioGRID, CORUM and Reactome. The combined score is reflected
-by edge transparency. By default any edge receives a score of 1.0. Available
-settings are `null`, `"mean"`, `"median"`, `"max"`, `"min"`, `"sum"`,
-`"number"`, the number of queried databases supporting the interaction. Further,
-`"BioGRID"`, `"CORUM"`, `"IntAct"`, `"MINT"`, `"Reactome"`, and `"STRING"` refer
-to the score in the particular database.
+The function used to combine edge confidence scores from in IntAct, MINT and
+STRING, and, lacking of corresponding score, 1.0 for all interactions from
+BioGRID, CORUM and Reactome. The combined score is reflected by edge
+transparency in Cytoscape. By default any edge receives a score of 1.0.
+Available settings are `null`, `"mean"`, `"median"`, `"max"`, `"min"`, `"sum"`,
+`"number"`, the number of queried databases supporting the protein-protein
+interaction. Further, `"BioGRID"`, `"CORUM"`, `"IntAct"`, `"MINT"`,
+`"Reactome"`, and `"STRING"` each refer to the score in the particular database.
 
 ---
 
@@ -1040,8 +1040,8 @@ The modification considered to determine a subset of proteins.
     }
 ]
 ```
-The function used to derive a protein-specific measurement from a its individual
-sites. The function is applied to ratios, not their log2. The default setting is
+The function used to combine separate sites into protein-specific measurements.
+The function is applied to ratios, not their logarithm. The default setting is
 `"maxabs"`, corresponding to the largest absolute value. Available settings are
 `"mean"`, `"median"`, `"max"`, `"maxabs"`, `"min"`, `"minabs"`, `"sum"`,
 `"sumabs"` as well as `"increase"` and `"decrease"`, referring to the proportion
@@ -1237,8 +1237,8 @@ The modification considered to determine a subset of proteins.
     }
 ]
 ```
-The function used to derive a protein-specific measurement from a its individual
-sites. The function is applied to ratios, not their log2. The default setting is
+The function used to combine separate sites into protein-specific measurements.
+The function is applied to ratios, not their logarithm. The default setting is
 `"maxabs"`, corresponding to the largest absolute value. Available settings are
 `"mean"`, `"median"`, `"max"`, `"maxabs"`, `"min"`, `"minabs"`, `"sum"`,
 `"sumabs"` as well as `"increase"` and `"decrease"`, referring to the proportion
@@ -1415,15 +1415,15 @@ expected number of intra-community edges.
     }
 ]
 ```
-The function used to derive a combined edge score from confidence scores in
-IntAct, MINT, and STRING as well as 1.0 used for BioGRID, CORUM and Reactome,
-respectively, for a lack of a corresponding score. The combined score is
-utilized as edge weight in community detection. By default any edge receives a
-score of 1.0, corresponding to an unweighted network. Available settings are
-`null`, `"mean"`, `"median"`, `"max"`, `"min"`, `"sum"`, `"number"`, the number
-of queried databases supporting the interaction. Further, `"BioGRID"`,
-`"CORUM"`, `"IntAct"`, `"MINT"`, `"Reactome"`, and `"STRING"` refer to the score
-in that particular database.
+The function used to combine edge confidence scores from in IntAct, MINT and
+STRING, and, lacking of corresponding score, 1.0 for all interactions from
+BioGRID, CORUM and Reactome. The combined score is used as edge weight in
+community detection. By default any edge receives a score of 1.0, corresponding
+to an unweighted network. Available settings are `null`, `"mean"`, `"median"`,
+`"max"`, `"min"`, `"sum"`, `"number"`, the number of queried databases
+supporting the protein-protein interaction. Further, `"BioGRID"`, `"CORUM"`,
+`"IntAct"`, `"MINT"`, `"Reactome"`, and `"STRING"` each refer to the score in
+that particular database.
 
 ```json
 [
@@ -1434,8 +1434,8 @@ in that particular database.
     }
 ]
 ```
-An additional upper bound on the number of proteins per community. Modules are
-iteratively subdivided until this threshold is met. The default setting is the
+An upper bound on the number of proteins per community. Modules are iteratively
+subdivided until this threshold is met. The adaptive default setting is the
 number of proteins in the network, resulting in a single iteration of the
 community detection algorithm.
 
@@ -1448,9 +1448,9 @@ community detection algorithm.
     }
 ]
 ```
-The function to combine sizes of communities into a value compared to the
-community size threshold. The default setting is `"mean"`. Available settings
-are `"mean"`, `"median"`, `"max"`, and `"min"`.
+The function used to combine community sizes in terms of nodes into the decisive
+value compared to the community size  threshold. The default setting is
+`"mean"`. Available settings are `"mean"`, `"median"`, `"max"`, and `"min"`.
 
 ---
 
@@ -1693,8 +1693,8 @@ The modification considered to determine a subset of proteins.
     }
 ]
 ```
-The function used to derive a protein-specific measurement from a its individual
-sites. The function is applied to ratios, not their log2. The default setting is
+The function used to combine separate sites into protein-specific measurements.
+The function is applied to ratios, not their logarithm. The default setting is
 `"maxabs"`, corresponding to the largest absolute value. Available settings are
 `"mean"`, `"median"`, `"max"`, `"maxabs"`, `"min"`, `"minabs"`, `"sum"`,
 `"sumabs"` as well as `"increase"` and `"decrease"`, referring to the proportion
@@ -1871,8 +1871,8 @@ interaction network.
     }
 ]
 ```
-The function used to derive a protein-specific measurement from a its sites. The
-default setting is `"maxabs"`, corresponding to the largest absolute value.
+The function used to combine separate sites into protein-specific measurements.
+The default setting is `"maxabs"`, corresponding to the largest absolute value.
 Available settings are `"mean"`, `"median"`, `"max"`, `"maxabs"`, `"min"`,
 `"minabs"`, `"sum"` and `"sumabs"` as well as `"increase"` and `"decrease"`,
 referring to the proportion of a proteins' sites exhibiting either, and `null`,
