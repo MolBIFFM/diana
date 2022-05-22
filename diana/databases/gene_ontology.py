@@ -169,21 +169,18 @@ def get_enrichment(
                 annotation[primary_term].add(protein)
 
     annotation = {
-        term: proteins
-        for term, proteins in annotation.items() if proteins
+        term: proteins for term, proteins in annotation.items() if proteins
     }
 
     annotated_proteins = set.union(*annotation.values())
 
     annotated_network_proteins = {
-        prt: len(annotated_proteins.intersection(prt))
-        for prt in proteins
+        prt: len(annotated_proteins.intersection(prt)) for prt in proteins
     }
 
     network_intersection = {
         prt:
-        {term: len(annotation[term].intersection(prt))
-         for term in annotation}
+        {term: len(annotation[term].intersection(prt)) for term in annotation}
         for prt in proteins
     }
 
@@ -196,7 +193,6 @@ def get_enrichment(
     })
 
     return {
-        prt: {(term, name[term]): p_value[(prt, term)]
-              for term in annotation}
-        for prt in proteins
+        prt: {(term, name[term]): p_value[(prt, term)] for term in annotation
+             } for prt in proteins
     }

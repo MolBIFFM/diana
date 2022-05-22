@@ -30,9 +30,8 @@ def clauset_newman_moore(network: nx.Graph,
     communities = {i: {i} for i in network.nodes()}
 
     adj_matrix = {
-        i: {j: network.edges[i, j][weight]
-            for j in nx.neighbors(network, i)}
-        for i in network.nodes()
+        i: {j: network.edges[i, j][weight] for j in nx.neighbors(network, i)
+           } for i in network.nodes()
     }
 
     connected = {i: set(adj_matrix[i]) - {i} for i in adj_matrix}
@@ -44,9 +43,9 @@ def clauset_newman_moore(network: nx.Graph,
         i: {
             j: (1.0 / (2.0 * m) - resolution * k[i] * k[j] /
                 ((2.0 * m)**2.0) if j in adj_matrix[i] else 0.0)
-            for j in adj_matrix if j < i
-        }
-        for i in adj_matrix
+            for j in adj_matrix
+            if j < i
+        } for i in adj_matrix
     }
 
     a = {i: k[i] / (2.0 * m) for i in adj_matrix}
@@ -63,9 +62,7 @@ def clauset_newman_moore(network: nx.Graph,
         del communities[max_i]
 
         delta_q_prime = {
-            i: {j: delta_q[i][j]
-                for j in delta_q[i]}
-            for i in delta_q
+            i: {j: delta_q[i][j] for j in delta_q[i]} for i in delta_q
         }
 
         for n in connected[max_i] & connected[max_j]:
@@ -153,8 +150,7 @@ def louvain(network: nx.Graph,
 
         adj_matrix = {
             i:
-            {j: network.edges[i, j][weight]
-             for j in nx.neighbors(network, i)}
+            {j: network.edges[i, j][weight] for j in nx.neighbors(network, i)}
             for i in network.nodes()
         }
 
@@ -168,10 +164,8 @@ def louvain(network: nx.Graph,
                 **{
                     community[i]: 0.0
                 },
-                **{community[j]: adj_matrix[i][j]
-                   for j in adj_matrix[i]}
-            }
-            for i in adj_matrix
+                **{community[j]: adj_matrix[i][j] for j in adj_matrix[i]}
+            } for i in adj_matrix
         }
 
         m = sum(k.values()) / 2.0
@@ -202,15 +196,14 @@ def louvain(network: nx.Graph,
                              (sigma_tot[community[j]] /
                               (2.0 * m))**2.0 - resolution * (k[i] /
                                                               (2.0 * m))**2.0)
-                        ) - (
-                            ((sigma_in[community[i]] + k_in[i][community[i]]) /
-                             (2.0 * m) - resolution *
-                             ((sigma_tot[community[i]] + k[i]) /
-                              (2.0 * m))**2.0) -
-                            (sigma_in[community[i]] / (2.0 * m) - resolution *
-                             (sigma_tot[community[i]] /
-                              (2.0 * m))**2.0 - resolution * (k[i] /
-                                                              (2.0 * m))**2.0))
+                        ) - (((sigma_in[community[i]] + k_in[i][community[i]]) /
+                              (2.0 * m) - resolution *
+                              ((sigma_tot[community[i]] + k[i]) /
+                               (2.0 * m))**2.0) -
+                             (sigma_in[community[i]] / (2.0 * m) - resolution *
+                              (sigma_tot[community[i]] /
+                               (2.0 * m))**2.0 - resolution * (k[i] /
+                                                               (2.0 * m))**2.0))
 
                 for n in adj_matrix[i]:
                     sigma_tot[community[i]] += adj_matrix[i][n]
@@ -257,8 +250,7 @@ def louvain(network: nx.Graph,
 
             weights: dict[Hashable,
                           dict[Hashable,
-                               float]] = {ci: {}
-                                          for ci in community.values()}
+                               float]] = {ci: {} for ci in community.values()}
             for i in adj_matrix:
                 for cj in k_in[i]:
                     if cj not in weights[community[i]]:

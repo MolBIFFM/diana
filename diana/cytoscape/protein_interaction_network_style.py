@@ -180,49 +180,40 @@ COMPONENTS: list[dict[str, dict[str, dict[str, dict[
                         "default": "ROUND_RECTANGLE"
                     },
                     "NODE_CUSTOMGRAPHICS_1": {
-                        "default":
-                        "org.cytoscape.ding.customgraphics."
-                        "NullCustomGraphics,0,[ Remove Graphics ],"
+                        "default": "org.cytoscape.ding.customgraphics."
+                                   "NullCustomGraphics,0,[ Remove Graphics ],"
                     },
                     "NODE_CUSTOMGRAPHICS_2": {
-                        "default":
-                        "org.cytoscape.ding.customgraphics."
-                        "NullCustomGraphics,0,[ Remove Graphics ],"
+                        "default": "org.cytoscape.ding.customgraphics."
+                                   "NullCustomGraphics,0,[ Remove Graphics ],"
                     },
                     "NODE_CUSTOMGRAPHICS_3": {
-                        "default":
-                        "org.cytoscape.ding.customgraphics."
-                        "NullCustomGraphics,0,[ Remove Graphics ],"
+                        "default": "org.cytoscape.ding.customgraphics."
+                                   "NullCustomGraphics,0,[ Remove Graphics ],"
                     },
                     "NODE_CUSTOMGRAPHICS_4": {
-                        "default":
-                        "org.cytoscape.ding.customgraphics."
-                        "NullCustomGraphics,0,[ Remove Graphics ],"
+                        "default": "org.cytoscape.ding.customgraphics."
+                                   "NullCustomGraphics,0,[ Remove Graphics ],"
                     },
                     "NODE_CUSTOMGRAPHICS_5": {
-                        "default":
-                        "org.cytoscape.ding.customgraphics."
-                        "NullCustomGraphics,0,[ Remove Graphics ],"
+                        "default": "org.cytoscape.ding.customgraphics."
+                                   "NullCustomGraphics,0,[ Remove Graphics ],"
                     },
                     "NODE_CUSTOMGRAPHICS_6": {
-                        "default":
-                        "org.cytoscape.ding.customgraphics."
-                        "NullCustomGraphics,0,[ Remove Graphics ],"
+                        "default": "org.cytoscape.ding.customgraphics."
+                                   "NullCustomGraphics,0,[ Remove Graphics ],"
                     },
                     "NODE_CUSTOMGRAPHICS_7": {
-                        "default":
-                        "org.cytoscape.ding.customgraphics."
-                        "NullCustomGraphics,0,[ Remove Graphics ],"
+                        "default": "org.cytoscape.ding.customgraphics."
+                                   "NullCustomGraphics,0,[ Remove Graphics ],"
                     },
                     "NODE_CUSTOMGRAPHICS_8": {
-                        "default":
-                        "org.cytoscape.ding.customgraphics."
-                        "NullCustomGraphics,0,[ Remove Graphics ],"
+                        "default": "org.cytoscape.ding.customgraphics."
+                                   "NullCustomGraphics,0,[ Remove Graphics ],"
                     },
                     "NODE_CUSTOMGRAPHICS_9": {
-                        "default":
-                        "org.cytoscape.ding.customgraphics."
-                        "NullCustomGraphics,0,[ Remove Graphics ],"
+                        "default": "org.cytoscape.ding.customgraphics."
+                                   "NullCustomGraphics,0,[ Remove Graphics ],"
                     },
                     "NODE_CUSTOMGRAPHICS_POSITION_1": {
                         "default": "C,C,c,0.00,0.00"
@@ -280,48 +271,48 @@ COMPONENTS: list[dict[str, dict[str, dict[str, dict[
                     },
                     "NODE_CUSTOMPAINT_1": {
                         "default":
-                        "DefaultVisualizableVisualProperty("
-                        "id=NODE_CUSTOMPAINT_1, name=Node Custom Paint 1)"
+                            "DefaultVisualizableVisualProperty("
+                            "id=NODE_CUSTOMPAINT_1, name=Node Custom Paint 1)"
                     },
                     "NODE_CUSTOMPAINT_2": {
                         "default":
-                        "DefaultVisualizableVisualProperty("
-                        "id=NODE_CUSTOMPAINT_2, name=Node Custom Paint 2)"
+                            "DefaultVisualizableVisualProperty("
+                            "id=NODE_CUSTOMPAINT_2, name=Node Custom Paint 2)"
                     },
                     "NODE_CUSTOMPAINT_3": {
                         "default":
-                        "DefaultVisualizableVisualProperty("
-                        "id=NODE_CUSTOMPAINT_3, name=Node Custom Paint 3)"
+                            "DefaultVisualizableVisualProperty("
+                            "id=NODE_CUSTOMPAINT_3, name=Node Custom Paint 3)"
                     },
                     "NODE_CUSTOMPAINT_4": {
                         "default":
-                        "DefaultVisualizableVisualProperty("
-                        "id=NODE_CUSTOMPAINT_4, name=Node Custom Paint 4)"
+                            "DefaultVisualizableVisualProperty("
+                            "id=NODE_CUSTOMPAINT_4, name=Node Custom Paint 4)"
                     },
                     "NODE_CUSTOMPAINT_5": {
                         "default":
-                        "DefaultVisualizableVisualProperty("
-                        "id=NODE_CUSTOMPAINT_5, name=Node Custom Paint 5)"
+                            "DefaultVisualizableVisualProperty("
+                            "id=NODE_CUSTOMPAINT_5, name=Node Custom Paint 5)"
                     },
                     "NODE_CUSTOMPAINT_6": {
                         "default":
-                        "DefaultVisualizableVisualProperty("
-                        "id=NODE_CUSTOMPAINT_6, name=Node Custom Paint 6)"
+                            "DefaultVisualizableVisualProperty("
+                            "id=NODE_CUSTOMPAINT_6, name=Node Custom Paint 6)"
                     },
                     "NODE_CUSTOMPAINT_7": {
                         "default":
-                        "DefaultVisualizableVisualProperty("
-                        "id=NODE_CUSTOMPAINT_7, name=Node Custom Paint 7)"
+                            "DefaultVisualizableVisualProperty("
+                            "id=NODE_CUSTOMPAINT_7, name=Node Custom Paint 7)"
                     },
                     "NODE_CUSTOMPAINT_8": {
                         "default":
-                        "DefaultVisualizableVisualProperty("
-                        "id=NODE_CUSTOMPAINT_8, name=Node Custom Paint 8)"
+                            "DefaultVisualizableVisualProperty("
+                            "id=NODE_CUSTOMPAINT_8, name=Node Custom Paint 8)"
                     },
                     "NODE_CUSTOMPAINT_9": {
                         "default":
-                        "DefaultVisualizableVisualProperty("
-                        "id=NODE_CUSTOMPAINT_9, name=Node Custom Paint 9)"
+                            "DefaultVisualizableVisualProperty("
+                            "id=NODE_CUSTOMPAINT_9, name=Node Custom Paint 9)"
                     },
                     "NODE_DEPTH": {
                         "default": "0.0"
@@ -384,8 +375,9 @@ COMPONENTS: list[dict[str, dict[str, dict[str, dict[
                         "default": "ROUND_RECTANGLE",
                         "discreteMapping": {
                             "attributeName":
-                            "post-translational modification {time}",
-                            "attributeType": "string",
+                                "post-translational modification {time}",
+                            "attributeType":
+                                "string",
                             "discreteMappingEntry": {
                                 "{modifications[0]}": "RECTANGLE",
                             },
@@ -587,49 +579,40 @@ COMPONENTS: list[dict[str, dict[str, dict[str, dict[
                         "default": "ROUND_RECTANGLE"
                     },
                     "NODE_CUSTOMGRAPHICS_1": {
-                        "default":
-                        "org.cytoscape.ding.customgraphics."
-                        "NullCustomGraphics,0,[ Remove Graphics ],"
+                        "default": "org.cytoscape.ding.customgraphics."
+                                   "NullCustomGraphics,0,[ Remove Graphics ],"
                     },
                     "NODE_CUSTOMGRAPHICS_2": {
-                        "default":
-                        "org.cytoscape.ding.customgraphics."
-                        "NullCustomGraphics,0,[ Remove Graphics ],"
+                        "default": "org.cytoscape.ding.customgraphics."
+                                   "NullCustomGraphics,0,[ Remove Graphics ],"
                     },
                     "NODE_CUSTOMGRAPHICS_3": {
-                        "default":
-                        "org.cytoscape.ding.customgraphics."
-                        "NullCustomGraphics,0,[ Remove Graphics ],"
+                        "default": "org.cytoscape.ding.customgraphics."
+                                   "NullCustomGraphics,0,[ Remove Graphics ],"
                     },
                     "NODE_CUSTOMGRAPHICS_4": {
-                        "default":
-                        "org.cytoscape.ding.customgraphics."
-                        "NullCustomGraphics,0,[ Remove Graphics ],"
+                        "default": "org.cytoscape.ding.customgraphics."
+                                   "NullCustomGraphics,0,[ Remove Graphics ],"
                     },
                     "NODE_CUSTOMGRAPHICS_5": {
-                        "default":
-                        "org.cytoscape.ding.customgraphics."
-                        "NullCustomGraphics,0,[ Remove Graphics ],"
+                        "default": "org.cytoscape.ding.customgraphics."
+                                   "NullCustomGraphics,0,[ Remove Graphics ],"
                     },
                     "NODE_CUSTOMGRAPHICS_6": {
-                        "default":
-                        "org.cytoscape.ding.customgraphics."
-                        "NullCustomGraphics,0,[ Remove Graphics ],"
+                        "default": "org.cytoscape.ding.customgraphics."
+                                   "NullCustomGraphics,0,[ Remove Graphics ],"
                     },
                     "NODE_CUSTOMGRAPHICS_7": {
-                        "default":
-                        "org.cytoscape.ding.customgraphics."
-                        "NullCustomGraphics,0,[ Remove Graphics ],"
+                        "default": "org.cytoscape.ding.customgraphics."
+                                   "NullCustomGraphics,0,[ Remove Graphics ],"
                     },
                     "NODE_CUSTOMGRAPHICS_8": {
-                        "default":
-                        "org.cytoscape.ding.customgraphics."
-                        "NullCustomGraphics,0,[ Remove Graphics ],"
+                        "default": "org.cytoscape.ding.customgraphics."
+                                   "NullCustomGraphics,0,[ Remove Graphics ],"
                     },
                     "NODE_CUSTOMGRAPHICS_9": {
-                        "default":
-                        "org.cytoscape.ding.customgraphics."
-                        "NullCustomGraphics,0,[ Remove Graphics ],"
+                        "default": "org.cytoscape.ding.customgraphics."
+                                   "NullCustomGraphics,0,[ Remove Graphics ],"
                     },
                     "NODE_CUSTOMGRAPHICS_POSITION_1": {
                         "default": "C,C,c,0.00,0.00"
@@ -687,48 +670,48 @@ COMPONENTS: list[dict[str, dict[str, dict[str, dict[
                     },
                     "NODE_CUSTOMPAINT_1": {
                         "default":
-                        "DefaultVisualizableVisualProperty("
-                        "id=NODE_CUSTOMPAINT_1, name=Node Custom Paint 1)"
+                            "DefaultVisualizableVisualProperty("
+                            "id=NODE_CUSTOMPAINT_1, name=Node Custom Paint 1)"
                     },
                     "NODE_CUSTOMPAINT_2": {
                         "default":
-                        "DefaultVisualizableVisualProperty("
-                        "id=NODE_CUSTOMPAINT_2, name=Node Custom Paint 2)"
+                            "DefaultVisualizableVisualProperty("
+                            "id=NODE_CUSTOMPAINT_2, name=Node Custom Paint 2)"
                     },
                     "NODE_CUSTOMPAINT_3": {
                         "default":
-                        "DefaultVisualizableVisualProperty("
-                        "id=NODE_CUSTOMPAINT_3, name=Node Custom Paint 3)"
+                            "DefaultVisualizableVisualProperty("
+                            "id=NODE_CUSTOMPAINT_3, name=Node Custom Paint 3)"
                     },
                     "NODE_CUSTOMPAINT_4": {
                         "default":
-                        "DefaultVisualizableVisualProperty("
-                        "id=NODE_CUSTOMPAINT_4, name=Node Custom Paint 4)"
+                            "DefaultVisualizableVisualProperty("
+                            "id=NODE_CUSTOMPAINT_4, name=Node Custom Paint 4)"
                     },
                     "NODE_CUSTOMPAINT_5": {
                         "default":
-                        "DefaultVisualizableVisualProperty("
-                        "id=NODE_CUSTOMPAINT_5, name=Node Custom Paint 5)"
+                            "DefaultVisualizableVisualProperty("
+                            "id=NODE_CUSTOMPAINT_5, name=Node Custom Paint 5)"
                     },
                     "NODE_CUSTOMPAINT_6": {
                         "default":
-                        "DefaultVisualizableVisualProperty("
-                        "id=NODE_CUSTOMPAINT_6, name=Node Custom Paint 6)"
+                            "DefaultVisualizableVisualProperty("
+                            "id=NODE_CUSTOMPAINT_6, name=Node Custom Paint 6)"
                     },
                     "NODE_CUSTOMPAINT_7": {
                         "default":
-                        "DefaultVisualizableVisualProperty("
-                        "id=NODE_CUSTOMPAINT_7, name=Node Custom Paint 7)"
+                            "DefaultVisualizableVisualProperty("
+                            "id=NODE_CUSTOMPAINT_7, name=Node Custom Paint 7)"
                     },
                     "NODE_CUSTOMPAINT_8": {
                         "default":
-                        "DefaultVisualizableVisualProperty("
-                        "id=NODE_CUSTOMPAINT_8, name=Node Custom Paint 8)"
+                            "DefaultVisualizableVisualProperty("
+                            "id=NODE_CUSTOMPAINT_8, name=Node Custom Paint 8)"
                     },
                     "NODE_CUSTOMPAINT_9": {
                         "default":
-                        "DefaultVisualizableVisualProperty("
-                        "id=NODE_CUSTOMPAINT_9, name=Node Custom Paint 9)"
+                            "DefaultVisualizableVisualProperty("
+                            "id=NODE_CUSTOMPAINT_9, name=Node Custom Paint 9)"
                     },
                     "NODE_DEPTH": {
                         "default": "0.0"
@@ -740,63 +723,63 @@ COMPONENTS: list[dict[str, dict[str, dict[str, dict[
                             "attributeType": "string",
                             "discreteMappingEntry": {
                                 "up":
-                                f"#{255:02X}{0:02X}{0:02X}",
+                                    f"#{255:02X}{0:02X}{0:02X}",
                                 "mid up":
-                                f"#{255:02X}{102:02X}{102:02X}",
+                                    f"#{255:02X}{102:02X}{102:02X}",
                                 "mid":
-                                f"#{128:02X}{128:02X}{128:02X}",
+                                    f"#{128:02X}{128:02X}{128:02X}",
                                 "mid down":
-                                f"#{102:02X}{102:02X}{255:02X}",
+                                    f"#{102:02X}{102:02X}{255:02X}",
                                 "down":
-                                f"#{0:02X}{0:02X}{255:02X}",
+                                    f"#{0:02X}{0:02X}{255:02X}",
                                 "{modifications[0]} up "
                                 "{modifications[1]} down":
-                                f"#{0:02X}{255:02X}{0:02X}",
+                                    f"#{0:02X}{255:02X}{0:02X}",
                                 "{modifications[0]} up "
                                 "{modifications[1]} mid down":
-                                f"#{0:02X}{255:02X}{0:02X}",
+                                    f"#{0:02X}{255:02X}{0:02X}",
                                 "{modifications[0]} mid up "
                                 "{modifications[1]} down":
-                                f"#{0:02X}{255:02X}{0:02X}",
+                                    f"#{0:02X}{255:02X}{0:02X}",
                                 "{modifications[0]} mid up "
                                 "{modifications[1]} mid down":
-                                f"#{0:02X}{255:02X}{0:02X}",
+                                    f"#{0:02X}{255:02X}{0:02X}",
                                 "{modifications[0]} down "
                                 "{modifications[1]} up":
-                                f"#{255:02X}{255:02X}{0:02X}",
+                                    f"#{255:02X}{255:02X}{0:02X}",
                                 "{modifications[0]} down "
                                 "{modifications[1]} mid up":
-                                f"#{255:02X}{255:02X}{0:02X}",
+                                    f"#{255:02X}{255:02X}{0:02X}",
                                 "{modifications[0]} mid down "
                                 "{modifications[1]} up":
-                                f"#{255:02X}{255:02X}{0:02X}",
+                                    f"#{255:02X}{255:02X}{0:02X}",
                                 "{modifications[0]} mid down "
                                 "{modifications[1]} mid up":
-                                f"#{255:02X}{255:02X}{0:02X}",
+                                    f"#{255:02X}{255:02X}{0:02X}",
                                 "{modifications[0]} up "
                                 "{modifications[1]} mid":
-                                f"#{255:02X}{0:02X}{0:02X}",
+                                    f"#{255:02X}{0:02X}{0:02X}",
                                 "{modifications[0]} mid up "
                                 "{modifications[1]} mid":
-                                f"#{255:02X}{102:02X}{102:02X}",
+                                    f"#{255:02X}{102:02X}{102:02X}",
                                 "{modifications[0]} mid down "
                                 "{modifications[1]} mid":
-                                f"#{102:02X}{102:02X}{255:02X}",
+                                    f"#{102:02X}{102:02X}{255:02X}",
                                 "{modifications[0]} down "
                                 "{modifications[1]} mid":
-                                f"#{0:02X}{0:02X}{255:02X}",
+                                    f"#{0:02X}{0:02X}{255:02X}",
                                 "{modifications[0]} mid "
                                 "{modifications[1]} up":
-                                f"#{255:02X}{0:02X}{0:02X}",
+                                    f"#{255:02X}{0:02X}{0:02X}",
                                 "{modifications[0]} mid "
                                 "{modifications[1]} mid up":
-                                f"#{255:02X}{102:02X}{102:02X}",
+                                    f"#{255:02X}{102:02X}{102:02X}",
                                 "{modifications[0]} mid "
                                 "{modifications[1]} mid down":
-                                f"#{102:02X}{102:02X}{255:02X}",
+                                    f"#{102:02X}{102:02X}{255:02X}",
                                 "{modifications[0]} mid "
                                 "{modifications[1]} down":
-                                f"#{0:02X}{0:02X}{255:02X}",
+                                    f"#{0:02X}{0:02X}{255:02X}",
                             },
                         },
                     },
@@ -844,13 +827,16 @@ COMPONENTS: list[dict[str, dict[str, dict[str, dict[
                         "default": "ROUND_RECTANGLE",
                         "discreteMapping": {
                             "attributeName":
-                            "post-translational modification {time}",
-                            "attributeType": "string",
+                                "post-translational modification {time}",
+                            "attributeType":
+                                "string",
                             "discreteMappingEntry": {
-                                "{modifications[0]}": "RECTANGLE",
-                                "{modifications[1]}": "TRIANGLE",
+                                "{modifications[0]}":
+                                    "RECTANGLE",
+                                "{modifications[1]}":
+                                    "TRIANGLE",
                                 "{modifications[0]} {modifications[1]}":
-                                "ELLIPSE",
+                                    "ELLIPSE",
                             },
                         },
                     },
@@ -903,20 +889,21 @@ def get_bar_chart(
     """
     bar_chart = json.dumps({
         "cy_range":
-        cy_range,
+            cy_range,
         "cy_showRangeAxis":
-        True,
+            True,
         "cy_type":
-        "UP_DOWN",
+            "UP_DOWN",
         "cy_autoRange":
-        False,
+            False,
         "cy_colorScheme":
-        "BLUE_RED",
+            "BLUE_RED",
         "cy_showRangeZeroBaseline":
-        True,
+            True,
         "cy_colors": ["#FF0000", "#0000FF"],
-        "cy_dataColumns":
-        [f"{time} {modification} {site}" for site in range(1, sites + 1)],
+        "cy_dataColumns": [
+            f"{time} {modification} {site}" for site in range(1, sites + 1)
+        ],
     })
     return f"org.cytoscape.BarChart: {bar_chart}"
 
@@ -1007,11 +994,11 @@ def get_style(
                                 "continuousMapping",
                                 attrib={
                                     "attributeName":
-                                    visual_property["continuousMapping"]
-                                    ["attributeName"],
+                                        visual_property["continuousMapping"]
+                                        ["attributeName"],
                                     "attributeType":
-                                    visual_property["continuousMapping"]
-                                    ["attributeType"]
+                                        visual_property["continuousMapping"]
+                                        ["attributeType"]
                                 })
 
                         if isinstance(
@@ -1027,13 +1014,14 @@ def get_style(
                                             "continuousMappingPoint",
                                             attrib={
                                                 "attrValue":
-                                                key.format(max=max_edge_score),
+                                                    key.format(
+                                                        max=max_edge_score),
                                                 "equalValue":
-                                                values["equalValue"],
+                                                    values["equalValue"],
                                                 "greaterValue":
-                                                values["greaterValue"],
+                                                    values["greaterValue"],
                                                 "lesserValue":
-                                                values["lesserValue"]
+                                                    values["lesserValue"]
                                             },
                                         )
                                     else:
@@ -1042,13 +1030,13 @@ def get_style(
                                             "continuousMappingPoint",
                                             attrib={
                                                 "attrValue":
-                                                key,
+                                                    key,
                                                 "equalValue":
-                                                values["equalValue"],
+                                                    values["equalValue"],
                                                 "greaterValue":
-                                                values["greaterValue"],
+                                                    values["greaterValue"],
                                                 "lesserValue":
-                                                values["lesserValue"]
+                                                    values["lesserValue"]
                                             },
                                         )
 
@@ -1065,11 +1053,11 @@ def get_style(
                                     "discreteMapping",
                                     attrib={
                                         "attributeName":
-                                        visual_property["discreteMapping"]
-                                        ["attributeName"].format(time=time),
+                                            visual_property["discreteMapping"]
+                                            ["attributeName"].format(time=time),
                                         "attributeType":
-                                        visual_property["discreteMapping"]
-                                        ["attributeType"],
+                                            visual_property["discreteMapping"]
+                                            ["attributeType"],
                                     },
                                 )
                             else:
@@ -1078,11 +1066,11 @@ def get_style(
                                     "discreteMapping",
                                     attrib={
                                         "attributeName":
-                                        visual_property["discreteMapping"]
-                                        ["attributeName"],
+                                            visual_property["discreteMapping"]
+                                            ["attributeName"],
                                         "attributeType":
-                                        visual_property["discreteMapping"]
-                                        ["attributeType"],
+                                            visual_property["discreteMapping"]
+                                            ["attributeType"],
                                     },
                                 )
 
@@ -1101,11 +1089,10 @@ def get_style(
                                             "discreteMappingEntry",
                                             attrib={
                                                 "attributeValue":
-                                                key.format(
-                                                    modifications=modifications
-                                                ),
+                                                    key.format(modifications=
+                                                               modifications),
                                                 "value":
-                                                value,
+                                                    value,
                                             },
                                         )
                                     else:
@@ -1130,11 +1117,11 @@ def get_style(
                                 "passthroughMapping",
                                 attrib={
                                     "attributeName":
-                                    visual_property["passthroughMapping"]
-                                    ["attributeName"],
+                                        visual_property["passthroughMapping"]
+                                        ["attributeName"],
                                     "attributeType":
-                                    visual_property["passthroughMapping"]
-                                    ["attributeType"],
+                                        visual_property["passthroughMapping"]
+                                        ["attributeType"],
                                 },
                             )
 
