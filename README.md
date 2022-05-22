@@ -6,9 +6,9 @@ spectrometry data.
 
 The tool assembles protein-protein interaction networks from genes or proteins
 associated with mass spectrometric measurements capturing differential
-post-translational modification, optionally extending to interacting
-proteins, querying protein-protein interaction data from BioGRID, CORUM, IntAct,
-MINT, Reactome, and STRING.
+post-translational modification, querying protein-protein interaction data from
+BioGRID, CORUM, IntAct, MINT, Reactome, and STRING, optionally extending to
+interacting proteins.
 
 The enrichment of CORUM protein complexes, Gene Ontology terms, and Reactome
 pathways by the protein-protein interaction network as well as the distribution
