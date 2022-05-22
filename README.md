@@ -1163,7 +1163,7 @@ The Gene Ontology namespaces to consider. The default setting is
 
 ---
 
-Networks of Gene Ontology terms or Reactome pathways can be assembled. Both
+Networks of Gene Ontology terms or Reactome pathways can be exported. Both
 incorporate the enrichment of each respective entity by the protein-protein
 interaction network with respect to the annotation specific to an organism of
 interest along the respective hierarchical relations of entities in these
