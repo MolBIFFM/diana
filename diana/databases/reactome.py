@@ -1,5 +1,6 @@
 """The interface for the Reactome database."""
-from typing import Callable, Container, Hashable, Iterable, Iterator, Optional, Mapping
+from typing import (Callable, Container, Hashable, Iterable, Iterator, Mapping,
+                    Optional)
 
 import scipy.stats
 from access import iterate

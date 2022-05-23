@@ -1,5 +1,6 @@
 """The interface for the Gene Ontology database."""
-from typing import Callable, Collection, Container, Hashable, Iterable, Iterator, Mapping
+from typing import (Callable, Collection, Container, Hashable, Iterable,
+                    Iterator, Mapping)
 
 import scipy.stats
 from access import iterate

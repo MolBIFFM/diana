@@ -89,8 +89,8 @@ def get_protein_complexes(
     primary_accession = uniprot.get_primary_accession(organism)
 
     for row in iterate.tabular_txt(
-            "http://mips.helmholtz-muenchen.de/corum/download/"
-            "allComplexes.txt.zip",
+            "https://mips.helmholtz-muenchen.de/corum/download/releases/"
+            "current/allComplexes.txt.zip",
             file_from_zip_archive=re.compile(r"allComplexes\.txt\.zip"),
             delimiter="\t",
             header=0,
