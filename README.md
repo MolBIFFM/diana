@@ -11,14 +11,14 @@ BioGRID, CORUM, IntAct, MINT, Reactome, and STRING, optionally extending to
 interacting proteins, while mapping proteins to their primary UniProt accession.
 
 The enrichment of CORUM protein complexes, Gene Ontology terms, and Reactome
-pathways by the protein-protein interaction network as well as the distribution
-of mass spectrometric measurements across it, its communities and subsets of
-proteins derived from mass spectrometric measurements can be assessed.
+pathways by protein-protein interaction networks as well as the distribution
+of mass spectrometric measurements across them, their communities and subsets of
+their proteins derived from mass spectrometric measurements can be assessed.
 
-In addition to a protein-protein interaction network and its individual
+In addition to protein-protein interaction networks and their separate
 communities, networks of Gene Ontology terms or Reactome pathways, capturing
-their respective hierarchical dependencies and enrichment by the protein-protein
-interaction network, can each be exported along corresponding Cytoscape style
+their respective hierarchical dependencies and enrichment by protein-protein
+interaction networks, can each be exported along corresponding Cytoscape style
 specifications.
 
 ## Setup
