@@ -107,15 +107,78 @@
         }
       },
       "CORUM enrichment": {
-        "measurement": [-1.0, 1.0],
+        "subsets": [
+          {
+            "time": 30,
+            "post-translational modification": "P",
+            "measurement": [-1.0, 1.0]
+          },
+          {
+            "time": 120,
+            "post-translational modification": "P",
+            "measurement": [-1.0, 1.0]
+          },
+          {
+            "time": 30,
+            "post-translational modification": "U",
+            "measurement": [-1.0, 1.0]
+          },
+          {
+            "time": 120,
+            "post-translational modification": "U",
+            "measurement": [-1.0, 1.0]
+          }
+        ],
         "p": 0.05
       },
       "Gene Ontology enrichment": {
-        "measurement": [-1.0, 1.0],
+        "subsets": [
+          {
+            "time": 30,
+            "post-translational modification": "P",
+            "measurement": [-1.0, 1.0]
+          },
+          {
+            "time": 120,
+            "post-translational modification": "P",
+            "measurement": [-1.0, 1.0]
+          },
+          {
+            "time": 30,
+            "post-translational modification": "U",
+            "measurement": [-1.0, 1.0]
+          },
+          {
+            "time": 120,
+            "post-translational modification": "U",
+            "measurement": [-1.0, 1.0]
+          }
+        ],
         "p": 0.05
       },
       "Reactome enrichment": {
-        "measurement": [-1.0, 1.0],
+        "subsets": [
+          {
+            "time": 30,
+            "post-translational modification": "P",
+            "measurement": [-1.0, 1.0]
+          },
+          {
+            "time": 120,
+            "post-translational modification": "P",
+            "measurement": [-1.0, 1.0]
+          },
+          {
+            "time": 30,
+            "post-translational modification": "U",
+            "measurement": [-1.0, 1.0]
+          },
+          {
+            "time": 120,
+            "post-translational modification": "U",
+            "measurement": [-1.0, 1.0]
+          }
+        ],
         "p": 0.05
       },
       "Gene Ontology network": {
@@ -168,12 +231,78 @@
       },
       "community detection": {
         "CORUM enrichment": {
+          "subsets": [
+            {
+              "time": 30,
+              "post-translational modification": "P",
+              "measurement": [-1.0, 1.0]
+            },
+            {
+              "time": 120,
+              "post-translational modification": "P",
+              "measurement": [-1.0, 1.0]
+            },
+            {
+              "time": 30,
+              "post-translational modification": "U",
+              "measurement": [-1.0, 1.0]
+            },
+            {
+              "time": 120,
+              "post-translational modification": "U",
+              "measurement": [-1.0, 1.0]
+            }
+          ],
           "p": 0.05
         },
         "Gene Ontology enrichment": {
+          "subsets": [
+            {
+              "time": 30,
+              "post-translational modification": "P",
+              "measurement": [-1.0, 1.0]
+            },
+            {
+              "time": 120,
+              "post-translational modification": "P",
+              "measurement": [-1.0, 1.0]
+            },
+            {
+              "time": 30,
+              "post-translational modification": "U",
+              "measurement": [-1.0, 1.0]
+            },
+            {
+              "time": 120,
+              "post-translational modification": "U",
+              "measurement": [-1.0, 1.0]
+            }
+          ],
           "p": 0.05
         },
         "Reactome enrichment": {
+          "subsets": [
+            {
+              "time": 30,
+              "post-translational modification": "P",
+              "measurement": [-1.0, 1.0]
+            },
+            {
+              "time": 120,
+              "post-translational modification": "P",
+              "measurement": [-1.0, 1.0]
+            },
+            {
+              "time": 30,
+              "post-translational modification": "U",
+              "measurement": [-1.0, 1.0]
+            },
+            {
+              "time": 120,
+              "post-translational modification": "U",
+              "measurement": [-1.0, 1.0]
+            }
+          ],
           "p": 0.05
         },
         "measurement enrichment": {
