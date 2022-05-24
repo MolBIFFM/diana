@@ -107,12 +107,15 @@
         }
       },
       "CORUM enrichment": {
+        "measurement": [-1.0, 1.0],
         "p": 0.05
       },
       "Gene Ontology enrichment": {
+        "measurement": [-1.0, 1.0],
         "p": 0.05
       },
       "Reactome enrichment": {
+        "measurement": [-1.0, 1.0],
         "p": 0.05
       },
       "Gene Ontology network": {
@@ -175,7 +178,7 @@
         },
         "measurement enrichment": {
           "p": 0.05,
-          "measurement": [-1.0, 1.0]      
+          "measurement": [-1.0, 1.0]
         },
         "measurement location": {
           "p": 0.05
