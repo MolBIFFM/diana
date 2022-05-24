@@ -1,11 +1,11 @@
 # DIANA
 
-DIANA is a command line tool for **D**ata **I**ntegration **A**nd
+DIANA is a command line application for **D**ata **I**ntegration **A**nd
 **N**etwork-based **A**nalysis for post-translational modification mass
 spectrometry data.
 
-The tool assembles protein-protein interaction networks from genes or proteins
-associated with mass spectrometric measurements capturing differential
+The application assembles protein-protein interaction networks from genes or
+proteins associated with mass spectrometric measurements capturing differential
 post-translational modification, querying protein-protein interaction data from
 BioGRID, CORUM, IntAct, MINT, Reactome, and STRING, optionally extending to
 interacting proteins, while mapping proteins to their primary UniProt accession.
