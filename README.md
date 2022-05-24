@@ -19,7 +19,7 @@ In addition to protein-protein interaction networks and their separate
 communities, networks of Gene Ontology terms or Reactome pathways, capturing
 their respective hierarchical dependencies and enrichment by protein-protein
 interaction networks, can each be exported along corresponding Cytoscape style
-specifications.
+specifications for each type of network.
 
 ## Setup
 
