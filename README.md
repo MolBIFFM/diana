@@ -836,7 +836,7 @@ protein-protein interaction network.
 The range of the bar charts reporting measurements. The adaptive default setting
 is `[-1.0, 1.0]` if `"conversion"` is not set, `[0.5, 2.0]` if `"conversion"` is
 set to `"ratio"`, `[25.0, 75.0]` if `"conversion"` is set to `"percentile"`,
-`[0.25, 0.75]` if `"conversion"` is set to `"quantile"`, and `[-2.0, 2.0]` if
+`[0.25, 0.75]` if `"conversion"` is set to `"quantile"`, and `[-1.0, 1.0]` if
 `"conversion"` is set to `"standard score"`.
 
 ```json
@@ -854,7 +854,7 @@ The range of combined measurements categorizing proteins by whether the range is
 exceeded or not. The adaptive default setting is `[-1.0, 1.0]` if `"conversion"`
 is not set, `[0.5, 2.0]` if `"conversion"` is set to `"ratio"`, `[25.0, 75.0]`
 if `"conversion"` is set to `"percentile"`, `[0.25, 0.75]` if `"conversion"` is
-set to `"quantile"`, and `[-2.0, 2.0]` if `"conversion"` is set to
+set to `"quantile"`, and `[-1.0, 1.0]` if `"conversion"` is set to
 `"standard score"`.
 
 ```json
@@ -1114,7 +1114,7 @@ The range of combined measurements categorizing proteins by whether the range is
 exceeded or not. The adaptive default setting is `[-1.0, 1.0]` if `"conversion"`
 is not set, `[0.5, 2.0]` if `"conversion"` is set to `"ratio"`, `[25.0, 75.0]`
 if `"conversion"` is set to `"percentile"`, `[0.25, 0.75]` if `"conversion"` is
-set to `"quantile"`, and `[-2.0, 2.0]` if `"conversion"` is set to
+set to `"quantile"`, and `[-1.0, 1.0]` if `"conversion"` is set to
 `"standard score"`.
 
 ```json
@@ -1298,7 +1298,7 @@ The range of combined measurements categorizing proteins by whether the range is
 exceeded or not. The adaptive default setting is `[-1.0, 1.0]` if `"conversion"`
 is not set, `[0.5, 2.0]` if `"conversion"` is set to `"ratio"`, `[25.0, 75.0]`
 if `"conversion"` is set to `"percentile"`, `[0.25, 0.75]` if `"conversion"` is
-set to `"quantile"`, and `[-2.0, 2.0]` if `"conversion"` is set to
+set to `"quantile"`, and `[-1.0, 1.0]` if `"conversion"` is set to
 `"standard score"`.
 
 ```json
@@ -1773,7 +1773,7 @@ The range of combined measurements categorizing proteins by whether the range is
 exceeded or not. The adaptive default setting is `[-1.0, 1.0]` if `"conversion"`
 is not set, `[0.5, 2.0]` if `"conversion"` is set to `"ratio"`, `[25.0, 75.0]`
 if `"conversion"` is set to `"percentile"`, `[0.25, 0.75]` if `"conversion"` is
-set to `"quantile"`, and `[-2.0, 2.0]` if `"conversion"` is set to
+set to `"quantile"`, and `[-1.0, 1.0]` if `"conversion"` is set to
 `"standard score"`.
 
 ```json
@@ -1861,7 +1861,7 @@ The range of measurements categorizing proteins by whether the range is exceeded
 or not. The adaptive default setting is `[-1.0, 1.0]` if `"conversion"` is not
 set, `[0.5, 2.0]` if `"conversion"` is set to `"ratio"`, `[25.0, 75.0]` if
 `"conversion"` is set to `"percentile"`, `[0.25, 0.75]` if `"conversion"` is set
-to `"quantile"`, and `[-2.0, 2.0]` if `"conversion"` is set to
+to `"quantile"`, and `[-1.0, 1.0]` if `"conversion"` is set to
 `"standard score"`.
 
 ```json

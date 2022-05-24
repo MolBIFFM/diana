@@ -7,5 +7,5 @@ MEASUREMENT_RANGE: dict[Optional[str], tuple[float, float]] = {
     "ratio": (0.5, 2.0),
     "percentile": (25.0, 75.0),
     "quantile": (0.25, 0.75),
-    "standard score": (-2.0, 2.0)
+    "standard score": (-1.0, 1.0)
 }
