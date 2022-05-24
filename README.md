@@ -223,7 +223,7 @@ file. The default setting is `0`.
 An identifier for the type of post-translational modification associate with
 measurements from the corresponding file. The default setting is `"M"`.
 Currently, up to two types of post-translational modification per time of
-measurement are supported in Cytoscape styles.
+measurement are supported by Cytoscape styles.
 
 ```json
 [
