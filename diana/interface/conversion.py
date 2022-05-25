@@ -26,14 +26,14 @@ MEASUREMENT_CONVERSION: dict[Optional[str], Callable[
         None:
             lambda measurement, _: measurement,
         "ratio":
-            lambda measurement, _: math.pow(2.0, measurement),
+            lambda ratio, _: math.log2(ratio),
         "percentile":
-            lambda measurement, measurements: sorted(measurements)[math.floor(
-                measurement / 100.0 * (len(measurements) - 1))],
+            lambda percentile, measurements: sorted(measurements)[math.floor(
+                percentile / 100.0 * (len(measurements) - 1))],
         "quantile":
-            lambda measurement, measurements: sorted(measurements)[math.floor(
-                measurement * (len(measurements) - 1))],
+            lambda quantile, measurements: sorted(measurements)[math.floor(
+                quantile * (len(measurements) - 1))],
         "standard score":
-            lambda measurement, measurements: measurement * statistics.stdev(
-                measurements) + statistics.mean(measurements)
+            lambda standard_score, measurements: standard_score * statistics.
+            stdev(measurements) + statistics.mean(measurements)
     }
