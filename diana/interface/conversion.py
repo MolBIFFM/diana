@@ -25,15 +25,15 @@ MEASUREMENT_CONVERSION: dict[Optional[str], Callable[
     [float, Collection[float]], float]] = {
         None:
             lambda measurement, _: measurement,
-        "ratio":
-            lambda ratio, _: math.log2(ratio),
         "percentile":
             lambda percentile, measurements: sorted(measurements)[math.floor(
                 percentile / 100.0 * (len(measurements) - 1))],
         "quantile":
             lambda quantile, measurements: sorted(measurements)[math.floor(
                 quantile * (len(measurements) - 1))],
+        "ratio":
+            lambda ratio, _: math.log2(ratio),
         "standard score":
             lambda standard_score, measurements: standard_score * statistics.
-            stdev(measurements) + statistics.mean(measurements)
+            stdev(measurements) + statistics.mean(measurements),
     }

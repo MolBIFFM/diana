@@ -8,5 +8,5 @@ CORRECTION: dict[str, Callable[[Mapping[Hashable, float]],
                                    "Benjamini-Hochberg":
                                        correction.benjamini_hochberg,
                                    "Bonferroni":
-                                       correction.bonferroni
+                                       correction.bonferroni,
                                }
