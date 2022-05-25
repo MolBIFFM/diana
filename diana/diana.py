@@ -565,7 +565,7 @@ def process_workflow(configuration: Mapping[str, Any],
                                     "maxabs")], measurement_range))
 
             gene_ontology_enrichment = gene_ontology.get_enrichment(
-                [frozenset(network.nodes())],
+                [frozenset(proteins)],
                 enrichment_test=test.ENRICHMENT_TEST[
                     configuration["Gene Ontology enrichment"].get(
                         "test", "hypergeometric")],
@@ -664,7 +664,7 @@ def process_workflow(configuration: Mapping[str, Any],
                                     "maxabs")], measurement_range))
 
             reactome_enrichment = reactome.get_enrichment(
-                [frozenset(network.nodes())],
+                [frozenset(proteins)],
                 enrichment_test=test.ENRICHMENT_TEST[
                     configuration["Reactome enrichment"].get(
                         "test", "hypergeometric")],
