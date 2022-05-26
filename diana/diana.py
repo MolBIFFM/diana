@@ -1406,7 +1406,9 @@ def process_configuration_file(configuration_file: str) -> None:
 
 def main() -> None:
     """Launches workflow execution."""
-    parser = argparse.ArgumentParser()
+    parser = argparse.ArgumentParser(
+        description="DIANA: Data Integration And Network-based Analysis for "
+        "post-translational modification mass spectrometry data")
 
     parser.add_argument("-c",
                         "--configurations",
