@@ -7,18 +7,16 @@ spectrometry data.
 The application assembles protein-protein interaction networks from genes or
 proteins associated with mass spectrometric measurements capturing differential
 post-translational modification, querying protein-protein interaction data from
-BioGRID, CORUM, IntAct, MINT, Reactome, and STRING while mapping proteins to
-their primary UniProt accession. Queries can extend to interacting proteins.
+BioGRID, CORUM, IntAct, MINT, Reactome, and STRING.
 
 The enrichment of CORUM protein complexes, Gene Ontology terms, and Reactome
 pathways by protein-protein interaction networks as well as the distribution
 of mass spectrometric measurements across them, their communities and subsets of
 their proteins derived from mass spectrometric measurements can be assessed.
 
-In addition to protein-protein interaction networks and their separate
-communities, networks of Gene Ontology terms or Reactome pathways, capturing
-their respective hierarchical dependencies and enrichment by protein-protein
-interaction networks, can each be exported along corresponding Cytoscape style
+In addition to protein-protein interaction networks and their communities,
+networks of Gene Ontology terms or Reactome pathways reporting enrichments of
+the respective entities can be exported along corresponding Cytoscape style
 specifications for each type of network.
 
 ## Setup
