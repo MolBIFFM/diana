@@ -1382,7 +1382,7 @@ The Gene Ontology namespaces to consider. The default setting is
 
 ---
 
-Communities of the protein-protein interaction network can be detected by
+Communities of the protein-protein interaction network can be extracted using
 parameterized modularity maximization and iterative subdivision.
 
 ```json
