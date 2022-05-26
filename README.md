@@ -11,9 +11,9 @@ BioGRID, CORUM, IntAct, MINT, Reactome, and STRING.
 
 The enrichment of CORUM protein complexes, Gene Ontology terms, and Reactome
 pathways by protein-protein interaction networks, their communities and subsets
-of their proteins derived from the distribution of mass spectrometric
-measurements can be assessed as well as the distribution of mass spectrometric
-measurements across communities.
+of their proteins derived from the distributions of mass spectrometric
+measurements across them can be assessed as well as the distribution of mass
+spectrometric measurements across communities.
 
 In addition to protein-protein interaction networks and their communities,
 networks of Gene Ontology terms or Reactome pathways reporting enrichments of
