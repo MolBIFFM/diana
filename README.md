@@ -10,9 +10,10 @@ post-translational modification, querying protein-protein interaction data from
 BioGRID, CORUM, IntAct, MINT, Reactome, and STRING.
 
 The enrichment of CORUM protein complexes, Gene Ontology terms, and Reactome
-pathways by protein-protein interaction networks as well as the distribution
-of mass spectrometric measurements across them, their communities and subsets of
-their proteins derived from mass spectrometric measurements can be assessed.
+pathways by protein-protein interaction networks, their communities and subsets
+of their proteins derived from mass spectrometric measurements can be assessed
+as well as the distribution of mass spectrometric measurements across
+communities.
 
 In addition to protein-protein interaction networks and their communities,
 networks of Gene Ontology terms or Reactome pathways reporting enrichments of
