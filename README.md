@@ -36,6 +36,11 @@ python3 diana/diana.py --help
 
 ## Configuration
 
+Configuration files are processed concurrently. A configuration file specifies
+an array of workflows executed sequentially.
+
+---
+
 Input genes or proteins can be read from tabular input files.
 
 ```json

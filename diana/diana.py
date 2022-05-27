@@ -1411,10 +1411,8 @@ def main() -> None:
         "post-translational modification mass spectrometry data")
 
     parser.add_argument("-c",
-                        "--configurations",
-                        help="concurrently processed configuration files each "
-                        "specifying an array of workflows processed "
-                        "sequentially",
+                        "--configuration",
+                        help="configuration files",
                         nargs="+",
                         required=True)
 
