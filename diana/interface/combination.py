@@ -37,12 +37,6 @@ MODULE_SIZE_COMBINATION: dict[str, Callable[[Iterable[int]], float]] = {
 CONFIDENCE_SCORE_COMBINATION: dict[Optional[str], Callable[[dict[
     str, float]], float]] = {
         None: lambda scores: float(bool(scores.values())),
-        "BioGRID": lambda scores: scores.get("BioGRID", 0.0),
-        "CORUM": lambda scores: scores.get("CORUM", 0.0),
-        "IntAct": lambda scores: scores.get("IntAct", 0.0),
-        "MINT": lambda scores: scores.get("MINT", 0.0),
-        "Reactome": lambda scores: scores.get("Reactome", 0.0),
-        "STRING": lambda scores: scores.get("STRING", 0.0),
         "max": lambda scores: max(scores.values()),
         "mean": lambda scores: statistics.mean(scores.values()),
         "median": lambda scores: statistics.median(scores.values()),

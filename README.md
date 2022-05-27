@@ -876,8 +876,7 @@ BioGRID, CORUM and Reactome. The combined score is reflected by edge
 transparency in Cytoscape. By default any edge receives a score of 1.0.
 Available settings are `null`, `"mean"`, `"median"`, `"max"`, `"min"`, `"sum"`,
 `"number"`, the number of queried databases supporting the protein-protein
-interaction. Further, `"BioGRID"`, `"CORUM"`, `"IntAct"`, `"MINT"`,
-`"Reactome"`, and `"STRING"` each refer to the score in the particular database.
+interaction.
 
 ---
 
@@ -1429,9 +1428,7 @@ BioGRID, CORUM and Reactome. The combined score is used as edge weight in
 community detection. By default any edge receives a score of 1.0, corresponding
 to an unweighted network. Available settings are `null`, `"mean"`, `"median"`,
 `"max"`, `"min"`, `"sum"`, `"number"`, the number of queried databases
-supporting the protein-protein interaction. Further, `"BioGRID"`, `"CORUM"`,
-`"IntAct"`, `"MINT"`, `"Reactome"`, and `"STRING"` each refer to the score in
-that particular database.
+supporting the protein-protein interaction.
 
 ```json
 [
