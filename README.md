@@ -10,10 +10,10 @@ post-translational modification, querying protein-protein interaction data from
 BioGRID, CORUM, IntAct, MINT, Reactome, and STRING.
 
 The enrichment of CORUM protein complexes, Gene Ontology terms, and Reactome
-pathways by protein-protein interaction networks, their communities and subsets
-of their proteins derived from the distributions of mass spectrometric
-measurements across them can be assessed as well as the distribution of mass
-spectrometric measurements across communities.
+pathways by protein-protein interaction networks, their separate communities and
+subsets of proteins, determined with respect to the distribution of
+changes in post-translational modification across them, can be assessed as well
+as the distribution of changes across communities.
 
 In addition to protein-protein interaction networks and their communities,
 networks of Gene Ontology terms or Reactome pathways reporting enrichments of
@@ -350,11 +350,10 @@ default, ratios are assumed, corresponding to `null`. Available settings are
 
 ---
 
-The specification of sources of protein-protein interactions for the assembly of
-the protein-protein interaction network. The protein-protein interaction network
-is exported if any source is specified. Database-specific requirements can be
-specified, where each must be satisfied for an interaction to be incorporated. A
-protein-protein interaction network is only exported if any database is queried.
+The interface to sources of protein-protein interactions for the protein-protein
+interaction network. The protein-protein interaction network is exported only if
+any source is queried. Database-specific requirements can be defined, where
+each must be satisfied for an interaction to be incorporated.
 
 ```json
 [
@@ -1472,9 +1471,8 @@ Alternatively, the distribution of measurements within separate communities can
 be compared with the remaining network with respect to either proteins or
 modification sites.
 
-The statistical tests act as filter on the communities of the protein-protein
-interaction network in that a community is exported only if it appears
-significant with respect to any of the specified tests.
+A community is exported only if it appears significant with respect to any of
+the specified tests.
 
 ```json
 [
