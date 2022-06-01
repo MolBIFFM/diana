@@ -406,7 +406,7 @@ def process_workflow(configuration: Mapping[str, Any],
                 measurements=default.MEASUREMENT_RANGE[
                     configuration["Cytoscape"].get("node color",
                                                    {}).get("conversion")],
-                convert_measurement=conversion.MEASUREMENT_CONVERSION[
+                measurement_conversion=conversion.MEASUREMENT_CONVERSION[
                     configuration["Cytoscape"].get("node color",
                                                    {}).get("conversion")],
             )
@@ -1301,7 +1301,7 @@ def process_workflow(configuration: Mapping[str, Any],
                 measurements=default.MEASUREMENT_RANGE[
                     configuration["community detection"]
                     ["measurement enrichment"].get("conversion")],
-                convert_measurement=conversion.MEASUREMENT_CONVERSION[
+                measurement_conversion=conversion.MEASUREMENT_CONVERSION[
                     configuration["community detection"]
                     ["measurement enrichment"].get("conversion")],
                 site_combination=combination.SITE_COMBINATION[

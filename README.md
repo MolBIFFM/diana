@@ -242,8 +242,9 @@ measurement are supported by Cytoscape styles.
 ```
 The table column reporting modification sites of measurements, according to
 which they are sorted. If an entry contains less positions than measurements,
-missing sites are substituted by 0. If an entry contains more positions than
-measurements, only as many as there are measurements are used in order.
+missing modification sites are substituted by 0. If an entry contains more
+positions than measurements, only as many as there are measurements are used in
+order of the entry.
 
 ```json
 [
@@ -797,13 +798,11 @@ exported.
     }
 ]
 ```
-The function used to combine distinct sites into protein-specific measurements.
-The function is applied to ratios, not their logarithm. The default setting is
-`"maxabs"`, corresponding to the largest absolute value. Available settings are
-`"mean"`, `"median"`, `"max"`, `"maxabs"`, `"min"`, `"minabs"`, `"sum"`,
-`"sumabs"` as well as `"increase"` and `"decrease"`, referring to the proportion
-of a proteins' sites exhibiting either, and `null`, so that sites are considered
-separately.
+The function used to combine distinct modification sites into protein-specific
+measurements. The function is applied to ratios, not their binary logarithm. The
+default setting is `"maxabs"`, corresponding to the largest absolute value.
+Available settings are `"mean"`, `"median"`, `"max"`, `"maxabs"`, `"min"`,
+`"minabs"`, `"sum"` and `"sumabs"`.
 
 ```json
 [
@@ -1044,13 +1043,11 @@ The modification considered to determine a subset of proteins.
     }
 ]
 ```
-The function used to combine distinct sites into protein-specific measurements.
-The function is applied to ratios, not their logarithm. The default setting is
-`"maxabs"`, corresponding to the largest absolute value. Available settings are
-`"mean"`, `"median"`, `"max"`, `"maxabs"`, `"min"`, `"minabs"`, `"sum"`,
-`"sumabs"` as well as `"increase"` and `"decrease"`, referring to the proportion
-of a proteins' sites exhibiting either, and `null`, so that sites are considered
-separately.
+The function used to combine distinct modification sites into protein-specific
+measurements. The function is applied to ratios, not their binary logarithm.
+The default setting is `"maxabs"`, corresponding to the largest absolute value.
+Available settings are `"mean"`, `"median"`, `"max"`, `"maxabs"`, `"min"`,
+`"minabs"`, `"sum"` and `"sumabs"`.
 
 ```json
 [
@@ -1242,13 +1239,11 @@ The modification considered to determine a subset of proteins.
     }
 ]
 ```
-The function used to combine distinct sites into protein-specific measurements.
-The function is applied to ratios, not their logarithm. The default setting is
-`"maxabs"`, corresponding to the largest absolute value. Available settings are
-`"mean"`, `"median"`, `"max"`, `"maxabs"`, `"min"`, `"minabs"`, `"sum"`,
-`"sumabs"` as well as `"increase"` and `"decrease"`, referring to the proportion
-of a proteins' sites exhibiting either, and `null`, so that sites are considered
-separately.
+The function used to combine distinct modification sites into protein-specific
+measurements. The function is applied to ratios, not their binary logarithm. The
+default setting is `"maxabs"`, corresponding to the largest absolute value.
+Available settings are `"mean"`, `"median"`, `"max"`, `"maxabs"`, `"min"`,
+`"minabs"`, `"sum"` and `"sumabs"`.
 
 ```json
 [
@@ -1696,13 +1691,11 @@ The modification considered to determine a subset of proteins.
     }
 ]
 ```
-The function used to combine distinct sites into protein-specific measurements.
-The function is applied to ratios, not their logarithm. The default setting is
-`"maxabs"`, corresponding to the largest absolute value. Available settings are
-`"mean"`, `"median"`, `"max"`, `"maxabs"`, `"min"`, `"minabs"`, `"sum"`,
-`"sumabs"` as well as `"increase"` and `"decrease"`, referring to the proportion
-of a proteins' sites exhibiting either, and `null`, so that sites are considered
-separately.
+The function used to combine distinct modification sites into protein-specific
+measurements. The function is applied to ratios, not their binary logarithm. The
+default setting is `"maxabs"`, corresponding to the largest absolute value.
+Available settings are `"mean"`, `"median"`, `"max"`, `"maxabs"`, `"min"`,
+`"minabs"`, `"sum"` and `"sumabs"`.
 
 ```json
 [
@@ -1833,6 +1826,27 @@ The Gene Ontology namespaces to consider. The default setting is
     {
       "community detection": {
         "measurement enrichment": {
+            "site combination": "maxabs"
+        },
+        "measurement location": {
+            "site combination": "maxabs"
+        }
+      }
+    }
+]
+```
+The function used to combine distinct modification sites into protein-specific
+measurements. The default setting is `"maxabs"`, corresponding to the largest
+absolute value. Available settings are `"mean"`, `"median"`, `"max"`,
+`"maxabs"`, `"min"`, `"minabs"`, `"sum"`, `"sumabs"` and `null` to consider
+modification sites separately.
+
+
+```json
+[
+    {
+      "community detection": {
+        "measurement enrichment": {
           "conversion": null
         }
       }
@@ -1862,26 +1876,6 @@ set, `[0.5, 2.0]` if `"conversion"` is set to `"ratio"`, `[25.0, 75.0]` if
 `"conversion"` is set to `"percentile"`, `[0.25, 0.75]` if `"conversion"` is set
 to `"quantile"`, and `[-1.0, 1.0]` if `"conversion"` is set to
 `"standard score"`.
-
-```json
-[
-    {
-      "community detection": {
-        "measurement enrichment": {
-          "proteins": {
-            "site combination": "maxabs"
-          }
-        }
-      }
-    }
-]
-```
-The function used to combine distinct sites into protein-specific measurements.
-The default setting is `"maxabs"`, corresponding to the largest absolute value.
-Available settings are `"mean"`, `"median"`, `"max"`, `"maxabs"`, `"min"`,
-`"minabs"`, `"sum"` and `"sumabs"` as well as `"increase"` and `"decrease"`,
-referring to the proportion of a proteins' sites exhibiting either, and `null`,
-so that sites are considered separately.
 
 ## References
 

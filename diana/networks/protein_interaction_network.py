@@ -153,10 +153,10 @@ def add_proteins_from_table(
             protein-accession, prioritized by largest absolute value.
         number_replicates: The minimum number of replicates to accept a
             measurement.
-        replicate_combination: A function to combine replicates into a single
+        replicate_combination: The function to combine replicates into a single
             measurement.
-        measurement_conversion: A function to convert the measurements reported
-            to log2-scale.
+        measurement_conversion: The function to convert the measurements
+            reported to their binary logarithm.
     """
     if os.path.splitext(file_name)[1].lstrip(".") in (
             "xls",
@@ -432,7 +432,7 @@ def set_measurements(
     site_combination: Callable[[Collection[float]],
                                float] = lambda sites: max(sites, key=abs),
     measurements: tuple[float, float] = (-1.0, 1.0),
-    convert_measurement: Callable[
+    measurement_conversion: Callable[
         [float, Collection[float]],
         float] = lambda measurement, measurements: measurement
 ) -> None:
@@ -446,19 +446,19 @@ def set_measurements(
         measurements: Proteins are categorized by whether their representative
             exceed either this range, the range defined by half the bounds or
             none.
-        convert_measurement: The function used convert the bounds to log2-fold
-            measurements.
+        measurement_conversion: The function used convert the bounds to their
+            binary logarithm.
     """
     times = get_times(network)
     modifications = {time: get_modifications(network, time) for time in times}
 
     measurement_range = {
         time: {
-            modification: (convert_measurement(
+            modification: (measurement_conversion(
                 measurements[0],
                 get_measurements(network, time, modification, site_combination),
             ),
-                           convert_measurement(
+                           measurement_conversion(
                                measurements[1],
                                get_measurements(network, time, modification,
                                                 site_combination)))
@@ -1151,7 +1151,7 @@ def get_measurement_enrichment(
     network: nx.Graph,
     communities: Iterable[nx.Graph],
     measurements: tuple[float, float] = (-1.0, 1.0),
-    convert_measurement: Callable[
+    measurement_conversion: Callable[
         [float, Collection[float]],
         float] = lambda measurement, measurements: measurement,
     site_combination: Optional[Callable[[Collection[float]], float]] = None,
@@ -1171,8 +1171,8 @@ def get_measurement_enrichment(
         communities: The communities of the protein-protein interaction network.
         measurements: Proteins are classified by whether their representative
             measurement exceeds this range.
-        convert_measurement: The function used convert the bounds to log2-fold
-            measurements.
+        measurement_conversion: The function used convert the bounds to their
+            binary logarithm.
         site_combination: An optional function to derive protein-specific
             measurements from site-specific measurements.
         enrichment_test: The statistical test used to assess enrichment of
@@ -1190,11 +1190,11 @@ def get_measurement_enrichment(
 
     for time in get_times(network):
         for modification in get_modifications(network, time):
-            measurement_range = (convert_measurement(
+            measurement_range = (measurement_conversion(
                 measurements[0],
                 get_measurements(network, time, modification,
                                  site_combination)),
-                                 convert_measurement(
+                                 measurement_conversion(
                                      measurements[1],
                                      get_measurements(network, time,
                                                       modification,

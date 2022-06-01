@@ -4,8 +4,6 @@ import statistics
 from typing import Callable, Collection, Iterable, Optional
 
 SITE_COMBINATION: dict[str, Callable[[Collection[float]], float]] = {
-    "decrease": lambda sites: sum(site < 1.0 for site in sites) / len(sites),
-    "increase": lambda sites: sum(site > 1.0 for site in sites) / len(sites),
     "max": max,
     "maxabs": lambda sites: max(sites, key=abs),
     "mean": statistics.mean,
