@@ -1,7 +1,7 @@
 """
 Gene Ontology network
 
-Nodes are Gene Ontology terms annotated with proteins from a species of
+Nodes are Gene Ontology terms associated with proteins from a species of
 interest. Edges are directed term relationships within the Gene Ontology.
 """
 
