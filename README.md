@@ -1447,8 +1447,8 @@ community detection algorithm.
     }
 ]
 ```
-The function used to combine community sizes in terms of nodes into the decisive
-value compared to the community size  threshold. The default setting is
+The function used to combine community sizes in terms of nodes into the value
+decisive to meeting the community size threshold. The default setting is
 `"mean"`. Available settings are `"mean"`, `"median"`, `"max"`, and `"min"`.
 
 ---
