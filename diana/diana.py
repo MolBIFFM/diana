@@ -1405,7 +1405,7 @@ def process_configuration_file(configuration_file: str) -> None:
 
 
 def main() -> None:
-    """Launches workflow execution."""
+    """Launches concurrent workflow execution."""
     parser = argparse.ArgumentParser(
         description="DIANA: Data Integration And Network-based Analysis for "
         "post-translational modification mass spectrometry data")
@@ -1441,7 +1441,7 @@ def main() -> None:
     with concurrent.futures.ProcessPoolExecutor(
             max_workers=args.processes) as executor:
         for process in executor.map(process_configuration_file,
-                                    args.configurations):
+                                    args.configuration):
             if process:
                 process.results()
 
