@@ -818,8 +818,8 @@ Available settings are `"mean"`, `"median"`, `"max"`, `"maxabs"`, `"min"`,
     }
 ]
 ```
-The conversion of measurements that a range refers to. It defaults to the
-binary logarithm of a measurement but may be set to `"ratio"`, `"percentile"`,
+The conversion that a measurement range refers to. It defaults to the binary
+logarithm of a measurement but may be set to `"ratio"`, `"percentile"`,
 `"quantile"` or `"standard score"`, computed with respect to the distribution of
 a particular modification at a particular time of measurement across the
 protein-protein interaction network.
@@ -1076,8 +1076,8 @@ Available settings are `"mean"`, `"median"`, `"max"`, `"maxabs"`, `"min"`,
     }
 ]
 ```
-The conversion of measurements that a range refers to. It defaults to the
-binary logarithm of a measurement but may be set to `"ratio"`, `"percentile"`,
+The conversion that a measurement range refers to. It defaults to the binary
+logarithm of a measurement but may be set to `"ratio"`, `"percentile"`,
 `"quantile"` or `"standard score"`, computed with respect to the distribution of
 a particular modification at a particular time of measurement across the
 protein-protein interaction network.
@@ -1152,16 +1152,16 @@ methods. The default setting is `[]`, corresponding to any annotation.
     {
       "Gene Ontology enrichment": {
         "namespaces": [
-          "cellular_component",
-          "molecular_function",
-          "biological_process"
+          "cellular component",
+          "molecular function",
+          "biological process"
         ]
       }
     }
 ]
 ```
 The Gene Ontology namespaces to consider. The default setting is
-`["cellular_component", "molecular_function" "biological_process"]`.
+`["cellular component", "molecular function" "biological process"]`.
 
 ---
 
@@ -1265,8 +1265,8 @@ Available settings are `"mean"`, `"median"`, `"max"`, `"maxabs"`, `"min"`,
     }
 ]
 ```
-The conversion of measurements that a range refers to. It defaults to the
-binary logarithm of a measurement but may be set to `"ratio"`, `"percentile"`,
+The conversion that a measurement range refers to. It defaults to the binary
+logarithm of a measurement but may be set to `"ratio"`, `"percentile"`,
 `"quantile"` or `"standard score"`, computed with respect to the distribution of
 a particular modification at a particular time of measurement across the
 protein-protein interaction network.
@@ -1366,16 +1366,16 @@ completely supported setting is `9606`, corresponding to Homo sapiens.
     {
       "Gene Ontology network": {
         "namespaces": [
-          "cellular_component",
-          "molecular_function",
-          "biological_process"
+          "cellular component",
+          "molecular function",
+          "biological process"
         ]
       }
     }
 ]
 ```
 The Gene Ontology namespaces to consider. The default setting is
-`["cellular_component", "molecular_function" "biological_process"]`.
+`["cellular component", "molecular function" "biological process"]`.
 
 ---
 
@@ -1726,8 +1726,8 @@ Available settings are `"mean"`, `"median"`, `"max"`, `"maxabs"`, `"min"`,
     }
 ]
 ```
-The conversion of measurements that a range refers to. It defaults to the
-binary logarithm of a measurement but may be set to `"ratio"`, `"percentile"`,
+The conversion that a measurement range refers to. It defaults to the binary
+logarithm of a measurement but may be set to `"ratio"`, `"percentile"`,
 `"quantile"` or `"standard score"`, computed with respect to the distribution of
 a particular modification at a particular time of measurement across the
 protein-protein interaction network. Conversions refer to separate communities.
@@ -1809,9 +1809,9 @@ methods. The default setting is `[]`, corresponding to any annotation.
       "community detection": {
         "Gene Ontology enrichment": {
           "namespaces": [
-              "cellular_component",
-              "molecular_function",
-              "biological_process"
+              "cellular component",
+              "molecular function",
+              "biological process"
             ]
         }
       }
@@ -1819,7 +1819,7 @@ methods. The default setting is `[]`, corresponding to any annotation.
 ]
 ```
 The Gene Ontology namespaces to consider. The default setting is
-`["cellular_component", "molecular_function" "biological_process"]`.
+`["cellular component", "molecular function" "biological process"]`.
 
 ```json
 [
@@ -1839,7 +1839,7 @@ The function used to combine distinct modification sites into protein-specific
 measurements. The default setting is `"maxabs"`, corresponding to the largest
 absolute value. Available settings are `"mean"`, `"median"`, `"max"`,
 `"maxabs"`, `"min"`, `"minabs"`, `"sum"`, `"sumabs"` and `null` to consider
-modification sites separately.
+modification sites individually.
 
 
 ```json
@@ -1853,11 +1853,11 @@ modification sites separately.
     }
 ]
 ```
-The conversion of measurements that a range refers to. It defaults to the
-binary logarithm of a measurement but may be set to `"ratio"`, `"percentile"`,
+The conversion that a measurement range refers to. It defaults to the binary
+logarithm of a measurement but may be set to `"ratio"`, `"percentile"`,
 `"quantile"` or `"standard score"`, computed with respect to the distribution of
-a particular modification at a particular time of measurement across the
-protein-protein interaction network.
+a particular modification at a particular time of measurement across each
+community of the protein-protein interaction network.
 
 ```json
 [
@@ -1870,9 +1870,9 @@ protein-protein interaction network.
     }
 ]
 ```
-The range of measurements categorizing proteins by whether the range is exceeded
-or not. The adaptive default setting is `[-1.0, 1.0]` if `"conversion"` is not
-set, `[0.5, 2.0]` if `"conversion"` is set to `"ratio"`, `[25.0, 75.0]` if
+The range of measurements to group proteins by whether the range is exceeded or
+not. The adaptive default setting is `[-1.0, 1.0]` if `"conversion"` is not set,
+`[0.5, 2.0]` if `"conversion"` is set to `"ratio"`, `[25.0, 75.0]` if
 `"conversion"` is set to `"percentile"`, `[0.25, 0.75]` if `"conversion"` is set
 to `"quantile"`, and `[-1.0, 1.0]` if `"conversion"` is set to
 `"standard score"`.
