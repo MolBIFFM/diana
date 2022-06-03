@@ -6,9 +6,10 @@
           "post-translational modification": "P",
           "file": "data/shigella/phosphorylation/mcp.M113.029918-2.xls",
           "sheet": "Raw Data",
+          "header": 2,
           "accession column": "protein",
           "accession format": "sp\\|(.+?)\\|[A-Z0-9]+_HUMAN",
-          "position column": "phosphosite",
+          "position column": "phosphosites",
           "position format": "(?:^|,)(\\d+)_[STY]",
           "replicate columns": [
             "wt15minvscontrolratio"
@@ -19,9 +20,10 @@
           "post-translational modification": "P",
           "file": "data/shigella/phosphorylation/mcp.M113.029918-2.xls",
           "sheet": "Raw Data",
+          "header": 2,
           "accession column": "protein",
           "accession format": "sp\\|(.+?)\\|[A-Z0-9]+_HUMAN",
-          "position column": "phosphosite",
+          "position column": "phosphosites",
           "position format": "(?:^|,)(\\d+)_[STY]",
           "replicate columns": [
             "wt30minvscontrolratio"
@@ -32,9 +34,10 @@
           "post-translational modification": "P",
           "file": "data/shigella/phosphorylation/mcp.M113.029918-2.xls",
           "sheet": "Raw Data",
+          "header": 2,
           "accession column": "protein",
           "accession format": "sp\\|(.+?)\\|[A-Z0-9]+_HUMAN",
-          "position column": "phosphosite",
+          "position column": "phosphosites",
           "position format": "(?:^|,)(\\d+)_[STY]",
           "replicate columns": [
             "wt60minvscontrolratio"
@@ -45,9 +48,10 @@
           "post-translational modification": "P",
           "file": "data/shigella/phosphorylation/mcp.M113.029918-2.xls",
           "sheet": "Raw Data",
+          "header": 2,
           "accession column": "protein",
           "accession format": "sp\\|(.+?)\\|[A-Z0-9]+_HUMAN",
-          "position column": "phosphosite",
+          "position column": "phosphosites",
           "position format": "(?:^|,)(\\d+)_[STY]",
           "replicate columns": [
             "wt120minvscontrolratio"
