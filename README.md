@@ -907,6 +907,24 @@ The statistical test to assess enrichment. The default setting is
 [
     {
       "CORUM enrichment": {
+        "increase": true
+      },
+      "Gene Ontology enrichment": {
+        "increase": true
+      },
+      "Reactome enrichment": {
+        "increase": true
+      }
+    }
+]
+```
+If `true`, assess overrepresentation, otherwise underrepresentation. The default
+setting is `true`.
+
+```json
+[
+    {
+      "CORUM enrichment": {
         "correction": "Benjamini-Hochberg"
       },
       "Gene Ontology enrichment": {
@@ -1333,6 +1351,21 @@ The statistical test to assess enrichment. The default setting is
 [
     {
       "Gene Ontology network": {
+        "increase": true
+      },
+      "Reactome network": {
+        "increase": true
+      }
+    }
+]
+```
+If `true`, assess overrepresentation, otherwise underrepresentation. The default
+setting is `true`.
+
+```json
+[
+    {
+      "Gene Ontology network": {
         "correction": "Benjamini-Hochberg"
       },
       "Reactome network": {
@@ -1474,38 +1507,27 @@ the specified tests.
     {
       "community detection": {
         "CORUM enrichment": {
-          "test": "hypergeometric"
+          "increase": true
         },
         "Gene Ontology enrichment": {
-          "test": "hypergeometric"
+          "increase": true
         },
         "Reactome enrichment": {
-          "test": "hypergeometric"
+          "increase": true
         },
         "measurement enrichment": {
-          "test": "hypergeometric"
-        }
-      }
-    }
-]
-```
-The statistical test to assess enrichment. The default setting is
-`"hypergeometric"`. Available settings are `"binomial"` and `"hypergeometric"`.
-
-```json
-[
-    {
-      "community detection": {
+          "increase": true
+        },
         "measurement location": {
-          "test": "Wilcoxon"
+          "increase": true
         }
       }
     }
 ]
 ```
-The statistical test to compare modification- and time-specific measurement
-distributions of each community in with the remaining network. The default and
-setting is `"Wilcoxon"`. Available settings are `"Welch"` and `"Wilcoxon"`.
+If `true`, assess overrepresentation, otherwise underrepresentation concerning
+enrichment and relative increase, otherwise relative decrease of measurements in
+a community. The default setting is `true`.
 
 ```json
 [
@@ -1558,6 +1580,58 @@ The procedure to correct p-values for multiple testing. The default setting is
 ]
 ```
 The corrected p-value threshold. The default setting is `1.0`.
+
+```json
+[
+    {
+      "community detection": {
+        "CORUM enrichment": {
+          "test": "hypergeometric"
+        },
+        "Gene Ontology enrichment": {
+          "test": "hypergeometric"
+        },
+        "Reactome enrichment": {
+          "test": "hypergeometric"
+        },
+        "measurement enrichment": {
+          "test": "hypergeometric"
+        }
+      }
+    }
+]
+```
+The statistical test to assess enrichment. The default setting is
+`"hypergeometric"`. Available settings are `"binomial"` and `"hypergeometric"`.
+
+```json
+[
+    {
+      "community detection": {
+        "measurement location": {
+          "test": "Wilcoxon"
+        }
+      }
+    }
+]
+```
+The statistical test to compare modification- and time-specific measurement
+distributions of each community in with the remaining network. The default and
+setting is `"Wilcoxon"`. Available settings are `"Welch"` and `"Wilcoxon"`.
+
+```json
+[
+    {
+      "community detection": {
+        "measurement location": {
+          "absolute": true
+        }
+      }
+    }
+]
+```
+If `true` test the absolute values of the measurements, otherwise the
+measurements. The default value is `true`.
 
 ```json
 [

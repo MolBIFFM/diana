@@ -472,9 +472,10 @@ def process_workflow(configuration: Mapping[str, Any],
 
             corum_enrichment = corum.get_enrichment(
                 [frozenset(proteins)],
-                enrichment_test=test.ENRICHMENT_TEST[
+                enrichment_test=test.ENRICHMENT_TEST[(
                     configuration["CORUM enrichment"].get(
-                        "test", "hypergeometric")],
+                        "test", "hypergeometric"),
+                    configuration["CORUM enrichment"].get("increase", True))],
                 multiple_testing_correction=correction.CORRECTION[
                     configuration["CORUM enrichment"].get(
                         "correction", "Benjamini-Hochberg")],
@@ -492,9 +493,10 @@ def process_workflow(configuration: Mapping[str, Any],
         else:
             corum_enrichment = corum.get_enrichment(
                 [frozenset(network.nodes())],
-                enrichment_test=test.ENRICHMENT_TEST[
+                enrichment_test=test.ENRICHMENT_TEST[(
                     configuration["CORUM enrichment"].get(
-                        "test", "hypergeometric")],
+                        "test", "hypergeometric"),
+                    configuration["CORUM enrichment"].get("increase", True))],
                 multiple_testing_correction=correction.CORRECTION[
                     configuration["CORUM enrichment"].get(
                         "correction", "Benjamini-Hochberg")],
@@ -566,9 +568,11 @@ def process_workflow(configuration: Mapping[str, Any],
 
             gene_ontology_enrichment = gene_ontology.get_enrichment(
                 [frozenset(proteins)],
-                enrichment_test=test.ENRICHMENT_TEST[
+                enrichment_test=test.ENRICHMENT_TEST[(
                     configuration["Gene Ontology enrichment"].get(
-                        "test", "hypergeometric")],
+                        "test", "hypergeometric"),
+                    configuration["Gene Ontology enrichment"].get(
+                        "increase", True))],
                 multiple_testing_correction=correction.CORRECTION[
                     configuration["Gene Ontology enrichment"].get(
                         "correction", "Benjamini-Hochberg")],
@@ -592,9 +596,11 @@ def process_workflow(configuration: Mapping[str, Any],
         else:
             gene_ontology_enrichment = gene_ontology.get_enrichment(
                 [frozenset(network.nodes())],
-                enrichment_test=test.ENRICHMENT_TEST[
+                enrichment_test=test.ENRICHMENT_TEST[(
                     configuration["Gene Ontology enrichment"].get(
-                        "test", "hypergeometric")],
+                        "test", "hypergeometric"),
+                    configuration["Gene Ontology enrichment"].get(
+                        "increase", True))],
                 multiple_testing_correction=correction.CORRECTION[
                     configuration["Gene Ontology enrichment"].get(
                         "correction", "Benjamini-Hochberg")],
@@ -671,9 +677,11 @@ def process_workflow(configuration: Mapping[str, Any],
 
             reactome_enrichment = reactome.get_enrichment(
                 [frozenset(proteins)],
-                enrichment_test=test.ENRICHMENT_TEST[
+                enrichment_test=test.ENRICHMENT_TEST[(
                     configuration["Reactome enrichment"].get(
-                        "test", "hypergeometric")],
+                        "test", "hypergeometric"),
+                    configuration["Reactome enrichment"].get("increase",
+                                                             True))],
                 multiple_testing_correction=correction.CORRECTION[
                     configuration["Reactome enrichment"].get(
                         "correction", "Benjamini-Hochberg")],
@@ -688,9 +696,11 @@ def process_workflow(configuration: Mapping[str, Any],
         else:
             reactome_enrichment = reactome.get_enrichment(
                 [frozenset(network.nodes())],
-                enrichment_test=test.ENRICHMENT_TEST[
+                enrichment_test=test.ENRICHMENT_TEST[(
                     configuration["Reactome enrichment"].get(
-                        "test", "hypergeometric")],
+                        "test", "hypergeometric"),
+                    configuration["Reactome enrichment"].get("increase",
+                                                             True))],
                 multiple_testing_correction=correction.CORRECTION[
                     configuration["Reactome enrichment"].get(
                         "correction", "Benjamini-Hochberg")],
@@ -765,9 +775,11 @@ def process_workflow(configuration: Mapping[str, Any],
                         "biological process"
                     ])
                 ],
-                enrichment_test=test.ENRICHMENT_TEST[
+                enrichment_test=test.ENRICHMENT_TEST[(
                     configuration["Gene Ontology network"].get(
-                        "test", "hypergeometric")],
+                        "test", "hypergeometric"),
+                    configuration["Gene Ontology network"].get(
+                        "increase", True))],
                 multiple_testing_correction=correction.CORRECTION[
                     configuration["Gene Ontology network"].get(
                         "correction", "Benjamini-Hochberg")],
@@ -785,9 +797,11 @@ def process_workflow(configuration: Mapping[str, Any],
                         "biological process"
                     ])
                 ],
-                enrichment_test=test.ENRICHMENT_TEST[
+                enrichment_test=test.ENRICHMENT_TEST[(
                     configuration["Gene Ontology network"].get(
-                        "test", "hypergeometric")],
+                        "test", "hypergeometric"),
+                    configuration["Gene Ontology network"].get(
+                        "increase", True))],
                 multiple_testing_correction=correction.CORRECTION[
                     configuration["Gene Ontology network"].get(
                         "correction", "Benjamini-Hochberg")],
@@ -859,9 +873,10 @@ def process_workflow(configuration: Mapping[str, Any],
 
             pathway_network = reactome_network.get_network(
                 proteins,
-                enrichment_test=test.ENRICHMENT_TEST[
+                enrichment_test=test.ENRICHMENT_TEST[(
                     configuration["Reactome network"].get(
-                        "test", "hypergeometric")],
+                        "test", "hypergeometric"),
+                    configuration["Reactome network"].get("increase", True))],
                 multiple_testing_correction=correction.CORRECTION[
                     configuration["Reactome network"].get(
                         "correction", "Benjamini-Hochberg")],
@@ -871,9 +886,10 @@ def process_workflow(configuration: Mapping[str, Any],
         else:
             pathway_network = reactome_network.get_network(
                 network.nodes(),
-                enrichment_test=test.ENRICHMENT_TEST[
+                enrichment_test=test.ENRICHMENT_TEST[(
                     configuration["Reactome network"].get(
-                        "test", "hypergeometric")],
+                        "test", "hypergeometric"),
+                    configuration["Reactome network"].get("increase", True))],
                 multiple_testing_correction=correction.CORRECTION[
                     configuration["Reactome network"].get(
                         "correction", "Benjamini-Hochberg")],
@@ -985,9 +1001,11 @@ def process_workflow(configuration: Mapping[str, Any],
                         frozenset(cmty_proteins[community])
                         for community in communities
                     ],
-                    enrichment_test=test.ENRICHMENT_TEST[
+                    enrichment_test=test.ENRICHMENT_TEST[(
                         configuration["CORUM enrichment"].get(
-                            "test", "hypergeometric")],
+                            "test", "hypergeometric"),
+                        configuration["CORUM enrichment"].get("increase",
+                                                              True))],
                     multiple_testing_correction=correction.CORRECTION[
                         configuration["CORUM enrichment"].get(
                             "correction", "Benjamini-Hochberg")],
@@ -1015,9 +1033,11 @@ def process_workflow(configuration: Mapping[str, Any],
             else:
                 corum_enrichment = corum.get_enrichment(
                     [frozenset(community.nodes()) for community in communities],
-                    enrichment_test=test.ENRICHMENT_TEST[
+                    enrichment_test=test.ENRICHMENT_TEST[(
                         configuration["community detection"]
-                        ["CORUM enrichment"].get("test", "hypergeometric")],
+                        ["CORUM enrichment"].get("test", "hypergeometric"),
+                        configuration["community detection"]
+                        ["CORUM enrichment"].get("increase", True))],
                     multiple_testing_correction=correction.CORRECTION[
                         configuration["community detection"]
                         ["CORUM enrichment"].get("correction",
@@ -1115,9 +1135,12 @@ def process_workflow(configuration: Mapping[str, Any],
                         frozenset(cmty_proteins[community])
                         for community in communities
                     ],
-                    enrichment_test=test.ENRICHMENT_TEST[configuration[
-                        "community detection"]["Gene Ontology enrichment"].get(
-                            "test", "hypergeometric")],
+                    enrichment_test=test.ENRICHMENT_TEST[(
+                        configuration["community detection"]
+                        ["Gene Ontology enrichment"].get(
+                            "test", "hypergeometric"),
+                        configuration["community detection"]
+                        ["Gene Ontology enrichment"].get("increase", True))],
                     multiple_testing_correction=correction.CORRECTION[
                         configuration["community detection"]
                         ["Gene Ontology enrichment"].get(
@@ -1152,9 +1175,12 @@ def process_workflow(configuration: Mapping[str, Any],
             else:
                 gene_ontology_enrichment = gene_ontology.get_enrichment(
                     [frozenset(community.nodes()) for community in communities],
-                    enrichment_test=test.ENRICHMENT_TEST[configuration[
-                        "community detection"]["Gene Ontology enrichment"].get(
-                            "test", "hypergeometric")],
+                    enrichment_test=test.ENRICHMENT_TEST[(
+                        configuration["community detection"]
+                        ["Gene Ontology enrichment"].get(
+                            "test", "hypergeometric"),
+                        configuration["community detection"]
+                        ["Gene Ontology enrichment"].get("increase", True))],
                     multiple_testing_correction=correction.CORRECTION[
                         configuration["community detection"]
                         ["Gene Ontology enrichment"].get(
@@ -1257,9 +1283,11 @@ def process_workflow(configuration: Mapping[str, Any],
                         frozenset(cmty_proteins[community])
                         for community in communities
                     ],
-                    enrichment_test=test.ENRICHMENT_TEST[
+                    enrichment_test=test.ENRICHMENT_TEST[(
                         configuration["community detection"]
-                        ["Reactome enrichment"].get("test", "hypergeometric")],
+                        ["Reactome enrichment"].get("test", "hypergeometric"),
+                        configuration["community detection"]
+                        ["Reactome enrichment"].get("increase", True))],
                     multiple_testing_correction=correction.CORRECTION[
                         configuration["community detection"]
                         ["Reactome enrichment"].get("correction",
@@ -1286,9 +1314,11 @@ def process_workflow(configuration: Mapping[str, Any],
             else:
                 reactome_enrichment = reactome.get_enrichment(
                     [frozenset(community.nodes()) for community in communities],
-                    enrichment_test=test.ENRICHMENT_TEST[
+                    enrichment_test=test.ENRICHMENT_TEST[(
                         configuration["community detection"]
-                        ["Reactome enrichment"].get("test", "hypergeometric")],
+                        ["Reactome enrichment"].get("test", "hypergeometric"),
+                        configuration["community detection"]
+                        ["Reactome enrichment"].get("increase", True))],
                     multiple_testing_correction=correction.CORRECTION[
                         configuration["community detection"]
                         ["Reactome enrichment"].get("correction",
@@ -1326,9 +1356,11 @@ def process_workflow(configuration: Mapping[str, Any],
                     configuration["community detection"]
                     ["measurement enrichment"].get("site combination",
                                                    "maxabs")],
-                enrichment_test=test.ENRICHMENT_TEST[
+                enrichment_test=test.ENRICHMENT_TEST[(
                     configuration["community detection"]
-                    ["measurement enrichment"].get("test", "hypergeometric")],
+                    ["measurement enrichment"].get("test", "hypergeometric"),
+                    configuration["community detection"]
+                    ["measurement enrichment"].get("increase", True))],
                 multiple_testing_correction=correction.CORRECTION[
                     configuration["community detection"]
                     ["measurement enrichment"].get("correction",
@@ -1356,9 +1388,13 @@ def process_workflow(configuration: Mapping[str, Any],
                 combination.SITE_COMBINATION[
                     configuration["community detection"]
                     ["measurement location"].get("site combination", "maxabs")],
-                location_test=test.LOCATION_TEST[
+                location_test=test.LOCATION_TEST[(
                     configuration["community detection"]
-                    ["measurement location"].get("test", "Wilcoxon")],
+                    ["measurement location"].get("test", "Wilcoxon"),
+                    configuration["community detection"]
+                    ["measurement location"].get("increase", True),
+                    configuration["community detection"]
+                    ["measurement location"].get("absolute", True))],
                 multiple_testing_correction=correction.CORRECTION[
                     configuration["community detection"]
                     ["measurement location"].get("correction",
