@@ -1346,8 +1346,8 @@ def process_workflow(configuration: Mapping[str, Any],
                         if p <= configuration["community detection"][
                                 "measurement enrichment"].get("p", 1.0):
                             export[community] = True
-                            logger.info(f"{k}\tmeasurement enrichment\t{time} "
-                                        f"{modification}\t{p:.2e}")
+                            logger.info(f"{k}\t{time} {modification}\t{p:.2e}\t"
+                                        "measurement enrichment")
 
         if "measurement location" in configuration["community detection"]:
             location = protein_interaction_network.get_measurement_location(
@@ -1376,8 +1376,8 @@ def process_workflow(configuration: Mapping[str, Any],
                         if p <= configuration["community detection"][
                                 "measurement location"].get("p", 1.0):
                             export[community] = True
-                            logger.info(f"{k}\tmeasurement location\t{time} "
-                                        f"{modification}\t{p:.2e}")
+                            logger.info(f"{k}\t{time} {modification}\t{p:.2e}\t"
+                                        "measurement location")
 
         for k, community in enumerate(sorted(
                 communities,
