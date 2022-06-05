@@ -218,14 +218,14 @@ file. The default setting is `0`.
     {
       "proteins": [
         {
-          "post-translational modification": "M"
+          "post-translational modification": "PTM"
         }
       ]
     }
 ]
 ```
-An identifier for the type of post-translational modification associate with
-measurements from the corresponding file. The default setting is `"M"`.
+The identifier for the type of post-translational modification associate with
+measurements from the corresponding file. The default setting is `"PTM"`.
 Currently, up to two types of post-translational modification per time of
 measurement are supported by Cytoscape styles.
 

@@ -116,7 +116,7 @@ def add_proteins_from_table(
     sheet_name: int | str = 0,
     header: int = 0,
     time: int = 0,
-    modification: str = "",
+    modification: str = "PTM",
     position_column: int | str = "",
     position_format: re.Pattern = re.compile("^(.+?)$"),
     replicate_columns: Optional[Collection[int] | Collection[str]] = None,
