@@ -937,8 +937,8 @@ setting is `true`.
 ]
 ```
 The procedure to correct p-values for multiple testing. The default setting is
-`"Benjamini-Hochberg"`. Available settings are `"Benjamini-Hochberg"` and
-`"Bonferroni"`.
+`"Benjamini-Hochberg"`. Available settings are `"Benjamini-Hochberg"`,
+`"Benjamini-Yekutieli"`, `"Holm"` and `"Hommel"`.
 
 ```json
 [
@@ -1375,8 +1375,8 @@ setting is `true`.
 ]
 ```
 The procedure to correct p-values for multiple testing. The default setting is
-`"Benjamini-Hochberg"`. Available settings are `"Benjamini-Hochberg"` and
-`"Bonferroni"`.
+`"Benjamini-Hochberg"`. Available settings are `"Benjamini-Hochberg"`,
+`"Benjamini-Yekutieli"`, `"Holm"` and `"Hommel"`.
 
 ```json
 [
@@ -1553,8 +1553,8 @@ a community. The default setting is `true`.
 ]
 ```
 The procedure to correct p-values for multiple testing. The default setting is
-`"Benjamini-Hochberg"`. Available settings are `"Benjamini-Hochberg"` and
-`"Bonferroni"`.
+`"Benjamini-Hochberg"`. Available settings are `"Benjamini-Hochberg"`,
+`"Benjamini-Yekutieli"`, `"Holm"` and `"Hommel"`.
 
 ```json
 [
