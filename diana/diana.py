@@ -1472,14 +1472,6 @@ def main() -> None:
                         required=True)
 
     parser.add_argument(
-        "-l",
-        "--level",
-        help="logging level (default: INFO)",
-        type=str,
-        default="INFO",
-        choices=["CRITICAL", "ERROR", "WARNING", "INFO", "DEBUG"])
-
-    parser.add_argument(
         "-p",
         "--processes",
         help=
@@ -1490,7 +1482,7 @@ def main() -> None:
     args = parser.parse_args()
 
     logging.basicConfig(stream=sys.stdout,
-                        level=args.level,
+                        level=logging.INFO,
                         format="%(name)s\t%(message)s")
 
     with concurrent.futures.ProcessPoolExecutor(
