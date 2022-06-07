@@ -1609,15 +1609,16 @@ The statistical test to assess enrichment. The default setting is
     {
       "community detection": {
         "measurement location": {
-          "test": "Wilcoxon"
+          "test": "Mann-Whitney-Wilcoxon"
         }
       }
     }
 ]
 ```
 The statistical test to compare modification- and time-specific measurement
-distributions of each community in with the remaining network. The default and
-setting is `"Wilcoxon"`. Available settings are `"Welch"` and `"Wilcoxon"`.
+distributions of each community in with the remaining network. The default
+setting is `"Mann-Whitney-Wilcoxon"`. Available settings are
+`"Mann-Whitney-Wilcoxon"` and `"Welch"`.
 
 ```json
 [

@@ -17,6 +17,30 @@ ENRICHMENT_TEST: dict[tuple[str, bool], Callable[
 
 LOCATION_TEST: dict[tuple[str, bool, bool], Callable[
     [Collection[float], Collection[float]], float]] = {
+        ("Mann-Whitney-Wilcoxon", False, False):
+            lambda x, y: scipy.stats.mannwhitneyu(x,
+                                                  y,
+                                                  use_continuity=False,
+                                                  alternative="less",
+                                                  method="asymptotic").pvalue,
+        ("Mann-Whitney-Wilcoxon", False, True):
+            lambda x, y: scipy.stats.mannwhitneyu([abs(xi) for xi in x],
+                                                  [abs(yi) for yi in y],
+                                                  use_continuity=False,
+                                                  alternative="less",
+                                                  method="asymptotic").pvalue,
+        ("Mann-Whitney-Wilcoxon", True, False):
+            lambda x, y: scipy.stats.mannwhitneyu(x,
+                                                  y,
+                                                  use_continuity=False,
+                                                  alternative="greater",
+                                                  method="asymptotic").pvalue,
+        ("Mann-Whitney-Wilcoxon", True, True):
+            lambda x, y: scipy.stats.mannwhitneyu([abs(xi) for xi in x],
+                                                  [abs(yi) for yi in y],
+                                                  use_continuity=False,
+                                                  alternative="greater",
+                                                  method="asymptotic").pvalue,
         ("Welch", False, False):
             lambda x, y: scipy.stats.ttest_ind(
                 x, y, equal_var=False, alternative="less").pvalue,
@@ -33,17 +57,4 @@ LOCATION_TEST: dict[tuple[str, bool, bool], Callable[
                                                [abs(yi) for yi in y],
                                                equal_var=False,
                                                alternative="greater").pvalue,
-        ("Wilcoxon", False, False):
-            lambda x, y: scipy.stats.ranksums(x, y, alternative="less").pvalue,
-        ("Wilcoxon", False, True):
-            lambda x, y: scipy.stats.ranksums([abs(xi) for xi in x],
-                                              [abs(yi) for yi in y],
-                                              alternative="less").pvalue,
-        ("Wilcoxon", True, False):
-            lambda x, y: scipy.stats.ranksums(x, y, alternative="greater").
-            pvalue,
-        ("Wilcoxon", True, True):
-            lambda x, y: scipy.stats.ranksums([abs(xi) for xi in x],
-                                              [abs(yi) for yi in y],
-                                              alternative="greater").pvalue,
     }
