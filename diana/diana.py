@@ -1391,7 +1391,8 @@ def process_workflow(configuration: Mapping[str, Any],
                     ["measurement location"].get("site combination", "maxabs")],
                 location_test=test.LOCATION_TEST[(
                     configuration["community detection"]
-                    ["measurement location"].get("test", "Wilcoxon"),
+                    ["measurement location"].get("test",
+                                                 "Mann-Whitney-Wilcoxon"),
                     configuration["community detection"]
                     ["measurement location"].get("increase", True),
                     configuration["community detection"]
