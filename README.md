@@ -925,19 +925,19 @@ setting is `true`.
 [
     {
       "CORUM enrichment": {
-        "correction": "Benjamini-Hochberg"
+        "correction": "Benjamini-Yektieli"
       },
       "Gene Ontology enrichment": {
-        "correction": "Benjamini-Hochberg"
+        "correction": "Benjamini-Yektieli"
       },
       "Reactome enrichment": {
-        "correction": "Benjamini-Hochberg"
+        "correction": "Benjamini-Yektieli"
       }
     }
 ]
 ```
 The procedure to correct p-values for multiple testing. The default setting is
-`"Benjamini-Hochberg"`. Available settings are `"Benjamini-Hochberg"`,
+`"Benjamini-Yekutieli"`. Available settings are `"Benjamini-Hochberg"`,
 `"Benjamini-Yekutieli"`, `"Holm"` and `"Hommel"`.
 
 ```json
@@ -1366,16 +1366,16 @@ setting is `true`.
 [
     {
       "Gene Ontology network": {
-        "correction": "Benjamini-Hochberg"
+        "correction": "Benjamini-Yektieli"
       },
       "Reactome network": {
-        "correction": "Benjamini-Hochberg"
+        "correction": "Benjamini-Yektieli"
       }
     }
 ]
 ```
 The procedure to correct p-values for multiple testing. The default setting is
-`"Benjamini-Hochberg"`. Available settings are `"Benjamini-Hochberg"`,
+`"Benjamini-Yekutieli"`. Available settings are `"Benjamini-Hochberg"`,
 `"Benjamini-Yekutieli"`, `"Holm"` and `"Hommel"`.
 
 ```json
@@ -1534,26 +1534,26 @@ a community. The default setting is `true`.
     {
       "community detection": {
         "CORUM enrichment": {
-          "correction": "Benjamini-Hochberg"
+          "correction": "Benjamini-Yektieli"
         },
         "Gene Ontology enrichment": {
-          "correction": "Benjamini-Hochberg"
+          "correction": "Benjamini-Yektieli"
         },
         "Reactome enrichment": {
-          "correction": "Benjamini-Hochberg"
+          "correction": "Benjamini-Yektieli"
         },
         "measurement enrichment": {
-          "correction": "Benjamini-Hochberg"
+          "correction": "Benjamini-Yektieli"
         },
         "measurement location": {
-          "correction": "Benjamini-Hochberg"
+          "correction": "Benjamini-Yektieli"
         }
       }
     }
 ]
 ```
 The procedure to correct p-values for multiple testing. The default setting is
-`"Benjamini-Hochberg"`. Available settings are `"Benjamini-Hochberg"`,
+`"Benjamini-Yekutieli"`. Available settings are `"Benjamini-Hochberg"`,
 `"Benjamini-Yekutieli"`, `"Holm"` and `"Hommel"`.
 
 ```json

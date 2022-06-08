@@ -479,7 +479,7 @@ def process_workflow(configuration: Mapping[str, Any],
                     configuration["CORUM enrichment"].get("increase", True))],
                 multiple_testing_correction=correction.CORRECTION[
                     configuration["CORUM enrichment"].get(
-                        "correction", "Benjamini-Hochberg")],
+                        "correction", "Benjamini-Yekutieli")],
                 purification_methods=configuration["CORUM enrichment"].get(
                     "purification methods", []),
                 organism=configuration["CORUM enrichment"].get(
@@ -500,7 +500,7 @@ def process_workflow(configuration: Mapping[str, Any],
                     configuration["CORUM enrichment"].get("increase", True))],
                 multiple_testing_correction=correction.CORRECTION[
                     configuration["CORUM enrichment"].get(
-                        "correction", "Benjamini-Hochberg")],
+                        "correction", "Benjamini-Yekutieli")],
                 purification_methods=configuration["CORUM enrichment"].get(
                     "purification methods", []),
                 organism=configuration["CORUM enrichment"].get(
@@ -576,7 +576,7 @@ def process_workflow(configuration: Mapping[str, Any],
                         "increase", True))],
                 multiple_testing_correction=correction.CORRECTION[
                     configuration["Gene Ontology enrichment"].get(
-                        "correction", "Benjamini-Hochberg")],
+                        "correction", "Benjamini-Yekutieli")],
                 organism=configuration["Gene Ontology enrichment"].get(
                     "organism", 9606),
                 namespaces=[
@@ -604,7 +604,7 @@ def process_workflow(configuration: Mapping[str, Any],
                         "increase", True))],
                 multiple_testing_correction=correction.CORRECTION[
                     configuration["Gene Ontology enrichment"].get(
-                        "correction", "Benjamini-Hochberg")],
+                        "correction", "Benjamini-Yekutieli")],
                 organism=configuration["Gene Ontology enrichment"].get(
                     "organism", 9606),
                 namespaces=[
@@ -685,7 +685,7 @@ def process_workflow(configuration: Mapping[str, Any],
                                                              True))],
                 multiple_testing_correction=correction.CORRECTION[
                     configuration["Reactome enrichment"].get(
-                        "correction", "Benjamini-Hochberg")],
+                        "correction", "Benjamini-Yekutieli")],
                 organism=configuration["Reactome enrichment"].get(
                     "organism", 9606))
 
@@ -704,7 +704,7 @@ def process_workflow(configuration: Mapping[str, Any],
                                                              True))],
                 multiple_testing_correction=correction.CORRECTION[
                     configuration["Reactome enrichment"].get(
-                        "correction", "Benjamini-Hochberg")],
+                        "correction", "Benjamini-Yekutieli")],
                 organism=configuration["Reactome enrichment"].get(
                     "organism", 9606))
 
@@ -783,7 +783,7 @@ def process_workflow(configuration: Mapping[str, Any],
                         "increase", True))],
                 multiple_testing_correction=correction.CORRECTION[
                     configuration["Gene Ontology network"].get(
-                        "correction", "Benjamini-Hochberg")],
+                        "correction", "Benjamini-Yekutieli")],
                 organism=configuration["Gene Ontology network"].get(
                     "organism", 9606))
 
@@ -805,7 +805,7 @@ def process_workflow(configuration: Mapping[str, Any],
                         "increase", True))],
                 multiple_testing_correction=correction.CORRECTION[
                     configuration["Gene Ontology network"].get(
-                        "correction", "Benjamini-Hochberg")],
+                        "correction", "Benjamini-Yekutieli")],
                 organism=configuration["Gene Ontology network"].get(
                     "organism", 9606))
 
@@ -880,7 +880,7 @@ def process_workflow(configuration: Mapping[str, Any],
                     configuration["Reactome network"].get("increase", True))],
                 multiple_testing_correction=correction.CORRECTION[
                     configuration["Reactome network"].get(
-                        "correction", "Benjamini-Hochberg")],
+                        "correction", "Benjamini-Yekutieli")],
                 organism=configuration["Reactome network"].get(
                     "organism", 9606))
 
@@ -893,7 +893,7 @@ def process_workflow(configuration: Mapping[str, Any],
                     configuration["Reactome network"].get("increase", True))],
                 multiple_testing_correction=correction.CORRECTION[
                     configuration["Reactome network"].get(
-                        "correction", "Benjamini-Hochberg")],
+                        "correction", "Benjamini-Yekutieli")],
                 organism=configuration["Reactome network"].get(
                     "organism", 9606))
 
@@ -1009,7 +1009,7 @@ def process_workflow(configuration: Mapping[str, Any],
                                                               True))],
                     multiple_testing_correction=correction.CORRECTION[
                         configuration["CORUM enrichment"].get(
-                            "correction", "Benjamini-Hochberg")],
+                            "correction", "Benjamini-Yekutieli")],
                     purification_methods=configuration["CORUM enrichment"].get(
                         "purification methods", []),
                     organism=configuration["CORUM enrichment"].get(
@@ -1042,7 +1042,7 @@ def process_workflow(configuration: Mapping[str, Any],
                     multiple_testing_correction=correction.CORRECTION[
                         configuration["community detection"]
                         ["CORUM enrichment"].get("correction",
-                                                 "Benjamini-Hochberg")],
+                                                 "Benjamini-Yekutieli")],
                     purification_methods=configuration["community detection"]
                     ["CORUM enrichment"].get("purification methods", []),
                     organism=configuration["community detection"]
@@ -1145,7 +1145,7 @@ def process_workflow(configuration: Mapping[str, Any],
                     multiple_testing_correction=correction.CORRECTION[
                         configuration["community detection"]
                         ["Gene Ontology enrichment"].get(
-                            "correction", "Benjamini-Hochberg")],
+                            "correction", "Benjamini-Yekutieli")],
                     organism=configuration["community detection"]
                     ["Gene Ontology enrichment"].get("organism", 9606),
                     namespaces=[
@@ -1185,7 +1185,7 @@ def process_workflow(configuration: Mapping[str, Any],
                     multiple_testing_correction=correction.CORRECTION[
                         configuration["community detection"]
                         ["Gene Ontology enrichment"].get(
-                            "correction", "Benjamini-Hochberg")],
+                            "correction", "Benjamini-Yekutieli")],
                     organism=configuration["community detection"]
                     ["Gene Ontology enrichment"].get("organism", 9606),
                     namespaces=[
@@ -1292,7 +1292,7 @@ def process_workflow(configuration: Mapping[str, Any],
                     multiple_testing_correction=correction.CORRECTION[
                         configuration["community detection"]
                         ["Reactome enrichment"].get("correction",
-                                                    "Benjamini-Hochberg")],
+                                                    "Benjamini-Yekutieli")],
                     organism=configuration["community detection"]
                     ["Reactome enrichment"].get("organism", 9606),
                     annotation_as_reference=configuration["community detection"]
@@ -1323,7 +1323,7 @@ def process_workflow(configuration: Mapping[str, Any],
                     multiple_testing_correction=correction.CORRECTION[
                         configuration["community detection"]
                         ["Reactome enrichment"].get("correction",
-                                                    "Benjamini-Hochberg")],
+                                                    "Benjamini-Yekutieli")],
                     organism=configuration["community detection"]
                     ["Reactome enrichment"].get("organism", 9606),
                     annotation_as_reference=configuration["community detection"]
@@ -1365,7 +1365,7 @@ def process_workflow(configuration: Mapping[str, Any],
                 multiple_testing_correction=correction.CORRECTION[
                     configuration["community detection"]
                     ["measurement enrichment"].get("correction",
-                                                   "Benjamini-Hochberg")])
+                                                   "Benjamini-Yekutieli")])
 
             for k, community in enumerate(sorted(
                     communities,
@@ -1400,7 +1400,7 @@ def process_workflow(configuration: Mapping[str, Any],
                 multiple_testing_correction=correction.CORRECTION[
                     configuration["community detection"]
                     ["measurement location"].get("correction",
-                                                 "Benjamini-Hochberg")])
+                                                 "Benjamini-Yekutieli")])
 
             for k, community in enumerate(sorted(
                     communities,
