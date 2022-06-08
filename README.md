@@ -925,13 +925,13 @@ setting is `true`.
 [
     {
       "CORUM enrichment": {
-        "correction": "Benjamini-Yektieli"
+        "correction": "Benjamini-Yekutieli"
       },
       "Gene Ontology enrichment": {
-        "correction": "Benjamini-Yektieli"
+        "correction": "Benjamini-Yekutieli"
       },
       "Reactome enrichment": {
-        "correction": "Benjamini-Yektieli"
+        "correction": "Benjamini-Yekutieli"
       }
     }
 ]
@@ -1366,10 +1366,10 @@ setting is `true`.
 [
     {
       "Gene Ontology network": {
-        "correction": "Benjamini-Yektieli"
+        "correction": "Benjamini-Yekutieli"
       },
       "Reactome network": {
-        "correction": "Benjamini-Yektieli"
+        "correction": "Benjamini-Yekutieli"
       }
     }
 ]
@@ -1534,19 +1534,19 @@ a community. The default setting is `true`.
     {
       "community detection": {
         "CORUM enrichment": {
-          "correction": "Benjamini-Yektieli"
+          "correction": "Benjamini-Yekutieli"
         },
         "Gene Ontology enrichment": {
-          "correction": "Benjamini-Yektieli"
+          "correction": "Benjamini-Yekutieli"
         },
         "Reactome enrichment": {
-          "correction": "Benjamini-Yektieli"
+          "correction": "Benjamini-Yekutieli"
         },
         "measurement enrichment": {
-          "correction": "Benjamini-Yektieli"
+          "correction": "Benjamini-Yekutieli"
         },
         "measurement location": {
-          "correction": "Benjamini-Yektieli"
+          "correction": "Benjamini-Yekutieli"
         }
       }
     }
