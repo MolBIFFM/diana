@@ -796,11 +796,11 @@ def process_workflow(configuration: Mapping[str, Any],
                 network.nodes(),
                 namespaces=[
                     namespace.replace(" ", "_")
-                    for namespace in configuration["Gene Ontology enrichment"].
-                    get("namespaces", [
-                        "cellular component", "molecular function",
-                        "biological process"
-                    ])
+                    for namespace in configuration["Gene Ontology network"].get(
+                        "namespaces", [
+                            "cellular component", "molecular function",
+                            "biological process"
+                        ])
                 ],
                 enrichment_test=test.ENRICHMENT_TEST[(
                     configuration["Gene Ontology network"].get(
@@ -1155,8 +1155,9 @@ def process_workflow(configuration: Mapping[str, Any],
                     organism=configuration["community detection"]
                     ["Gene Ontology enrichment"].get("organism", 9606),
                     namespaces=[
-                        namespace.replace(" ", "_") for namespace in
-                        configuration["Gene Ontology enrichment"].get(
+                        namespace.replace(" ", "_")
+                        for namespace in configuration["community detection"]
+                        ["Gene Ontology enrichment"].get(
                             "namespaces", [
                                 "cellular component", "molecular function",
                                 "biological process"
@@ -1195,8 +1196,9 @@ def process_workflow(configuration: Mapping[str, Any],
                     organism=configuration["community detection"]
                     ["Gene Ontology enrichment"].get("organism", 9606),
                     namespaces=[
-                        namespace.replace(" ", "_") for namespace in
-                        configuration["Gene Ontology enrichment"].get(
+                        namespace.replace(" ", "_")
+                        for namespace in configuration["community detection"]
+                        ["Gene Ontology enrichment"].get(
                             "namespaces", [
                                 "cellular component", "molecular function",
                                 "biological process"
