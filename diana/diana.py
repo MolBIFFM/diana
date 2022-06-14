@@ -105,6 +105,7 @@ def process_workflow(configuration: Mapping[str, Any],
                     database, {}).get("neighbors", 0) for database in
                     configuration["protein-protein interactions"])):
             interacting_proteins = set()
+
             if "BioGRID" in configuration[
                     "protein-protein interactions"] and configuration[
                         "protein-protein interactions"]["BioGRID"].get(
@@ -518,7 +519,7 @@ def process_workflow(configuration: Mapping[str, Any],
                     "intersection", False):
                 proteins = set(network.nodes())
             else:
-                set()
+                proteins = set()
 
             for subset in configuration["Gene Ontology enrichment"]["subsets"]:
                 if subset.get("time") in protein_interaction_network.get_times(
@@ -716,9 +717,12 @@ def process_workflow(configuration: Mapping[str, Any],
 
     if "Gene Ontology network" in configuration:
         if "subsets" in configuration["Gene Ontology network"]:
-            proteins = set(
-                network.nodes()) if configuration["Gene Ontology network"].get(
-                    "intersection", False) else set()
+            if configuration["Gene Ontology network"].get(
+                    "intersection", False):
+                proteins = set(network.nodes())
+            else:
+                proteins = set()
+
             for subset in configuration["Gene Ontology network"]["subsets"]:
                 if subset.get("time") in protein_interaction_network.get_times(
                         network) and subset.get(
@@ -770,11 +774,11 @@ def process_workflow(configuration: Mapping[str, Any],
                 proteins,
                 namespaces=[
                     namespace.replace(" ", "_")
-                    for namespace in configuration["Gene Ontology enrichment"].
-                    get("namespaces", [
-                        "cellular component", "molecular function",
-                        "biological process"
-                    ])
+                    for namespace in configuration["Gene Ontology network"].get(
+                        "namespaces", [
+                            "cellular component", "molecular function",
+                            "biological process"
+                        ])
                 ],
                 enrichment_test=test.ENRICHMENT_TEST[(
                     configuration["Gene Ontology network"].get(
@@ -822,9 +826,11 @@ def process_workflow(configuration: Mapping[str, Any],
 
     if "Reactome network" in configuration:
         if "subsets" in configuration["Reactome network"]:
-            proteins = set(
-                network.nodes()) if configuration["Reactome network"].get(
-                    "intersection", False) else set()
+            if configuration["Reactome network"].get("intersection", False):
+                proteins = set(network.nodes())
+            else:
+                proteins = set()
+
             for subset in configuration["Reactome network"]["subsets"]:
                 if subset.get("time") in protein_interaction_network.get_times(
                         network) and subset.get(

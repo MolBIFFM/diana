@@ -72,7 +72,7 @@ COMPONENTS: dict[str, dict[str, dict[str, dict[
                     "default": "DELTA"
                 },
                 "EDGE_TARGET_ARROW_UNSELECTED_PAINT": {
-                    "default": f"#{0:02X}{0:02X}{0:02X}"
+                    "default": f"#{132:02X}{132:02X}{132:02X}"
                 },
                 "EDGE_TOOLTIP": {
                     "default": ""
@@ -152,7 +152,7 @@ COMPONENTS: dict[str, dict[str, dict[str, dict[
                     "default": "255"
                 },
                 "NODE_BORDER_WIDTH": {
-                    "default": "0.0"
+                    "default": "1.0"
                 },
                 "NODE_COMPOUND_SHAPE": {
                     "default": "ROUND_RECTANGLE"
@@ -372,7 +372,7 @@ COMPONENTS: dict[str, dict[str, dict[str, dict[
                         "attributeName": "number of proteins",
                         "attributeType": "float",
                         "continuousMappingPoint": {
-                            "0.0": {
+                            "0": {
                                 "equalValue": "35.0",
                                 "greaterValue": "35.0",
                                 "lesserValue": "35.0"
@@ -527,6 +527,8 @@ def get_style(network: nx.Graph) -> ET.ElementTree:
                                         attrib={
                                             "attrValue":
                                                 key,
+                                            "equalValue":
+                                                values["equalValue"],
                                             "greaterValue":
                                                 values["greaterValue"],
                                             "lesserValue":

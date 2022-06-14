@@ -89,7 +89,7 @@ COMPONENTS: list[dict[str, dict[str, dict[str, dict[
                             "attributeName": "score",
                             "attributeType": "float",
                             "continuousMappingPoint": {
-                                "0.0": {
+                                "0": {
                                     "equalValue": "0",
                                     "greaterValue": "0",
                                     "lesserValue": "0"

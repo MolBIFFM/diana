@@ -72,7 +72,7 @@ COMPONENTS: dict[str, dict[str, dict[str, dict[
                     "default": "DELTA"
                 },
                 "EDGE_TARGET_ARROW_UNSELECTED_PAINT": {
-                    "default": f"#{0:02X}{0:02X}{0:02X}"
+                    "default": f"#{132:02X}{132:02X}{132:02X}"
                 },
                 "EDGE_TOOLTIP": {
                     "default": ""
@@ -152,7 +152,7 @@ COMPONENTS: dict[str, dict[str, dict[str, dict[
                     "default": "255"
                 },
                 "NODE_BORDER_WIDTH": {
-                    "default": "0.0"
+                    "default": "1.0"
                 },
                 "NODE_COMPOUND_SHAPE": {
                     "default": "ROUND_RECTANGLE"
@@ -363,7 +363,7 @@ COMPONENTS: dict[str, dict[str, dict[str, dict[
                         "attributeName": "number of proteins",
                         "attributeType": "float",
                         "continuousMappingPoint": {
-                            "0.0": {
+                            "0": {
                                 "equalValue": "35.0",
                                 "greaterValue": "35.0",
                                 "lesserValue": "35.0"
@@ -527,61 +527,60 @@ def get_style(network: nx.Graph) -> ET.ElementTree:
                                         },
                                     )
 
-                elif visual_property.get("discreteMapping"):
-                    if isinstance(visual_property["discreteMapping"], dict):
-                        if isinstance(
-                                visual_property["discreteMapping"]
-                            ["attributeName"], str) and isinstance(
-                                visual_property["discreteMapping"]
-                                ["attributeType"], str):
-                            discrete_mapping_sub_element = ET.SubElement(
-                                visual_property_sub_element,
-                                "discreteMapping",
-                                attrib={
-                                    "attributeName":
-                                        visual_property["discreteMapping"]
-                                        ["attributeName"],
-                                    "attributeType":
-                                        visual_property["discreteMapping"]
-                                        ["attributeType"],
-                                },
-                            )
+            elif visual_property.get("discreteMapping"):
+                if isinstance(visual_property["discreteMapping"], dict):
+                    if isinstance(
+                            visual_property["discreteMapping"]
+                        ["attributeName"], str) and isinstance(
+                            visual_property["discreteMapping"]["attributeType"],
+                            str):
+                        discrete_mapping_sub_element = ET.SubElement(
+                            visual_property_sub_element,
+                            "discreteMapping",
+                            attrib={
+                                "attributeName":
+                                    visual_property["discreteMapping"]
+                                    ["attributeName"],
+                                "attributeType":
+                                    visual_property["discreteMapping"]
+                                    ["attributeType"],
+                            },
+                        )
 
-                        if isinstance(
-                                visual_property["discreteMapping"]
-                            ["discreteMappingEntry"], dict):
-                            for key, value in visual_property[
-                                    "discreteMapping"][
-                                        "discreteMappingEntry"].items():
-                                if isinstance(value, str):
-                                    ET.SubElement(
-                                        discrete_mapping_sub_element,
-                                        "discreteMappingEntry",
-                                        attrib={
-                                            "attributeValue": key,
-                                            "value": value,
-                                        },
-                                    )
+                    if isinstance(
+                            visual_property["discreteMapping"]
+                        ["discreteMappingEntry"], dict):
+                        for key, value in visual_property["discreteMapping"][
+                                "discreteMappingEntry"].items():
+                            if isinstance(value, str):
+                                ET.SubElement(
+                                    discrete_mapping_sub_element,
+                                    "discreteMappingEntry",
+                                    attrib={
+                                        "attributeValue": key,
+                                        "value": value,
+                                    },
+                                )
 
-                elif visual_property.get("passthroughMapping"):
-                    if isinstance(visual_property["passthroughMapping"], dict):
-                        if isinstance(
-                                visual_property["passthroughMapping"]
-                            ["attributeName"], str) and isinstance(
-                                visual_property["passthroughMapping"]
-                                ["attributeType"], str):
-                            ET.SubElement(
-                                visual_property_sub_element,
-                                "passthroughMapping",
-                                attrib={
-                                    "attributeName":
-                                        visual_property["passthroughMapping"]
-                                        ["attributeName"],
-                                    "attributeType":
-                                        visual_property["passthroughMapping"]
-                                        ["attributeType"],
-                                },
-                            )
+            elif visual_property.get("passthroughMapping"):
+                if isinstance(visual_property["passthroughMapping"], dict):
+                    if isinstance(
+                            visual_property["passthroughMapping"]
+                        ["attributeName"], str) and isinstance(
+                            visual_property["passthroughMapping"]
+                            ["attributeType"], str):
+                        ET.SubElement(
+                            visual_property_sub_element,
+                            "passthroughMapping",
+                            attrib={
+                                "attributeName":
+                                    visual_property["passthroughMapping"]
+                                    ["attributeName"],
+                                "attributeType":
+                                    visual_property["passthroughMapping"]
+                                    ["attributeType"],
+                            },
+                        )
 
     ET.indent(style)
     return style
