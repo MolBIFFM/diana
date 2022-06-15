@@ -1,5 +1,5 @@
 """The Cytoscape style configuration for a Reactome network."""
-
+import math
 import xml.etree.ElementTree as ET
 
 import networkx as nx
@@ -475,40 +475,31 @@ def get_style(network: nx.Graph) -> ET.ElementTree:
                                 "continuousMappingPoint"].items():
                             if isinstance(values, dict):
                                 if name == "NODE_SIZE":
+                                    maximum_size = max(
+                                        reactome_network.get_pathway_sizes(
+                                            network).values())
                                     ET.SubElement(
                                         continuous_mapping_sub_element,
                                         "continuousMappingPoint",
                                         attrib={
                                             "attrValue":
-                                                key.format(max=float(
-                                                    max(
-                                                        reactome_network.
-                                                        get_pathway_sizes(
-                                                            network).values()))
-                                                          ),
+                                                key.format(
+                                                    max=float(maximum_size)),
                                             "equalValue":
                                                 values["equalValue"].
-                                                format(size=35.0 + float(
-                                                    max(
-                                                        reactome_network.
-                                                        get_pathway_sizes(
-                                                            network).values()))
-                                                      ),
+                                                format(size=35.0 + math.ceil(
+                                                    math.sqrt(
+                                                        float(maximum_size)))),
                                             "greaterValue":
                                                 values["greaterValue"].
-                                                format(size=35.0 + float(
-                                                    max(
-                                                        reactome_network.
-                                                        get_pathway_sizes(
-                                                            network).values()))
-                                                      ),
+                                                format(size=35.0 + math.ceil(
+                                                    math.sqrt(
+                                                        float(maximum_size)))),
                                             "lesserValue":
                                                 values["lesserValue"].
-                                                format(size=35.0 + float(
-                                                    max(
-                                                        reactome_network.
-                                                        get_pathway_sizes(
-                                                            network).values())))
+                                                format(size=35.0 + math.ceil(
+                                                    math.sqrt(
+                                                        float(maximum_size))))
                                         },
                                     )
                                 else:
