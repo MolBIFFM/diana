@@ -819,10 +819,10 @@ Available settings are `"mean"`, `"median"`, `"max"`, `"maxabs"`, `"min"`,
 ]
 ```
 The conversion that a measurement range refers to. It defaults to the binary
-logarithm of a measurement but may be set to `"ratio"`, `"percentile"`,
-`"quantile"` or `"standard score"`, computed with respect to the distribution of
-a particular modification at a particular time of measurement across the
-protein-protein interaction network.
+logarithm of a measurement for `null` but can be set to `"ratio"`,
+`"percentile"`, `"quantile"` or `"standard score"`, computed with respect to the
+distribution of a particular modification at a particular time of measurement
+across the protein-protein interaction network.
 
 ```json
 [
@@ -1095,10 +1095,10 @@ Available settings are `"mean"`, `"median"`, `"max"`, `"maxabs"`, `"min"`,
 ]
 ```
 The conversion that a measurement range refers to. It defaults to the binary
-logarithm of a measurement but may be set to `"ratio"`, `"percentile"`,
-`"quantile"` or `"standard score"`, computed with respect to the distribution of
-a particular modification at a particular time of measurement across the
-protein-protein interaction network.
+logarithm of a measurement for `null` but can be set to `"ratio"`,
+`"percentile"`, `"quantile"` or `"standard score"`, computed with respect to the
+distribution of a particular modification at a particular time of measurement
+across the protein-protein interaction network.
 
 ```json
 [
@@ -1284,10 +1284,10 @@ Available settings are `"mean"`, `"median"`, `"max"`, `"maxabs"`, `"min"`,
 ]
 ```
 The conversion that a measurement range refers to. It defaults to the binary
-logarithm of a measurement but may be set to `"ratio"`, `"percentile"`,
-`"quantile"` or `"standard score"`, computed with respect to the distribution of
-a particular modification at a particular time of measurement across the
-protein-protein interaction network.
+logarithm of a measurement for `null` but can be set to `"ratio"`,
+`"percentile"`, `"quantile"` or `"standard score"`, computed with respect to the
+distribution of a particular modification at a particular time of measurement
+across the protein-protein interaction network.
 
 ```json
 [
@@ -1802,10 +1802,11 @@ Available settings are `"mean"`, `"median"`, `"max"`, `"maxabs"`, `"min"`,
 ]
 ```
 The conversion that a measurement range refers to. It defaults to the binary
-logarithm of a measurement but may be set to `"ratio"`, `"percentile"`,
-`"quantile"` or `"standard score"`, computed with respect to the distribution of
-a particular modification at a particular time of measurement across the
-protein-protein interaction network. Conversions refer to separate communities.
+logarithm of a measurement for `null` but can be set to `"ratio"`,
+`"percentile"`, `"quantile"` or `"standard score"`, computed with respect to the
+distribution of a particular modification at a particular time of measurement
+across the protein-protein interaction network. Conversions refer to separate
+communities.
 
 ```json
 [
@@ -1929,10 +1930,10 @@ modification sites individually.
 ]
 ```
 The conversion that a measurement range refers to. It defaults to the binary
-logarithm of a measurement but may be set to `"ratio"`, `"percentile"`,
-`"quantile"` or `"standard score"`, computed with respect to the distribution of
-a particular modification at a particular time of measurement across each
-community of the protein-protein interaction network.
+logarithm of a measurement for `null` but can be set to `"ratio"`,
+`"percentile"`, `"quantile"` or `"standard score"`, computed with respect to the
+distribution of a particular modification at a particular time of measurement
+across each community of the protein-protein interaction network.
 
 ```json
 [
