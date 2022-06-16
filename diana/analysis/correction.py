@@ -19,10 +19,11 @@ def benjamini_hochberg(p: Mapping[Hashable, float]) -> dict[Hashable, float]:
 
     p_sorted = dict(sorted(p.items(), key=lambda item: item[1], reverse=True))
 
+    pj = 0.0
     for i, (key, pi) in enumerate(p_sorted.items()):
         if i and pi / (m - i) > pj / (m - i + 1):
             p_sorted[key] = pj * (m - i) / (m - i + 1)
-        pj: float = p_sorted[key]
+        pj = p_sorted[key]
 
     return {
         key: min(m * pi / (m - i), 1.0)
@@ -48,10 +49,11 @@ def benjamini_yekutieli(p: Mapping[Hashable, float]) -> dict[Hashable, float]:
 
     p_sorted = dict(sorted(p.items(), key=lambda item: item[1], reverse=True))
 
+    pj = 0.0
     for i, (key, pi) in enumerate(p_sorted.items()):
         if i and pi / (m - i) > pj / (m - i + 1):
             p_sorted[key] = pj * (m - i) / (m - i + 1)
-        pj: float = p_sorted[key]
+        pj = p_sorted[key]
 
     return {
         key: min(m * l * pi / (m - i), 1.0)
@@ -76,10 +78,11 @@ def holm(p: Mapping[Hashable, float]) -> dict[Hashable, float]:
 
     p_sorted = dict(sorted(p.items(), key=lambda item: item[1]))
 
+    pj = 0.0
     for i, (key, pi) in enumerate(p_sorted.items()):
         if i and (m - i) * pi < (m - i - 1) * pj:
             p_sorted[key] = (m - i - 1) * pj / (m - i)
-        pj: float = p_sorted[key]
+        pj = p_sorted[key]
 
     return {
         key: min((m - i) * pi, 1.0)

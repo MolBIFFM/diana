@@ -41,11 +41,10 @@ def get_protein_interactions(
                 "SWISSPROT organism"
             ]):
         if (not purification_methods or any(
-                purification_method.split("-")[0] in purification_methods or
-                purification_method.split(
-                    "-")[1].rstrip() in purification_methods
-                for purification_method in
-                row["Protein complex purification method"].split(";"))):
+                purification_method.split("-")
+            [0].strip() in purification_methods or purification_method.split(
+                "-")[1].strip() in purification_methods for purification_method
+                in row["Protein complex purification method"].split(";"))):
 
             subunits = [
                 subunit.split("-")[0] if "-" in subunit and
@@ -56,13 +55,13 @@ def get_protein_interactions(
             organisms = row["SWISSPROT organism"].split(";")
 
             for a in range(len(subunits) - 1):
-                if organisms[a][:organisms[a].find("(")].rstrip(
+                if organisms[a][:organisms[a].find("(")].strip(
                 ) != ORGANISM["data"][organism]:
                     continue
                 for primary_interactor_a in primary_accession.get(
                         subunits[a].split("-")[0], {subunits[a]}):
                     for b in range(a + 1, len(subunits)):
-                        if organisms[b][:organisms[b].find("(")].rstrip(
+                        if organisms[b][:organisms[b].find("(")].strip(
                         ) != ORGANISM["data"][organism]:
                             continue
                         for primary_interactor_b in primary_accession.get(
@@ -99,12 +98,11 @@ def get_protein_complexes(
                 "Protein complex purification method", "SWISSPROT organism"
             ]):
         if ((not purification_methods or any(
-                purification_method.split("-")[0] in purification_methods or
-                purification_method.split(
-                    "-")[1].rstrip() in purification_methods
-                for purification_method in
-                row["Protein complex purification method"].split(";"))) and
-                all(spo[:spo.find("(")].rstrip() == ORGANISM["data"][organism]
+                purification_method.split("-")
+            [0].strip() in purification_methods or purification_method.split(
+                "-")[1].strip() in purification_methods for purification_method
+                in row["Protein complex purification method"].split(";"))) and
+                all(spo[:spo.find("(")].strip() == ORGANISM["data"][organism]
                     for spo in row["SWISSPROT organism"].split(";"))):
 
             subunits = [
