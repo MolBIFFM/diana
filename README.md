@@ -4,21 +4,19 @@ DIANA is a command line application for **D**ata **I**ntegration **A**nd
 **N**etwork-based **A**nalysis for post-translational modification mass
 spectrometry data.
 
-The application assembles protein-protein interaction networks from genes or
+Incorporating protein-protein interactions from BioGRID, CORUM, IntAct, MINT,
+Reactome, and STRING, DIANA assembles protein-protein interaction networks from
 proteins associated with mass spectrometric measurements capturing differential
-post-translational modification, querying protein-protein interaction data from
-BioGRID, CORUM, IntAct, MINT, Reactome, and STRING.
+post-translational modification.
 
 The enrichment of CORUM protein complexes, Gene Ontology terms, and Reactome
-pathways by protein-protein interaction networks, their separate communities and
-subsets of proteins, determined with respect to the distribution of
-changes in post-translational modification across them, can be assessed as well
-as the distribution of changes across communities.
+pathways by protein-protein interaction networks and their separate communities
+can be assessed as well as the distribution of changes across communities.
 
-In addition to protein-protein interaction networks and their communities,
-networks of Gene Ontology terms or Reactome pathways reporting enrichments of
-the respective entities can be exported along corresponding Cytoscape style
-specifications for each type of network.
+In addition to protein-protein interaction networks, networks of Gene Ontology
+terms or Reactome pathways, reporting enrichment of each entity by these
+proteins, can be assembled along customized Cytoscape style specifications for
+each type of network.
 
 ## Setup
 
@@ -100,8 +98,8 @@ secondary accessions.
 ]
 ```
 A regular expression used to extract all matching gene or protein accessions
-from an entry in the table, possibly removing additional information. The
-default setting is `"^(.+?)$"`, corresponding to the entire entry.
+from a cell entry in the table, possibly removing additional components of the
+entry. The default setting is `"^(.+?)$"`, corresponding to the entire entry.
 
 ```json
 [
@@ -119,8 +117,8 @@ default setting is `"^(.+?)$"`, corresponding to the entire entry.
     }
 ]
 ```
-The sheet of a spreadsheet to extract data from. The default setting is `1`
-corresponding to the first sheet of the file.
+The spreadsheet from a file to extract data from. The default setting is `1`
+corresponding to the first spreadsheet of the file.
 
 ```json
 [
@@ -138,8 +136,8 @@ corresponding to the first sheet of the file.
     }
 ]
 ```
-The line number of the header, allowing to skip lines. The default setting is
-`1`, corresponding to the first line of the sheet.
+The line number of the header, allowing to skip lines above it. The default
+setting is `1`, corresponding to the first line of the sheet.
 
 ```json
 [
