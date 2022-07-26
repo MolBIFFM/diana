@@ -10,8 +10,9 @@ proteins associated with mass spectrometric measurements capturing differential
 post-translational modification.
 
 The enrichment of CORUM protein complexes, Gene Ontology terms, and Reactome
-pathways by protein-protein interaction networks and their separate communities
-can be assessed as well as the distribution of changes across communities.
+pathways by protein-protein interaction networks and their communities can be
+assessed as well as the distribution of mass spectrometric measurements
+across communities.
 
 In addition to protein-protein interaction networks, networks of Gene Ontology
 terms or Reactome pathways, reporting enrichment of each entity by these
