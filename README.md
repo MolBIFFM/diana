@@ -16,7 +16,7 @@ across communities.
 
 In addition to protein-protein interaction networks, networks of Gene Ontology
 terms or Reactome pathways, reporting enrichment of each entity by these
-proteins, can be assembled along customized Cytoscape style specifications for
+proteins, can be generated along customized Cytoscape style specifications for
 each type of network.
 
 ## Setup
