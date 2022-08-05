@@ -1480,6 +1480,11 @@ def main() -> None:
                         nargs="+",
                         required=True)
 
+    parser.add_argument("-l",
+                        "--log",
+                        help="file to write log to instead of standard out",
+                        type=str)
+
     parser.add_argument(
         "-p",
         "--processes",
@@ -1490,9 +1495,15 @@ def main() -> None:
 
     args = parser.parse_args()
 
-    logging.basicConfig(stream=sys.stdout,
-                        level=logging.INFO,
-                        format="%(name)s\t%(message)s")
+    if args.log:
+        logging.basicConfig(filename=args.log,
+                            filemode="w",
+                            level=logging.INFO,
+                            format="%(name)s\t%(message)s")
+    else:
+        logging.basicConfig(stream=sys.stdout,
+                            level=logging.INFO,
+                            format="%(name)s\t%(message)s")
 
     with concurrent.futures.ProcessPoolExecutor(
             max_workers=args.processes) as executor:
