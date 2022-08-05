@@ -7,8 +7,8 @@ spectrometry data.
 Incorporating protein-protein interactions from BioGRID, CORUM, IntAct, MINT,
 Reactome, and STRING, DIANA assembles protein-protein interaction networks from
 UniProt protein accessions. Further analysis of these networks is geared towards
-mass spectrometric measurements capturing differential post-translational
-modification of the represented proteins.
+contextualization of mass spectrometric measurements capturing differential
+post-translational modification of the represented proteins.
 
 The enrichment of CORUM protein complexes, Gene Ontology terms, and Reactome
 pathways by protein-protein interaction networks and their communities can be
