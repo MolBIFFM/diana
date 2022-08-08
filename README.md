@@ -2046,5 +2046,5 @@ Development was inspired by previous work combining the following applications.
 
 ---
 
-References for implemented algorithms are supplied in the corresponding source
+References for implemented algorithms are listed in the corresponding source
 code.
