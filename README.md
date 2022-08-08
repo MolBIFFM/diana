@@ -119,7 +119,7 @@ entry. The default setting is `"^(.+?)$"`, corresponding to the entire entry.
     }
 ]
 ```
-The spreadsheet from a file to extract data from. The default setting is `1`
+The spreadsheet from a file to extract input from. The default setting is `1`
 corresponding to the first spreadsheet of the file.
 
 ```json
@@ -138,7 +138,7 @@ corresponding to the first spreadsheet of the file.
     }
 ]
 ```
-The line number of the header, allowing to skip lines above it. The default
+The line number of the header, allowing to skip preceding lines. The default
 setting is `1`, corresponding to the first line of the sheet.
 
 ```json
@@ -172,8 +172,9 @@ tabular file.
     }
 ]
 ```
-A protein-protein interaction network as output by a workflow. The union of
-input protein-protein interaction networks with proteins and genes is used.
+A list of protein-protein interaction networks as exported from workflows. The
+union of input protein-protein interaction networks with input proteins and
+genes is used.
 
 ```json
 [
@@ -211,7 +212,8 @@ completely supported setting is `9606`, corresponding to Homo sapiens.
 ]
 ```
 The time of measurement to be associated with the measurements from the input
-file. The default setting is `0`.
+file for reference in the specification of further analyses. The default setting
+is `0`.
 
 ```json
 [
@@ -225,9 +227,10 @@ file. The default setting is `0`.
 ]
 ```
 The identifier for the type of post-translational modification associate with
-measurements from the corresponding file. The default setting is `"PTM"`.
-Currently, up to two types of post-translational modification per time of
-measurement are supported by Cytoscape styles.
+measurements from the input file for reference in the specification of further
+analyses. The default setting is `"PTM"`. Currently, up to two types of
+post-translational modification per time of measurement are supported by
+Cytoscape styles.
 
 ```json
 [
@@ -241,10 +244,10 @@ measurement are supported by Cytoscape styles.
 ]
 ```
 The table column reporting modification sites of measurements, according to
-which they are sorted. If an entry contains less positions than measurements,
+which they are ordered. If an entry contains fewer positions than measurements,
 missing modification sites are substituted by 0. If an entry contains more
-positions than measurements, only as many as there are measurements are used in
-order of the entry.
+positions than measurements, only as many leading entries as there are
+measurements are used.
 
 ```json
 [
@@ -257,8 +260,8 @@ order of the entry.
     }
 ]
 ```
-A regular expression used to extract all matching modification sites from an
-entry in the table, possibly removing additional information. The default
+A regular expression used to extract matching modification sites from an
+entry in the table, allowing to remove additions to the site number. The default
 setting is `"^(.+?)$"`, corresponding to the entire entry.
 
 ```json
@@ -286,8 +289,8 @@ A list of columns to extract replicate measurements from. The default setting is
     }
 ]
 ```
-A regular expression used to extract all matching replicate measurements from an
-entry in the table, possibly removing additional information. The default
+A regular expression used to extract matching replicate measurements from an
+entry in the table, allowing to remove additions to the measurement. The default
 setting is `"^(.+?)$"`, corresponding to the entire entry.
 
 ```json
@@ -301,8 +304,8 @@ setting is `"^(.+?)$"`, corresponding to the entire entry.
     }
 ]
 ```
-A threshold on the number of replicates required to consider a measurement. The
-default setting is `1`.
+An inclusive threshold on the number of replicates required to consider a
+measurement. The default setting is `1`.
 
 ```json
 [
@@ -1488,19 +1491,19 @@ decisive to meeting the community size threshold. The default setting is
 
 CORUM protein complex, Gene Ontology term and Reactome pathway enrichment of
 separate communities can be assessed. The proteins considered can be
-restricted, based on mass spectrometric associated measurements, either by a
-union or intersection of specified subsets of proteins from the protein-protein
-interaction network.
+restricted, based on ranges of associated mass spectrometric measurements,
+either by a union or intersection of specified subsets of proteins from the
+protein-protein interaction network.
 
 To assess the distribution of mass spectrometry measurements, these are either
 categorized to measure the communities' enrichment of proteins which exhibit
 measurements exceeding a specified absolute or relative threshold.
-Alternatively, the distribution of measurements within separate communities can
-be compared with the remaining network with respect to either proteins or
-modification sites.
+Alternatively, the distribution of measurements inside separate communities can
+be compared with the remaining network, with respect to either individual
+proteins or modification sites.
 
-A community is exported only if it appears significant with respect to any of
-the specified tests.
+A community is exported if it is rendered significant with respect to any of the
+specified tests.
 
 ```json
 [
