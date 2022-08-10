@@ -512,57 +512,57 @@ def set_measurements(
 
                     if combined_sites >= 1.0 * measurement_range[time][
                             modification][1]:
-                        classification[modification] = "up"
+                        classification[modification] = "UP"
                     elif 1.0 * measurement_range[time][modification][
                             1] > combined_sites >= 0.5 * measurement_range[
                                 time][modification][1]:
-                        classification[modification] = "mid up"
+                        classification[modification] = "MID_UP"
                     elif 0.5 * measurement_range[time][modification][
                             1] > combined_sites > 0.5 * measurement_range[time][
                                 modification][0]:
-                        classification[modification] = "mid"
+                        classification[modification] = "MID"
                     elif 0.5 * measurement_range[time][modification][
                             0] >= combined_sites > 1.0 * measurement_range[
                                 time][modification][0]:
-                        classification[modification] = "mid down"
+                        classification[modification] = "MID_DOWN"
                     else:
-                        classification[modification] = "down"
+                        classification[modification] = "DOWN"
 
             if classification:
-                if set(classification.values()) == {"up"}:
-                    network.nodes[protein][f"measurement {time}"] = "up"
-                elif set(classification.values()) == {"mid up", "up"}:
-                    network.nodes[protein][f"measurement {time}"] = "up"
-                elif set(classification.values()) == {"mid", "mid up", "up"}:
-                    network.nodes[protein][f"measurement {time}"] = "up"
+                if set(classification.values()) == {"UP"}:
+                    network.nodes[protein][f"measurement {time}"] = "UP"
+                elif set(classification.values()) == {"MID_UP", "UP"}:
+                    network.nodes[protein][f"measurement {time}"] = "UP"
+                elif set(classification.values()) == {"MID", "MID_UP", "UP"}:
+                    network.nodes[protein][f"measurement {time}"] = "UP"
 
-                elif set(classification.values()) == {"mid up"}:
-                    network.nodes[protein][f"measurement {time}"] = "mid up"
-                elif set(classification.values()) == {"mid", "mid up"}:
-                    network.nodes[protein][f"measurement {time}"] = "mid up"
+                elif set(classification.values()) == {"MID_UP"}:
+                    network.nodes[protein][f"measurement {time}"] = "MID_UP"
+                elif set(classification.values()) == {"MID", "MID_UP"}:
+                    network.nodes[protein][f"measurement {time}"] = "MID_UP"
 
-                elif set(classification.values()) == {"mid"}:
-                    network.nodes[protein][f"measurement {time}"] = "mid"
+                elif set(classification.values()) == {"MID"}:
+                    network.nodes[protein][f"measurement {time}"] = "MID"
 
-                elif set(classification.values()) == {"mid", "mid down"}:
-                    network.nodes[protein][f"measurement {time}"] = "mid down"
-                elif set(classification.values()) == {"mid down"}:
-                    network.nodes[protein][f"measurement {time}"] = "mid down"
+                elif set(classification.values()) == {"MID", "MID_DOWN"}:
+                    network.nodes[protein][f"measurement {time}"] = "MID_DOWN"
+                elif set(classification.values()) == {"MID_DOWN"}:
+                    network.nodes[protein][f"measurement {time}"] = "MID_DOWN"
 
                 elif set(
-                        classification.values()) == {"mid", "mid down", "down"}:
-                    network.nodes[protein][f"measurement {time}"] = "down"
-                elif set(classification.values()) == {"mid down", "down"}:
-                    network.nodes[protein][f"measurement {time}"] = "down"
-                elif set(classification.values()) == {"down"}:
-                    network.nodes[protein][f"measurement {time}"] = "down"
+                        classification.values()) == {"MID", "MID_DOWN", "DOWN"}:
+                    network.nodes[protein][f"measurement {time}"] = "DOWN"
+                elif set(classification.values()) == {"MID_DOWN", "DOWN"}:
+                    network.nodes[protein][f"measurement {time}"] = "DOWN"
+                elif set(classification.values()) == {"DOWN"}:
+                    network.nodes[protein][f"measurement {time}"] = "DOWN"
                 else:
                     network.nodes[protein][f"measurement {time}"] = " ".join(
                         f"{modification} {classification[modification]}"
                         for modification in sorted(classification))
 
             else:
-                network.nodes[protein][f"measurement {time}"] = "mid"
+                network.nodes[protein][f"measurement {time}"] = "MID"
 
 
 def get_neighbors_from_biogrid(

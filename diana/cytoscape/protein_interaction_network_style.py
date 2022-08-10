@@ -324,11 +324,11 @@ COMPONENTS: list[dict[str, dict[str, dict[str, dict[
                             "attributeName": "measurement {time}",
                             "attributeType": "string",
                             "discreteMappingEntry": {
-                                "up": f"#{255:02X}{0:02X}{0:02X}",
-                                "mid up": f"#{255:02X}{102:02X}{102:02X}",
-                                "mid": f"#{128:02X}{128:02X}{128:02X}",
-                                "mid down": f"#{102:02X}{102:02X}{255:02X}",
-                                "down": f"#{0:02X}{0:02X}{255:02X}",
+                                "UP": f"#{255:02X}{0:02X}{0:02X}",
+                                "MID_UP": f"#{255:02X}{102:02X}{102:02X}",
+                                "MID": f"#{128:02X}{128:02X}{128:02X}",
+                                "MID_DOWN": f"#{102:02X}{102:02X}{255:02X}",
+                                "DOWN": f"#{0:02X}{0:02X}{255:02X}",
                             },
                         },
                     },
@@ -723,63 +723,63 @@ COMPONENTS: list[dict[str, dict[str, dict[str, dict[
                             "attributeName": "measurement {time}",
                             "attributeType": "string",
                             "discreteMappingEntry": {
-                                "up":
+                                "UP":
                                     f"#{255:02X}{0:02X}{0:02X}",
-                                "mid up":
+                                "MID_UP":
                                     f"#{255:02X}{102:02X}{102:02X}",
-                                "mid":
+                                "MID":
                                     f"#{128:02X}{128:02X}{128:02X}",
-                                "mid down":
+                                "MID_DOWN":
                                     f"#{102:02X}{102:02X}{255:02X}",
-                                "down":
+                                "DOWN":
                                     f"#{0:02X}{0:02X}{255:02X}",
-                                "{modifications[0]} up "
-                                "{modifications[1]} down":
+                                "{modifications[0]} UP "
+                                "{modifications[1]} DOWN":
                                     f"#{0:02X}{255:02X}{0:02X}",
-                                "{modifications[0]} up "
-                                "{modifications[1]} mid down":
+                                "{modifications[0]} UP "
+                                "{modifications[1]} MID_DOWN":
                                     f"#{0:02X}{255:02X}{0:02X}",
-                                "{modifications[0]} mid up "
-                                "{modifications[1]} down":
+                                "{modifications[0]} MID_UP "
+                                "{modifications[1]} DOWN":
                                     f"#{0:02X}{255:02X}{0:02X}",
-                                "{modifications[0]} mid up "
-                                "{modifications[1]} mid down":
+                                "{modifications[0]} MID_UP "
+                                "{modifications[1]} MID_DOWN":
                                     f"#{0:02X}{255:02X}{0:02X}",
-                                "{modifications[0]} down "
-                                "{modifications[1]} up":
+                                "{modifications[0]} DOWN "
+                                "{modifications[1]} UP":
                                     f"#{255:02X}{255:02X}{0:02X}",
-                                "{modifications[0]} down "
-                                "{modifications[1]} mid up":
+                                "{modifications[0]} DOWN "
+                                "{modifications[1]} MID_UP":
                                     f"#{255:02X}{255:02X}{0:02X}",
-                                "{modifications[0]} mid down "
-                                "{modifications[1]} up":
+                                "{modifications[0]} MID_DOWN "
+                                "{modifications[1]} UP":
                                     f"#{255:02X}{255:02X}{0:02X}",
-                                "{modifications[0]} mid down "
-                                "{modifications[1]} mid up":
+                                "{modifications[0]} MID_DOWN "
+                                "{modifications[1]} MID_UP":
                                     f"#{255:02X}{255:02X}{0:02X}",
-                                "{modifications[0]} up "
-                                "{modifications[1]} mid":
+                                "{modifications[0]} UP "
+                                "{modifications[1]} MID":
                                     f"#{255:02X}{0:02X}{0:02X}",
-                                "{modifications[0]} mid up "
-                                "{modifications[1]} mid":
+                                "{modifications[0]} MID_UP "
+                                "{modifications[1]} MID":
                                     f"#{255:02X}{102:02X}{102:02X}",
-                                "{modifications[0]} mid down "
-                                "{modifications[1]} mid":
+                                "{modifications[0]} MID_DOWN "
+                                "{modifications[1]} MID":
                                     f"#{102:02X}{102:02X}{255:02X}",
-                                "{modifications[0]} down "
-                                "{modifications[1]} mid":
+                                "{modifications[0]} DOWN "
+                                "{modifications[1]} MID":
                                     f"#{0:02X}{0:02X}{255:02X}",
-                                "{modifications[0]} mid "
-                                "{modifications[1]} up":
+                                "{modifications[0]} MID "
+                                "{modifications[1]} UP":
                                     f"#{255:02X}{0:02X}{0:02X}",
-                                "{modifications[0]} mid "
-                                "{modifications[1]} mid up":
+                                "{modifications[0]} MID "
+                                "{modifications[1]} MID_UP":
                                     f"#{255:02X}{102:02X}{102:02X}",
-                                "{modifications[0]} mid "
-                                "{modifications[1]} mid down":
+                                "{modifications[0]} MID "
+                                "{modifications[1]} MID_DOWN":
                                     f"#{102:02X}{102:02X}{255:02X}",
-                                "{modifications[0]} mid "
-                                "{modifications[1]} down":
+                                "{modifications[0]} MID "
+                                "{modifications[1]} DOWN":
                                     f"#{0:02X}{0:02X}{255:02X}",
                             },
                         },
