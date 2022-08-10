@@ -261,10 +261,10 @@ def add_proteins_from_table(
                              for replicate in site[1]]))),
             )[-number_sites:])
 
-        for i, (_, site) in enumerate(sorted_sites):
-            for j, measurement in enumerate(site):
+        for s, (_, site) in enumerate(sorted_sites):
+            for m, measurement in enumerate(site):
                 network.nodes[protein][
-                    f"{time} {modification} {i + 1} {j + 1}"] = measurement
+                    f"{time} {modification} {s + 1} {m + 1}"] = measurement
 
 
 def map_proteins(network: nx.Graph, organism: int = 9606) -> None:
@@ -512,6 +512,14 @@ def set_measurements(
                 ]
 
                 if sites:
+                    for s, site in enumerate(sites, start=1):
+                        network.nodes[protein][
+                            f"{time} {modification} {s}"] = math.log2(
+                                replicate_combination([
+                                    math.pow(2.0, replicate)
+                                    for replicate in site
+                                ]))
+
                     combined_sites = math.log2(
                         site_combination([
                             replicate_combination([
