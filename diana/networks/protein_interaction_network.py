@@ -261,10 +261,13 @@ def add_proteins_from_table(
                              for replicate in site[1]]))),
             )[-number_sites:])
 
-        for s, (_, site) in enumerate(sorted_sites):
-            for m, measurement in enumerate(site):
+        for s, (_, site) in enumerate(sorted_sites, start=1):
+            network.nodes[protein][f"{time} {modification} {s}"] = math.log2(
+                replicate_combination(
+                    [math.pow(replicate, 2.0) for replicate in site]))
+            for r, replicate in enumerate(site, start=1):
                 network.nodes[protein][
-                    f"{time} {modification} {s + 1} {m + 1}"] = measurement
+                    f"{time} {modification} {s} {r}"] = replicate
 
 
 def map_proteins(network: nx.Graph, organism: int = 9606) -> None:
@@ -495,37 +498,17 @@ def set_measurements(
             classification = {}
             for modification in modifications[time]:
                 sites = [
-                    [
-                        network.nodes[protein][site]
-                        for site in network.nodes[protein]
-                        if len(site.split(" ")) == 4 and site.split(" ")[0] ==
-                        str(time) and site.split(" ")[1] == modification and
-                        site.split(" ")[2] == str(s + 1)
-                    ]
-                    for s in range(
-                        max(
-                            int(
-                                site.split(" ")[2] if len(site.split(" ")) ==
-                                4 and site.split(" ")[0] == str(time) and
-                                site.split(" ")[1] == modification else "0")
-                            for site in network.nodes[protein]))
+                    network.nodes[protein][measurement]
+                    for measurement in network.nodes[protein]
+                    if len(measurement.split(" ")) == 3 and
+                    measurement.split(" ")[0] == str(time) and
+                    measurement.split(" ")[1] == modification
                 ]
 
                 if sites:
-                    for s, site in enumerate(sites, start=1):
-                        network.nodes[protein][
-                            f"{time} {modification} {s}"] = math.log2(
-                                replicate_combination([
-                                    math.pow(2.0, replicate)
-                                    for replicate in site
-                                ]))
-
                     combined_sites = math.log2(
-                        site_combination([
-                            replicate_combination([
-                                math.pow(2.0, replicate) for replicate in site
-                            ]) for site in sites
-                        ]))
+                        site_combination(
+                            [math.pow(site, 2.0) for site in sites]))
 
                     if combined_sites >= 1.0 * measurement_range[time][
                             modification][1]:

@@ -333,9 +333,9 @@ largest absolute measurement. The default setting is `5`.
 ]
 ```
 The function used to combine replicates into a single measurement. The function
-is applied to ratios, not their binary logarithm. The default setting is
-`"mean"`. Available settings are `"mean"`, `"median"`, `"max"`, `"maxabs"`,
-`"min"`, `"minabs"`, `"sum"`, and `"sumabs"`.
+is applied to ratios, not their binary logarithm. Cytoscape styles refer to this
+combination. The default setting is `"mean"`. Available settings are `"mean"`,
+`"median"`, `"max"`, `"maxabs"`, `"min"`, `"minabs"`, `"sum"`, and `"sumabs"`.
 
 ```json
 [
@@ -822,10 +822,11 @@ measurement. Available settings are `"mean"`, `"median"`, `"max"`, `"maxabs"`,
 ]
 ```
 The function used to combine distinct replicates into modification site-specific
-measurements. The function is applied to ratios, not their binary logarithm. The
-default setting is `"mean"`, corresponding to the mean of replicates. Available
-settings are `"mean"`, `"median"`, `"max"`, `"maxabs"`, `"min"`, `"minabs"`,
-`"sum"` and `"sumabs"`.
+measurements to derive thresholds. Site-specific measurements are determined
+when parsing the input file. The function is applied to ratios, not their binary
+logarithm. The default setting is `"mean"`, corresponding to the mean of
+replicates. Available settings are `"mean"`, `"median"`, `"max"`, `"maxabs"`,
+`"min"`, `"minabs"`, `"sum"` and `"sumabs"`.
 
 ```json
 [
