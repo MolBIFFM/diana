@@ -10,7 +10,7 @@ from typing import (Callable, Collection, Container, Hashable, Iterable,
 import networkx as nx
 import pandas as pd
 import scipy.stats
-from analysis import correction, modularization
+from algorithms import correction, modularization
 from databases import biogrid, corum, intact, mint, reactome, string, uniprot
 
 
@@ -109,26 +109,23 @@ def map_genes(network: nx.Graph, organism: int = 9606) -> None:
 
 
 def add_proteins_from_table(
-    network: nx.Graph,
-    file_name: str,
-    protein_accession_column: int | str,
-    protein_accession_format: re.Pattern = re.compile("^(.+?)$"),
-    sheet_name: int | str = 0,
-    header: int = 0,
-    time: int = 0,
-    modification: str = "PTM",
-    position_column: int | str = "",
-    position_format: re.Pattern = re.compile("^(.+?)$"),
-    replicate_columns: Optional[Collection[int] | Collection[str]] = None,
-    replicate_format: re.Pattern = re.compile("^(.+?)$"),
-    number_sites: int = 100,
-    number_replicates: int = 1,
-    replicate_combination: Callable[[Iterable[float]], float] = statistics.mean,
-    measurement_conversion: Callable[
-        [Iterable[float], Callable[[Iterable[float]], float]],
-        float] = lambda measurements, combination: math.log2(
-            combination(measurements))
-) -> None:
+        network: nx.Graph,
+        file_name: str,
+        protein_accession_column: int | str,
+        protein_accession_format: re.Pattern = re.compile("^(.+?)$"),
+        sheet_name: int | str = 0,
+        header: int = 0,
+        time: int = 0,
+        modification: str = "PTM",
+        position_column: int | str = "",
+        position_format: re.Pattern = re.compile("^(.+?)$"),
+        replicate_columns: Optional[Collection[int] | Collection[str]] = None,
+        replicate_format: re.Pattern = re.compile("^(.+?)$"),
+        number_sites: int = 100,
+        number_replicates: int = 1,
+        replicate_combination: Callable[[Iterable[float]],
+                                        float] = statistics.mean,
+        measurement_conversion: Callable[[float], float] = math.log2) -> None:
     """
     Parse UniProt protein accessions and measurements of measurements from a
     tabular file and add the corresponding primary UniProt protein accessions to
@@ -153,8 +150,8 @@ def add_proteins_from_table(
             protein-accession, prioritized by largest absolute value.
         number_replicates: The minimum number of replicates to accept a
             measurement.
-        replicate_combination: The function to combine replicates into a single
-            measurement.
+        replicate_combination: A function to derive site-specific measurements
+            from replicates for site prioritization.
         measurement_conversion: The function to convert the measurements
             reported to their binary logarithm.
     """
@@ -202,7 +199,7 @@ def add_proteins_from_table(
             },
         )
 
-    proteins: dict[str, list[tuple[int, float]]] = {}
+    proteins: dict[str, list[tuple[int, tuple[float, ...]]]] = {}
     for _, row in table.iterrows():
         if pd.isna(row[protein_accession_column]):
             continue
@@ -243,8 +240,9 @@ def add_proteins_from_table(
                     bisect.insort(
                         proteins[protein_accession],
                         (position,
-                         measurement_conversion(measurements,
-                                                replicate_combination)),
+                         tuple(
+                             measurement_conversion(measurement)
+                             for measurement in measurements)),
                     )
         else:
             for protein_accession in protein_accessions:
@@ -253,15 +251,20 @@ def add_proteins_from_table(
 
     network.add_nodes_from(proteins)
     for protein, sites in proteins.items():
-        sorted_measurements = sorted(
+        sorted_sites = sorted(
             sorted(
                 sites,
-                key=lambda item: abs(item[1]),
+                key=lambda site: abs(
+                    math.log2(
+                        replicate_combination(
+                            [math.pow(replicate, 2.0)
+                             for replicate in site[1]]))),
             )[-number_sites:])
 
-        for i, (_, measurement) in enumerate(sorted_measurements):
-            network.nodes[protein][
-                f"{time} {modification} {i + 1}"] = measurement
+        for i, (_, site) in enumerate(sorted_sites):
+            for j, measurement in enumerate(site):
+                network.nodes[protein][
+                    f"{time} {modification} {i + 1} {j + 1}"] = measurement
 
 
 def map_proteins(network: nx.Graph, organism: int = 9606) -> None:
@@ -300,8 +303,9 @@ def get_proteins(
     network: nx.Graph,
     time: int,
     modification: str,
-    site_combination: Callable[[Collection[float]],
+    site_combination: Callable[[Iterable[float]],
                                float] = lambda sites: max(sites, key=abs),
+    replicate_combination: Callable[[Iterable[float]], float] = statistics.mean,
     combined_measurement_range: tuple[float, float] = (0.0, 0.0)
 ) -> frozenset[str]:
     """
@@ -312,8 +316,10 @@ def get_proteins(
         network: The protein-protein interaction network.
         time: The time of measurement.
         modification: The type of post-translational modification.
-        site_combination: An optional function to derive protein-specific
-            measurements from site-specific measurements.
+        site_combination: A function to derive protein-specific measurements
+            from site-specific measurements.
+        replicate_combination: A function to derive site-specific measurements
+            from replicates.
         combined_measurement_range: A range that is to be exceeded by combined
             measurements of the proteins.
 
@@ -324,15 +330,28 @@ def get_proteins(
     """
     proteins = []
     for protein in network:
-        sites = [
-            network.nodes[protein][measurement]
-            for measurement in network.nodes[protein]
-            if len(measurement.split(" ")) == 3 and measurement.split(" ")[0] ==
-            str(time) and measurement.split(" ")[1] == modification
+        sites = [[
+            network.nodes[protein][site]
+            for site in network.nodes[protein]
+            if len(site.split(" ")) == 4 and site.split(" ")[0] == str(time) and
+            site.split(" ")[1] == modification and site.split(" ")[2] == str(s +
+                                                                             1)
         ]
+                 for s in range(
+                     max(
+                         int(
+                             site.split(" ")[2] if len(site.split(" ")) == 4 and
+                             site.split(" ")[0] == str(time) and
+                             site.split(" ")[1] == modification else "0")
+                         for site in network.nodes[protein]))]
 
-        if sites and not (combined_measurement_range[0] < site_combination(
-                sites) < combined_measurement_range[1]):
+        if sites and not (combined_measurement_range[0] < math.log2(
+                site_combination([
+                    replicate_combination(
+                        [math.pow(2.0, replicate)
+                         for replicate in site])
+                    for site in sites
+                ])) < combined_measurement_range[1]):
             proteins.append(protein)
 
     return frozenset(proteins)
@@ -356,7 +375,7 @@ def get_times(network: nx.Graph) -> tuple[int, ...]:
                 int(measurement.split(" ")[0])
                 for protein in network
                 for measurement in network.nodes[protein]
-                if len(measurement.split(" ")) == 3 and
+                if len(measurement.split(" ")) == 4 and
                 measurement.split(" ")[0].isnumeric())))
 
 
@@ -380,7 +399,7 @@ def get_modifications(network: nx.Graph, time: int) -> tuple[str, ...]:
                 measurement.split(" ")[1]
                 for protein in network
                 for measurement in network.nodes[protein]
-                if len(measurement.split(" ")) == 3 and
+                if len(measurement.split(" ")) == 4 and
                 measurement.split(" ")[0] == str(time))))
 
 
@@ -404,7 +423,7 @@ def get_sites(network: nx.Graph, time: int, modification: str) -> int:
         int(measurement.split(" ")[2])
         for protein in network
         for measurement in network.nodes[protein]
-        if len(measurement.split(" ")) == 3 and measurement.split(" ")[0] ==
+        if len(measurement.split(" ")) == 4 and measurement.split(" ")[0] ==
         str(time) and measurement.split(" ")[1] == modification)
 
 
@@ -423,14 +442,15 @@ def set_post_translational_modification(network: nx.Graph) -> None:
                         set(
                             measurement.split(" ")[1]
                             for measurement in network.nodes[protein]
-                            if len(measurement.split(" ")) == 3 and
+                            if len(measurement.split(" ")) == 4 and
                             measurement.split(" ")[0] == str(time))))
 
 
 def set_measurements(
     network: nx.Graph,
-    site_combination: Callable[[Collection[float]],
+    site_combination: Callable[[Iterable[float]],
                                float] = lambda sites: max(sites, key=abs),
+    replicate_combination: Callable[[Iterable[float]], float] = statistics.mean,
     measurements: tuple[float, float] = (-1.0, 1.0),
     measurement_conversion: Callable[
         [float, Collection[float]],
@@ -441,8 +461,10 @@ def set_measurements(
 
     Args:
         network: The protein-protein interaction network.
-        site_combination: An optional function to derive protein-specific
-            measurements from site-specific measurements.
+        site_combination: A function to derive protein-specific measurements
+            from site-specific measurements.
+        replicate_combination: A function to derive site-specific measurements
+            from replicates.
         measurements: Proteins are categorized by whether their representative
             exceed either this range, the range defined by half the bounds or
             none.
@@ -454,14 +476,16 @@ def set_measurements(
 
     measurement_range = {
         time: {
-            modification: (measurement_conversion(
+            modification:
+            (measurement_conversion(
                 measurements[0],
-                get_measurements(network, time, modification, site_combination),
+                get_measurements(network, time, modification, site_combination,
+                                 replicate_combination),
             ),
-                           measurement_conversion(
-                               measurements[1],
-                               get_measurements(network, time, modification,
-                                                site_combination)))
+             measurement_conversion(
+                 measurements[1],
+                 get_measurements(network, time, modification, site_combination,
+                                  replicate_combination)))
             for modification in modifications[time]
         } for time in times
     }
@@ -471,15 +495,29 @@ def set_measurements(
             classification = {}
             for modification in modifications[time]:
                 sites = [
-                    network.nodes[protein][measurement]
-                    for measurement in network.nodes[protein]
-                    if len(measurement.split(" ")) == 3 and
-                    measurement.split(" ")[0] == str(time) and
-                    measurement.split(" ")[1] == modification
+                    [
+                        network.nodes[protein][site]
+                        for site in network.nodes[protein]
+                        if len(site.split(" ")) == 4 and site.split(" ")[0] ==
+                        str(time) and site.split(" ")[1] == modification and
+                        site.split(" ")[2] == str(s + 1)
+                    ]
+                    for s in range(
+                        max(
+                            int(
+                                site.split(" ")[2] if len(site.split(" ")) ==
+                                4 and site.split(" ")[0] == str(time) and
+                                site.split(" ")[1] == modification else "0")
+                            for site in network.nodes[protein]))
                 ]
 
                 if sites:
-                    combined_sites = site_combination(sites)
+                    combined_sites = math.log2(
+                        site_combination([
+                            replicate_combination([
+                                math.pow(2.0, replicate) for replicate in site
+                            ]) for site in sites
+                        ]))
 
                     if combined_sites >= 1.0 * measurement_range[time][
                             modification][1]:
@@ -1109,7 +1147,8 @@ def get_measurements(
     network: nx.Graph,
     time: int,
     modification: str,
-    site_combination: Optional[Callable[[Collection[float]], float]] = None
+    site_combination: Optional[Callable[[Iterable[float]], float]] = None,
+    replicate_combination: Optional[Callable[[Iterable[float]], float]] = None
 ) -> tuple[float, ...]:
     """
     Returns the measurement distribution for a particular type of
@@ -1121,6 +1160,8 @@ def get_measurements(
         modification: The type of post-translational modification.
         site_combination: An optional function to derive protein-specific
             measurements from site-specific measurements.
+        replicate_combination: The function to derive site-specific measurements
+            from replicates.
 
     Returns:
         Measurements for a particular type of post-translational
@@ -1128,21 +1169,42 @@ def get_measurements(
     """
     measurements = []
     for protein in network:
-        sites = [
-            network.nodes[protein][measurement]
-            for measurement in network.nodes[protein]
-            if len(measurement.split(" ")) == 3 and measurement.split(" ")[0] ==
-            str(time) and measurement.split(" ")[1] == modification
+        sites = [[
+            network.nodes[protein][site]
+            for site in network.nodes[protein]
+            if len(site.split(" ")) == 4 and site.split(" ")[0] == str(time) and
+            site.split(" ")[1] == modification and site.split(" ")[2] == str(s +
+                                                                             1)
         ]
+                 for s in range(
+                     max(
+                         int(
+                             site.split(" ")[2] if len(site.split(" ")) == 4 and
+                             site.split(" ")[0] == str(time) and
+                             site.split(" ")[1] == modification else "0")
+                         for site in network.nodes[protein]))]
 
-        if sites:
-            if site_combination:
+        if any(sites):
+            if (site_combination is not None and
+                    replicate_combination is not None):
                 measurements.append(
                     math.log2(
-                        site_combination(
-                            [math.pow(2.0, site) for site in sites])))
+                        site_combination([
+                            replicate_combination([
+                                math.pow(2.0, replicate) for replicate in site
+                            ]) for site in sites
+                        ])))
+            elif replicate_combination is not None:
+                measurements.extend([
+                    math.log2(
+                        replicate_combination(
+                            [math.pow(2.0, replicate)
+                             for replicate in site]))
+                    for site in sites
+                ])
             else:
-                measurements.extend(sites)
+                for site in sites:
+                    measurements.extend(site)
 
     return tuple(measurements)
 
@@ -1154,7 +1216,8 @@ def get_measurement_enrichment(
     measurement_conversion: Callable[
         [float, Collection[float]],
         float] = lambda measurement, measurements: measurement,
-    site_combination: Optional[Callable[[Collection[float]], float]] = None,
+    site_combination: Optional[Callable[[Iterable[float]], float]] = None,
+    replicate_combination: Optional[Callable[[Iterable[float]], float]] = None,
     enrichment_test: Callable[
         [int, int, int, int],
         float] = lambda k, M, n, N: scipy.stats.hypergeom.sf(k - 1, M, n, N),
@@ -1175,6 +1238,8 @@ def get_measurement_enrichment(
             binary logarithm.
         site_combination: An optional function to derive protein-specific
             measurements from site-specific measurements.
+        replicate_combination: An optional function to derive site-specific
+            measurements from replicates.
         enrichment_test: The statistical test used to assess enrichment of
             proteins with large measurements by a community.
         multiple_testing_correction: The procedure to correct for multiple
@@ -1192,33 +1257,33 @@ def get_measurement_enrichment(
         for modification in get_modifications(network, time):
             measurement_range = (measurement_conversion(
                 measurements[0],
-                get_measurements(network, time, modification,
-                                 site_combination)),
+                get_measurements(network, time, modification, site_combination,
+                                 replicate_combination)),
                                  measurement_conversion(
                                      measurements[1],
                                      get_measurements(network, time,
                                                       modification,
-                                                      site_combination)))
+                                                      site_combination,
+                                                      replicate_combination)))
 
             modified_proteins = len([
                 measurement for measurement in get_measurements(
-                    network, time, modification, site_combination)
-                if measurement
+                    network, time, modification, site_combination,
+                    replicate_combination) if measurement
             ])
 
             modified_community_proteins = [
                 len([
-                    measurement
-                    for measurement in get_measurements(
-                        community, time, modification, site_combination)
-                    if measurement
-                ])
-                for community in communities
+                    measurement for measurement in get_measurements(
+                        community, time, modification, site_combination,
+                        replicate_combination) if measurement
+                ]) for community in communities
             ]
 
             target_proteins = len([
                 measurement for measurement in get_measurements(
-                    network, time, modification, site_combination)
+                    network, time, modification, site_combination,
+                    replicate_combination)
                 if measurement <= measurement_range[0] or
                 measurement >= measurement_range[1]
             ])
@@ -1226,8 +1291,9 @@ def get_measurement_enrichment(
             target_community_proteins = [
                 len([
                     measurement
-                    for measurement in get_measurements(
-                        community, time, modification, site_combination)
+                    for measurement in
+                    get_measurements(community, time, modification,
+                                     site_combination, replicate_combination)
                     if measurement <= measurement_range[0] or
                     measurement >= measurement_range[1]
                 ])
@@ -1255,7 +1321,8 @@ def get_measurement_enrichment(
 def get_measurement_location(
     network: nx.Graph,
     communities: Iterable[nx.Graph],
-    site_combination: Optional[Callable[[Collection[float]], float]] = None,
+    site_combination: Optional[Callable[[Iterable[float]], float]] = None,
+    replicate_combination: Optional[Callable[[Iterable[float]], float]] = None,
     location_test: Callable[
         [Collection[float], Collection[float]],
         float] = lambda x, y: scipy.stats.ranksums(x, y).pvalue,
@@ -1272,6 +1339,8 @@ def get_measurement_location(
         communities: The communities of the protein-protein interaction network.
         site_combination: An optional function to derive protein-specific
             measurements from site-specific measurements.
+        replicate_combination: An optional function to derive site-specific
+            measurements from replicates.
         location_test: The statistical test used to assess location of
             proteins with large measurements by a community.
         multiple_testing_correction: The procedure to correct for multiple
@@ -1292,13 +1361,14 @@ def get_measurement_location(
                     nx.union_all([m
                                   for m in communities
                                   if m != community]), time, modification,
-                    site_combination)
+                    site_combination, replicate_combination)
                 for community in communities
             ]
 
             community_measurements = [
                 get_measurements(community, time, modification,
-                                 site_combination) for community in communities
+                                 site_combination, replicate_combination)
+                for community in communities
             ]
 
             p_values.update({(community, time, modification):

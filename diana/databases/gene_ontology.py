@@ -4,7 +4,7 @@ from typing import (Callable, Collection, Container, Hashable, Iterable,
 
 import scipy.stats
 from access import iterate
-from analysis import correction
+from algorithms import correction
 
 from databases import uniprot
 

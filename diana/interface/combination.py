@@ -1,9 +1,9 @@
 """Mappings of configuration file entries to combining functions."""
 import math
 import statistics
-from typing import Callable, Collection, Iterable, Optional
+from typing import Callable, Iterable, Optional
 
-SITE_COMBINATION: dict[str, Callable[[Collection[float]], float]] = {
+SITE_COMBINATION: dict[str, Callable[[Iterable[float]], float]] = {
     "max": max,
     "maxabs": lambda sites: max(sites, key=abs),
     "mean": statistics.mean,
@@ -15,14 +15,23 @@ SITE_COMBINATION: dict[str, Callable[[Collection[float]], float]] = {
 }
 
 REPLICATE_COMBINATION: dict[str, Callable[[Iterable[float]], float]] = {
-    "max": max,
-    "maxabs": lambda sites: max(sites, key=abs),
-    "mean": statistics.mean,
-    "median": statistics.median,
-    "min": min,
-    "minabs": lambda sites: min(sites, key=abs),
-    "sum": math.fsum,
-    "sumabs": lambda sites: math.fsum(math.fabs(site) for site in sites),
+    "max":
+        max,
+    "maxabs":
+        lambda replicates: max(replicates, key=abs),
+    "mean":
+        statistics.mean,
+    "median":
+        statistics.median,
+    "min":
+        min,
+    "minabs":
+        lambda replicates: min(replicates, key=abs),
+    "sum":
+        math.fsum,
+    "sumabs":
+        lambda replicates: math.fsum(
+            math.fabs(replicate) for replicate in replicates),
 }
 
 MODULE_SIZE_COMBINATION: dict[str, Callable[[Iterable[int]], float]] = {

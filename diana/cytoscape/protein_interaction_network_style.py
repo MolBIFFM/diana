@@ -4,8 +4,9 @@ network.
 """
 
 import json
+import statistics
 import xml.etree.ElementTree as ET
-from typing import Callable, Collection
+from typing import Callable, Collection, Iterable
 
 import networkx as nx
 from networks import protein_interaction_network
@@ -882,7 +883,8 @@ def get_bar_chart(
     Args:
         time: time of measurement associated with the measurement
         modification: modification associated with the measurement
-        cy_range: range of log2-fold measurements covered by the bar chart.
+        cy_range: range of binary logarithms of measurements covered by the bar
+            chart.
 
     Returns:
        bar chart specification
@@ -914,8 +916,9 @@ def get_style(
     convert_measurement: Callable[
         [float, Collection[float]],
         float] = lambda measurement, measurements: measurement,
-    site_combination: Callable[[Collection[float]],
+    site_combination: Callable[[Iterable[float]],
                                float] = lambda sites: max(sites, key=abs),
+    replicate_combination: Callable[[Iterable[float]], float] = statistics.mean,
     confidence_score_combination: Callable[[dict[str, float]], float] = lambda
     confidence_scores: float(bool(confidence_scores.values()))
 ) -> ET.ElementTree:
@@ -924,13 +927,17 @@ def get_style(
 
     Args:
         network: The protein-protein interaction network.
-        bar_chart_range: The range of log2-fold measurements covered by the bar
-            chart.
-        convert_measurement: The function to transform log2-fold measurements.
-        site_combination: The function to derive a proteins' representative
-            log2-fold measurement from its site-specific measurements.
-        confidence_score_combination: The function to derive an edges'
-            representative confidence from its confidence scores.
+        bar_chart_range: The range of binary logarithms of measurements covered
+            by the bar chart.
+        convert_measurement: The function to transform binary logarithms of
+            measurements.
+        site_combination: The function to derive a protein-specific measurement
+            from its site-specific measurements.
+        replicate_combination: The function to derive a site-specific
+            measurement from its replicates.
+        confidence_score_combination: The function to derive an edge-specific
+            confidence score from confidence scores reported in different
+            databases.
 
     Returns:
        The Cytoscape styles for the protein-protein interaction network.
@@ -1145,13 +1152,15 @@ def get_style(
                                     protein_interaction_network.
                                     get_measurements(network, time,
                                                      modification,
-                                                     site_combination)),
+                                                     site_combination,
+                                                     replicate_combination)),
                                           convert_measurement(
                                               bar_chart_range[1],
                                               protein_interaction_network.
                                               get_measurements(
                                                   network, time, modification,
-                                                  site_combination)))))
+                                                  site_combination,
+                                                  replicate_combination)))))
 
                     elif visual_property_sub_element.get(
                             "name") == f"NODE_CUSTOMGRAPHICS_POSITION_{i + 1}":

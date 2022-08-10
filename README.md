@@ -319,7 +319,7 @@ measurement. The default setting is `1`.
 ]
 ```
 The maximum number of measurements to associate with each protein prioritized by
-largest absolute value. The default setting is `5`.
+largest absolute measurement. The default setting is `5`.
 
 ```json
 [
@@ -348,9 +348,9 @@ is applied to ratios, not their binary logarithm. The default setting is
     }
 ]
 ```
-The base of the logarithm that measured measurements are expressed as. By
-default, ratios are assumed, corresponding to `null`. Available settings are
-`null`, `2` and `10`.
+The base of the logarithm that measured measurements are reported as. By
+default, ratios are assumed and no conversion is performed, corresponding to
+`null`. Available settings are `null`, `2` and `10`.
 
 ---
 
@@ -803,9 +803,29 @@ exported.
 ```
 The function used to combine distinct modification sites into protein-specific
 measurements. The function is applied to ratios, not their binary logarithm. The
-default setting is `"maxabs"`, corresponding to the largest absolute value.
-Available settings are `"mean"`, `"median"`, `"max"`, `"maxabs"`, `"min"`,
-`"minabs"`, `"sum"` and `"sumabs"`.
+default setting is `"maxabs"`, corresponding to the largest absolute
+measurement. Available settings are `"mean"`, `"median"`, `"max"`, `"maxabs"`,
+`"min"`, `"minabs"`, `"sum"` and `"sumabs"`.
+
+```json
+[
+    {
+      "Cytoscape": {
+        "bar chart": {
+          "replicate combination": "mean"
+        },
+        "node color": {
+          "replicate combination": "mean"
+        }
+      }
+    }
+]
+```
+The function used to combine distinct replicates into modification site-specific
+measurements. The function is applied to ratios, not their binary logarithm. The
+default setting is `"mean"`, corresponding to the mean of replicates. Available
+settings are `"mean"`, `"median"`, `"max"`, `"maxabs"`, `"min"`, `"minabs"`,
+`"sum"` and `"sumabs"`.
 
 ```json
 [
@@ -1066,7 +1086,40 @@ The modification considered to determine a subset of proteins.
 ```
 The function used to combine distinct modification sites into protein-specific
 measurements. The function is applied to ratios, not their binary logarithm.
-The default setting is `"maxabs"`, corresponding to the largest absolute value.
+The default setting is `"maxabs"`, corresponding to the largest absolute
+measurement. Available settings are `"mean"`, `"median"`, `"max"`, `"maxabs"`,
+`"min"`, `"minabs"`, `"sum"` and `"sumabs"`.
+
+```json
+[
+    {
+      "CORUM enrichment": {
+        "subsets": [
+          {
+            "replicate combination": "mean"
+          }
+        ]
+      },
+      "Gene Ontology enrichment": {
+        "subsets": [
+          {
+            "replicate combination": "mean"
+          }
+        ]
+      },
+      "Reactome enrichment": {
+        "subsets": [
+          {
+            "replicate combination": "mean"
+          }
+        ]
+      }
+    }
+]
+```
+The function used to combine distinct replicates into modification site-specific
+measurements. The function is applied to ratios, not their binary logarithm.
+The default setting is `"mean"`, corresponding to the mean of replicates.
 Available settings are `"mean"`, `"median"`, `"max"`, `"maxabs"`, `"min"`,
 `"minabs"`, `"sum"` and `"sumabs"`.
 
@@ -1262,9 +1315,35 @@ The modification considered to determine a subset of proteins.
 ```
 The function used to combine distinct modification sites into protein-specific
 measurements. The function is applied to ratios, not their binary logarithm. The
-default setting is `"maxabs"`, corresponding to the largest absolute value.
-Available settings are `"mean"`, `"median"`, `"max"`, `"maxabs"`, `"min"`,
-`"minabs"`, `"sum"` and `"sumabs"`.
+default setting is `"maxabs"`, corresponding to the largest absolute
+measurement. Available settings are `"mean"`, `"median"`, `"max"`, `"maxabs"`,
+`"min"`, `"minabs"`, `"sum"` and `"sumabs"`.
+
+```json
+[
+    {
+      "Gene Ontology network": {
+        "subsets": [
+          {
+            "replicate combination": "mean"
+          }
+        ]
+      },
+      "Reactome network": {
+        "subsets": [
+          {
+            "replicate combination": "mean"
+          }
+        ]
+      }
+    }
+]
+```
+The function used to combine distinct replicates into modification site-specific
+measurements. The function is applied to ratios, not their binary logarithm. The
+default setting is `"mean"`, corresponding to the mean of replicates. Available
+settings are `"mean"`, `"median"`, `"max"`, `"maxabs"`, `"min"`, `"minabs"`,
+`"sum"` and `"sumabs"`.
 
 ```json
 [
@@ -1771,9 +1850,44 @@ The modification considered to determine a subset of proteins.
 ```
 The function used to combine distinct modification sites into protein-specific
 measurements. The function is applied to ratios, not their binary logarithm. The
-default setting is `"maxabs"`, corresponding to the largest absolute value.
-Available settings are `"mean"`, `"median"`, `"max"`, `"maxabs"`, `"min"`,
-`"minabs"`, `"sum"` and `"sumabs"`.
+default setting is `"maxabs"`, corresponding to the largest absolute
+measurement. Available settings are `"mean"`, `"median"`, `"max"`, `"maxabs"`,
+`"min"`, `"minabs"`, `"sum"` and `"sumabs"`.
+
+```json
+[
+    {
+      "community detection": {
+        "CORUM enrichment": {
+          "subsets": [
+            {
+              "replicate combination": "mean"
+            }
+          ]
+        },
+        "Gene Ontology enrichment": {
+          "subsets": [
+            {
+              "replicate combination": "mean"
+            }
+          ]
+        },
+        "Reactome enrichment": {
+          "subsets": [
+            {
+              "replicate combination": "mean"
+            }
+          ]
+        }
+      }
+    }
+]
+```
+The function used to combine distinct replicates into modification site-specific
+measurements. The function is applied to ratios, not their binary logarithm. The
+default setting is `"mean"`, corresponding to the mean of replicates. Available
+settings are `"mean"`, `"median"`, `"max"`, `"maxabs"`, `"min"`, `"minabs"`,
+`"sum"` and `"sumabs"`.
 
 ```json
 [
@@ -1918,8 +2032,27 @@ The function used to combine distinct modification sites into protein-specific
 measurements. The default setting is `"maxabs"`, corresponding to the largest
 absolute value. Available settings are `"mean"`, `"median"`, `"max"`,
 `"maxabs"`, `"min"`, `"minabs"`, `"sum"`, `"sumabs"` and `null` to consider
-modification sites individually.
+modification sites separately.
 
+```json
+[
+    {
+      "community detection": {
+        "measurement enrichment": {
+            "replicate combination": "mean"
+        },
+        "measurement location": {
+            "replicate combination": "mean"
+        }
+      }
+    }
+]
+```
+The function used to combine distinct replicates into modification site-specific
+measurements. The default setting is `"mean"`, corresponding to the mean of
+replicates. Available settings are `"mean"`, `"median"`, `"max"`, `"maxabs"`,
+`"min"`, `"minabs"`, `"sum"`, `"sumabs"` and `null` to consider replicates
+separately.
 
 ```json
 [

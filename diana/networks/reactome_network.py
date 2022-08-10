@@ -9,7 +9,7 @@ from typing import Callable, Hashable, Iterable, Mapping
 
 import networkx as nx
 import scipy.stats
-from analysis import correction
+from algorithms import correction
 from databases import reactome
 
 

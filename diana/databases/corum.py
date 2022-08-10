@@ -5,7 +5,7 @@ from typing import (Callable, Container, Hashable, Iterable, Iterator, Mapping,
 
 import scipy.stats
 from access import iterate
-from analysis import correction
+from algorithms import correction
 
 from databases import uniprot
 

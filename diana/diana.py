@@ -382,6 +382,9 @@ def process_workflow(configuration: Mapping[str, Any],
                 site_combination=combination.SITE_COMBINATION[
                     configuration["Cytoscape"].get("bar chart", {}).get(
                         "site combination", "maxabs")],
+                replicate_combination=combination.REPLICATE_COMBINATION[
+                    configuration["Cytoscape"].get("bar chart", {}).get(
+                        "replicate combination", "mean")],
                 confidence_score_combination=combination.
                 CONFIDENCE_SCORE_COMBINATION[configuration["Cytoscape"].get(
                     "edge transparency")])
@@ -405,6 +408,9 @@ def process_workflow(configuration: Mapping[str, Any],
                 site_combination=combination.SITE_COMBINATION[
                     configuration["Cytoscape"].get("node color", {}).get(
                         "site combination", "maxabs")],
+                replicate_combination=combination.REPLICATE_COMBINATION[
+                    configuration["Cytoscape"].get("node color", {}).get(
+                        "replicate combination", "mean")],
                 measurements=default.MEASUREMENT_RANGE[
                     configuration["Cytoscape"].get("node color",
                                                    {}).get("conversion")],
@@ -432,16 +438,18 @@ def process_workflow(configuration: Mapping[str, Any],
                         ) in protein_interaction_network.get_modifications(
                             network, subset["time"]):
                     measurement_range = (
-                        conversion.MEASUREMENT_CONVERSION[subset.get(
-                            "conversion")](
-                                subset.get(
-                                    "measurement", default.MEASUREMENT_RANGE[
-                                        subset.get("conversion")])[0],
-                                protein_interaction_network.get_measurements(
-                                    network, subset["time"],
-                                    subset["post-translational modification"],
-                                    combination.SITE_COMBINATION[subset.get(
-                                        "site combination", "maxabs")])),
+                        conversion.
+                        MEASUREMENT_CONVERSION[subset.get("conversion")](
+                            subset.get(
+                                "measurement", default.MEASUREMENT_RANGE[
+                                    subset.get("conversion")])[0],
+                            protein_interaction_network.get_measurements(
+                                network, subset["time"],
+                                subset["post-translational modification"],
+                                combination.SITE_COMBINATION[subset.get(
+                                    "site combination", "maxabs")],
+                                combination.REPLICATE_COMBINATION[subset.get(
+                                    "replicate combination", "mean")])),
                         conversion.MEASUREMENT_CONVERSION[subset.get(
                             "conversion")](
                                 subset.get(
@@ -451,7 +459,10 @@ def process_workflow(configuration: Mapping[str, Any],
                                     network, subset["time"],
                                     subset["post-translational modification"],
                                     combination.SITE_COMBINATION[subset.get(
-                                        "site combination", "maxabs")])))
+                                        "site combination", "maxabs")],
+                                    combination.REPLICATE_COMBINATION[
+                                        subset.get("replicate combination",
+                                                   "mean")])))
 
                     if configuration["CORUM enrichment"].get(
                             "intersection", False):
@@ -460,8 +471,10 @@ def process_workflow(configuration: Mapping[str, Any],
                                 network, subset["time"],
                                 subset["post-translational modification"],
                                 combination.SITE_COMBINATION[subset.get(
-                                    "site combination",
-                                    "maxabs")], measurement_range))
+                                    "site combination", "maxabs")],
+                                combination.REPLICATE_COMBINATION[subset.get(
+                                    "replicate combination",
+                                    "mean")], measurement_range))
 
                     else:
                         proteins.update(
@@ -469,8 +482,10 @@ def process_workflow(configuration: Mapping[str, Any],
                                 network, subset["time"],
                                 subset["post-translational modification"],
                                 combination.SITE_COMBINATION[subset.get(
-                                    "site combination",
-                                    "maxabs")], measurement_range))
+                                    "site combination", "maxabs")],
+                                combination.REPLICATE_COMBINATION[subset.get(
+                                    "replicate combination",
+                                    "mean")], measurement_range))
 
             corum_enrichment = corum.get_enrichment(
                 [frozenset(proteins)],
@@ -528,26 +543,33 @@ def process_workflow(configuration: Mapping[str, Any],
                         ) in protein_interaction_network.get_modifications(
                             network, subset["time"]):
                     measurement_range = (
-                        conversion.MEASUREMENT_CONVERSION[subset.get(
-                            "conversion")](
-                                subset.get(
-                                    "measurement", default.MEASUREMENT_RANGE[
-                                        subset.get("conversion")])[0],
-                                protein_interaction_network.get_measurements(
-                                    network, subset["time"],
-                                    subset["post-translational modification"],
-                                    combination.SITE_COMBINATION[subset.get(
-                                        "site combination", "maxabs")])),
+                        conversion.
+                        MEASUREMENT_CONVERSION[subset.get("conversion")](
+                            subset.get(
+                                "measurement", default.MEASUREMENT_RANGE[
+                                    subset.get("conversion")])[0],
+                            protein_interaction_network.get_measurements(
+                                network, subset["time"],
+                                subset["post-translational modification"],
+                                combination.SITE_COMBINATION[subset.get(
+                                    "site combination", "maxabs")],
+                                combination.REPLICATE_COMBINATION[subset.get(
+                                    "replicate combination", "mean")])),
                         conversion.MEASUREMENT_CONVERSION[subset.get(
                             "conversion")](
                                 subset.get(
                                     "measurement", default.MEASUREMENT_RANGE[
                                         subset.get("conversion")])[1],
                                 protein_interaction_network.get_measurements(
-                                    network, subset["time"],
+                                    network,
+                                    subset["time"],
                                     subset["post-translational modification"],
                                     combination.SITE_COMBINATION[subset.get(
-                                        "site combination", "maxabs")])))
+                                        "site combination", "maxabs")],
+                                    combination.REPLICATE_COMBINATION[
+                                        subset.get("replicate combination",
+                                                   "mean")],
+                                )))
 
                     if configuration["Gene Ontology enrichment"].get(
                             "intersection", False):
@@ -556,8 +578,10 @@ def process_workflow(configuration: Mapping[str, Any],
                                 network, subset["time"],
                                 subset["post-translational modification"],
                                 combination.SITE_COMBINATION[subset.get(
-                                    "site combination",
-                                    "maxabs")], measurement_range))
+                                    "site combination", "maxabs")],
+                                combination.REPLICATE_COMBINATION[subset.get(
+                                    "replicate combination",
+                                    "mean")], measurement_range))
 
                     else:
                         proteins.update(
@@ -565,8 +589,10 @@ def process_workflow(configuration: Mapping[str, Any],
                                 network, subset["time"],
                                 subset["post-translational modification"],
                                 combination.SITE_COMBINATION[subset.get(
-                                    "site combination",
-                                    "maxabs")], measurement_range))
+                                    "site combination", "maxabs")],
+                                combination.REPLICATE_COMBINATION[subset.get(
+                                    "replicate combination",
+                                    "mean")], measurement_range))
 
             gene_ontology_enrichment = gene_ontology.get_enrichment(
                 [frozenset(proteins)],
@@ -637,16 +663,18 @@ def process_workflow(configuration: Mapping[str, Any],
                         ) in protein_interaction_network.get_modifications(
                             network, subset["time"]):
                     measurement_range = (
-                        conversion.MEASUREMENT_CONVERSION[subset.get(
-                            "conversion")](
-                                subset.get(
-                                    "measurement", default.MEASUREMENT_RANGE[
-                                        subset.get("conversion")])[0],
-                                protein_interaction_network.get_measurements(
-                                    network, subset["time"],
-                                    subset["post-translational modification"],
-                                    combination.SITE_COMBINATION[subset.get(
-                                        "site combination", "maxabs")])),
+                        conversion.
+                        MEASUREMENT_CONVERSION[subset.get("conversion")](
+                            subset.get(
+                                "measurement", default.MEASUREMENT_RANGE[
+                                    subset.get("conversion")])[0],
+                            protein_interaction_network.get_measurements(
+                                network, subset["time"],
+                                subset["post-translational modification"],
+                                combination.SITE_COMBINATION[subset.get(
+                                    "site combination", "maxabs")],
+                                combination.REPLICATE_COMBINATION[subset.get(
+                                    "replicate combination", "mean")])),
                         conversion.MEASUREMENT_CONVERSION[subset.get(
                             "conversion")](
                                 subset.get(
@@ -656,7 +684,10 @@ def process_workflow(configuration: Mapping[str, Any],
                                     network, subset["time"],
                                     subset["post-translational modification"],
                                     combination.SITE_COMBINATION[subset.get(
-                                        "site combination", "maxabs")])))
+                                        "site combination", "maxabs")],
+                                    combination.REPLICATE_COMBINATION[
+                                        subset.get("replicate combination",
+                                                   "mean")])))
 
                     if configuration["Reactome enrichment"].get(
                             "intersection", False):
@@ -665,8 +696,10 @@ def process_workflow(configuration: Mapping[str, Any],
                                 network, subset["time"],
                                 subset["post-translational modification"],
                                 combination.SITE_COMBINATION[subset.get(
-                                    "site combination",
-                                    "maxabs")], measurement_range))
+                                    "site combination", "maxabs")],
+                                combination.REPLICATE_COMBINATION[subset.get(
+                                    "replicate combination",
+                                    "mean")], measurement_range))
 
                     else:
                         proteins.update(
@@ -674,8 +707,10 @@ def process_workflow(configuration: Mapping[str, Any],
                                 network, subset["time"],
                                 subset["post-translational modification"],
                                 combination.SITE_COMBINATION[subset.get(
-                                    "site combination",
-                                    "maxabs")], measurement_range))
+                                    "site combination", "maxabs")],
+                                combination.REPLICATE_COMBINATION[subset.get(
+                                    "replicate combination",
+                                    "mean")], measurement_range))
 
             reactome_enrichment = reactome.get_enrichment(
                 [frozenset(proteins)],
@@ -730,16 +765,18 @@ def process_workflow(configuration: Mapping[str, Any],
                         ) in protein_interaction_network.get_modifications(
                             network, subset["time"]):
                     measurement_range = (
-                        conversion.MEASUREMENT_CONVERSION[subset.get(
-                            "conversion")](
-                                subset.get(
-                                    "measurement", default.MEASUREMENT_RANGE[
-                                        subset.get("conversion")])[0],
-                                protein_interaction_network.get_measurements(
-                                    network, subset["time"],
-                                    subset["post-translational modification"],
-                                    combination.SITE_COMBINATION[subset.get(
-                                        "site combination", "maxabs")])),
+                        conversion.
+                        MEASUREMENT_CONVERSION[subset.get("conversion")](
+                            subset.get(
+                                "measurement", default.MEASUREMENT_RANGE[
+                                    subset.get("conversion")])[0],
+                            protein_interaction_network.get_measurements(
+                                network, subset["time"],
+                                subset["post-translational modification"],
+                                combination.SITE_COMBINATION[subset.get(
+                                    "site combination", "maxabs")],
+                                combination.REPLICATE_COMBINATION[subset.get(
+                                    "replicate combination", "mean")])),
                         conversion.MEASUREMENT_CONVERSION[subset.get(
                             "conversion")](
                                 subset.get(
@@ -749,7 +786,10 @@ def process_workflow(configuration: Mapping[str, Any],
                                     network, subset["time"],
                                     subset["post-translational modification"],
                                     combination.SITE_COMBINATION[subset.get(
-                                        "site combination", "maxabs")])))
+                                        "site combination", "maxabs")],
+                                    combination.REPLICATE_COMBINATION[
+                                        subset.get("replicate combination",
+                                                   "mean")])))
 
                     if configuration["Gene Ontology network"].get(
                             "intersection", False):
@@ -758,8 +798,10 @@ def process_workflow(configuration: Mapping[str, Any],
                                 network, subset["time"],
                                 subset["post-translational modification"],
                                 combination.SITE_COMBINATION[subset.get(
-                                    "site combination",
-                                    "maxabs")], measurement_range))
+                                    "site combination", "maxabs")],
+                                combination.REPLICATE_COMBINATION[subset.get(
+                                    "replicate combination",
+                                    "mean")], measurement_range))
 
                     else:
                         proteins.update(
@@ -767,8 +809,10 @@ def process_workflow(configuration: Mapping[str, Any],
                                 network, subset["time"],
                                 subset["post-translational modification"],
                                 combination.SITE_COMBINATION[subset.get(
-                                    "site combination",
-                                    "maxabs")], measurement_range))
+                                    "site combination", "maxabs")],
+                                combination.REPLICATE_COMBINATION[subset.get(
+                                    "replicate combination",
+                                    "mean")], measurement_range))
 
             ontology_network = gene_ontology_network.get_network(
                 proteins,
@@ -838,16 +882,18 @@ def process_workflow(configuration: Mapping[str, Any],
                         ) in protein_interaction_network.get_modifications(
                             network, subset["time"]):
                     measurement_range = (
-                        conversion.MEASUREMENT_CONVERSION[subset.get(
-                            "conversion")](
-                                subset.get(
-                                    "measurement", default.MEASUREMENT_RANGE[
-                                        subset.get("conversion")])[0],
-                                protein_interaction_network.get_measurements(
-                                    network, subset["time"],
-                                    subset["post-translational modification"],
-                                    combination.SITE_COMBINATION[subset.get(
-                                        "site combination", "maxabs")])),
+                        conversion.
+                        MEASUREMENT_CONVERSION[subset.get("conversion")](
+                            subset.get(
+                                "measurement", default.MEASUREMENT_RANGE[
+                                    subset.get("conversion")])[0],
+                            protein_interaction_network.get_measurements(
+                                network, subset["time"],
+                                subset["post-translational modification"],
+                                combination.SITE_COMBINATION[subset.get(
+                                    "site combination", "maxabs")],
+                                combination.REPLICATE_COMBINATION[subset.get(
+                                    "replicate combination", "mean")])),
                         conversion.MEASUREMENT_CONVERSION[subset.get(
                             "conversion")](
                                 subset.get(
@@ -857,7 +903,10 @@ def process_workflow(configuration: Mapping[str, Any],
                                     network, subset["time"],
                                     subset["post-translational modification"],
                                     combination.SITE_COMBINATION[subset.get(
-                                        "site combination", "maxabs")])))
+                                        "site combination", "maxabs")],
+                                    combination.REPLICATE_COMBINATION[
+                                        subset.get("replicate combination",
+                                                   "mean")])))
 
                     if configuration["Reactome network"].get(
                             "intersection", False):
@@ -866,8 +915,10 @@ def process_workflow(configuration: Mapping[str, Any],
                                 network, subset["time"],
                                 subset["post-translational modification"],
                                 combination.SITE_COMBINATION[subset.get(
-                                    "site combination",
-                                    "maxabs")], measurement_range))
+                                    "site combination", "maxabs")],
+                                combination.REPLICATE_COMBINATION[subset.get(
+                                    "replicate combination",
+                                    "mean")], measurement_range))
 
                     else:
                         proteins.update(
@@ -875,8 +926,10 @@ def process_workflow(configuration: Mapping[str, Any],
                                 network, subset["time"],
                                 subset["post-translational modification"],
                                 combination.SITE_COMBINATION[subset.get(
-                                    "site combination",
-                                    "maxabs")], measurement_range))
+                                    "site combination", "maxabs")],
+                                combination.REPLICATE_COMBINATION[subset.get(
+                                    "replicate combination",
+                                    "mean")], measurement_range))
 
             pathway_network = reactome_network.get_network(
                 proteins,
@@ -942,12 +995,12 @@ def process_workflow(configuration: Mapping[str, Any],
                     "CORUM enrichment"]:
                 if configuration["community detection"]["CORUM enrichment"].get(
                         "intersection", False):
-                    cmty_proteins = {
+                    subset_proteins = {
                         community: set(community.nodes())
                         for community in communities
                     }
                 else:
-                    cmty_proteins = {
+                    subset_proteins = {
                         community: set() for community in communities
                     }
 
@@ -960,7 +1013,7 @@ def process_workflow(configuration: Mapping[str, Any],
                                 "post-translational modification"
                             ) in protein_interaction_network.get_modifications(
                                 network, subset["time"]):
-                        for community in cmty_proteins:
+                        for community in subset_proteins:
                             measurement_range = (
                                 conversion.MEASUREMENT_CONVERSION[subset.get(
                                     "conversion")]
@@ -971,7 +1024,10 @@ def process_workflow(configuration: Mapping[str, Any],
                                      community, subset["time"],
                                      subset["post-translational modification"],
                                      combination.SITE_COMBINATION[subset.get(
-                                         "site combination", "maxabs")])),
+                                         "site combination", "maxabs")],
+                                     combination.REPLICATE_COMBINATION[
+                                         subset.get("replicate combination",
+                                                    "mean")])),
                                 conversion.MEASUREMENT_CONVERSION[subset.get(
                                     "conversion")]
                                 (subset.get(
@@ -981,31 +1037,40 @@ def process_workflow(configuration: Mapping[str, Any],
                                      community, subset["time"],
                                      subset["post-translational modification"],
                                      combination.SITE_COMBINATION[subset.get(
-                                         "site combination", "maxabs")])))
+                                         "site combination", "maxabs")],
+                                     combination.REPLICATE_COMBINATION[
+                                         subset.get("replicate combination",
+                                                    "mean")])))
 
                             if configuration["community detection"][
                                     "CORUM enrichment"].get(
                                         "intersection", False):
-                                cmty_proteins[community].intersection_update(
+                                subset_proteins[community].intersection_update(
                                     protein_interaction_network.get_proteins(
                                         community, subset["time"], subset[
                                             "post-translational modification"],
                                         combination.SITE_COMBINATION[subset.get(
-                                            "site combination",
-                                            "maxabs")], measurement_range))
+                                            "site combination", "maxabs")],
+                                        combination.REPLICATE_COMBINATION[
+                                            subset.get("replicate combination",
+                                                       "mean")],
+                                        measurement_range))
 
                             else:
-                                cmty_proteins[community].update(
+                                subset_proteins[community].update(
                                     protein_interaction_network.get_proteins(
                                         community, subset["time"], subset[
                                             "post-translational modification"],
                                         combination.SITE_COMBINATION[subset.get(
-                                            "site combination",
-                                            "maxabs")], measurement_range))
+                                            "site combination", "maxabs")],
+                                        combination.REPLICATE_COMBINATION[
+                                            subset.get("replicate combination",
+                                                       "mean")],
+                                        measurement_range))
 
                 corum_enrichment = corum.get_enrichment(
                     [
-                        frozenset(cmty_proteins[community])
+                        frozenset(subset_proteins[community])
                         for community in communities
                     ],
                     enrichment_test=test.ENRICHMENT_TEST[(
@@ -1030,7 +1095,7 @@ def process_workflow(configuration: Mapping[str, Any],
                                               start=1):
                     for (protein_complex,
                          name), p in sorted(corum_enrichment[frozenset(
-                             cmty_proteins[community])].items(),
+                             subset_proteins[community])].items(),
                                             key=lambda item: item[1]):
                         if p <= configuration["community detection"][
                                 "CORUM enrichment"].get("p", 1.0):
@@ -1076,12 +1141,12 @@ def process_workflow(configuration: Mapping[str, Any],
                     "Gene Ontology enrichment"]:
                 if configuration["community detection"][
                         "Gene Ontology enrichment"].get("intersection", False):
-                    cmty_proteins = {
+                    subset_proteins = {
                         community: set(community.nodes())
                         for community in communities
                     }
                 else:
-                    cmty_proteins = {
+                    subset_proteins = {
                         community: set() for community in communities
                     }
 
@@ -1094,7 +1159,7 @@ def process_workflow(configuration: Mapping[str, Any],
                                 "post-translational modification"
                             ) in protein_interaction_network.get_modifications(
                                 network, subset["time"]):
-                        for community in cmty_proteins:
+                        for community in subset_proteins:
                             measurement_range = (
                                 conversion.MEASUREMENT_CONVERSION[subset.get(
                                     "conversion")]
@@ -1105,7 +1170,10 @@ def process_workflow(configuration: Mapping[str, Any],
                                      community, subset["time"],
                                      subset["post-translational modification"],
                                      combination.SITE_COMBINATION[subset.get(
-                                         "site combination", "maxabs")])),
+                                         "site combination", "maxabs")],
+                                     combination.REPLICATE_COMBINATION[
+                                         subset.get("replicate combination",
+                                                    "mean")])),
                                 conversion.MEASUREMENT_CONVERSION[subset.get(
                                     "conversion")]
                                 (subset.get(
@@ -1115,31 +1183,40 @@ def process_workflow(configuration: Mapping[str, Any],
                                      community, subset["time"],
                                      subset["post-translational modification"],
                                      combination.SITE_COMBINATION[subset.get(
-                                         "site combination", "maxabs")])))
+                                         "site combination", "maxabs")],
+                                     combination.REPLICATE_COMBINATION[
+                                         subset.get("replicate combination",
+                                                    "mean")])))
 
                             if configuration["community detection"][
                                     "Gene Ontology enrichment"].get(
                                         "intersection", False):
-                                cmty_proteins[community].intersection_update(
+                                subset_proteins[community].intersection_update(
                                     protein_interaction_network.get_proteins(
                                         community, subset["time"], subset[
                                             "post-translational modification"],
                                         combination.SITE_COMBINATION[subset.get(
-                                            "site combination",
-                                            "maxabs")], measurement_range))
+                                            "site combination", "maxabs")],
+                                        combination.REPLICATE_COMBINATION[
+                                            subset.get("replicate combination",
+                                                       "mean")],
+                                        measurement_range))
 
                             else:
-                                cmty_proteins[community].update(
+                                subset_proteins[community].update(
                                     protein_interaction_network.get_proteins(
                                         community, subset["time"], subset[
                                             "post-translational modification"],
                                         combination.SITE_COMBINATION[subset.get(
-                                            "site combination",
-                                            "maxabs")], measurement_range))
+                                            "site combination", "maxabs")],
+                                        combination.REPLICATE_COMBINATION[
+                                            subset.get("replicate combination",
+                                                       "mean")],
+                                        measurement_range))
 
                 gene_ontology_enrichment = gene_ontology.get_enrichment(
                     [
-                        frozenset(cmty_proteins[community])
+                        frozenset(subset_proteins[community])
                         for community in communities
                     ],
                     enrichment_test=test.ENRICHMENT_TEST[(
@@ -1173,7 +1250,7 @@ def process_workflow(configuration: Mapping[str, Any],
                                               start=1):
                     for (term,
                          name), p in sorted(gene_ontology_enrichment[frozenset(
-                             cmty_proteins[community])].items(),
+                             subset_proteins[community])].items(),
                                             key=lambda item: item[1]):
                         if p <= configuration["community detection"][
                                 "Gene Ontology enrichment"].get("p", 1.0):
@@ -1226,12 +1303,12 @@ def process_workflow(configuration: Mapping[str, Any],
                     "Reactome enrichment"]:
                 if configuration["community detection"][
                         "Reactome enrichment"].get("intersection", False):
-                    cmty_proteins = {
+                    subset_proteins = {
                         community: set(community.nodes())
                         for community in communities
                     }
                 else:
-                    cmty_proteins = {
+                    subset_proteins = {
                         community: set() for community in communities
                     }
 
@@ -1244,7 +1321,7 @@ def process_workflow(configuration: Mapping[str, Any],
                                 "post-translational modification"
                             ) in protein_interaction_network.get_modifications(
                                 network, subset["time"]):
-                        for community in cmty_proteins:
+                        for community in subset_proteins:
                             measurement_range = (
                                 conversion.MEASUREMENT_CONVERSION[subset.get(
                                     "conversion")]
@@ -1252,12 +1329,16 @@ def process_workflow(configuration: Mapping[str, Any],
                                     "measurement", default.MEASUREMENT_RANGE[
                                         subset.get("conversion")])[0],
                                  protein_interaction_network.get_measurements(
-                                     community, subset["time"],
+                                     community,
+                                     subset["time"],
                                      subset["post-translational modification"],
                                      combination.SITE_COMBINATION[subset.get(
-                                         "site combination", "maxabs")])),
-                                conversion.MEASUREMENT_CONVERSION[subset.get(
-                                    "conversion")]
+                                         "site combination", "maxabs")],
+                                     combination.REPLICATE_COMBINATION[
+                                         subset.get("replicate combination",
+                                                    "mean")],
+                                 )), conversion.MEASUREMENT_CONVERSION[
+                                     subset.get("conversion")]
                                 (subset.get(
                                     "measurement", default.MEASUREMENT_RANGE[
                                         subset.get("conversion")])[1],
@@ -1265,31 +1346,40 @@ def process_workflow(configuration: Mapping[str, Any],
                                      community, subset["time"],
                                      subset["post-translational modification"],
                                      combination.SITE_COMBINATION[subset.get(
-                                         "site combination", "maxabs")])))
+                                         "site combination", "maxabs")],
+                                     combination.REPLICATE_COMBINATION[
+                                         subset.get("replicate combination",
+                                                    "mean")])))
 
                             if configuration["community detection"][
                                     "Reactome enrichment"].get(
                                         "intersection", False):
-                                cmty_proteins[community].intersection_update(
+                                subset_proteins[community].intersection_update(
                                     protein_interaction_network.get_proteins(
                                         community, subset["time"], subset[
                                             "post-translational modification"],
                                         combination.SITE_COMBINATION[subset.get(
-                                            "site combination",
-                                            "maxabs")], measurement_range))
+                                            "site combination", "maxabs")],
+                                        combination.REPLICATE_COMBINATION[
+                                            subset.get("replicate combination",
+                                                       "mean")],
+                                        measurement_range))
 
                             else:
-                                cmty_proteins[community].update(
+                                subset_proteins[community].update(
                                     protein_interaction_network.get_proteins(
                                         community, subset["time"], subset[
                                             "post-translational modification"],
                                         combination.SITE_COMBINATION[subset.get(
-                                            "site combination",
-                                            "maxabs")], measurement_range))
+                                            "site combination", "maxabs")],
+                                        combination.REPLICATE_COMBINATION[
+                                            subset.get("replicate combination",
+                                                       "mean")],
+                                        measurement_range))
 
                 reactome_enrichment = reactome.get_enrichment(
                     [
-                        frozenset(cmty_proteins[community])
+                        frozenset(subset_proteins[community])
                         for community in communities
                     ],
                     enrichment_test=test.ENRICHMENT_TEST[(
@@ -1313,7 +1403,7 @@ def process_workflow(configuration: Mapping[str, Any],
                                               start=1):
                     for (pathway,
                          name), p in sorted(reactome_enrichment[frozenset(
-                             cmty_proteins[community])].items(),
+                             subset_proteins[community])].items(),
                                             key=lambda item: item[1]):
                         if p <= configuration["community detection"][
                                 "Reactome enrichment"].get("p", 1.0):
@@ -1364,7 +1454,15 @@ def process_workflow(configuration: Mapping[str, Any],
                 site_combination=combination.SITE_COMBINATION[
                     configuration["community detection"]
                     ["measurement enrichment"].get("site combination",
-                                                   "maxabs")],
+                                                   "maxabs")] if
+                configuration["community detection"]["measurement enrichment"].
+                get("site combination", "maxabs") is not None else None,
+                replicate_combination=combination.REPLICATE_COMBINATION[
+                    configuration["community detection"]
+                    ["measurement enrichment"].get("replicate combination",
+                                                   "mean")] if
+                configuration["community detection"]["measurement enrichment"].
+                get("replicate combination", "mean") is not None else None,
                 enrichment_test=test.ENRICHMENT_TEST[(
                     configuration["community detection"]
                     ["measurement enrichment"].get("test", "hypergeometric"),
@@ -1394,9 +1492,16 @@ def process_workflow(configuration: Mapping[str, Any],
             location = protein_interaction_network.get_measurement_location(
                 network,
                 communities,
-                combination.SITE_COMBINATION[
+                site_combination=combination.SITE_COMBINATION[
                     configuration["community detection"]
-                    ["measurement location"].get("site combination", "maxabs")],
+                    ["measurement location"].get("site combination", "maxabs")]
+                if configuration["community detection"]["measurement location"].
+                get("site combination", "maxabs") is not None else None,
+                replicate_combination=combination.REPLICATE_COMBINATION[
+                    configuration["community detection"]["measurement location"]
+                    .get("replicate combination", "mean")]
+                if configuration["community detection"]["measurement location"].
+                get("replicate combination", "mean") is not None else None,
                 location_test=test.LOCATION_TEST[(
                     configuration["community detection"]
                     ["measurement location"].get("test",

@@ -2,7 +2,7 @@
 from typing import Callable, Hashable
 
 import networkx as nx
-from analysis import modularization
+from algorithms import modularization
 
 ALGORITHM: dict[str, Callable[[nx.Graph, float, str], list[set[Hashable]]]] = {
     "Clauset-Newman-Moore": modularization.clauset_newman_moore,
