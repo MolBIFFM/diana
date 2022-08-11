@@ -262,9 +262,6 @@ def add_proteins_from_table(
             )[-number_sites:])
 
         for s, (_, site) in enumerate(sorted_sites, start=1):
-            network.nodes[protein][f"{time} {modification} {s}"] = math.log2(
-                replicate_combination(
-                    [math.pow(replicate, 2.0) for replicate in site]))
             for r, replicate in enumerate(site, start=1):
                 network.nodes[protein][
                     f"{time} {modification} {s} {r}"] = replicate
@@ -504,6 +501,13 @@ def set_measurements(
                     measurement.split(" ")[0] == str(time) and
                     measurement.split(" ")[1] == modification
                 ]
+
+                for s, (_, site) in enumerate(sites, start=1):
+                    network.nodes[protein][
+                        f"{time} {modification} {s}"] = math.log2(
+                            replicate_combination([
+                                math.pow(replicate, 2.0) for replicate in site
+                            ]))
 
                 if sites:
                     combined_sites = math.log2(
