@@ -36,8 +36,8 @@ python3 diana/diana.py --help
 
 ## Configuration
 
-Configuration files are processed concurrently. A configuration file specifies
-an array of workflows executed sequentially.
+A configuration file specifies an array of workflows executed sequentially.
+Configuration files are processed concurrently.
 
 ---
 
