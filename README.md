@@ -822,10 +822,10 @@ measurement. Available settings are `"mean"`, `"median"`, `"max"`, `"maxabs"`,
 ]
 ```
 The function used to combine distinct replicates into modification site-specific
-measurements to derive thresholds. The function is applied to ratios, not their
-binary logarithm. The default setting is `"mean"`, corresponding to the mean of
-replicates. Available settings are `"mean"`, `"median"`, `"max"`, `"maxabs"`,
-`"min"`, `"minabs"`, `"sum"` and `"sumabs"`.
+measurements. The function is applied to ratios, not their binary logarithm. The
+default setting is `"mean"`, corresponding to the mean of replicates. Available
+settings are `"mean"`, `"median"`, `"max"`, `"maxabs"`, `"min"`, `"minabs"`,
+`"sum"` and `"sumabs"`.
 
 ```json
 [
