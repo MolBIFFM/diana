@@ -502,7 +502,7 @@ def set_measurements(
                     measurement.split(" ")[1] == modification
                 ]
 
-                for s, (_, site) in enumerate(sites, start=1):
+                for s, site in enumerate(sites, start=1):
                     network.nodes[protein][
                         f"{time} {modification} {s}"] = math.log2(
                             replicate_combination([
