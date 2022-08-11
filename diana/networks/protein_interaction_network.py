@@ -257,7 +257,7 @@ def add_proteins_from_table(
                 key=lambda site: abs(
                     math.log2(
                         replicate_combination(
-                            [math.pow(replicate, 2.0)
+                            [math.pow(2.0, replicate)
                              for replicate in site[1]]))),
             )[-number_sites:])
 
@@ -506,13 +506,13 @@ def set_measurements(
                     network.nodes[protein][
                         f"{time} {modification} {s}"] = math.log2(
                             replicate_combination([
-                                math.pow(replicate, 2.0) for replicate in site
+                                math.pow(2.0, replicate) for replicate in site
                             ]))
 
                 if sites:
                     combined_sites = math.log2(
                         site_combination(
-                            [math.pow(site, 2.0) for site in sites]))
+                            [math.pow(2.0, site) for site in sites]))
 
                     if combined_sites >= 1.0 * measurement_range[time][
                             modification][1]:
