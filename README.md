@@ -19,19 +19,6 @@ Networks of Gene Ontology terms or Reactome pathways, reporting enrichment of
 each term or pathway by a protein-protein interaction network, can be generated
 along customized Cytoscape style specifications for each type of network.
 
-```mermaid
-flowchart
-   biogrid[(BioGRID)] -->
-    protein-protein-interaction-network[protein-protein interaction network]
-   corum[(CORUM)] --> protein-protein-interaction-network
-   intact[(IntAct)]--> protein-protein-interaction-network
-   mint[(MINT)]--> protein-protein-interaction-network
-   string[(STRING)] --> protein-protein-interaction-network
-   reactome[(Reactome)] --> protein-protein-interaction-network
-   reactome --> reactome-network[Reactome network]
-   go[(Gene Ontology)] --> gene-ontology-network[Gene Ontology network]
-```
-
 ## Setup
 
 ```
