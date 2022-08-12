@@ -1536,7 +1536,7 @@ STRING, and, lacking of corresponding score, 1.0 for all interactions from
 BioGRID, CORUM and Reactome. The combined score is used as edge weight in
 community detection. By default any edge receives a score of 1.0, corresponding
 to an unweighted network. Available settings are `null`, `"mean"`, `"median"`,
-`"max"`, `"min"`, `"sum"`, `"number"`, the number of queried databases
+`"max"`, `"min"`, `"sum"`, and `"number"`, the number of queried databases
 supporting the protein-protein interaction.
 
 ```json
