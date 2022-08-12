@@ -10,10 +10,9 @@ UniProt protein accessions. Further analysis of these networks is geared towards
 integrative contextualization of mass spectrometric measurements capturing
 differential post-translational modification of the represented proteins.
 
-In addition to protein-protein interaction networks, networks of Gene Ontology
-terms or Reactome pathways, reporting enrichment of each term or pathway by
-the proteins, can be generated along customized Cytoscape style specifications
-for each type of network.
+Networks of Gene Ontology terms or Reactome pathways, reporting enrichment of
+each term or pathway by a protein-protein interaction network, can be generated
+along customized Cytoscape style specifications for each type of network.
 
 ```mermaid
 flowchart
