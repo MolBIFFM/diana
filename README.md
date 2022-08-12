@@ -10,6 +10,11 @@ UniProt protein accessions. Further analysis of these networks is geared towards
 integrative contextualization of mass spectrometric measurements capturing
 differential post-translational modification of the represented proteins.
 
+The enrichment of CORUM protein complexes, Gene Ontology terms, and Reactome
+pathways by protein-protein interaction networks and their densely interacting
+communities can be assessed as well as the distribution of mass spectrometric
+measurements across communities.
+
 Networks of Gene Ontology terms or Reactome pathways, reporting enrichment of
 each term or pathway by a protein-protein interaction network, can be generated
 along customized Cytoscape style specifications for each type of network.
@@ -26,11 +31,6 @@ flowchart
    reactome --> reactome-network[Reactome network]
    go[(Gene Ontology)] --> gene-ontology-network[Gene Ontology network]
 ```
-
-The enrichment of CORUM protein complexes, Gene Ontology terms, and Reactome
-pathways by protein-protein interaction networks and their densely interacting
-communities can be assessed as well as the distribution of mass spectrometric
-measurements across communities.
 
 ## Setup
 
