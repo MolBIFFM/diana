@@ -495,11 +495,20 @@ def set_measurements(
             classification = {}
             for modification in modifications[time]:
                 sites = [
-                    network.nodes[protein][measurement]
-                    for measurement in network.nodes[protein]
-                    if len(measurement.split(" ")) == 3 and
-                    measurement.split(" ")[0] == str(time) and
-                    measurement.split(" ")[1] == modification
+                    [
+                        network.nodes[protein][site]
+                        for site in network.nodes[protein]
+                        if len(site.split(" ")) == 4 and site.split(" ")[0] ==
+                        str(time) and site.split(" ")[1] == modification and
+                        site.split(" ")[2] == str(s + 1)
+                    ]
+                    for s in range(
+                        max(
+                            int(
+                                site.split(" ")[2] if len(site.split(" ")) ==
+                                4 and site.split(" ")[0] == str(time) and
+                                site.split(" ")[1] == modification else "0")
+                            for site in network.nodes[protein]))
                 ]
 
                 for s, site in enumerate(sites, start=1):
@@ -511,8 +520,11 @@ def set_measurements(
 
                 if sites:
                     combined_sites = math.log2(
-                        site_combination(
-                            [math.pow(2.0, site) for site in sites]))
+                        site_combination([
+                            replicate_combination([
+                                math.pow(2.0, replicate) for replicate in site
+                            ]) for site in sites
+                        ]))
 
                     if combined_sites >= 1.0 * measurement_range[time][
                             modification][1]:
@@ -1179,7 +1191,7 @@ def get_measurements(
                              site.split(" ")[1] == modification else "0")
                          for site in network.nodes[protein]))]
 
-        if any(sites):
+        if sites:
             if (site_combination is not None and
                     replicate_combination is not None):
                 measurements.append(
