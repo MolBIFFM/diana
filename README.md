@@ -896,7 +896,7 @@ STRING, and, lacking of corresponding score, 1.0 for all interactions from
 BioGRID, CORUM and Reactome. The combined score is reflected by edge
 transparency in Cytoscape. By default any edge receives a score of 1.0.
 Available settings are `null`, `"mean"`, `"median"`, `"max"`, `"min"`, `"sum"`,
-`"number"`, the number of queried databases supporting the protein-protein
+and `"number"`, the number of queried databases supporting the protein-protein
 interaction.
 
 ---
