@@ -2133,9 +2133,9 @@ replicate. Entries consisting of three components refer to modification
 site-specific combinations of replicates.
 
 `"post-translational modification 30"` and
-`"post-translational modification 120"` refer to the specified types of
-post-translational modification the protein is associated with for particular
-times of measurement while `"measurement 30"` and `"measurement 120"` refer
+`"post-translational modification 120"` each refer to the specified types of
+pot-translational modification the protein is associated with for particular
+times of measurement while `"measurement 30"` and `"measurement 120"` each refer
 to a categorization of the protein-specific combination of modification sites.
 
 Annotations of Protein-protein interactions have the following structure.
@@ -2160,7 +2160,7 @@ Annotations of Gene Ontology terms have the following structure.
 ```xml
 <node id="GO:0043122">
   <data key="term">regulation of I-kappaB kinase/NF-kappaB signaling</data>
-  <data key="namespace">biological_process</data>
+  <data key="namespace">biological process</data>
   <data key="p-value">0.07496498697418053</data>
   <data key="number of proteins">5</data>
   <data key="proteins">P04792 P55085 Q12933 Q13501 Q9Y4K3</data>
