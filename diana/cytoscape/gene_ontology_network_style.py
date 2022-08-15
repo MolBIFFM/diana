@@ -360,9 +360,9 @@ COMPONENTS: dict[str, dict[str, dict[str, dict[
                         "attributeName": "namespace",
                         "attributeType": "string",
                         "discreteMappingEntry": {
-                            "cellular_component": "RECTANGLE",
-                            "biological_process": "TRIANGLE",
-                            "molecular_function": "ELLIPSE",
+                            "cellular component": "RECTANGLE",
+                            "biological process": "TRIANGLE",
+                            "molecular function": "ELLIPSE",
                         },
                     },
                 },

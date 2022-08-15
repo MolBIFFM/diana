@@ -41,10 +41,11 @@ def get_network(proteins: Iterable[str] = frozenset(),
     network = nx.DiGraph()
     go_id: dict[str, set[str]] = {}
     for term in gene_ontology.get_ontology(namespaces):
-        if isinstance(term["id"], str):
+        if isinstance(term["id"], str) and isinstance(term["namespace"], str):
             network.add_node(term["id"])
             network.nodes[term["id"]]["term"] = term["name"]
-            network.nodes[term["id"]]["namespace"] = term["namespace"]
+            network.nodes[term["id"]]["namespace"] = term["namespace"].replace(
+                "_", " ")
 
             for parent in term.get("is_a", []):
                 network.add_edge(term["id"], parent)

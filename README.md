@@ -2088,6 +2088,116 @@ not. The adaptive default setting is `[-1.0, 1.0]` if `"conversion"` is not set,
 to `"quantile"`, and `[-1.0, 1.0]` if `"conversion"` is set to
 `"standard score"`.
 
+## Protein-protein interaction network
+
+Annotations of proteins have the following structure.
+
+```xml
+<node id="Q12933">
+  <data key="30 U 1 1">3.765004</data>
+  <data key="30 U 1 2">4.2322</data>
+  <data key="30 U 2 1">3.926948</data>
+  <data key="30 U 2 2">4.299611</data>
+  <data key="30 U 2 3">3.715125</data>
+  <data key="30 U 3 1">2.239367</data>
+  <data key="30 U 3 2">3.353323</data>
+  <data key="30 U 4 1">4.508999</data>
+  <data key="30 U 4 2">4.576885</data>
+  <data key="120 U 1 1">2.377096</data>
+  <data key="120 U 1 2">2.890972</data>
+  <data key="120 U 2 1">2.962512</data>
+  <data key="120 U 2 2">3.0054</data>
+  <data key="gene">TRAF2</data>
+  <data key="protein">TNF receptor-associated factor 2</data>
+  <data key="post-translational modification 30">U</data>
+  <data key="post-translational modification 120">U</data>
+  <data key="30 U 1">4.017431773281321</data>
+  <data key="30 U 2">4.001081644434266</data>
+  <data key="30 U 3">2.9012913530601145</data>
+  <data key="30 U 4">4.543341260044583</data>
+  <data key="measurement 30">UP</data>
+  <data key="120 U 1">2.6567938583308726</data>
+  <data key="120 U 2">2.9841153643117204</data>
+  <data key="measurement 120">UP</data>
+</node>
+```
+Proteins are represented by their primary UniProt accession. `"gene"` and
+`"protein"` refer to the gene and protein names listed in UniProt, respectively.
+
+Extracted mass spectrometric measurements, expressed as binary logarithms of the
+corresponding ratios, are represented by keys consisting of four components.
+The first component refers to the specified time of measurement, the second to
+the specified type of post-translational modification, the third refers to the
+relative position of the corresponding modification site and the fourth to the
+replicate. Entries consisting of three components refer to modification
+site-specific combinations of replicates.
+
+`"post-translational modification 30"` and
+`"post-translational modification 120"` refer to the specified types of
+post-translational modification the protein is associated with for particular
+times of measurement while `"measurement 30"` and `"measurement 120"` refer
+to a categorization of the protein-specific combination of modification sites.
+
+Annotations of Protein-protein interactions have the following structure.
+
+```xml
+<edge source="Q92844" target="Q12933">
+  <data key="BioGRID">1.0</data>
+  <data key="CORUM">1.0</data>
+  <data key="IntAct">0.81</data>
+  <data key="Reactome">1.0</data>
+  <data key="STRING">0.991</data>
+  <data key="score">1.0</data>
+</edge>
+```
+A protein-protein interaction between is associated with database-specific
+confidence scores. `"score"` refers to the combination of confidence scores.
+
+## Gene Ontology network
+
+Annotations of Gene Ontology terms have the following structure.
+
+```xml
+<node id="GO:0043122">
+  <data key="term">regulation of I-kappaB kinase/NF-kappaB signaling</data>
+  <data key="namespace">biological_process</data>
+  <data key="p-value">0.07496498697418053</data>
+  <data key="number of proteins">5</data>
+  <data key="proteins">P04792 P55085 Q12933 Q13501 Q9Y4K3</data>
+</node>
+```
+Terms are represented by their Gene Ontology ID. `"term"` refers to the term and
+`"namespace"` to its namespace. `"p-value"` refers to the corrected p-value of
+the test for enrichment of the term by the submitted proteins.
+`"number of proteins"` refers to the number of submitted proteins annotated with
+the term and `"proteins"` refers to the space separated accessions of these
+proteins.
+
+Relationships of Gene Ontology terms are not annotated with additional
+information besides the related terms.
+
+## Reactome network
+
+Annotations of Reactome pathways have the following structure.
+
+```xml
+<node id="R-HSA-9758274">
+  <data key="pathway">Regulation of NF-kappa B signaling</data>
+  <data key="p-value">1.0</data>
+  <data key="number of proteins">3</data>
+  <data key="proteins">O75113 Q12933 Q9Y4K3</data>
+</node>
+```
+Pathways are represented by their Reactome pathway stable identifier.
+`"pathway"` refers to the pathway name. `"p-value"` refers to the corrected
+p-value of the test for enrichment of the pathway by the submitted proteins.
+`"number of proteins"` refers to the number of submitted proteins annotated with
+the pathway and `"proteins"` refers to the space separated accessions of these
+proteins.
+
+Relationships of Reactome pathways are not annotated with additional
+information besides the related pathways.
+
 ## References
 
 The configuration files in this repository refer to data sets supplemented with
