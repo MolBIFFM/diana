@@ -2134,9 +2134,10 @@ combinations of replicates.
 
 `"post-translational modification 30"` and
 `"post-translational modification 120"` each refer to the specified types of
-pot-translational modification the protein is associated with for particular
-times of measurement while `"measurement 30"` and `"measurement 120"` each refer
-to a categorization of the protein-specific combination of modification sites.
+pot-translational modification the protein is associated with while
+`"measurement 30"` and `"measurement 120"` each refer to a categorization of the
+protein-specific combination of modification sites for particular specified
+times of measurement.
 
 Annotations of protein-protein interactions contain the following information.
 
