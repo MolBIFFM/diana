@@ -11,7 +11,7 @@ integrative contextualization of mass spectrometric measurements capturing
 differential post-translational modification of the represented proteins.
 
 The enrichment of CORUM protein complexes, Gene Ontology terms, and Reactome
-pathways by protein-protein interaction networks and their densely interacting
+pathways by a protein-protein interaction network and its densely interacting
 communities can be assessed as well as the distribution of mass spectrometric
 measurements across communities.
 
