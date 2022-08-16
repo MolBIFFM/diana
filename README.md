@@ -2127,10 +2127,10 @@ Proteins are represented by their primary UniProt accession. `"gene"` and
 Extracted mass spectrometric measurements, expressed as binary logarithms of the
 corresponding ratios, are represented by keys consisting of four components.
 The first component refers to the specified time of measurement, the second to
-the specified type of post-translational modification, the third refers to the
-relative position of the corresponding modification site and the fourth to the
-replicate. Entries consisting of three components refer to modification
-site-specific combinations of replicates.
+the specified type of post-translational modification, the third to the relative
+position of the corresponding modification site and the fourth to the replicate.
+Entries consisting of three components refer to modification site-specific
+combinations of replicates.
 
 `"post-translational modification 30"` and
 `"post-translational modification 120"` each refer to the specified types of
