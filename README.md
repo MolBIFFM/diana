@@ -893,10 +893,10 @@ set to `"quantile"`, and `[-1.0, 1.0]` if `"conversion"` is set to
 The function used to combine edge confidence scores from in IntAct, MINT and
 STRING, and, lacking of corresponding score, 1.0 for all interactions from
 BioGRID, CORUM and Reactome. The combined score is reflected by edge
-transparency in Cytoscape. By default any edge receives a score of 1.0.
-Available settings are `null`, `"mean"`, `"median"`, `"max"`, `"min"`, `"sum"`,
-and `"number"`, the number of queried databases supporting the protein-protein
-interaction.
+transparency in Cytoscape. By default, `null`, any edge receives a score of
+1.0 and edges are not transparent. Available settings are `null`, `"mean"`,
+`"median"`, `"max"`, `"min"`, `"sum"`,and `"number"`, the number of queried
+databases supporting the protein-protein interaction.
 
 ---
 
@@ -1533,10 +1533,10 @@ expected number of intra-community edges.
 The function used to combine edge confidence scores from in IntAct, MINT and
 STRING, and, lacking of corresponding score, 1.0 for all interactions from
 BioGRID, CORUM and Reactome. The combined score is used as edge weight in
-community detection. By default any edge receives a score of 1.0, corresponding
-to an unweighted network. Available settings are `null`, `"mean"`, `"median"`,
-`"max"`, `"min"`, `"sum"`, and `"number"`, the number of queried databases
-supporting the protein-protein interaction.
+community detection. By default, `null`, any edge receives a score of 1.0,
+corresponding to an unweighted network. Available settings are `null`, `"mean"`,
+`"median"`, `"max"`, `"min"`, `"sum"`, and `"number"`, the number of queried
+databases supporting the protein-protein interaction.
 
 ```json
 [
@@ -2090,7 +2090,7 @@ to `"quantile"`, and `[-1.0, 1.0]` if `"conversion"` is set to
 
 ## Protein-protein interaction network
 
-Annotations of proteins have the following structure.
+Annotations of proteins contain the following information.
 
 ```xml
 <node id="Q12933">
@@ -2138,7 +2138,7 @@ pot-translational modification the protein is associated with for particular
 times of measurement while `"measurement 30"` and `"measurement 120"` each refer
 to a categorization of the protein-specific combination of modification sites.
 
-Annotations of Protein-protein interactions have the following structure.
+Annotations of protein-protein interactions contain the following information.
 
 ```xml
 <edge source="Q92844" target="Q12933">
@@ -2155,7 +2155,7 @@ confidence scores. `"score"` refers to the combination of confidence scores.
 
 ## Gene Ontology network
 
-Annotations of Gene Ontology terms have the following structure.
+Annotations of Gene Ontology terms contain the following information.
 
 ```xml
 <node id="GO:0043122">
@@ -2178,7 +2178,7 @@ information besides the related terms.
 
 ## Reactome network
 
-Annotations of Reactome pathways have the following structure.
+Annotations of Reactome pathways contain the following information.
 
 ```xml
 <node id="R-HSA-9758274">
