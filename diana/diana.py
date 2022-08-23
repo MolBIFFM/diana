@@ -1,5 +1,5 @@
 """
-DIANA: Data Integration And Network-based Analysis for post-translational
+DIANA: data integration and network-based analysis for post-translational
 modification mass spectrometry data
 """
 import argparse
@@ -1592,7 +1592,7 @@ def process_configuration_file(configuration_file: str) -> None:
 def main() -> None:
     """Launches concurrent workflow execution."""
     parser = argparse.ArgumentParser(
-        description="DIANA: Data Integration And Network-based Analysis for "
+        description="DIANA: data integration and network-based analysis for "
         "post-translational modification mass spectrometry data")
 
     parser.add_argument("-c",
