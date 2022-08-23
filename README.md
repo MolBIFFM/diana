@@ -19,27 +19,35 @@ each term or pathway by a protein-protein interaction network, can be generated
 along customized Cytoscape style specifications for each type of network.
 
 ## Setup
+External dependencies can be installed using pip by running
 
 ```
 pip3 install -r diana/requirements.txt
 ```
-External dependencies consist of NetworkX, pandas, and SciPy. DIANA is currently
-developed using Python 3.10.4, Ubuntu 22.04 and Cytoscape 3.9.1.
+External dependencies consist of NetworkX, pandas, and SciPy.
+
+DIANA is currently developed using Python 3.10.4, Ubuntu 22.04 and Cytoscape
+3.9.1.
 
 ## Command Line Interface
+
+Instructions can be displayed by running
 
 ```
 python3 diana/diana.py --help
 ```
 
+Configuration is detailed below. Configuration files referring to published data
+sets referenced below are included in this repository.
+
 ## Configuration
 
 A configuration file specifies an array of workflows executed sequentially.
-Configuration files are processed concurrently.
+Multiple configuration files are processed concurrently.
 
 ---
 
-Input genes or proteins can be read from tabular input files.
+Input genes or proteins are read from tabular input files.
 
 ```json
 [
@@ -921,8 +929,9 @@ of proteins from the protein-protein interaction network.
     }
 ]
 ```
-The statistical test to assess enrichment. The default setting is
-`"hypergeometric"`. Available settings are `"binomial"` and `"hypergeometric"`.
+The statistical test to assess enrichment of each complex, term or pathway by
+the submitted proteins. The default setting is `"hypergeometric"`. Available
+settings are `"binomial"` and `"hypergeometric"`.
 
 ```json
 [
@@ -1424,8 +1433,9 @@ their union. The default setting is `false`.
     }
 ]
 ```
-The statistical test to assess enrichment. The default setting is
-`"hypergeometric"`. Available settings are `"binomial"` and `"hypergeometric"`.
+The statistical test to assess enrichment of each term or pathway by the
+submitted proteins. The default setting is `"hypergeometric"`. Available
+settings are `"binomial"` and `"hypergeometric"`.
 
 ```json
 [
@@ -1681,8 +1691,9 @@ The corrected p-value threshold. The default setting is `1.0`.
     }
 ]
 ```
-The statistical test to assess enrichment. The default setting is
-`"hypergeometric"`. Available settings are `"binomial"` and `"hypergeometric"`.
+The statistical test to assess enrichment of each complex, term or pathway by
+the each of the communities. The default setting is `"hypergeometric"`.
+Available settings are `"binomial"` and `"hypergeometric"`.
 
 ```json
 [
@@ -1695,10 +1706,11 @@ The statistical test to assess enrichment. The default setting is
     }
 ]
 ```
-The statistical test to compare modification- and time-specific measurement
-distributions of each community in with the remaining network. The default
-setting is `"Mann-Whitney-Wilcoxon"`. Available settings are
-`"Mann-Whitney-Wilcoxon"` and `"Welch"`.
+The statistical test to compare locations of modification- and time-specific
+distributions of measurements across each community with the distribution of the
+remaining protein-protein interaction network. The default setting is
+`"Mann-Whitney-Wilcoxon"`. Available settings are `"Mann-Whitney-Wilcoxon"` and
+`"Welch"`.
 
 ```json
 [
@@ -2290,3 +2302,8 @@ Development was inspired by previous work combining the following applications.
 
 References for implemented algorithms are listed in the corresponding source
 code.
+
+---
+
+DIANA is developed by Jens Rieser and Lucas Fein in the Molecular Bioinformatics
+group of Ina Koch at Goethe-University Frankfurt.
