@@ -5,7 +5,7 @@ Nodes are Reactome pathways associated with proteins from a species of interest.
 Edges are directed pathway relationships within Reactome.
 """
 
-from typing import Callable, Hashable, Iterable, Mapping
+from typing import Callable, Container, Hashable, Iterable, Mapping
 
 import networkx as nx
 import scipy.stats
@@ -13,13 +13,15 @@ from algorithms import correction
 from databases import reactome
 
 
-def get_network(proteins: Iterable[str] = frozenset(),
-                enrichment_test: Callable[[int, int, int, int], float] = lambda
-                k, M, n, N: scipy.stats.hypergeom.sf(k - 1, M, n, N),
-                multiple_testing_correction: Callable[
-                    [dict[Hashable, float]],
-                    Mapping[Hashable, float]] = correction.benjamini_hochberg,
-                organism: int = 9606) -> nx.DiGraph:
+def get_network(
+    proteins: Iterable[str] = frozenset(),
+    enrichment_test: Callable[
+        [int, int, int, int],
+        float] = lambda k, M, n, N: scipy.stats.hypergeom.sf(k - 1, M, n, N),
+    multiple_testing_correction: Callable[[dict[Hashable, float]], Mapping[
+        Hashable, float]] = correction.benjamini_yekutieli,
+    organism: int = 9606,
+    reference: Container[str] = frozenset()) -> nx.DiGraph:
     """
     Assemble a Reactome network from proteins.
 
@@ -47,7 +49,9 @@ def get_network(proteins: Iterable[str] = frozenset(),
     for protein, pathway in reactome.get_pathway_annotation(organism):
         if pathway not in annotation:
             annotation[pathway] = set()
-        annotation[pathway].add(protein)
+
+        if not reference or protein in reference:
+            annotation[pathway].add(protein)
 
     network.remove_nodes_from(
         [pathway for pathway in network if pathway not in annotation])

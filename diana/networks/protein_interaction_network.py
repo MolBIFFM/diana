@@ -1229,7 +1229,7 @@ def get_measurement_enrichment(
         [int, int, int, int],
         float] = lambda k, M, n, N: scipy.stats.hypergeom.sf(k - 1, M, n, N),
     multiple_testing_correction: Callable[[dict[Hashable, float]], dict[
-        Hashable, float]] = correction.benjamini_hochberg,
+        Hashable, float]] = correction.benjamini_yekutieli,
 ) -> dict[nx.Graph, dict[int, dict[str, float]]]:
     """
     Test communities for enrichment of large protein-specific measurements for
@@ -1334,7 +1334,7 @@ def get_measurement_location(
         [Collection[float], Collection[float]],
         float] = lambda x, y: scipy.stats.ranksums(x, y).pvalue,
     multiple_testing_correction: Callable[[dict[Hashable, float]], dict[
-        Hashable, float]] = correction.benjamini_hochberg,
+        Hashable, float]] = correction.benjamini_yekutieli,
 ) -> dict[nx.Graph, dict[int, dict[str, float]]]:
     """
     Test communities for difference tendencies in protein-specific measurements

@@ -1247,10 +1247,10 @@ The Gene Ontology namespaces to consider. The default setting is
 ---
 
 Networks of Gene Ontology terms or Reactome pathways can be exported. Both
-incorporate the enrichment of each respective entity by the protein-protein
-interaction network with respect to the annotation specific to an organism of
-interest along the respective hierarchical relations of entities in these
-databases.
+report the enrichment of each term or pathway by proteins represented in the
+protein-protein interaction network with respect to the annotation specific to
+an organism of interest. Edges of these networks are the respective hierarchical
+relations of entities in these databases.
 
 The proteins considered can be restricted, based on mass spectrometric
 associated measurements, either by a union or intersection of specified subsets
@@ -1472,6 +1472,23 @@ The procedure to correct p-values for multiple testing. The default setting is
 [
     {
       "Gene Ontology network": {
+        "annotation": false
+      },
+      "Reactome network": {
+        "annotation": false
+      }
+    }
+]
+```
+If `true`, compute enrichment with respect to the entire annotation, specific to
+the organism of interest, otherwise with respect to proteins represented in the
+protein-protein interaction network to assess enrichment within specified
+subsets of them. The default setting is `false`.
+
+```json
+[
+    {
+      "Gene Ontology network": {
         "organism": 9606
       },
       "Reactome network": {
@@ -1576,21 +1593,21 @@ decisive to meeting the community size threshold. The default setting is
 
 ---
 
-CORUM protein complex, Gene Ontology term and Reactome pathway enrichment of
+CORUM protein complex, Gene Ontology term and Reactome pathway enrichment by
 separate communities can be assessed. The proteins considered can be
 restricted, based on ranges of associated mass spectrometric measurements,
 either by a union or intersection of specified subsets of proteins from the
 protein-protein interaction network.
 
-To assess the distribution of mass spectrometry measurements, these are either
-categorized to measure the communities' enrichment of proteins which exhibit
-measurements exceeding a specified absolute or relative threshold.
-Alternatively, the distribution of measurements inside separate communities can
-be compared with the remaining network, with respect to either individual
-proteins or modification sites.
+To assess the distribution of mass spectrometry measurements across communities,
+these can be categorized to measure the enrichment of proteins exceeding a
+specified absolute or relative threshold.
 
-A community is exported if it is rendered significant with respect to any of the
-specified tests.
+Alternatively, the distribution of measurements within separate communities can
+be compared with the remaining network.
+
+A community is exported if is significant according to any of the specified
+tests.
 
 ```json
 [
@@ -1764,8 +1781,8 @@ completely supported setting is `9606`, corresponding to Homo sapiens.
 ]
 ```
 If `true`, compute enrichment with respect to the entire annotation, specific to
-the organism of interest, otherwise with respect to the protein-protein
-interaction network. The default setting is `false`.
+the organism of interest, otherwise with respect to proteins represented in the
+protein-protein interaction network. The default setting is `false`.
 
 ```json
 [

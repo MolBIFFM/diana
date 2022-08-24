@@ -5,7 +5,7 @@ Nodes are Gene Ontology terms associated with proteins from a species of
 interest. Edges are directed term relationships within the Gene Ontology.
 """
 
-from typing import Callable, Collection, Hashable, Iterable, Mapping
+from typing import Callable, Collection, Container, Hashable, Iterable, Mapping
 
 import networkx as nx
 import scipy.stats
@@ -13,16 +13,17 @@ from algorithms import correction
 from databases import gene_ontology
 
 
-def get_network(proteins: Iterable[str] = frozenset(),
-                namespaces: Collection[str] = ("cellular_component",
-                                               "molecular_function",
-                                               "biological_process"),
-                enrichment_test: Callable[[int, int, int, int], float] = lambda
-                k, M, n, N: scipy.stats.hypergeom.sf(k - 1, M, n, N),
-                multiple_testing_correction: Callable[
-                    [dict[Hashable, float]],
-                    Mapping[Hashable, float]] = correction.benjamini_hochberg,
-                organism: int = 9606) -> nx.DiGraph:
+def get_network(
+    proteins: Iterable[str] = frozenset(),
+    namespaces: Collection[str] = ("cellular_component", "molecular_function",
+                                   "biological_process"),
+    enrichment_test: Callable[
+        [int, int, int, int],
+        float] = lambda k, M, n, N: scipy.stats.hypergeom.sf(k - 1, M, n, N),
+    multiple_testing_correction: Callable[[dict[Hashable, float]], Mapping[
+        Hashable, float]] = correction.benjamini_yekutieli,
+    organism: int = 9606,
+    reference: Container[str] = frozenset()) -> nx.DiGraph:
     """
     Assemble a Gene Ontology network from proteins.
 
@@ -61,7 +62,9 @@ def get_network(proteins: Iterable[str] = frozenset(),
         for primary_term in go_id.get(annotated_term, {annotated_term}):
             if primary_term not in annotation:
                 annotation[primary_term] = set()
-            annotation[primary_term].add(protein)
+
+            if not reference or protein in reference:
+                annotation[primary_term].add(protein)
 
     network.remove_nodes_from(
         [term for term in network if term not in annotation])

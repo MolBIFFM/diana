@@ -125,7 +125,7 @@ def get_enrichment(
         [int, int, int, int],
         float] = lambda k, M, n, N: scipy.stats.hypergeom.sf(k - 1, M, n, N),
     multiple_testing_correction: Callable[[dict[Hashable, float]], Mapping[
-        Hashable, float]] = correction.benjamini_hochberg,
+        Hashable, float]] = correction.benjamini_yekutieli,
     organism: int = 9606,
     namespaces: Collection[str] = ("cellular_component", "molecular_function",
                                    "biological_process"),

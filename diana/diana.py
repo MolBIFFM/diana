@@ -849,7 +849,10 @@ def process_workflow(configuration: Mapping[str, Any],
                     configuration["Gene Ontology network"].get(
                         "correction", "Benjamini-Yekutieli")],
                 organism=configuration["Gene Ontology network"].get(
-                    "organism", 9606))
+                    "organism", 9606),
+                reference=network.nodes()
+                if not configuration["Gene Ontology network"].get(
+                    "annotation", False) else frozenset())
 
         else:
             ontology_network = gene_ontology_network.get_network(
@@ -957,7 +960,10 @@ def process_workflow(configuration: Mapping[str, Any],
                     configuration["Reactome network"].get(
                         "correction", "Benjamini-Yekutieli")],
                 organism=configuration["Reactome network"].get(
-                    "organism", 9606))
+                    "organism", 9606),
+                reference=network.nodes() if
+                not configuration["Reactome network"].get("annotation", False)
+                else frozenset())
 
         else:
             pathway_network = reactome_network.get_network(
