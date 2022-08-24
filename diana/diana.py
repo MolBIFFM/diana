@@ -396,7 +396,7 @@ def process_workflow(configuration: Mapping[str, Any],
 
                 protein_interaction_network_style.export(
                     style,
-                    f"{logger.name}.{index}" if index else logger.name,
+                    f"{logger.name}_{index}" if index else logger.name,
                 )
 
                 protein_interaction_network.set_edge_weights(
@@ -437,7 +437,7 @@ def process_workflow(configuration: Mapping[str, Any],
 
         protein_interaction_network.export(
             network,
-            f"{logger.name}.{index}" if index else logger.name,
+            f"{logger.name}_{index}" if index else logger.name,
         )
 
     if "CORUM enrichment" in configuration:
@@ -874,15 +874,15 @@ def process_workflow(configuration: Mapping[str, Any],
                     "organism", 9606))
 
         gene_ontology_network.export(
-            ontology_network,
-            f"{logger.name}.go.{index}" if index else f"{logger.name}.go")
+            ontology_network, f"{logger.name}_gene_ontology_{index}"
+            if index else f"{logger.name}_gene_ontology")
 
         if "Cytoscape" in configuration:
             ontology_network_style = gene_ontology_network_style.get_style(
                 ontology_network)
             gene_ontology_network_style.export(
-                ontology_network_style,
-                f"{logger.name}.go.{index}" if index else f"{logger.name}.go")
+                ontology_network_style, f"{logger.name}_gene_ontology_{index}"
+                if index else f"{logger.name}_gene_ontology")
 
     if "Reactome network" in configuration:
         if "subsets" in configuration["Reactome network"]:
@@ -973,15 +973,15 @@ def process_workflow(configuration: Mapping[str, Any],
                     "organism", 9606))
 
         reactome_network.export(
-            pathway_network, f"{logger.name}.reactome.{index}"
-            if index else f"{logger.name}.reactome")
+            pathway_network, f"{logger.name}_reactome_{index}"
+            if index else f"{logger.name}_reactome")
 
         if "Cytoscape" in configuration:
             pathway_network_style = reactome_network_style.get_style(
                 pathway_network)
             reactome_network_style.export(
-                pathway_network_style, f"{logger.name}.reactome.{index}"
-                if index else f"{logger.name}.reactome")
+                pathway_network_style, f"{logger.name}_reactome_{index}"
+                if index else f"{logger.name}_reactome")
 
     if "community detection" in configuration:
         protein_interaction_network.set_edge_weights(
@@ -1554,8 +1554,8 @@ def process_workflow(configuration: Mapping[str, Any],
             if export[community]:
                 protein_interaction_network.export(
                     community,
-                    f"{logger.name}.{index}.{k}"
-                    if index else f"{logger.name}.{k}",
+                    f"{logger.name}_{index}_{k}"
+                    if index else f"{logger.name}_{k}",
                 )
 
 
