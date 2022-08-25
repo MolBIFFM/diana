@@ -19,7 +19,8 @@ each term or pathway by a protein-protein interaction network, can be generated
 along customized Cytoscape style specifications for each type of network.
 
 ## Setup
-External dependencies can be installed using pip by running
+External dependencies can be installed using pip by running the following
+command:
 
 ```
 pip3 install -r diana/requirements.txt
@@ -31,7 +32,7 @@ DIANA is currently developed using Python 3.10.4, Ubuntu 22.04 and Cytoscape
 
 ## Command Line Interface
 
-Instructions can be displayed by running
+Instructions can be displayed by running the following command:
 
 ```
 python3 diana/diana.py --help
@@ -898,7 +899,7 @@ set to `"quantile"`, and `[-1.0, 1.0]` if `"conversion"` is set to
 ]
 ```
 The function used to combine edge confidence scores from in IntAct, MINT and
-STRING, and, lacking of corresponding score, 1.0 for all interactions from
+STRING, and, lacking a corresponding score, 1.0 for all interactions from
 BioGRID, CORUM and Reactome. The combined score is reflected by edge
 transparency in Cytoscape. By default, `null`, any edge receives a score of
 1.0 and edges are not transparent. Available settings are `null`, `"mean"`,
@@ -2118,7 +2119,7 @@ to `"quantile"`, and `[-1.0, 1.0]` if `"conversion"` is set to
 
 ## Protein-protein interaction network
 
-Annotations of proteins contain the following information.
+Annotations of proteins contain the following information:
 
 ```xml
 <node id="Q12933">
@@ -2162,12 +2163,12 @@ combinations of replicates.
 
 `"post-translational modification 30"` and
 `"post-translational modification 120"` each refer to the specified types of
-pot-translational modification the protein is associated with while
+post-translational modification the protein is associated with while
 `"measurement 30"` and `"measurement 120"` each refer to a categorization of the
 protein-specific combination of modification sites for particular specified
 times of measurement.
 
-Annotations of protein-protein interactions contain the following information.
+Annotations of protein-protein interactions contain the following information:
 
 ```xml
 <edge source="Q92844" target="Q12933">
@@ -2184,7 +2185,7 @@ confidence scores. `"score"` refers to the combination of confidence scores.
 
 ## Gene Ontology network
 
-Annotations of Gene Ontology terms contain the following information.
+Annotations of Gene Ontology terms contain the following information:
 
 ```xml
 <node id="GO:0043122">
@@ -2202,12 +2203,12 @@ the test for enrichment of the term by the submitted proteins.
 the term and `"proteins"` refers to the space separated accessions of these
 proteins.
 
-Relationships of Gene Ontology terms are not annotated with additional
-information besides the related terms.
+Relationships of Gene Ontology terms contain no additional information besides
+the related terms.
 
 ## Reactome network
 
-Annotations of Reactome pathways contain the following information.
+Annotations of Reactome pathways contain the following information:
 
 ```xml
 <node id="R-HSA-9758274">
@@ -2224,13 +2225,13 @@ p-value of the test for enrichment of the pathway by the submitted proteins.
 the pathway and `"proteins"` refers to the space separated accessions of these
 proteins.
 
-Relationships of Reactome pathways are not annotated with additional
-information besides the related pathways.
+Relationships of Reactome pathways contain no additional information besides the
+related pathways.
 
 ## References
 
 The configuration files in this repository refer to data sets supplemented with
-the following publications.
+the following publications:
 
 - Fiskin, E. et al. (2016) **Global Analysis of Host and Bacterial**
   **Ubiquitinome in Response to *Salmonella* Typhimurium Infection**, *Mol.*
@@ -2248,7 +2249,7 @@ the following publications.
 
 ---
 
-The following resources can be accessed.
+DIANA accesses the following resources:
 
 - Ashburner, M. et al. (2000) **Gene Ontology: tool for the unification of**
   **biology**, *Nat. Genet.*, 25, 25-29.
@@ -2282,14 +2283,7 @@ The following resources can be accessed.
 
 ---
 
-The following applications are targeted.
-
-- Shannon, P. et al. (2003) **Cytoscape: a software environment for integrated**
-  **models of biomolecular interaction networks**, *Genome Res.*, 13, 2498-2504.
-
----
-
-The following external libraries are utilized.
+DIANA utilizes the following external libraries:
 
 - Hagberg, A. A. et al. (2008) **Exploring network structure, dynamics, and**
   **function using NetworkX**, *Proceedings of the 7th Python in Science*
@@ -2303,7 +2297,8 @@ The following external libraries are utilized.
 
 ---
 
-Development was inspired by previous work combining the following applications.
+Development of DIANA was inspired by previous work combining the following
+applications:
 
 - Maere, S. et al. (2005) ***BiNGO*: a Cytoscape plugin to assess**
   **overrepresentation of Gene Ontology categories in Biological Networks**,
@@ -2314,6 +2309,13 @@ Development was inspired by previous work combining the following applications.
 
 - Su, G. et al. (2010) **GLay: community structure analysis of biological**
   **networks**, *Bioinformatics*, 26, 3135-3137.
+
+---
+
+DIANA produces Cytoscape style specifications.
+
+- Shannon, P. et al. (2003) **Cytoscape: a software environment for integrated**
+  **models of biomolecular interaction networks**, *Genome Res.*, 13, 2498-2504.
 
 ---
 
