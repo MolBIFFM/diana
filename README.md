@@ -5,14 +5,14 @@ DIANA is a command line application for **D**ata **I**ntegration **A**nd
 spectrometry data.
 
 Incorporating protein-protein interactions from BioGRID, CORUM, IntAct, MINT,
-Reactome, and STRING, DIANA assembles and analyses protein-protein interaction
+Reactome, and STRING, DIANA assembles and analyzes protein-protein interaction
 networks from mass spectrometry data, providing integrative contextualization of
-differential post-translational modification captured.
+differential post-translational modification.
 
 The enrichment of CORUM protein complexes, Gene Ontology terms, and Reactome
 pathways by a protein-protein interaction network and its densely interacting
-communities can be assessed as well as the distribution of mass spectrometric
-measurements across communities.
+communities as well as the distribution of mass spectrometric measurements
+across communities can be assessed.
 
 Networks of Gene Ontology terms or Reactome pathways, reporting enrichment of
 each term or pathway by a protein-protein interaction network, can be generated
