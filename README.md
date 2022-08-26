@@ -2200,33 +2200,42 @@ Terms are represented by their Gene Ontology ID. `"term"` refers to the term and
 `"namespace"` to its namespace. `"p-value"` refers to the corrected p-value of
 the test for enrichment of the term by the submitted proteins.
 `"number of proteins"` refers to the number of submitted proteins annotated with
-the term and `"proteins"` refers to the space separated accessions of these
+the term and `"proteins"` refers to the space-separated accessions of these
 proteins.
 
 Relationships of Gene Ontology terms contain no additional information besides
-the related terms.
+the related terms, for example:
+
+```xml
+<edge source="GO:0043122" target="GO:1902531"/>
+```
 
 ## Reactome network
 
 Annotations of Reactome pathways contain the following information:
 
 ```xml
-<node id="R-HSA-9758274">
-  <data key="pathway">Regulation of NF-kappa B signaling</data>
+<node id="R-HSA-445989">
+  <data key="pathway">TAK1-dependent IKK and NF-kappa-B activation</data>
   <data key="p-value">1.0</data>
-  <data key="number of proteins">3</data>
-  <data key="proteins">O75113 Q12933 Q9Y4K3</data>
+  <data key="number of proteins">5</data>
+  <data key="proteins">O75113 P19838 Q12933 Q9NYJ8 Q9Y4K3</data>
 </node>
 ```
+
 Pathways are represented by their Reactome pathway stable identifier.
 `"pathway"` refers to the pathway name. `"p-value"` refers to the corrected
 p-value of the test for enrichment of the pathway by the submitted proteins.
 `"number of proteins"` refers to the number of submitted proteins annotated with
-the pathway and `"proteins"` refers to the space separated accessions of these
+the pathway and `"proteins"` refers to the space-separated accessions of these
 proteins.
 
 Relationships of Reactome pathways contain no additional information besides the
-related pathways.
+related pathways, for example:
+
+```xml
+<edge source="R-HSA-445989" target="R-HSA-9758274" />
+```
 
 ## References
 
