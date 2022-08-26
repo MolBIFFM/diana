@@ -2234,7 +2234,7 @@ Relationships of Reactome pathways contain no additional information besides the
 related pathways, for example:
 
 ```xml
-<edge source="R-HSA-445989" target="R-HSA-9758274" />
+<edge source="R-HSA-445989" target="R-HSA-9758274"/>
 ```
 
 ## References
