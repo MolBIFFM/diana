@@ -2180,6 +2180,7 @@ Annotations of protein-protein interactions contain the following information:
   <data key="score">1.0</data>
 </edge>
 ```
+
 A protein-protein interaction between is associated with database-specific
 confidence scores. `"score"` refers to the combination of confidence scores.
 
@@ -2191,11 +2192,12 @@ Annotations of Gene Ontology terms contain the following information:
 <node id="GO:0043122">
   <data key="term">regulation of I-kappaB kinase/NF-kappaB signaling</data>
   <data key="namespace">biological process</data>
-  <data key="p-value">0.07496498697418053</data>
+  <data key="p-value">1.0</data>
   <data key="number of proteins">5</data>
   <data key="proteins">P04792 P55085 Q12933 Q13501 Q9Y4K3</data>
 </node>
 ```
+
 Terms are represented by their Gene Ontology ID. `"term"` refers to the term and
 `"namespace"` to its namespace. `"p-value"` refers to the corrected p-value of
 the test for enrichment of the term by the submitted proteins.
