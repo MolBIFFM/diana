@@ -521,8 +521,8 @@ def process_workflow(configuration: Mapping[str, Any],
                     corum_enrichment[frozenset(proteins)].items(),
                     key=lambda item: item[1]):
                 if p <= configuration["CORUM enrichment"].get("p", 1.0):
-                    logger.info(f"CORUM enrichment\t{protein_complex}\t{name}\t"
-                                f"{p:.2e}")
+                    logger.info(f"CORUM enrichment\tnetwork\t"
+                                f"{protein_complex}\t{name}\t{p:.2e}")
 
         else:
             corum_enrichment = corum.get_enrichment(
@@ -543,8 +543,8 @@ def process_workflow(configuration: Mapping[str, Any],
                     network.nodes())].items(),
                                                      key=lambda item: item[1]):
                 if p <= configuration["CORUM enrichment"].get("p", 1.0):
-                    logger.info(f"CORUM enrichment\t{protein_complex}\t{name}\t"
-                                f"{p:.2e}")
+                    logger.info(f"CORUM enrichment\tnetwork\t"
+                                f"{protein_complex}\t{name}\t{p:.2e}")
 
     if "Gene Ontology enrichment" in configuration:
         if "subsets" in configuration["Gene Ontology enrichment"]:
@@ -637,8 +637,8 @@ def process_workflow(configuration: Mapping[str, Any],
                     gene_ontology_enrichment[frozenset(proteins)].items(),
                     key=lambda item: item[1]):
                 if p <= configuration["Gene Ontology enrichment"].get("p", 1.0):
-                    logger.info(f"Gene Ontology enrichment\t{term}\t{name}\t"
-                                f"{p:.2e}")
+                    logger.info(f"Gene Ontology enrichment\tnetwork\t{term}\t"
+                                f"{name}\t{p:.2e}")
 
         else:
             gene_ontology_enrichment = gene_ontology.get_enrichment(
@@ -666,8 +666,8 @@ def process_workflow(configuration: Mapping[str, Any],
                     network.nodes())].items(),
                                           key=lambda item: item[1]):
                 if p <= configuration["Gene Ontology enrichment"].get("p", 1.0):
-                    logger.info(f"Gene Ontology enrichment\t{term}\t{name}\t"
-                                f"{p:.2e}")
+                    logger.info(f"Gene Ontology enrichment\tnetwork\t{term}\t"
+                                f"{name}\t{p:.2e}")
 
     if "Reactome enrichment" in configuration:
         if "subsets" in configuration["Reactome enrichment"]:
@@ -749,8 +749,8 @@ def process_workflow(configuration: Mapping[str, Any],
                     reactome_enrichment[frozenset(proteins)].items(),
                     key=lambda item: item[1]):
                 if p <= configuration["Reactome enrichment"].get("p", 1.0):
-                    logger.info(f"Reactome enrichment\t{pathway}\t{name}\t"
-                                f"{p:.2e}")
+                    logger.info(f"Reactome enrichment\tnetwork\t{pathway}\t"
+                                f"{name}\t{p:.2e}")
         else:
             reactome_enrichment = reactome.get_enrichment(
                 [frozenset(network.nodes())],
@@ -769,8 +769,8 @@ def process_workflow(configuration: Mapping[str, Any],
                     network.nodes())].items(),
                                              key=lambda item: item[1]):
                 if p <= configuration["Reactome enrichment"].get("p", 1.0):
-                    logger.info(f"Reactome enrichment\t{pathway}\t{name}\t"
-                                f"{p:.2e}")
+                    logger.info(f"Reactome enrichment\tnetwork\t{pathway}\t"
+                                f"{name}\t{p:.2e}")
 
     if "Gene Ontology network" in configuration:
         if "subsets" in configuration["Gene Ontology network"]:
@@ -1561,7 +1561,7 @@ def process_workflow(configuration: Mapping[str, Any],
                                 "measurement location"].get("p", 1.0):
                             export[community] = True
                             logger.info(f"measurement location\tcommunity {k}\t"
-                                        f"time {time}\tmodification"
+                                        f"time {time}\tmodification "
                                         f"{modification}\t{p:.2e}")
 
         for k, community in enumerate(sorted(
