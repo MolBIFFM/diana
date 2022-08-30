@@ -10,13 +10,13 @@ networks from mass spectrometry data, providing integrative contextualization of
 differential post-translational modification.
 
 The enrichment of CORUM protein complexes, Gene Ontology terms, and Reactome
-pathways by a protein-protein interaction network and its densely interacting
-communities as well as the distribution of mass spectrometric measurements
-across communities can be assessed.
+pathways by densely interacting portions of protein-protein interaction
+networks as well as the distribution of mass spectrometric measurements
+across them can be assessed.
 
 Networks of Gene Ontology terms or Reactome pathways, reporting enrichment of
-each term or pathway by a protein-protein interaction network, can be generated
-along customized Cytoscape style specifications for each type of network.
+each term or pathway by the represented proteins, can be generated along
+customized Cytoscape style specifications.
 
 ## Setup
 External dependencies can be installed using pip by running the following
