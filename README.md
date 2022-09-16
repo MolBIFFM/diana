@@ -10,9 +10,11 @@ mass spectrometry data for the analysis of differential post-translational
 modification.
 
 The enrichment of CORUM protein complexes, Gene Ontology terms, and Reactome
-pathways by densely interacting portions of these protein-protein interaction
-networks as well as the distribution of mass spectrometric measurements across
-them can be assessed.
+pathways by proteins representing separate densely interacting portions of
+these protein-protein interaction networks or those exceeding specified changes
+in post-translational modification can be assessed. Densely interacting portions
+of these protein-protein interaction networks exhibiting relatively large
+changes can be determined.
 
 Networks of Gene Ontology terms or Reactome pathways, reporting enrichment of
 each term or pathway by the represented proteins, can be generated along
@@ -849,10 +851,10 @@ settings are `"mean"`, `"median"`, `"max"`, `"maxabs"`, `"min"`, `"minabs"`,
 ]
 ```
 The conversion that a measurement range refers to. It defaults to the binary
-logarithm of a measurement for `null` but can be set to `"ratio"`,
-`"percentile"`, `"quantile"` or `"standard score"`, computed with respect to the
-distribution of a particular modification at a particular time of measurement
-across the protein-protein interaction network.
+logarithm of a measurement for `null` but can be set to `"log10"`,
+`"percentile"`, `"quantile"` or `"ratio"`, `"standard score"`, computed with
+respect to the distribution of a particular modification at a particular time of
+measurement across the protein-protein interaction network if applicable.
 
 ```json
 [
@@ -866,10 +868,11 @@ across the protein-protein interaction network.
 ]
 ```
 The range of the bar charts reporting measurements. The adaptive default setting
-is `[-1.0, 1.0]` if `"conversion"` is not set, `[0.5, 2.0]` if `"conversion"` is
-set to `"ratio"`, `[25.0, 75.0]` if `"conversion"` is set to `"percentile"`,
-`[0.25, 0.75]` if `"conversion"` is set to `"quantile"`, and `[-1.0, 1.0]` if
-`"conversion"` is set to `"standard score"`.
+is `[-1.0, 1.0]` if `"conversion"` is not set, `[-1.0, 1.0]` if `"conversion"`
+is set to `"log10"`, `[25.0, 75.0]` if `"conversion"` is set to `"percentile"`,
+`[0.25, 0.75]` if `"conversion"` is set to `"quantile"`, `[0.5, 2.0]` if
+`"conversion"` is set to `"ratio"`, and `[-1.0, 1.0]` if `"conversion"` is set
+to `"standard score"`.
 
 ```json
 [
@@ -884,10 +887,10 @@ set to `"ratio"`, `[25.0, 75.0]` if `"conversion"` is set to `"percentile"`,
 ```
 The range of combined measurements categorizing proteins by whether the range is
 exceeded or not. The adaptive default setting is `[-1.0, 1.0]` if `"conversion"`
-is not set, `[0.5, 2.0]` if `"conversion"` is set to `"ratio"`, `[25.0, 75.0]`
+is not set, `[-1.0, 1.0]` if `"conversion"` is set to `"log10"`, `[25.0, 75.0]`
 if `"conversion"` is set to `"percentile"`, `[0.25, 0.75]` if `"conversion"` is
-set to `"quantile"`, and `[-1.0, 1.0]` if `"conversion"` is set to
-`"standard score"`.
+set to `"quantile"`, `[0.5, 2.0]` if `"conversion"` is set to `"ratio"`, and
+`[-1.0, 1.0]` if `"conversion"` is set to `"standard score"`.
 
 ```json
 [
@@ -1159,10 +1162,10 @@ Available settings are `"mean"`, `"median"`, `"max"`, `"maxabs"`, `"min"`,
 ]
 ```
 The conversion that a measurement range refers to. It defaults to the binary
-logarithm of a measurement for `null` but can be set to `"ratio"`,
-`"percentile"`, `"quantile"` or `"standard score"`, computed with respect to the
-distribution of a particular modification at a particular time of measurement
-across the protein-protein interaction network.
+logarithm of a measurement for `null` but can be set to `"log10"`,
+`"percentile"`, `"quantile"`, `"ratio"` or `"standard score"`, computed with
+respect to the distribution of a particular modification at a particular time of
+measurement across the protein-protein interaction network if applicable.
 
 ```json
 [
@@ -1193,10 +1196,10 @@ across the protein-protein interaction network.
 ```
 The range of combined measurements categorizing proteins by whether the range is
 exceeded or not. The adaptive default setting is `[-1.0, 1.0]` if `"conversion"`
-is not set, `[0.5, 2.0]` if `"conversion"` is set to `"ratio"`, `[25.0, 75.0]`
+is not set, `[-1.0, 1.0]` if `"conversion"` is set to `"log10"`, `[25.0, 75.0]`
 if `"conversion"` is set to `"percentile"`, `[0.25, 0.75]` if `"conversion"` is
-set to `"quantile"`, and `[-1.0, 1.0]` if `"conversion"` is set to
-`"standard score"`.
+set to `"quantile"`, `[0.5, 2.0]` if `"conversion"` is set to `"ratio"`, and
+`[-1.0, 1.0]` if `"conversion"` is set to `"standard score"`.
 
 ```json
 [
@@ -1374,10 +1377,10 @@ settings are `"mean"`, `"median"`, `"max"`, `"maxabs"`, `"min"`, `"minabs"`,
 ]
 ```
 The conversion that a measurement range refers to. It defaults to the binary
-logarithm of a measurement for `null` but can be set to `"ratio"`,
-`"percentile"`, `"quantile"` or `"standard score"`, computed with respect to the
-distribution of a particular modification at a particular time of measurement
-across the protein-protein interaction network.
+logarithm of a measurement for `null` but can be set to `"log10"`,
+`"percentile"`, `"quantile"`, `"ratio"` or `"standard score"`, computed with
+respect to the distribution of a particular modification at a particular time of
+measurement across the protein-protein interaction network if applicable.
 
 ```json
 [
@@ -1401,10 +1404,10 @@ across the protein-protein interaction network.
 ```
 The range of combined measurements categorizing proteins by whether the range is
 exceeded or not. The adaptive default setting is `[-1.0, 1.0]` if `"conversion"`
-is not set, `[0.5, 2.0]` if `"conversion"` is set to `"ratio"`, `[25.0, 75.0]`
+is not set, `[-1.0, 1.0]` if `"conversion"` is set to `"log10"`, `[25.0, 75.0]`
 if `"conversion"` is set to `"percentile"`, `[0.25, 0.75]` if `"conversion"` is
-set to `"quantile"`, and `[-1.0, 1.0]` if `"conversion"` is set to
-`"standard score"`.
+set to `"quantile"`, `[0.5, 2.0]` if `"conversion"` is set to `"ratio"`, and
+`[-1.0, 1.0]` if `"conversion"` is set to `"standard score"`.
 
 ```json
 [
@@ -1947,11 +1950,11 @@ settings are `"mean"`, `"median"`, `"max"`, `"maxabs"`, `"min"`, `"minabs"`,
 ]
 ```
 The conversion that a measurement range refers to. It defaults to the binary
-logarithm of a measurement for `null` but can be set to `"ratio"`,
-`"percentile"`, `"quantile"` or `"standard score"`, computed with respect to the
-distribution of a particular modification at a particular time of measurement
-across the protein-protein interaction network. Conversions refer to separate
-communities.
+logarithm of a measurement for `null` but can be set to`"log10"`,
+`"percentile"`, `"quantile"`, `"ratio"` or `"standard score"`, computed with
+respect to the distribution of a particular modification at a particular time of
+measurement across the protein-protein interaction network if applicable.
+Conversions are separately applied to communities.
 
 ```json
 [
@@ -1984,10 +1987,10 @@ communities.
 ```
 The range of combined measurements categorizing proteins by whether the range is
 exceeded or not. The adaptive default setting is `[-1.0, 1.0]` if `"conversion"`
-is not set, `[0.5, 2.0]` if `"conversion"` is set to `"ratio"`, `[25.0, 75.0]`
+is not set, `[-1.0, 1.0]` if `"conversion"` is set to `"log10"`, `[25.0, 75.0]`
 if `"conversion"` is set to `"percentile"`, `[0.25, 0.75]` if `"conversion"` is
-set to `"quantile"`, and `[-1.0, 1.0]` if `"conversion"` is set to
-`"standard score"`.
+set to `"quantile"`, `[0.5, 2.0]` if `"conversion"` is set to `"ratio"`, and
+`[-1.0, 1.0]` if `"conversion"` is set to `"standard score"`.
 
 ```json
 [
@@ -2094,10 +2097,11 @@ separately.
 ]
 ```
 The conversion that a measurement range refers to. It defaults to the binary
-logarithm of a measurement for `null` but can be set to `"ratio"`,
-`"percentile"`, `"quantile"` or `"standard score"`, computed with respect to the
-distribution of a particular modification at a particular time of measurement
-across each community of the protein-protein interaction network.
+logarithm of a measurement for `null` but can be set to `"log10"`,
+`"percentile"`, `"quantile"`, `"ratio"` or `"standard score"`, computed with
+respect to the distribution of a particular modification at a particular time of
+measurement across each community of the protein-protein interaction network if
+applicable.
 
 ```json
 [
@@ -2112,10 +2116,10 @@ across each community of the protein-protein interaction network.
 ```
 The range of measurements to group proteins by whether the range is exceeded or
 not. The adaptive default setting is `[-1.0, 1.0]` if `"conversion"` is not set,
-`[0.5, 2.0]` if `"conversion"` is set to `"ratio"`, `[25.0, 75.0]` if
+`[-1.0, 1.0]` if `"conversion"` is set to `"log10"`, `[25.0, 75.0]` if
 `"conversion"` is set to `"percentile"`, `[0.25, 0.75]` if `"conversion"` is set
-to `"quantile"`, and `[-1.0, 1.0]` if `"conversion"` is set to
-`"standard score"`.
+to `"quantile"`, `[0.5, 2.0]` if `"conversion"` is set to `"ratio"`, and
+`[-1.0, 1.0]` if `"conversion"` is set to `"standard score"`.
 
 ## Protein-protein interaction network
 
