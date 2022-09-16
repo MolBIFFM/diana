@@ -1,5 +1,4 @@
 # DIANA
-
 DIANA is a command line application for **D**ata **I**ntegration **A**nd
 **N**etwork-based **A**nalysis for post-translational modification mass
 spectrometry data.
