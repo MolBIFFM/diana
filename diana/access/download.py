@@ -1,4 +1,5 @@
 """Utilities to download files."""
+import http
 import os
 import socket
 import sys
@@ -35,5 +36,6 @@ def download_file(url: str,
                         local_file.write(chunk)
             break
 
-        except (socket.timeout, urllib.error.URLError):
+        except (http.client.HTTPException, urllib.error.URLError,
+                socket.timeout):
             time.sleep(pause)
