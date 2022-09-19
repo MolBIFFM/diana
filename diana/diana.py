@@ -67,9 +67,10 @@ def process_workflow(configuration: Mapping[str, Any],
                 sheet_name=entry.get("sheet", 1) -
                 1 if isinstance(entry.get("sheet", 1), int) else entry["sheet"],
                 header=entry.get("header", 1) - 1,
-                time=entry.get("time", 0),
-                modification=entry.get("post-translational modification",
-                                       "PTM"),
+                time=entry["time"]
+                if entry.get("time") and isinstance(entry["time"], int) else 0,
+                modification=entry["post-translational modification"]
+                if entry.get("post-translational modification") else "PTM",
                 position_column=entry.get("position column", ""),
                 position_format=re.compile(
                     entry.get("position format", "^(.+?)$")),
