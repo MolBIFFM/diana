@@ -2244,8 +2244,9 @@ related pathways, for example:
 
 ## References
 
-The configuration files in this repository refer to data sets supplemented with
-the following publications:
+The configuration files in this repository refer to data sets concerning
+differential post-translational modification supplemented with the following
+publications:
 
 - Fiskin, E. et al. (2016) **Global Analysis of Host and Bacterial**
   **Ubiquitinome in Response to *Salmonella* Typhimurium Infection**, *Mol.*
