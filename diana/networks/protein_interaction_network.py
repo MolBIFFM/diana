@@ -333,7 +333,7 @@ def get_proteins(
         sites = [[
             network.nodes[protein][attribute]
             for attribute in network.nodes[protein]
-            if re.fullmatch("\d+ \S+ \d+ \d+", attribute) and
+            if re.fullmatch(r"\d+ \S+ \d+ \d+", attribute) and
             attribute.split(" ")[0] == str(time) and attribute.split(" ")[1] ==
             modification and attribute.split(" ")[2] == str(s + 1)
         ]
@@ -341,7 +341,7 @@ def get_proteins(
                      max(
                          int(
                              attribute.split(" ")[2]
-                             if re.fullmatch("\d+ \S+ \d+ \d+", attribute) and
+                             if re.fullmatch(r"\d+ \S+ \d+ \d+", attribute) and
                              attribute.split(" ")[0] == str(time) and
                              attribute.split(" ")[1] == modification else "0")
                          for attribute in network.nodes[protein]))]
@@ -376,7 +376,7 @@ def get_times(network: nx.Graph) -> tuple[int, ...]:
                 int(attribute.split(" ")[0])
                 for protein in network
                 for attribute in network.nodes[protein]
-                if re.fullmatch("\d+ \S+ \d+ \d+", attribute))))
+                if re.fullmatch(r"\d+ \S+ \d+ \d+", attribute))))
 
 
 def get_modifications(network: nx.Graph, time: int) -> tuple[str, ...]:
@@ -399,7 +399,7 @@ def get_modifications(network: nx.Graph, time: int) -> tuple[str, ...]:
                 attribute.split(" ")[1]
                 for protein in network
                 for attribute in network.nodes[protein]
-                if re.fullmatch("\d+ \S+ \d+ \d+", attribute) and
+                if re.fullmatch(r"\d+ \S+ \d+ \d+", attribute) and
                 attribute.split(" ")[0] == str(time))))
 
 
@@ -423,7 +423,7 @@ def get_sites(network: nx.Graph, time: int, modification: str) -> int:
         int(attribute.split(" ")[2])
         for protein in network
         for attribute in network.nodes[protein]
-        if re.fullmatch("\d+ \S+ \d+ \d+", attribute) and attribute.split(" ")
+        if re.fullmatch(r"\d+ \S+ \d+ \d+", attribute) and attribute.split(" ")
         [0] == str(time) and attribute.split(" ")[1] == modification)
 
 
@@ -442,7 +442,7 @@ def set_post_translational_modification(network: nx.Graph) -> None:
                         set(
                             attribute.split(" ")[1]
                             for attribute in network.nodes[protein]
-                            if re.fullmatch("\d+ \S+ \d+ \d+", attribute) and
+                            if re.fullmatch(r"\d+ \S+ \d+ \d+", attribute) and
                             attribute.split(" ")[0] == str(time))))
 
 
@@ -496,9 +496,9 @@ def set_measurements(
             for modification in modifications[time]:
                 sites = [
                     [
-                        network.nodes[protein][site]
+                        network.nodes[protein][attribute]
                         for attribute in network.nodes[protein]
-                        if re.fullmatch("\d+ \S+ \d+ \d+", attribute) and
+                        if re.fullmatch(r"\d+ \S+ \d+ \d+", attribute) and
                         attribute.split(" ")[0] == str(time) and
                         attribute.split(" ")[1] == modification and
                         attribute.split(" ")[2] == str(s + 1)
@@ -506,10 +506,11 @@ def set_measurements(
                     for s in range(
                         max(
                             int(
-                                site.split(" ")[2] if len(site.split(" ")) ==
-                                4 and site.split(" ")[0] == str(time) and
-                                site.split(" ")[1] == modification else "0")
-                            for site in network.nodes[protein]))
+                                attribute.split(" ")[2] if re.fullmatch(
+                                    r"\d+ \S+ \d+ \d+", attribute) and attribute
+                                .split(" ")[0] == str(time) and attribute.
+                                split(" ")[1] == modification else "0")
+                            for attribute in network.nodes[protein]))
                 ]
 
                 for s, site in enumerate(sites, start=1):
@@ -1178,17 +1179,17 @@ def get_measurements(
     measurements = []
     for protein in network:
         sites = [[
-            network.nodes[protein][site]
+            network.nodes[protein][attribute]
             for attribute in network.nodes[protein]
-            if re.fullmatch("\d+ \S+ \d+ \d+", attribute) and
-            attribute.split(" ")[0] == str(time) and attribute.split(
-                " ")[1] == modification and site.split(" ")[2] == str(s + 1)
+            if re.fullmatch(r"\d+ \S+ \d+ \d+", attribute) and
+            attribute.split(" ")[0] == str(time) and attribute.split(" ")[1] ==
+            modification and attribute.split(" ")[2] == str(s + 1)
         ]
                  for s in range(
                      max(
                          int(
                              attribute.split(" ")[2]
-                             if re.fullmatch("\d+ \S+ \d+ \d+", attribute) and
+                             if re.fullmatch(r"\d+ \S+ \d+ \d+", attribute) and
                              attribute.split(" ")[0] == str(time) and
                              attribute.split(" ")[1] == modification else "0")
                          for attribute in network.nodes[protein]))]
