@@ -35,27 +35,6 @@ def process_workflow(configuration: Mapping[str, Any],
     """
     network = protein_interaction_network.get_network()
 
-    for entry in configuration.get("genes", {}):
-        if "file" in entry and "accession column" in entry:
-            protein_interaction_network.add_genes_from_table(
-                network,
-                file_name=entry["file"],
-                gene_accession_column=entry["accession column"],
-                gene_accession_format=re.compile(
-                    entry.get("accession format", "^(.+?)$")),
-                sheet_name=entry.get("sheet", 1) -
-                1 if isinstance(entry.get("sheet", 1), int) else entry["sheet"],
-                header=entry.get("header", 1) - 1,
-            )
-
-        elif "accessions" in entry:
-            network.add_nodes_from(entry["accessions"])
-
-    for organism in set(
-            entry.get("organism", 9606)
-            for entry in configuration.get("genes", {})):
-        protein_interaction_network.map_genes(network, organism)
-
     for entry in configuration.get("proteins", {}):
         if "file" in entry and "accession column" in entry:
             protein_interaction_network.add_proteins_from_table(

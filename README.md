@@ -49,16 +49,11 @@ Multiple configuration files are processed concurrently.
 
 ---
 
-Input genes or proteins are read from tabular input files.
+Input proteins are read from tabular input files.
 
 ```json
 [
     {
-      "genes": [
-        {
-          "file": null
-        }
-      ],
       "proteins": [
         {
           "file": null
@@ -67,17 +62,12 @@ Input genes or proteins are read from tabular input files.
     }
 ]
 ```
-The tabular input file with UniProt gene or protein accessions and, optionally,
+The tabular input file with UniProt protein accessions and, optionally,
 additional mass spectrometry data.
 
 ```json
 [
     {
-      "genes": [
-        {
-          "accession column": null
-        }
-      ],
       "proteins": [
         {
           "accession column": null
@@ -86,19 +76,14 @@ additional mass spectrometry data.
     }
 ]
 ```
-The table column to extract UniProt gene or protein accessions from. These are
-mapped to primary UniProt accessions or discarded if not present in Swiss-Prot.
-Isoform identifiers are maintained on primary, but not transferred from
-secondary accessions.
+The table column to extract UniProt protein accessions from. These are mapped to
+primary UniProt accessions or discarded if not present in Swiss-Prot. Isoform
+identifiers are maintained on primary, but not transferred from secondary
+accessions.
 
 ```json
 [
     {
-      "genes": [
-        {
-          "accession format": "^(.+?)$"
-        }
-      ],
       "proteins": [
         {
           "accession format": "^(.+?)$"
@@ -107,18 +92,14 @@ secondary accessions.
     }
 ]
 ```
-A regular expression used to extract all matching gene or protein accessions
-from a cell entry in the table, possibly removing additional components of the
-entry. The default setting is `"^(.+?)$"`, corresponding to the entire entry.
+A regular expression used to extract all matching protein accessions from a
+spreadsheet cell entry in the table, possibly removing additional components of
+the entry. The default setting is `"^(.+?)$"`, corresponding to the entire
+entry.
 
 ```json
 [
     {
-      "genes": [
-        {
-          "sheet": 1
-        }
-      ],
       "proteins": [
         {
           "sheet": 1
@@ -133,11 +114,6 @@ corresponding to the first spreadsheet of the file.
 ```json
 [
     {
-      "genes": [
-        {
-          "header": 1
-        }
-      ],
       "proteins": [
         {
           "header": 1
@@ -152,11 +128,6 @@ setting is `1`, corresponding to the first line of the sheet.
 ```json
 [
     {
-      "genes": [
-        {
-          "accessions": []
-        }
-      ],
       "proteins": [
         {
           "accessions": []
@@ -166,7 +137,7 @@ setting is `1`, corresponding to the first line of the sheet.
 ]
 ```
 
-A list of input gene or protein accessions, alternative to extraction from
+A list of input UniProt protein accessions, alternative to extraction from a
 tabular file.
 
 ```json
@@ -181,17 +152,11 @@ tabular file.
 ]
 ```
 A list of protein-protein interaction networks as exported from workflows. The
-union of input protein-protein interaction networks with input proteins and
-genes is used.
+union of input protein-protein interaction networks and input proteins is used.
 
 ```json
 [
     {
-      "genes": [
-        {
-          "organism": 9606
-        }
-      ],
       "proteins": [
         {
           "organism": 9606
