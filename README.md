@@ -818,7 +818,7 @@ The conversion that a measurement range refers to. It defaults to the binary
 logarithm of a measurement for `null` but can be set to `"log10"`,
 `"percentile"`, `"quantile"` or `"ratio"`, `"standard score"`, computed with
 respect to the distribution of a particular modification at a particular time of
-measurement across the protein-protein interaction network if applicable.
+measurement across the protein-protein interaction network, if applicable.
 
 ```json
 [
@@ -1129,7 +1129,7 @@ The conversion that a measurement range refers to. It defaults to the binary
 logarithm of a measurement for `null` but can be set to `"log10"`,
 `"percentile"`, `"quantile"`, `"ratio"` or `"standard score"`, computed with
 respect to the distribution of a particular modification at a particular time of
-measurement across the protein-protein interaction network if applicable.
+measurement across the protein-protein interaction network, if applicable.
 
 ```json
 [
@@ -1344,7 +1344,7 @@ The conversion that a measurement range refers to. It defaults to the binary
 logarithm of a measurement for `null` but can be set to `"log10"`,
 `"percentile"`, `"quantile"`, `"ratio"` or `"standard score"`, computed with
 respect to the distribution of a particular modification at a particular time of
-measurement across the protein-protein interaction network if applicable.
+measurement across the protein-protein interaction network, if applicable.
 
 ```json
 [
@@ -1917,8 +1917,8 @@ The conversion that a measurement range refers to. It defaults to the binary
 logarithm of a measurement for `null` but can be set to`"log10"`,
 `"percentile"`, `"quantile"`, `"ratio"` or `"standard score"`, computed with
 respect to the distribution of a particular modification at a particular time of
-measurement across the protein-protein interaction network if applicable.
-Conversions are separately applied to communities.
+measurement across each community of the protein-protein interaction network,
+if applicable.
 
 ```json
 [
