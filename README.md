@@ -321,9 +321,9 @@ combination. The default setting is `"mean"`. Available settings are `"mean"`,
     }
 ]
 ```
-The base of the logarithm that measured measurements are reported as. By
-default, ratios are assumed and no conversion is performed, corresponding to
-`null`. Available settings are `null`, `2` and `10`.
+The base of the logarithm that measurements are reported as. By default, ratios
+are assumed and no conversion is performed, corresponding to `null`. Available
+settings are `null`, `2` and `10`.
 
 ---
 
