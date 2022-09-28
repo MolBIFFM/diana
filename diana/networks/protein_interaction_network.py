@@ -25,28 +25,27 @@ def get_network() -> nx.Graph:
     return nx.Graph()
 
 
-def add_proteins_from_table(
+def add_modifications_from_table(
         network: nx.Graph,
         file_name: str,
         protein_accession_column: int | str,
+        position_column: int | str,
+        replicate_columns: Collection[int] | Collection[str],
         protein_accession_format: re.Pattern = re.compile("^(.+?)$"),
+        position_format: re.Pattern = re.compile("^(.+?)$"),
+        replicate_format: re.Pattern = re.compile("^(.+?)$"),
         sheet_name: int | str = 0,
         header: int = 0,
         time: int = 0,
         modification: str = "PTM",
-        position_column: int | str = "",
-        position_format: re.Pattern = re.compile("^(.+?)$"),
-        replicate_columns: Optional[Collection[int] | Collection[str]] = None,
-        replicate_format: re.Pattern = re.compile("^(.+?)$"),
         number_sites: int = 100,
         number_replicates: int = 1,
         replicate_combination: Callable[[Iterable[float]],
                                         float] = statistics.mean,
         measurement_conversion: Callable[[float], float] = math.log2) -> None:
     """
-    Parse UniProt protein accessions and measurements of measurements from a
-    tabular file and add the corresponding primary UniProt protein accessions to
-    a protein-protein interaction network.
+    Parse UniProt protein accessions and site-specific measurements from a
+    tabular file to add to a protein-protein interaction network.
 
     Args:
         network: The protein-protein interaction network.
@@ -55,14 +54,18 @@ def add_proteins_from_table(
             accessions.
         protein_accession_format: A regular expression to extract protein
             accessions from a corresponding entry.
+        position_column: The column containing sites corresponding to
+            measurements.
+        position_format: A regular expression to extract measurement positions
+            such as modification sites from a corresponding entry.
+        replicate_columns: The columns containing replicates of measurements.
+        replicate_format: A regular expression to extract measurements
+            from a corresponding entry.
         sheet_name: The sheet to parse protein accessions from.
         header: The index of the header row.
         time: The time of measurement to associate with measurements.
         modification: An identifier for the type of post-translational
             modification to associate with measurements.
-        position_column: The column containing sites corresponding to
-            measurements.
-        replicate_columns: The columns containing replicates of measurements.
         number_sites: The maximum number of measurements to associate with a
             protein-accession, prioritized by largest absolute value.
         number_replicates: The minimum number of replicates to accept a
@@ -85,34 +88,24 @@ def add_proteins_from_table(
             file_name,
             sheet_name=sheet_name,
             header=header,
-            usecols=[protein_accession_column] +
-            ([position_column] if position_column else []) + (
-                list(replicate_columns)
-                    if replicate_columns is not None else []),
+            usecols=[protein_accession_column, position_column] +
+            list(replicate_columns),
             dtype={
                 protein_accession_column: str,
-                **({
-                    position_column: str
-                } if position_column else {}),
-                **({column: str for column in replicate_columns}
-                    if replicate_columns is not None else {}),
+                position_column: str,
+                **{column: str for column in replicate_columns},
             },
         )
     else:
         table = pd.read_table(
             file_name,
             header=header,
-            usecols=[protein_accession_column] +
-            ([position_column] if position_column else []) + (
-                list(replicate_columns)
-                    if replicate_columns is not None else []),
+            usecols=[protein_accession_column, position_column] +
+            list(replicate_columns),
             dtype={
                 protein_accession_column: str,
-                **({
-                    position_column: str
-                } if position_column else {}),
-                **({column: str for column in replicate_columns}
-                    if replicate_columns is not None else {}),
+                position_column: str,
+                **{column: str for column in replicate_columns},
             },
         )
 
@@ -126,45 +119,39 @@ def add_proteins_from_table(
             protein_accession_format.findall(row[protein_accession_column])
         ]
 
-        if replicate_columns:
-            if position_column and not pd.isna(row[position_column]):
-                positions = [
-                    int(position) for position in position_format.findall(
-                        row[position_column])
-                ]
-            else:
-                positions = []
-
-            if len(protein_accessions) > len(positions):
-                positions.extend(
-                    [0 for _ in range(len(positions), len(protein_accessions))])
-            elif len(protein_accessions) < len(positions):
-                positions = positions[:len(protein_accessions)]
-
-            measurements = [
-                float(replicate) for replicate_column in replicate_columns
-                if not pd.isna(row[replicate_column])
-                for replicate in replicate_format.findall(row[replicate_column])
+        if not pd.isna(row[position_column]):
+            positions = [
+                int(position)
+                for position in position_format.findall(row[position_column])
             ]
-
-            if len(measurements) >= min(number_replicates,
-                                        len(replicate_columns)):
-                for protein_accession, position in zip(protein_accessions,
-                                                       positions):
-                    if protein_accession not in proteins:
-                        proteins[protein_accession] = []
-
-                    bisect.insort(
-                        proteins[protein_accession],
-                        (position,
-                         tuple(
-                             measurement_conversion(measurement)
-                             for measurement in measurements)),
-                    )
         else:
-            for protein_accession in protein_accessions:
+            positions = []
+
+        if len(protein_accessions) > len(positions):
+            positions.extend(
+                [0 for _ in range(len(positions), len(protein_accessions))])
+        elif len(protein_accessions) < len(positions):
+            positions = positions[:len(protein_accessions)]
+
+        measurements = [
+            float(replicate) for replicate_column in replicate_columns
+            if not pd.isna(row[replicate_column])
+            for replicate in replicate_format.findall(row[replicate_column])
+        ]
+
+        if len(measurements) >= min(number_replicates, len(replicate_columns)):
+            for protein_accession, position in zip(protein_accessions,
+                                                   positions):
                 if protein_accession not in proteins:
                     proteins[protein_accession] = []
+
+                bisect.insort(
+                    proteins[protein_accession],
+                    (position,
+                     tuple(
+                         measurement_conversion(measurement)
+                         for measurement in measurements)),
+                )
 
     network.add_nodes_from(proteins)
     for protein, sites in proteins.items():
