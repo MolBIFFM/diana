@@ -45,7 +45,7 @@ def add_modifications_from_table(
         measurement_conversion: Callable[[float], float] = math.log2) -> None:
     """
     Parse UniProt protein accessions and site-specific measurements from a
-    tabular file to add to a protein-protein interaction network.
+    tabular file and add proteins to a protein-protein interaction network.
 
     Args:
         network: The protein-protein interaction network.
