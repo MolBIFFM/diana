@@ -1,5 +1,6 @@
 """Utilities to download files."""
 import os
+import ssl
 import sys
 import time
 import urllib.error
@@ -29,7 +30,9 @@ def download_file(url: str,
 
     while True:
         try:
-            with urllib.request.urlopen(request, timeout=pause) as response:
+            with urllib.request.urlopen(
+                    request, timeout=pause,
+                    context=ssl.create_default_context()) as response:
                 with open(local_file_name, "wb") as local_file:
                     while chunk := response.read(size):
                         local_file.write(chunk)

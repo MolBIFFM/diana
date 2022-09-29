@@ -174,8 +174,9 @@ def add_modifications_from_table(
 def map_proteins(network: nx.Graph, organism: int = 9606) -> None:
     """
     Map proteins in a protein-protein interaction network to their primary
-    UniProt identifiers and remove proteins not present in Swiss-Prot. Isoform
-    identifiers are maintained, but not transferred.
+    UniProt identifiers and remove proteins not present in Swiss-Prot for the
+    organism of interest. Isoform identifiers are maintained, but not
+    transferred.
 
     Args:
         network: The protein-protein interaction network to map proteins from.
