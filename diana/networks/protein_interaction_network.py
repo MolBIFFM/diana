@@ -52,13 +52,13 @@ def add_modifications_from_table(
         file_name: The file location of the file.
         protein_accession_column: The column containing UniProt protein
             accessions.
-        protein_accession_format: A regular expression to extract protein
-            accessions from a corresponding entry.
         position_column: The column containing sites corresponding to
             measurements.
+        replicate_columns: The columns containing replicates of measurements.
+        protein_accession_format: A regular expression to extract protein
+            accessions from a corresponding entry.
         position_format: A regular expression to extract measurement positions
             such as modification sites from a corresponding entry.
-        replicate_columns: The columns containing replicates of measurements.
         replicate_format: A regular expression to extract measurements
             from a corresponding entry.
         sheet_name: The sheet to parse protein accessions from.
