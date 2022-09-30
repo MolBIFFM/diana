@@ -37,32 +37,53 @@ def process_workflow(configuration: Mapping[str, Any],
 
     for entry in configuration.get("proteins", {}):
         if ("file" in entry and "accession column" in entry and
-                "position column" in entry and "replicate columns" in entry):
-            protein_interaction_network.add_modifications_from_table(
-                network,
-                file_name=entry["file"],
-                protein_accession_column=entry["accession column"],
-                protein_accession_format=re.compile(
-                    entry.get("accession format", "^(.+?)$")),
-                position_column=entry["position column"],
-                position_format=re.compile(
-                    entry.get("position format", "^(.+?)$")),
-                replicate_columns=entry["replicate columns"],
-                replicate_format=re.compile(
-                    entry.get("replicate format", "^(.+?)$")),
-                sheet_name=entry.get("sheet", 1) -
-                1 if isinstance(entry.get("sheet", 1), int) else entry["sheet"],
-                header=entry.get("header", 1) - 1,
-                time=entry["time"]
-                if entry.get("time") and isinstance(entry["time"], int) else 0,
-                modification=entry["post-translational modification"]
-                if entry.get("post-translational modification") else "PTM",
-                number_sites=entry.get("sites", 5),
-                number_replicates=entry.get("replicates", 1),
-                replicate_combination=combination.REPLICATE_COMBINATION[
-                    entry.get("replicate combination", "mean")],
-                measurement_conversion=conversion.LOGARITHM[entry.get(
-                    "logarithm")])
+                "replicate columns" in entry):
+            if "position column" in entry:
+                protein_interaction_network.add_sites_from_table(
+                    network,
+                    file_name=entry["file"],
+                    protein_accession_column=entry["accession column"],
+                    protein_accession_format=re.compile(
+                        entry.get("accession format", "^(.+?)$")),
+                    position_column=entry["position column"],
+                    position_format=re.compile(
+                        entry.get("position format", "^(.+?)$")),
+                    replicate_columns=entry["replicate columns"],
+                    replicate_format=re.compile(
+                        entry.get("replicate format", "^(.+?)$")),
+                    sheet_name=entry.get("sheet", 1) - 1 if isinstance(
+                        entry.get("sheet", 1), int) else entry["sheet"],
+                    header=entry.get("header", 1) - 1,
+                    time=entry["time"] if entry.get("time") and
+                    isinstance(entry["time"], int) else 0,
+                    modification=entry["post-translational modification"]
+                    if entry.get("post-translational modification") else "PTM",
+                    number_sites=entry.get("sites", 5),
+                    number_replicates=entry.get("replicates", 1),
+                    replicate_combination=combination.REPLICATE_COMBINATION[
+                        entry.get("replicate combination", "mean")],
+                    measurement_conversion=conversion.LOGARITHM[entry.get(
+                        "logarithm")])
+            else:
+                protein_interaction_network.add_proteins_from_table(
+                    network,
+                    file_name=entry["file"],
+                    protein_accession_column=entry["accession column"],
+                    protein_accession_format=re.compile(
+                        entry.get("accession format", "^(.+?)$")),
+                    replicate_columns=entry["replicate columns"],
+                    replicate_format=re.compile(
+                        entry.get("replicate format", "^(.+?)$")),
+                    sheet_name=entry.get("sheet", 1) - 1 if isinstance(
+                        entry.get("sheet", 1), int) else entry["sheet"],
+                    header=entry.get("header", 1) - 1,
+                    time=entry["time"] if entry.get("time") and
+                    isinstance(entry["time"], int) else 0,
+                    modification=entry["post-translational modification"]
+                    if entry.get("post-translational modification") else "PTM",
+                    number_replicates=entry.get("replicates", 1),
+                    measurement_conversion=conversion.LOGARITHM[entry.get(
+                        "logarithm")])
 
         elif "accessions" in entry:
             network.add_nodes_from(entry["accessions"])

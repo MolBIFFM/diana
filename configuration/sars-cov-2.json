@@ -13,6 +13,54 @@
             "Ratio Virus/Mock (log2)"
           ],
           "logarithm": 2
+        },
+        {
+          "time": 120,
+          "post-translational modification": "A",
+          "file": "data/sars-cov-2/expression/41586_2020_2332_MOESM3_ESM.xlsx",
+          "sheet": "Tabelle1",
+          "accession column": "UniProt Accession",
+          "position format": "(?=(?:^|;)(.+?)(?:;|$))",
+          "replicate columns": [
+            "Ratio 2h"
+          ],
+          "logarithm": 2
+        },
+        {
+          "time": 360,
+          "post-translational modification": "A",
+          "file": "data/sars-cov-2/expression/41586_2020_2332_MOESM3_ESM.xlsx",
+          "sheet": "Tabelle1",
+          "accession column": "UniProt Accession",
+          "position format": "(?=(?:^|;)(.+?)(?:;|$))",
+          "replicate columns": [
+            "Ratio 6h"
+          ],
+          "logarithm": 2
+        },
+        {
+          "time": 600,
+          "post-translational modification": "A",
+          "file": "data/sars-cov-2/expression/41586_2020_2332_MOESM3_ESM.xlsx",
+          "sheet": "Tabelle1",
+          "accession column": "UniProt Accession",
+          "position format": "(?=(?:^|;)(.+?)(?:;|$))",
+          "replicate columns": [
+            "Ratio 10h "
+          ],
+          "logarithm": 2
+        },
+        {
+          "time": 1440,
+          "post-translational modification": "A",
+          "file": "data/sars-cov-2/expression/41586_2020_2332_MOESM3_ESM.xlsx",
+          "sheet": "Tabelle1",
+          "accession column": "UniProt Accession",
+          "position format": "(?=(?:^|;)(.+?)(?:;|$))",
+          "replicate columns": [
+            "Ratio 24h"
+          ],
+          "logarithm": 2
         }
       ],
       "protein-protein interactions": {

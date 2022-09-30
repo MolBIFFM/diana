@@ -4,9 +4,9 @@ DIANA is a command line application for **D**ata **I**ntegration **A**nd
 spectrometry data.
 
 Incorporating protein-protein interactions from BioGRID, CORUM, IntAct, MINT,
-Reactome, and STRING, DIANA assembles protein-protein interaction networks from
-mass spectrometry data for the analysis of differential post-translational
-modification.
+Reactome, and STRING, DIANA assembles protein-protein interaction networks for
+the contextualization of differential post-translational modification relating
+mass spectrometry data, protein-protein interactions, and protein annotation.
 
 The enrichment of CORUM protein complexes, Gene Ontology terms, and Reactome
 pathways by proteins representing separate densely interacting portions of
@@ -20,13 +20,12 @@ each term or pathway by the represented proteins, can be generated along
 customized Cytoscape style specifications.
 
 ## Setup
-External dependencies can be installed using pip by running the following
-command:
+External dependencies, consisting of NetworkX, pandas, and SciPy, can be
+installed using pip by running the following command
 
 ```
 pip3 install -r diana/requirements.txt
 ```
-External dependencies consist of NetworkX, pandas, and SciPy.
 
 DIANA is currently developed using Python 3.10.4, Ubuntu 22.04 and Cytoscape
 3.9.1.

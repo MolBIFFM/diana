@@ -1,5 +1,4 @@
 """protein-protein interaction network"""
-import bisect
 import math
 import os
 import re
@@ -25,7 +24,102 @@ def get_network() -> nx.Graph:
     return nx.Graph()
 
 
-def add_modifications_from_table(
+def add_proteins_from_table(
+        network: nx.Graph,
+        file_name: str,
+        protein_accession_column: int | str,
+        replicate_columns: Collection[int] | Collection[str],
+        protein_accession_format: re.Pattern = re.compile("^(.+?)$"),
+        replicate_format: re.Pattern = re.compile("^(.+?)$"),
+        sheet_name: int | str = 0,
+        header: int = 0,
+        time: int = 0,
+        modification: str = "PTM",
+        number_replicates: int = 1,
+        measurement_conversion: Callable[[float], float] = math.log2) -> None:
+    """
+    Parse UniProt protein accessions and protein-specific measurements from a
+    tabular file and add proteins to a protein-protein interaction network.
+
+    Args:
+        network: The protein-protein interaction network.
+        file_name: The file location of the file.
+        protein_accession_column: The column containing UniProt protein
+            accessions.
+        replicate_columns: The columns containing replicates of measurements.
+        protein_accession_format: A regular expression to extract protein
+            accessions from a corresponding entry.
+        replicate_format: A regular expression to extract measurements
+            from a corresponding entry.
+        sheet_name: The sheet to parse protein accessions from.
+        header: The index of the header row.
+        time: The time of measurement to associate with measurements.
+        modification: An identifier for the type of post-translational
+            modification to associate with measurements.
+        number_replicates: The minimum number of replicates to accept a
+            measurement.
+        measurement_conversion: The function to convert the measurements
+            reported to their binary logarithm.
+    """
+    if os.path.splitext(file_name)[1].lstrip(".") in (
+            "xls",
+            "xlsx",
+            "xlsm",
+            "xlsb",
+            "odf",
+            "ods",
+            "odt",
+    ):
+        table = pd.read_excel(
+            file_name,
+            sheet_name=sheet_name,
+            header=header,
+            usecols=[protein_accession_column] + list(replicate_columns),
+            dtype={
+                protein_accession_column: str,
+                **{column: str for column in replicate_columns},
+            },
+        )
+    else:
+        table = pd.read_table(
+            file_name,
+            header=header,
+            usecols=[protein_accession_column] + list(replicate_columns),
+            dtype={
+                protein_accession_column: str,
+                **{column: str for column in replicate_columns},
+            },
+        )
+
+    proteins: dict[str, tuple[float, ...]] = {}
+    for _, row in table.iterrows():
+        if pd.isna(row[protein_accession_column]):
+            continue
+
+        protein_accessions = [
+            str(protein_accession) for protein_accession in
+            protein_accession_format.findall(row[protein_accession_column])
+        ]
+
+        measurements = [
+            float(replicate) for replicate_column in replicate_columns
+            if not pd.isna(row[replicate_column])
+            for replicate in replicate_format.findall(row[replicate_column])
+        ]
+
+        if len(measurements) >= min(number_replicates, len(replicate_columns)):
+            for protein_accession in protein_accessions:
+                proteins[protein_accession] = tuple(
+                    measurement_conversion(measurement)
+                    for measurement in measurements)
+
+    network.add_nodes_from(proteins)
+    for protein, replicates in proteins.items():
+        for r, replicate in enumerate(replicates, start=1):
+            network.nodes[protein][f"{time} {modification} {r}"] = replicate
+
+
+def add_sites_from_table(
         network: nx.Graph,
         file_name: str,
         protein_accession_column: int | str,
@@ -109,7 +203,7 @@ def add_modifications_from_table(
             },
         )
 
-    proteins: dict[str, list[tuple[int, tuple[float, ...]]]] = {}
+    proteins: dict[str, dict[int, tuple[float, ...]]] = {}
     for _, row in table.iterrows():
         if pd.isna(row[protein_accession_column]):
             continue
@@ -143,30 +237,26 @@ def add_modifications_from_table(
             for protein_accession, position in zip(protein_accessions,
                                                    positions):
                 if protein_accession not in proteins:
-                    proteins[protein_accession] = []
+                    proteins[protein_accession] = {}
 
-                bisect.insort(
-                    proteins[protein_accession],
-                    (position,
-                     tuple(
-                         measurement_conversion(measurement)
-                         for measurement in measurements)),
-                )
+                proteins[protein_accession][position] = tuple(
+                    measurement_conversion(measurement)
+                    for measurement in measurements)
 
     network.add_nodes_from(proteins)
     for protein, sites in proteins.items():
-        sorted_sites = sorted(
-            sorted(
-                sites,
-                key=lambda site: abs(
-                    math.log2(
-                        replicate_combination(
-                            [math.pow(2.0, replicate)
-                             for replicate in site[1]]))),
-            )[-number_sites:])
-
-        for s, (_, site) in enumerate(sorted_sites, start=1):
-            for r, replicate in enumerate(site, start=1):
+        for s, (_, measurements) in enumerate(sorted(
+                sorted(
+                    sites.items(),
+                    key=lambda site: abs(
+                        math.log2(
+                            replicate_combination([
+                                math.pow(2.0, replicate)
+                                for replicate in site[1]
+                            ]))),
+                )[-number_sites:]),
+                                              start=1):
+            for r, replicate in enumerate(measurements, start=1):
                 network.nodes[protein][
                     f"{time} {modification} {s} {r}"] = replicate
 
@@ -1019,7 +1109,7 @@ def get_communities(
         community_size: The maximum community size. Communities are iteratively
             subdivided until it is met.
         community_size_combination: The function to derive a decisive value to
-            from meeting the threshhold from the community sizes.
+            from meeting the threshold from the community sizes.
         algorithm: The community detection algorithm.
         resolution: The resolution parameter for modularity.
         weight: The attribute name of the edge weight.
