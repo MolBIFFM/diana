@@ -298,7 +298,7 @@ largest absolute measurement. The default setting is `5`.
     {
       "proteins": [
         {
-          "replicate combination": "mean"
+          "replicate average": "mean"
         }
       ]
     }
@@ -306,8 +306,9 @@ largest absolute measurement. The default setting is `5`.
 ```
 The function used to combine replicates into a single measurement. The function
 is applied to ratios, not their binary logarithm. Cytoscape styles refer to this
-combination. The default setting is `"mean"`. Available settings are `"mean"`,
-`"median"`, `"max"`, `"maxabs"`, `"min"`, `"minabs"`, `"sum"`, and `"sumabs"`.
+average. The default setting is `"mean"`. Available settings are `"mean"`,
+`"median"`, `"mid-range"`, `"max"`, `"maxabs"`, `"min"`, `"minabs"`, `"sum"`,
+and `"sumabs"`.
 
 ```json
 [
@@ -764,10 +765,10 @@ exported.
     {
       "Cytoscape": {
         "bar chart": {
-          "site combination": "maxabs"
+          "site average": "maxabs"
         },
         "node color": {
-          "site combination": "maxabs"
+          "site average": "maxabs"
         }
       }
     }
@@ -776,18 +777,18 @@ exported.
 The function used to combine distinct modification sites into protein-specific
 measurements. The function is applied to ratios, not their binary logarithm. The
 default setting is `"maxabs"`, corresponding to the largest absolute
-measurement. Available settings are `"mean"`, `"median"`, `"max"`, `"maxabs"`,
-`"min"`, `"minabs"`, `"sum"` and `"sumabs"`.
+measurement. Available settings are `"mean"`, `"median"`, `"mid-range"`,
+`"max"`, `"maxabs"`, `"min"`, `"minabs"`, `"sum"` and `"sumabs"`.
 
 ```json
 [
     {
       "Cytoscape": {
         "bar chart": {
-          "replicate combination": "mean"
+          "replicate average": "mean"
         },
         "node color": {
-          "replicate combination": "mean"
+          "replicate average": "mean"
         }
       }
     }
@@ -796,8 +797,8 @@ measurement. Available settings are `"mean"`, `"median"`, `"max"`, `"maxabs"`,
 The function used to combine distinct replicates into modification site-specific
 measurements. The function is applied to ratios, not their binary logarithm. The
 default setting is `"mean"`, corresponding to the mean of replicates. Available
-settings are `"mean"`, `"median"`, `"max"`, `"maxabs"`, `"min"`, `"minabs"`,
-`"sum"` and `"sumabs"`.
+settings are `"mean"`, `"median"`, `"mid-range"`, `"max"`, `"maxabs"`, `"min"`,
+`"minabs"`, `"sum"` and `"sumabs"`.
 
 ```json
 [
@@ -869,8 +870,8 @@ STRING, and, lacking a corresponding score, 1.0 for all interactions from
 BioGRID, CORUM and Reactome. The combined score is reflected by edge
 transparency in Cytoscape. By default, `null`, any edge receives a score of
 1.0 and edges are not transparent. Available settings are `null`, `"mean"`,
-`"median"`, `"max"`, `"min"`, `"sum"`,and `"number"`, the number of queried
-databases supporting the protein-protein interaction.
+`"median"`, `"mid-range"`, `"max"`, `"min"`, `"sum"`,and `"number"`, the number
+of queried databases supporting the protein-protein interaction.
 
 ---
 
@@ -1037,21 +1038,21 @@ The modification considered to determine a subset of proteins.
       "CORUM enrichment": {
         "subsets": [
           {
-            "site combination": "maxabs"
+            "site average": "maxabs"
           }
         ]
       },
       "Gene Ontology enrichment": {
         "subsets": [
           {
-            "site combination": "maxabs"
+            "site average": "maxabs"
           }
         ]
       },
       "Reactome enrichment": {
         "subsets": [
           {
-            "site combination": "maxabs"
+            "site average": "maxabs"
           }
         ]
       }
@@ -1061,8 +1062,8 @@ The modification considered to determine a subset of proteins.
 The function used to combine distinct modification sites into protein-specific
 measurements. The function is applied to ratios, not their binary logarithm.
 The default setting is `"maxabs"`, corresponding to the largest absolute
-measurement. Available settings are `"mean"`, `"median"`, `"max"`, `"maxabs"`,
-`"min"`, `"minabs"`, `"sum"` and `"sumabs"`.
+measurement. Available settings are `"mean"`, `"median"`, `"mid-range"`, `"max"`,
+`"maxabs"`, `"min"`, `"minabs"`, `"sum"` and `"sumabs"`.
 
 ```json
 [
@@ -1070,21 +1071,21 @@ measurement. Available settings are `"mean"`, `"median"`, `"max"`, `"maxabs"`,
       "CORUM enrichment": {
         "subsets": [
           {
-            "replicate combination": "mean"
+            "replicate average": "mean"
           }
         ]
       },
       "Gene Ontology enrichment": {
         "subsets": [
           {
-            "replicate combination": "mean"
+            "replicate average": "mean"
           }
         ]
       },
       "Reactome enrichment": {
         "subsets": [
           {
-            "replicate combination": "mean"
+            "replicate average": "mean"
           }
         ]
       }
@@ -1094,8 +1095,8 @@ measurement. Available settings are `"mean"`, `"median"`, `"max"`, `"maxabs"`,
 The function used to combine distinct replicates into modification site-specific
 measurements. The function is applied to ratios, not their binary logarithm.
 The default setting is `"mean"`, corresponding to the mean of replicates.
-Available settings are `"mean"`, `"median"`, `"max"`, `"maxabs"`, `"min"`,
-`"minabs"`, `"sum"` and `"sumabs"`.
+Available settings are `"mean"`, `"median"`, `"mid-range"`, `"max"`, `"maxabs"`,
+`"min"`, `"minabs"`, `"sum"` and `"sumabs"`.
 
 ```json
 [
@@ -1273,14 +1274,14 @@ The modification considered to determine a subset of proteins.
       "Gene Ontology network": {
         "subsets": [
           {
-            "site combination": "maxabs"
+            "site average": "maxabs"
           }
         ]
       },
       "Reactome network": {
         "subsets": [
           {
-            "site combination": "maxabs"
+            "site average": "maxabs"
           }
         ]
       }
@@ -1290,8 +1291,8 @@ The modification considered to determine a subset of proteins.
 The function used to combine distinct modification sites into protein-specific
 measurements. The function is applied to ratios, not their binary logarithm. The
 default setting is `"maxabs"`, corresponding to the largest absolute
-measurement. Available settings are `"mean"`, `"median"`, `"max"`, `"maxabs"`,
-`"min"`, `"minabs"`, `"sum"` and `"sumabs"`.
+measurement. Available settings are `"mean"`, `"median"`, `"mid-range"`, `"max"`,
+`"maxabs"`, `"min"`, `"minabs"`, `"sum"` and `"sumabs"`.
 
 ```json
 [
@@ -1299,14 +1300,14 @@ measurement. Available settings are `"mean"`, `"median"`, `"max"`, `"maxabs"`,
       "Gene Ontology network": {
         "subsets": [
           {
-            "replicate combination": "mean"
+            "replicate average": "mean"
           }
         ]
       },
       "Reactome network": {
         "subsets": [
           {
-            "replicate combination": "mean"
+            "replicate average": "mean"
           }
         ]
       }
@@ -1316,8 +1317,8 @@ measurement. Available settings are `"mean"`, `"median"`, `"max"`, `"maxabs"`,
 The function used to combine distinct replicates into modification site-specific
 measurements. The function is applied to ratios, not their binary logarithm. The
 default setting is `"mean"`, corresponding to the mean of replicates. Available
-settings are `"mean"`, `"median"`, `"max"`, `"maxabs"`, `"min"`, `"minabs"`,
-`"sum"` and `"sumabs"`.
+settings are `"mean"`, `"median"`, `"mid-range"`, `"max"`, `"maxabs"`, `"min"`,
+`"minabs"`, `"sum"` and `"sumabs"`.
 
 ```json
 [
@@ -1528,8 +1529,8 @@ STRING, and, lacking of corresponding score, 1.0 for all interactions from
 BioGRID, CORUM and Reactome. The combined score is used as edge weight in
 community detection. By default, `null`, any edge receives a score of 1.0,
 corresponding to an unweighted network. Available settings are `null`, `"mean"`,
-`"median"`, `"max"`, `"min"`, `"sum"`, and `"number"`, the number of queried
-databases supporting the protein-protein interaction.
+`"median"`, `"mid-range"`, `"max"`, `"min"`, `"sum"`, and `"number"`, the number
+of queried databases supporting the protein-protein interaction.
 
 ```json
 [
@@ -1549,14 +1550,15 @@ community detection algorithm.
 [
     {
       "community detection": {
-        "community size combination": "mean"
+        "community size average": "mean"
       }
     }
 ]
 ```
 The function used to combine community sizes in terms of nodes into the value
 decisive to meeting the community size threshold. The default setting is
-`"mean"`. Available settings are `"mean"`, `"median"`, `"max"`, and `"min"`.
+`"mean"`. Available settings are `"mean"`, `"median"`, `"mid-range"`, `"max"`,
+and `"min"`.
 
 ---
 
@@ -1820,21 +1822,21 @@ The modification considered to determine a subset of proteins.
         "CORUM enrichment": {
           "subsets": [
             {
-              "site combination": "maxabs"
+              "site average": "maxabs"
             }
           ]
         },
         "Gene Ontology enrichment": {
           "subsets": [
             {
-              "site combination": "maxabs"
+              "site average": "maxabs"
             }
           ]
         },
         "Reactome enrichment": {
           "subsets": [
             {
-              "site combination": "maxabs"
+              "site average": "maxabs"
             }
           ]
         }
@@ -1845,8 +1847,8 @@ The modification considered to determine a subset of proteins.
 The function used to combine distinct modification sites into protein-specific
 measurements. The function is applied to ratios, not their binary logarithm. The
 default setting is `"maxabs"`, corresponding to the largest absolute
-measurement. Available settings are `"mean"`, `"median"`, `"max"`, `"maxabs"`,
-`"min"`, `"minabs"`, `"sum"` and `"sumabs"`.
+measurement. Available settings are `"mean"`, `"median"`, `"mid-range"`, `"max"`,
+`"maxabs"`, `"min"`, `"minabs"`, `"sum"` and `"sumabs"`.
 
 ```json
 [
@@ -1855,21 +1857,21 @@ measurement. Available settings are `"mean"`, `"median"`, `"max"`, `"maxabs"`,
         "CORUM enrichment": {
           "subsets": [
             {
-              "replicate combination": "mean"
+              "replicate average": "mean"
             }
           ]
         },
         "Gene Ontology enrichment": {
           "subsets": [
             {
-              "replicate combination": "mean"
+              "replicate average": "mean"
             }
           ]
         },
         "Reactome enrichment": {
           "subsets": [
             {
-              "replicate combination": "mean"
+              "replicate average": "mean"
             }
           ]
         }
@@ -1880,8 +1882,8 @@ measurement. Available settings are `"mean"`, `"median"`, `"max"`, `"maxabs"`,
 The function used to combine distinct replicates into modification site-specific
 measurements. The function is applied to ratios, not their binary logarithm. The
 default setting is `"mean"`, corresponding to the mean of replicates. Available
-settings are `"mean"`, `"median"`, `"max"`, `"maxabs"`, `"min"`, `"minabs"`,
-`"sum"` and `"sumabs"`.
+settings are `"mean"`, `"median"`, `"mid-range"`, `"max"`, `"maxabs"`, `"min"`,
+`"minabs"`, `"sum"` and `"sumabs"`.
 
 ```json
 [
@@ -2013,10 +2015,10 @@ The Gene Ontology namespaces to consider. The default setting is
     {
       "community detection": {
         "measurement enrichment": {
-            "site combination": "maxabs"
+            "site average": "maxabs"
         },
         "measurement location": {
-            "site combination": "maxabs"
+            "site average": "maxabs"
         }
       }
     }
@@ -2024,19 +2026,19 @@ The Gene Ontology namespaces to consider. The default setting is
 ```
 The function used to combine distinct modification sites into protein-specific
 measurements. The default setting is `"maxabs"`, corresponding to the largest
-absolute value. Available settings are `"mean"`, `"median"`, `"max"`,
-`"maxabs"`, `"min"`, `"minabs"`, `"sum"`, `"sumabs"` and `null` to consider
-modification sites separately.
+absolute value. Available settings are `"mean"`, `"median"`, `"mid-range"`,
+`"max"`, `"maxabs"`, `"min"`, `"minabs"`, `"sum"`, `"sumabs"` and `null` to
+consider modification sites separately.
 
 ```json
 [
     {
       "community detection": {
         "measurement enrichment": {
-            "replicate combination": "mean"
+            "replicate average": "mean"
         },
         "measurement location": {
-            "replicate combination": "mean"
+            "replicate average": "mean"
         }
       }
     }
@@ -2044,9 +2046,9 @@ modification sites separately.
 ```
 The function used to combine distinct replicates into modification site-specific
 measurements. The default setting is `"mean"`, corresponding to the mean of
-replicates. Available settings are `"mean"`, `"median"`, `"max"`, `"maxabs"`,
-`"min"`, `"minabs"`, `"sum"`, `"sumabs"` and `null` to consider replicates
-separately.
+replicates. Available settings are `"mean"`, `"median"`, `"mid-range"`, `"max"`,
+`"maxabs"`, `"min"`, `"minabs"`, `"sum"`, `"sumabs"` and `null` to consider
+replicates separately.
 
 ```json
 [
@@ -2126,13 +2128,13 @@ The first component refers to the specified time of measurement, the second to
 the specified type of post-translational modification, the third to the relative
 position of the corresponding modification site and the fourth to the replicate.
 Entries consisting of three components refer to modification site-specific
-combinations of replicates.
+averages of replicates.
 
 `"post-translational modification 30"` and
 `"post-translational modification 120"` each refer to the specified types of
 post-translational modification the protein is associated with while
 `"measurement 30"` and `"measurement 120"` each refer to a categorization of the
-protein-specific combination of modification sites for particular specified
+protein-specific average of modification sites for particular specified
 times of measurement.
 
 Annotations of protein-protein interactions contain the following information:
@@ -2149,7 +2151,7 @@ Annotations of protein-protein interactions contain the following information:
 ```
 
 A protein-protein interaction between is associated with database-specific
-confidence scores. `"score"` refers to the combination of confidence scores.
+confidence scores. `"score"` refers to the average of confidence scores.
 
 ## Gene Ontology network
 

@@ -17,8 +17,8 @@ from cytoscape import (gene_ontology_network_style,
                        protein_interaction_network_style,
                        reactome_network_style)
 from databases import corum, gene_ontology, reactome
-from interface import (combination, conversion, correction, default,
-                       modularization, test)
+from interface import (average, conversion, correction, default, modularization,
+                       test)
 from networks import (gene_ontology_network, protein_interaction_network,
                       reactome_network)
 
@@ -60,8 +60,8 @@ def process_workflow(configuration: Mapping[str, Any],
                     if entry.get("post-translational modification") else "PTM",
                     number_sites=entry.get("sites", 5),
                     number_replicates=entry.get("replicates", 1),
-                    replicate_combination=combination.REPLICATE_COMBINATION[
-                        entry.get("replicate combination", "mean")],
+                    replicate_average=average.REPLICATE_AVERAGE[entry.get(
+                        "replicate average", "mean")],
                     measurement_conversion=conversion.LOGARITHM[entry.get(
                         "logarithm")])
             else:
@@ -94,12 +94,15 @@ def process_workflow(configuration: Mapping[str, Any],
             nx.readwrite.graphml.read_graphml(entry["network"]) if
             entry.get("network") else protein_interaction_network.get_network())
 
+    nodes_to_remove = set(network.nodes())
     for organism in set(
             entry.get("organism", 9606)
             for entry in configuration.get("proteins", {})) | set(
                 entry.get("organism", 9606)
                 for entry in configuration.get("networks", {})):
-        protein_interaction_network.map_proteins(network, organism)
+        nodes_to_remove.intersection_update(
+            protein_interaction_network.map_proteins(network, organism))
+    network.remove_nodes_from(nodes_to_remove)
 
     if "protein-protein interactions" in configuration:
         for neighbors in range(
@@ -386,15 +389,14 @@ def process_workflow(configuration: Mapping[str, Any],
                     convert_measurement=conversion.MEASUREMENT_CONVERSION[
                         configuration["Cytoscape"].get("bar chart",
                                                        {}).get("conversion")],
-                    site_combination=combination.SITE_COMBINATION[
+                    site_average=average.SITE_AVERAGE[
                         configuration["Cytoscape"].get("bar chart", {}).get(
-                            "site combination", "maxabs")],
-                    replicate_combination=combination.REPLICATE_COMBINATION[
+                            "site average", "maxabs")],
+                    replicate_average=average.REPLICATE_AVERAGE[
                         configuration["Cytoscape"].get("bar chart", {}).get(
-                            "replicate combination", "mean")],
-                    confidence_score_combination=combination.
-                    CONFIDENCE_SCORE_COMBINATION[configuration["Cytoscape"].get(
-                        "edge transparency")])
+                            "replicate average", "mean")],
+                    confidence_score_average=average.CONFIDENCE_SCORE_AVERAGE[
+                        configuration["Cytoscape"].get("edge transparency")])
 
                 protein_interaction_network_style.export(
                     style,
@@ -403,18 +405,18 @@ def process_workflow(configuration: Mapping[str, Any],
 
                 protein_interaction_network.set_edge_weights(
                     network,
-                    weight=combination.CONFIDENCE_SCORE_COMBINATION[
+                    weight=average.CONFIDENCE_SCORE_AVERAGE[
                         configuration["Cytoscape"].get("edge transparency")],
                     attribute="score")
 
                 protein_interaction_network.set_measurements(
                     network,
-                    site_combination=combination.SITE_COMBINATION[
+                    site_average=average.SITE_AVERAGE[
                         configuration["Cytoscape"].get("node color", {}).get(
-                            "site combination", "maxabs")],
-                    replicate_combination=combination.REPLICATE_COMBINATION[
+                            "site average", "maxabs")],
+                    replicate_average=average.REPLICATE_AVERAGE[
                         configuration["Cytoscape"].get("node color", {}).get(
-                            "replicate combination", "mean")],
+                            "replicate average", "mean")],
                     measurements=default.MEASUREMENT_RANGE[
                         configuration["Cytoscape"].get("node color",
                                                        {}).get("conversion")],
@@ -425,16 +427,15 @@ def process_workflow(configuration: Mapping[str, Any],
             else:
                 protein_interaction_network.set_measurements(
                     network,
-                    site_combination=combination.SITE_COMBINATION["maxabs"],
-                    replicate_combination=combination.
-                    REPLICATE_COMBINATION["mean"],
+                    site_average=average.SITE_AVERAGE["maxabs"],
+                    replicate_average=average.REPLICATE_AVERAGE["mean"],
                     measurements=default.MEASUREMENT_RANGE[None],
                     measurement_conversion=conversion.
                     MEASUREMENT_CONVERSION[None])
 
                 protein_interaction_network.set_edge_weights(
                     network,
-                    weight=combination.CONFIDENCE_SCORE_COMBINATION[None],
+                    weight=average.CONFIDENCE_SCORE_AVERAGE[None],
                     attribute="score")
 
         protein_interaction_network.export(
@@ -456,18 +457,18 @@ def process_workflow(configuration: Mapping[str, Any],
                         ) in protein_interaction_network.get_modifications(
                             network, subset["time"]):
                     measurement_range = (
-                        conversion.
-                        MEASUREMENT_CONVERSION[subset.get("conversion")](
-                            subset.get(
-                                "measurement", default.MEASUREMENT_RANGE[
-                                    subset.get("conversion")])[0],
-                            protein_interaction_network.get_measurements(
-                                network, subset["time"],
-                                subset["post-translational modification"],
-                                combination.SITE_COMBINATION[subset.get(
-                                    "site combination", "maxabs")],
-                                combination.REPLICATE_COMBINATION[subset.get(
-                                    "replicate combination", "mean")])),
+                        conversion.MEASUREMENT_CONVERSION[subset.get(
+                            "conversion")](
+                                subset.get(
+                                    "measurement", default.MEASUREMENT_RANGE[
+                                        subset.get("conversion")])[0],
+                                protein_interaction_network.get_measurements(
+                                    network, subset["time"],
+                                    subset["post-translational modification"],
+                                    average.SITE_AVERAGE[subset.get(
+                                        "site average", "maxabs")],
+                                    average.REPLICATE_AVERAGE[subset.get(
+                                        "replicate average", "mean")])),
                         conversion.MEASUREMENT_CONVERSION[subset.get(
                             "conversion")](
                                 subset.get(
@@ -476,11 +477,10 @@ def process_workflow(configuration: Mapping[str, Any],
                                 protein_interaction_network.get_measurements(
                                     network, subset["time"],
                                     subset["post-translational modification"],
-                                    combination.SITE_COMBINATION[subset.get(
-                                        "site combination", "maxabs")],
-                                    combination.REPLICATE_COMBINATION[
-                                        subset.get("replicate combination",
-                                                   "mean")])))
+                                    average.SITE_AVERAGE[subset.get(
+                                        "site average", "maxabs")],
+                                    average.REPLICATE_AVERAGE[subset.get(
+                                        "replicate average", "mean")])))
 
                     if configuration["CORUM enrichment"].get(
                             "intersection", False):
@@ -488,10 +488,10 @@ def process_workflow(configuration: Mapping[str, Any],
                             protein_interaction_network.get_proteins(
                                 network, subset["time"],
                                 subset["post-translational modification"],
-                                combination.SITE_COMBINATION[subset.get(
-                                    "site combination", "maxabs")],
-                                combination.REPLICATE_COMBINATION[subset.get(
-                                    "replicate combination",
+                                average.SITE_AVERAGE[subset.get(
+                                    "site average", "maxabs")],
+                                average.REPLICATE_AVERAGE[subset.get(
+                                    "replicate average",
                                     "mean")], measurement_range))
 
                     else:
@@ -499,10 +499,10 @@ def process_workflow(configuration: Mapping[str, Any],
                             protein_interaction_network.get_proteins(
                                 network, subset["time"],
                                 subset["post-translational modification"],
-                                combination.SITE_COMBINATION[subset.get(
-                                    "site combination", "maxabs")],
-                                combination.REPLICATE_COMBINATION[subset.get(
-                                    "replicate combination",
+                                average.SITE_AVERAGE[subset.get(
+                                    "site average", "maxabs")],
+                                average.REPLICATE_AVERAGE[subset.get(
+                                    "replicate average",
                                     "mean")], measurement_range))
 
             corum_enrichment = corum.get_enrichment(
@@ -563,18 +563,18 @@ def process_workflow(configuration: Mapping[str, Any],
                         ) in protein_interaction_network.get_modifications(
                             network, subset["time"]):
                     measurement_range = (
-                        conversion.
-                        MEASUREMENT_CONVERSION[subset.get("conversion")](
-                            subset.get(
-                                "measurement", default.MEASUREMENT_RANGE[
-                                    subset.get("conversion")])[0],
-                            protein_interaction_network.get_measurements(
-                                network, subset["time"],
-                                subset["post-translational modification"],
-                                combination.SITE_COMBINATION[subset.get(
-                                    "site combination", "maxabs")],
-                                combination.REPLICATE_COMBINATION[subset.get(
-                                    "replicate combination", "mean")])),
+                        conversion.MEASUREMENT_CONVERSION[subset.get(
+                            "conversion")](
+                                subset.get(
+                                    "measurement", default.MEASUREMENT_RANGE[
+                                        subset.get("conversion")])[0],
+                                protein_interaction_network.get_measurements(
+                                    network, subset["time"],
+                                    subset["post-translational modification"],
+                                    average.SITE_AVERAGE[subset.get(
+                                        "site average", "maxabs")],
+                                    average.REPLICATE_AVERAGE[subset.get(
+                                        "replicate average", "mean")])),
                         conversion.MEASUREMENT_CONVERSION[subset.get(
                             "conversion")](
                                 subset.get(
@@ -584,11 +584,10 @@ def process_workflow(configuration: Mapping[str, Any],
                                     network,
                                     subset["time"],
                                     subset["post-translational modification"],
-                                    combination.SITE_COMBINATION[subset.get(
-                                        "site combination", "maxabs")],
-                                    combination.REPLICATE_COMBINATION[
-                                        subset.get("replicate combination",
-                                                   "mean")],
+                                    average.SITE_AVERAGE[subset.get(
+                                        "site average", "maxabs")],
+                                    average.REPLICATE_AVERAGE[subset.get(
+                                        "replicate average", "mean")],
                                 )))
 
                     if configuration["Gene Ontology enrichment"].get(
@@ -597,10 +596,10 @@ def process_workflow(configuration: Mapping[str, Any],
                             protein_interaction_network.get_proteins(
                                 network, subset["time"],
                                 subset["post-translational modification"],
-                                combination.SITE_COMBINATION[subset.get(
-                                    "site combination", "maxabs")],
-                                combination.REPLICATE_COMBINATION[subset.get(
-                                    "replicate combination",
+                                average.SITE_AVERAGE[subset.get(
+                                    "site average", "maxabs")],
+                                average.REPLICATE_AVERAGE[subset.get(
+                                    "replicate average",
                                     "mean")], measurement_range))
 
                     else:
@@ -608,10 +607,10 @@ def process_workflow(configuration: Mapping[str, Any],
                             protein_interaction_network.get_proteins(
                                 network, subset["time"],
                                 subset["post-translational modification"],
-                                combination.SITE_COMBINATION[subset.get(
-                                    "site combination", "maxabs")],
-                                combination.REPLICATE_COMBINATION[subset.get(
-                                    "replicate combination",
+                                average.SITE_AVERAGE[subset.get(
+                                    "site average", "maxabs")],
+                                average.REPLICATE_AVERAGE[subset.get(
+                                    "replicate average",
                                     "mean")], measurement_range))
 
             gene_ontology_enrichment = gene_ontology.get_enrichment(
@@ -685,18 +684,18 @@ def process_workflow(configuration: Mapping[str, Any],
                         ) in protein_interaction_network.get_modifications(
                             network, subset["time"]):
                     measurement_range = (
-                        conversion.
-                        MEASUREMENT_CONVERSION[subset.get("conversion")](
-                            subset.get(
-                                "measurement", default.MEASUREMENT_RANGE[
-                                    subset.get("conversion")])[0],
-                            protein_interaction_network.get_measurements(
-                                network, subset["time"],
-                                subset["post-translational modification"],
-                                combination.SITE_COMBINATION[subset.get(
-                                    "site combination", "maxabs")],
-                                combination.REPLICATE_COMBINATION[subset.get(
-                                    "replicate combination", "mean")])),
+                        conversion.MEASUREMENT_CONVERSION[subset.get(
+                            "conversion")](
+                                subset.get(
+                                    "measurement", default.MEASUREMENT_RANGE[
+                                        subset.get("conversion")])[0],
+                                protein_interaction_network.get_measurements(
+                                    network, subset["time"],
+                                    subset["post-translational modification"],
+                                    average.SITE_AVERAGE[subset.get(
+                                        "site average", "maxabs")],
+                                    average.REPLICATE_AVERAGE[subset.get(
+                                        "replicate average", "mean")])),
                         conversion.MEASUREMENT_CONVERSION[subset.get(
                             "conversion")](
                                 subset.get(
@@ -705,11 +704,10 @@ def process_workflow(configuration: Mapping[str, Any],
                                 protein_interaction_network.get_measurements(
                                     network, subset["time"],
                                     subset["post-translational modification"],
-                                    combination.SITE_COMBINATION[subset.get(
-                                        "site combination", "maxabs")],
-                                    combination.REPLICATE_COMBINATION[
-                                        subset.get("replicate combination",
-                                                   "mean")])))
+                                    average.SITE_AVERAGE[subset.get(
+                                        "site average", "maxabs")],
+                                    average.REPLICATE_AVERAGE[subset.get(
+                                        "replicate average", "mean")])))
 
                     if configuration["Reactome enrichment"].get(
                             "intersection", False):
@@ -717,10 +715,10 @@ def process_workflow(configuration: Mapping[str, Any],
                             protein_interaction_network.get_proteins(
                                 network, subset["time"],
                                 subset["post-translational modification"],
-                                combination.SITE_COMBINATION[subset.get(
-                                    "site combination", "maxabs")],
-                                combination.REPLICATE_COMBINATION[subset.get(
-                                    "replicate combination",
+                                average.SITE_AVERAGE[subset.get(
+                                    "site average", "maxabs")],
+                                average.REPLICATE_AVERAGE[subset.get(
+                                    "replicate average",
                                     "mean")], measurement_range))
 
                     else:
@@ -728,10 +726,10 @@ def process_workflow(configuration: Mapping[str, Any],
                             protein_interaction_network.get_proteins(
                                 network, subset["time"],
                                 subset["post-translational modification"],
-                                combination.SITE_COMBINATION[subset.get(
-                                    "site combination", "maxabs")],
-                                combination.REPLICATE_COMBINATION[subset.get(
-                                    "replicate combination",
+                                average.SITE_AVERAGE[subset.get(
+                                    "site average", "maxabs")],
+                                average.REPLICATE_AVERAGE[subset.get(
+                                    "replicate average",
                                     "mean")], measurement_range))
 
             reactome_enrichment = reactome.get_enrichment(
@@ -789,18 +787,18 @@ def process_workflow(configuration: Mapping[str, Any],
                         ) in protein_interaction_network.get_modifications(
                             network, subset["time"]):
                     measurement_range = (
-                        conversion.
-                        MEASUREMENT_CONVERSION[subset.get("conversion")](
-                            subset.get(
-                                "measurement", default.MEASUREMENT_RANGE[
-                                    subset.get("conversion")])[0],
-                            protein_interaction_network.get_measurements(
-                                network, subset["time"],
-                                subset["post-translational modification"],
-                                combination.SITE_COMBINATION[subset.get(
-                                    "site combination", "maxabs")],
-                                combination.REPLICATE_COMBINATION[subset.get(
-                                    "replicate combination", "mean")])),
+                        conversion.MEASUREMENT_CONVERSION[subset.get(
+                            "conversion")](
+                                subset.get(
+                                    "measurement", default.MEASUREMENT_RANGE[
+                                        subset.get("conversion")])[0],
+                                protein_interaction_network.get_measurements(
+                                    network, subset["time"],
+                                    subset["post-translational modification"],
+                                    average.SITE_AVERAGE[subset.get(
+                                        "site average", "maxabs")],
+                                    average.REPLICATE_AVERAGE[subset.get(
+                                        "replicate average", "mean")])),
                         conversion.MEASUREMENT_CONVERSION[subset.get(
                             "conversion")](
                                 subset.get(
@@ -809,11 +807,10 @@ def process_workflow(configuration: Mapping[str, Any],
                                 protein_interaction_network.get_measurements(
                                     network, subset["time"],
                                     subset["post-translational modification"],
-                                    combination.SITE_COMBINATION[subset.get(
-                                        "site combination", "maxabs")],
-                                    combination.REPLICATE_COMBINATION[
-                                        subset.get("replicate combination",
-                                                   "mean")])))
+                                    average.SITE_AVERAGE[subset.get(
+                                        "site average", "maxabs")],
+                                    average.REPLICATE_AVERAGE[subset.get(
+                                        "replicate average", "mean")])))
 
                     if configuration["Gene Ontology network"].get(
                             "intersection", False):
@@ -821,10 +818,10 @@ def process_workflow(configuration: Mapping[str, Any],
                             protein_interaction_network.get_proteins(
                                 network, subset["time"],
                                 subset["post-translational modification"],
-                                combination.SITE_COMBINATION[subset.get(
-                                    "site combination", "maxabs")],
-                                combination.REPLICATE_COMBINATION[subset.get(
-                                    "replicate combination",
+                                average.SITE_AVERAGE[subset.get(
+                                    "site average", "maxabs")],
+                                average.REPLICATE_AVERAGE[subset.get(
+                                    "replicate average",
                                     "mean")], measurement_range))
 
                     else:
@@ -832,10 +829,10 @@ def process_workflow(configuration: Mapping[str, Any],
                             protein_interaction_network.get_proteins(
                                 network, subset["time"],
                                 subset["post-translational modification"],
-                                combination.SITE_COMBINATION[subset.get(
-                                    "site combination", "maxabs")],
-                                combination.REPLICATE_COMBINATION[subset.get(
-                                    "replicate combination",
+                                average.SITE_AVERAGE[subset.get(
+                                    "site average", "maxabs")],
+                                average.REPLICATE_AVERAGE[subset.get(
+                                    "replicate average",
                                     "mean")], measurement_range))
 
             ontology_network = gene_ontology_network.get_network(
@@ -909,18 +906,18 @@ def process_workflow(configuration: Mapping[str, Any],
                         ) in protein_interaction_network.get_modifications(
                             network, subset["time"]):
                     measurement_range = (
-                        conversion.
-                        MEASUREMENT_CONVERSION[subset.get("conversion")](
-                            subset.get(
-                                "measurement", default.MEASUREMENT_RANGE[
-                                    subset.get("conversion")])[0],
-                            protein_interaction_network.get_measurements(
-                                network, subset["time"],
-                                subset["post-translational modification"],
-                                combination.SITE_COMBINATION[subset.get(
-                                    "site combination", "maxabs")],
-                                combination.REPLICATE_COMBINATION[subset.get(
-                                    "replicate combination", "mean")])),
+                        conversion.MEASUREMENT_CONVERSION[subset.get(
+                            "conversion")](
+                                subset.get(
+                                    "measurement", default.MEASUREMENT_RANGE[
+                                        subset.get("conversion")])[0],
+                                protein_interaction_network.get_measurements(
+                                    network, subset["time"],
+                                    subset["post-translational modification"],
+                                    average.SITE_AVERAGE[subset.get(
+                                        "site average", "maxabs")],
+                                    average.REPLICATE_AVERAGE[subset.get(
+                                        "replicate average", "mean")])),
                         conversion.MEASUREMENT_CONVERSION[subset.get(
                             "conversion")](
                                 subset.get(
@@ -929,11 +926,10 @@ def process_workflow(configuration: Mapping[str, Any],
                                 protein_interaction_network.get_measurements(
                                     network, subset["time"],
                                     subset["post-translational modification"],
-                                    combination.SITE_COMBINATION[subset.get(
-                                        "site combination", "maxabs")],
-                                    combination.REPLICATE_COMBINATION[
-                                        subset.get("replicate combination",
-                                                   "mean")])))
+                                    average.SITE_AVERAGE[subset.get(
+                                        "site average", "maxabs")],
+                                    average.REPLICATE_AVERAGE[subset.get(
+                                        "replicate average", "mean")])))
 
                     if configuration["Reactome network"].get(
                             "intersection", False):
@@ -941,10 +937,10 @@ def process_workflow(configuration: Mapping[str, Any],
                             protein_interaction_network.get_proteins(
                                 network, subset["time"],
                                 subset["post-translational modification"],
-                                combination.SITE_COMBINATION[subset.get(
-                                    "site combination", "maxabs")],
-                                combination.REPLICATE_COMBINATION[subset.get(
-                                    "replicate combination",
+                                average.SITE_AVERAGE[subset.get(
+                                    "site average", "maxabs")],
+                                average.REPLICATE_AVERAGE[subset.get(
+                                    "replicate average",
                                     "mean")], measurement_range))
 
                     else:
@@ -952,10 +948,10 @@ def process_workflow(configuration: Mapping[str, Any],
                             protein_interaction_network.get_proteins(
                                 network, subset["time"],
                                 subset["post-translational modification"],
-                                combination.SITE_COMBINATION[subset.get(
-                                    "site combination", "maxabs")],
-                                combination.REPLICATE_COMBINATION[subset.get(
-                                    "replicate combination",
+                                average.SITE_AVERAGE[subset.get(
+                                    "site average", "maxabs")],
+                                average.REPLICATE_AVERAGE[subset.get(
+                                    "replicate average",
                                     "mean")], measurement_range))
 
             pathway_network = reactome_network.get_network(
@@ -1000,16 +996,16 @@ def process_workflow(configuration: Mapping[str, Any],
     if "community detection" in configuration:
         protein_interaction_network.set_edge_weights(
             network,
-            weight=combination.CONFIDENCE_SCORE_COMBINATION[
+            weight=average.CONFIDENCE_SCORE_AVERAGE[
                 configuration["community detection"].get("edge weight")])
 
         communities = protein_interaction_network.get_communities(
             network,
             community_size=configuration["community detection"].get(
                 "community size", network.number_of_nodes()),
-            community_size_combination=combination.MODULE_SIZE_COMBINATION[
+            community_size_average=average.MODULE_SIZE_AVERAGE[
                 configuration["community detection"].get(
-                    "community size combination", "mean")],
+                    "community size average", "mean")],
             algorithm=modularization.ALGORITHM[
                 configuration["community detection"].get(
                     "algorithm", "Louvain")],
@@ -1053,11 +1049,10 @@ def process_workflow(configuration: Mapping[str, Any],
                                  protein_interaction_network.get_measurements(
                                      community, subset["time"],
                                      subset["post-translational modification"],
-                                     combination.SITE_COMBINATION[subset.get(
-                                         "site combination", "maxabs")],
-                                     combination.REPLICATE_COMBINATION[
-                                         subset.get("replicate combination",
-                                                    "mean")])),
+                                     average.SITE_AVERAGE[subset.get(
+                                         "site average", "maxabs")],
+                                     average.REPLICATE_AVERAGE[subset.get(
+                                         "replicate average", "mean")])),
                                 conversion.MEASUREMENT_CONVERSION[subset.get(
                                     "conversion")]
                                 (subset.get(
@@ -1066,11 +1061,10 @@ def process_workflow(configuration: Mapping[str, Any],
                                  protein_interaction_network.get_measurements(
                                      community, subset["time"],
                                      subset["post-translational modification"],
-                                     combination.SITE_COMBINATION[subset.get(
-                                         "site combination", "maxabs")],
-                                     combination.REPLICATE_COMBINATION[
-                                         subset.get("replicate combination",
-                                                    "mean")])))
+                                     average.SITE_AVERAGE[subset.get(
+                                         "site average", "maxabs")],
+                                     average.REPLICATE_AVERAGE[subset.get(
+                                         "replicate average", "mean")])))
 
                             if configuration["community detection"][
                                     "CORUM enrichment"].get(
@@ -1079,24 +1073,22 @@ def process_workflow(configuration: Mapping[str, Any],
                                     protein_interaction_network.get_proteins(
                                         community, subset["time"], subset[
                                             "post-translational modification"],
-                                        combination.SITE_COMBINATION[subset.get(
-                                            "site combination", "maxabs")],
-                                        combination.REPLICATE_COMBINATION[
-                                            subset.get("replicate combination",
-                                                       "mean")],
-                                        measurement_range))
+                                        average.SITE_AVERAGE[subset.get(
+                                            "site average", "maxabs")],
+                                        average.REPLICATE_AVERAGE[subset.get(
+                                            "replicate average",
+                                            "mean")], measurement_range))
 
                             else:
                                 subset_proteins[community].update(
                                     protein_interaction_network.get_proteins(
                                         community, subset["time"], subset[
                                             "post-translational modification"],
-                                        combination.SITE_COMBINATION[subset.get(
-                                            "site combination", "maxabs")],
-                                        combination.REPLICATE_COMBINATION[
-                                            subset.get("replicate combination",
-                                                       "mean")],
-                                        measurement_range))
+                                        average.SITE_AVERAGE[subset.get(
+                                            "site average", "maxabs")],
+                                        average.REPLICATE_AVERAGE[subset.get(
+                                            "replicate average",
+                                            "mean")], measurement_range))
 
                 corum_enrichment = corum.get_enrichment(
                     [
@@ -1199,11 +1191,10 @@ def process_workflow(configuration: Mapping[str, Any],
                                  protein_interaction_network.get_measurements(
                                      community, subset["time"],
                                      subset["post-translational modification"],
-                                     combination.SITE_COMBINATION[subset.get(
-                                         "site combination", "maxabs")],
-                                     combination.REPLICATE_COMBINATION[
-                                         subset.get("replicate combination",
-                                                    "mean")])),
+                                     average.SITE_AVERAGE[subset.get(
+                                         "site average", "maxabs")],
+                                     average.REPLICATE_AVERAGE[subset.get(
+                                         "replicate average", "mean")])),
                                 conversion.MEASUREMENT_CONVERSION[subset.get(
                                     "conversion")]
                                 (subset.get(
@@ -1212,11 +1203,10 @@ def process_workflow(configuration: Mapping[str, Any],
                                  protein_interaction_network.get_measurements(
                                      community, subset["time"],
                                      subset["post-translational modification"],
-                                     combination.SITE_COMBINATION[subset.get(
-                                         "site combination", "maxabs")],
-                                     combination.REPLICATE_COMBINATION[
-                                         subset.get("replicate combination",
-                                                    "mean")])))
+                                     average.SITE_AVERAGE[subset.get(
+                                         "site average", "maxabs")],
+                                     average.REPLICATE_AVERAGE[subset.get(
+                                         "replicate average", "mean")])))
 
                             if configuration["community detection"][
                                     "Gene Ontology enrichment"].get(
@@ -1225,24 +1215,22 @@ def process_workflow(configuration: Mapping[str, Any],
                                     protein_interaction_network.get_proteins(
                                         community, subset["time"], subset[
                                             "post-translational modification"],
-                                        combination.SITE_COMBINATION[subset.get(
-                                            "site combination", "maxabs")],
-                                        combination.REPLICATE_COMBINATION[
-                                            subset.get("replicate combination",
-                                                       "mean")],
-                                        measurement_range))
+                                        average.SITE_AVERAGE[subset.get(
+                                            "site average", "maxabs")],
+                                        average.REPLICATE_AVERAGE[subset.get(
+                                            "replicate average",
+                                            "mean")], measurement_range))
 
                             else:
                                 subset_proteins[community].update(
                                     protein_interaction_network.get_proteins(
                                         community, subset["time"], subset[
                                             "post-translational modification"],
-                                        combination.SITE_COMBINATION[subset.get(
-                                            "site combination", "maxabs")],
-                                        combination.REPLICATE_COMBINATION[
-                                            subset.get("replicate combination",
-                                                       "mean")],
-                                        measurement_range))
+                                        average.SITE_AVERAGE[subset.get(
+                                            "site average", "maxabs")],
+                                        average.REPLICATE_AVERAGE[subset.get(
+                                            "replicate average",
+                                            "mean")], measurement_range))
 
                 gene_ontology_enrichment = gene_ontology.get_enrichment(
                     [
@@ -1364,11 +1352,10 @@ def process_workflow(configuration: Mapping[str, Any],
                                      community,
                                      subset["time"],
                                      subset["post-translational modification"],
-                                     combination.SITE_COMBINATION[subset.get(
-                                         "site combination", "maxabs")],
-                                     combination.REPLICATE_COMBINATION[
-                                         subset.get("replicate combination",
-                                                    "mean")],
+                                     average.SITE_AVERAGE[subset.get(
+                                         "site average", "maxabs")],
+                                     average.REPLICATE_AVERAGE[subset.get(
+                                         "replicate average", "mean")],
                                  )), conversion.MEASUREMENT_CONVERSION[
                                      subset.get("conversion")]
                                 (subset.get(
@@ -1377,11 +1364,10 @@ def process_workflow(configuration: Mapping[str, Any],
                                  protein_interaction_network.get_measurements(
                                      community, subset["time"],
                                      subset["post-translational modification"],
-                                     combination.SITE_COMBINATION[subset.get(
-                                         "site combination", "maxabs")],
-                                     combination.REPLICATE_COMBINATION[
-                                         subset.get("replicate combination",
-                                                    "mean")])))
+                                     average.SITE_AVERAGE[subset.get(
+                                         "site average", "maxabs")],
+                                     average.REPLICATE_AVERAGE[subset.get(
+                                         "replicate average", "mean")])))
 
                             if configuration["community detection"][
                                     "Reactome enrichment"].get(
@@ -1390,24 +1376,22 @@ def process_workflow(configuration: Mapping[str, Any],
                                     protein_interaction_network.get_proteins(
                                         community, subset["time"], subset[
                                             "post-translational modification"],
-                                        combination.SITE_COMBINATION[subset.get(
-                                            "site combination", "maxabs")],
-                                        combination.REPLICATE_COMBINATION[
-                                            subset.get("replicate combination",
-                                                       "mean")],
-                                        measurement_range))
+                                        average.SITE_AVERAGE[subset.get(
+                                            "site average", "maxabs")],
+                                        average.REPLICATE_AVERAGE[subset.get(
+                                            "replicate average",
+                                            "mean")], measurement_range))
 
                             else:
                                 subset_proteins[community].update(
                                     protein_interaction_network.get_proteins(
                                         community, subset["time"], subset[
                                             "post-translational modification"],
-                                        combination.SITE_COMBINATION[subset.get(
-                                            "site combination", "maxabs")],
-                                        combination.REPLICATE_COMBINATION[
-                                            subset.get("replicate combination",
-                                                       "mean")],
-                                        measurement_range))
+                                        average.SITE_AVERAGE[subset.get(
+                                            "site average", "maxabs")],
+                                        average.REPLICATE_AVERAGE[subset.get(
+                                            "replicate average",
+                                            "mean")], measurement_range))
 
                 reactome_enrichment = reactome.get_enrichment(
                     [
@@ -1485,18 +1469,17 @@ def process_workflow(configuration: Mapping[str, Any],
                 measurement_conversion=conversion.MEASUREMENT_CONVERSION[
                     configuration["community detection"]
                     ["measurement enrichment"].get("conversion")],
-                site_combination=combination.SITE_COMBINATION[
+                site_average=average.SITE_AVERAGE[
                     configuration["community detection"]
-                    ["measurement enrichment"].get("site combination",
-                                                   "maxabs")] if
+                    ["measurement enrichment"].get("site average", "maxabs")] if
                 configuration["community detection"]["measurement enrichment"].
-                get("site combination", "maxabs") is not None else None,
-                replicate_combination=combination.REPLICATE_COMBINATION[
+                get("site average", "maxabs") is not None else None,
+                replicate_average=average.REPLICATE_AVERAGE[
                     configuration["community detection"]
-                    ["measurement enrichment"].get("replicate combination",
-                                                   "mean")] if
-                configuration["community detection"]["measurement enrichment"].
-                get("replicate combination", "mean") is not None else None,
+                    ["measurement enrichment"].get("replicate average", "mean")]
+                if configuration["community detection"]
+                ["measurement enrichment"].get("replicate average",
+                                               "mean") is not None else None,
                 enrichment_test=test.ENRICHMENT_TEST[(
                     configuration["community detection"]
                     ["measurement enrichment"].get("test", "hypergeometric"),
@@ -1527,16 +1510,16 @@ def process_workflow(configuration: Mapping[str, Any],
             location = protein_interaction_network.get_measurement_location(
                 network,
                 communities,
-                site_combination=combination.SITE_COMBINATION[
+                site_average=average.SITE_AVERAGE[
                     configuration["community detection"]
-                    ["measurement location"].get("site combination", "maxabs")]
+                    ["measurement location"].get("site average", "maxabs")]
                 if configuration["community detection"]["measurement location"].
-                get("site combination", "maxabs") is not None else None,
-                replicate_combination=combination.REPLICATE_COMBINATION[
-                    configuration["community detection"]["measurement location"]
-                    .get("replicate combination", "mean")]
+                get("site average", "maxabs") is not None else None,
+                replicate_average=average.REPLICATE_AVERAGE[
+                    configuration["community detection"]
+                    ["measurement location"].get("replicate average", "mean")]
                 if configuration["community detection"]["measurement location"].
-                get("replicate combination", "mean") is not None else None,
+                get("replicate average", "mean") is not None else None,
                 location_test=test.LOCATION_TEST[(
                     configuration["community detection"]
                     ["measurement location"].get("test",

@@ -916,11 +916,12 @@ def get_style(
     convert_measurement: Callable[
         [float, Collection[float]],
         float] = lambda measurement, measurements: measurement,
-    site_combination: Callable[[Iterable[float]],
-                               float] = lambda sites: max(sites, key=abs),
-    replicate_combination: Callable[[Iterable[float]], float] = statistics.mean,
-    confidence_score_combination: Callable[[dict[str, float]], float] = lambda
-    confidence_scores: float(bool(confidence_scores.values()))
+    site_average: Callable[[Iterable[float]],
+                           float] = lambda sites: max(sites, key=abs),
+    replicate_average: Callable[[Iterable[float]], float] = statistics.mean,
+    confidence_score_average: Callable[[dict[str, float]],
+                                       float] = lambda confidence_scores: float(
+                                           bool(confidence_scores.values()))
 ) -> ET.ElementTree:
     """
     Returns the Cytoscape styles for a protein-protein interaction network.
@@ -931,11 +932,11 @@ def get_style(
             by the bar chart.
         convert_measurement: The function to transform binary logarithms of
             measurements.
-        site_combination: The function to derive a protein-specific measurement
-            from its site-specific measurements.
-        replicate_combination: The function to derive a site-specific
-            measurement from its replicates.
-        confidence_score_combination: The function to derive an edge-specific
+        site_average: The function to derive a protein-specific measurement from
+            its site-specific measurements.
+        replicate_average: The function to derive a site-specific measurement
+            from its replicates.
+        confidence_score_average: The function to derive an edge-specific
             confidence score from confidence scores reported in different
             databases.
 
@@ -948,14 +949,14 @@ def get_style(
             "documentVersion": "3.0"
         }))
 
-    max_edge_score = confidence_score_combination({
+    max_edge_score = confidence_score_average({
         database: 1.0
         for database in protein_interaction_network.get_databases(network)
     })
 
     for time in protein_interaction_network.get_times(network):
         modifications = protein_interaction_network.get_modifications(
-            network, time)
+            network, time, proteins=False)
         visual_style_sub_element = ET.SubElement(styles.getroot(),
                                                  "visualStyle",
                                                  attrib={"name": str(time)})
@@ -1151,16 +1152,15 @@ def get_style(
                                     bar_chart_range[0],
                                     protein_interaction_network.
                                     get_measurements(network, time,
-                                                     modification,
-                                                     site_combination,
-                                                     replicate_combination)),
+                                                     modification, site_average,
+                                                     replicate_average)),
                                           convert_measurement(
                                               bar_chart_range[1],
                                               protein_interaction_network.
                                               get_measurements(
                                                   network, time, modification,
-                                                  site_combination,
-                                                  replicate_combination)))))
+                                                  site_average,
+                                                  replicate_average)))))
 
                     elif visual_property_sub_element.get(
                             "name") == f"NODE_CUSTOMGRAPHICS_POSITION_{i + 1}":
