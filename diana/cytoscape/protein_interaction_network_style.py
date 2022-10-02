@@ -924,7 +924,7 @@ def get_bar_chart(
             True,
         "cy_colors": ["#FF0000", "#0000FF"],
         "cy_dataColumns": [
-            f"{time} {modification} {site}" for site in range(1, sites + 1)
+            f"{time} {modification} S{site}" for site in range(1, sites + 1)
         ],
     })
     return f"org.cytoscape.BarChart: {bar_chart}"

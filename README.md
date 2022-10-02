@@ -2138,30 +2138,30 @@ Annotations of proteins contain the following information:
 
 ```xml
 <node id="Q12933">
-  <data key="30 U 1 1">3.765004</data>
-  <data key="30 U 1 2">4.2322</data>
-  <data key="30 U 2 1">3.926948</data>
-  <data key="30 U 2 2">4.299611</data>
-  <data key="30 U 2 3">3.715125</data>
-  <data key="30 U 3 1">2.239367</data>
-  <data key="30 U 3 2">3.353323</data>
-  <data key="30 U 4 1">4.508999</data>
-  <data key="30 U 4 2">4.576885</data>
-  <data key="120 U 1 1">2.377096</data>
-  <data key="120 U 1 2">2.890972</data>
-  <data key="120 U 2 1">2.962512</data>
-  <data key="120 U 2 2">3.0054</data>
+  <data key="30 U S1 R1">3.765004</data>
+  <data key="30 U S1 R2">4.2322</data>
+  <data key="30 U S2 R1">3.926948</data>
+  <data key="30 U S2 R2">4.299611</data>
+  <data key="30 U S2 R3">3.715125</data>
+  <data key="30 U S3 R1">2.239367</data>
+  <data key="30 U S3 R2">3.353323</data>
+  <data key="30 U S4 R1">4.508999</data>
+  <data key="30 U S4 R2">4.576885</data>
+  <data key="120 U S1 R1">2.377096</data>
+  <data key="120 U S1 R2">2.890972</data>
+  <data key="120 U S2 R1">2.962512</data>
+  <data key="120 U S2 R2">3.0054</data>
   <data key="gene">TRAF2</data>
   <data key="protein">TNF receptor-associated factor 2</data>
   <data key="post-translational modification 30">U</data>
   <data key="post-translational modification 120">U</data>
-  <data key="30 U 1">4.017431773281321</data>
-  <data key="30 U 2">4.001081644434266</data>
-  <data key="30 U 3">2.9012913530601145</data>
-  <data key="30 U 4">4.543341260044583</data>
+  <data key="30 U S1">4.017431773281321</data>
+  <data key="30 U S2">4.001081644434266</data>
+  <data key="30 U S3">2.9012913530601145</data>
+  <data key="30 U S4">4.543341260044583</data>
   <data key="measurement 30">UP</data>
-  <data key="120 U 1">2.6567938583308726</data>
-  <data key="120 U 2">2.9841153643117204</data>
+  <data key="120 U S1">2.6567938583308726</data>
+  <data key="120 U S2">2.9841153643117204</data>
   <data key="measurement 120">UP</data>
 </node>
 ```
