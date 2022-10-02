@@ -298,6 +298,22 @@ largest absolute measurement. The default setting is `5`.
     {
       "proteins": [
         {
+          "site prioritization": "abs"
+        }
+      ]
+    }
+]
+```
+A function of a site-specific measurement to prioritize it over others. The
+default setting is `"abs"` corresponding to the absolute value. Available
+settings are `"abs"` as well as `"increase"`, and `"decrease"`to prioritize
+measurements signifying an increase or decrease, respectively.
+
+```json
+[
+    {
+      "proteins": [
+        {
           "replicate average": "mean"
         }
       ]
@@ -825,6 +841,21 @@ measurement across the protein-protein interaction network, if applicable.
     {
       "Cytoscape": {
         "bar chart": {
+          "post-translational modifications": [],
+        }
+      }
+    }
+]
+```
+The identifiers of site-specific post-translational modifications to represent
+as bar charts. Zero, one, and two identifiers are supported. Specified
+identifiers are considered in order.
+
+```json
+[
+    {
+      "Cytoscape": {
+        "bar chart": {
           "range": [-1.0, 1.0],
         }
       }
@@ -837,6 +868,21 @@ is set to `"log10"`, `[25.0, 75.0]` if `"conversion"` is set to `"percentile"`,
 `[0.25, 0.75]` if `"conversion"` is set to `"quantile"`, `[0.5, 2.0]` if
 `"conversion"` is set to `"ratio"`, and `[-1.0, 1.0]` if `"conversion"` is set
 to `"standard score"`.
+
+```json
+[
+    {
+      "Cytoscape": {
+        "node color": {
+          "post-translational modifications": [],
+        }
+      }
+    }
+]
+```
+The identifiers of site-specific post-translational modifications to represent
+by node color. Zero, one, and two identifiers are supported. Specified
+identifiers are represented in order.
 
 ```json
 [

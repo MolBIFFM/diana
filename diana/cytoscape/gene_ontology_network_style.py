@@ -412,9 +412,9 @@ COMPONENTS: dict[str, dict[str, dict[str, dict[
     }
 
 
-def get_style(network: nx.Graph) -> ET.ElementTree:
+def get_styles(network: nx.Graph) -> ET.ElementTree:
     """
-    Returns the Cytoscape style for a Gene Ontology network.
+    Returns the Cytoscape styles for a Gene Ontology network.
 
     Args:
         network: The Gene Ontology network.
@@ -422,13 +422,13 @@ def get_style(network: nx.Graph) -> ET.ElementTree:
     Returns:
         The Cytoscape style for the Gene Ontology network.
     """
-    style = ET.ElementTree(
+    styles = ET.ElementTree(
         ET.Element("vizmap", attrib={
             "id": "VizMap",
             "documentVersion": "3.0"
         }))
 
-    visual_style_sub_element = ET.SubElement(style.getroot(),
+    visual_style_sub_element = ET.SubElement(styles.getroot(),
                                              "visualStyle",
                                              attrib={"name": "Gene Ontology"})
 
@@ -582,8 +582,8 @@ def get_style(network: nx.Graph) -> ET.ElementTree:
                             },
                         )
 
-    ET.indent(style)
-    return style
+    ET.indent(styles)
+    return styles
 
 
 def export(styles: ET.ElementTree, basename: str) -> None:

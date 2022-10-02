@@ -135,7 +135,8 @@ def add_sites_from_table(
         number_sites: int = 100,
         number_replicates: int = 1,
         replicate_average: Callable[[Iterable[float]], float] = statistics.mean,
-        measurement_conversion: Callable[[float], float] = math.log2) -> None:
+        measurement_conversion: Callable[[float], float] = math.log2,
+        site_prioritization: Callable[[float], float] = abs) -> None:
     """
     Parse UniProt protein accessions and site-specific measurements from a
     tabular file and add proteins to a protein-protein interaction network.
@@ -160,13 +161,15 @@ def add_sites_from_table(
         modification: An identifier for the type of post-translational
             modification to associate with measurements.
         number_sites: The maximum number of measurements to associate with a
-            protein-accession, prioritized by largest absolute value.
+            protein-accession, prioritized by value.
         number_replicates: The minimum number of replicates to accept a
             measurement.
         replicate_average: A function to derive site-specific measurements from
             replicates for site prioritization.
         measurement_conversion: The function to convert the measurements
             reported to their binary logarithm.
+        site_prioritization: A function of a measurement to derive a
+        representative value for site prioritization.
     """
     if os.path.splitext(file_name)[1].lstrip(".") in (
             "xls",
@@ -247,7 +250,7 @@ def add_sites_from_table(
         for s, (_, replicates) in enumerate(sorted(
                 sorted(
                     sites.items(),
-                    key=lambda site: abs(
+                    key=lambda site: site_prioritization(
                         math.log2(
                             replicate_average([
                                 math.pow(2.0, replicate)
@@ -386,9 +389,9 @@ def get_modifications(network: nx.Graph,
     Args:
         network: The protein-protein interaction network.
         time: The time of measurement.
-        proteins: If true, return protein-specific types of post-translational
+        proteins: If true, consider protein-specific types of post-translational
             modification.
-        sites: If true, return site-specific types of post-translational
+        sites: If true, consider site-specific types of post-translational
             modification.
 
     Returns:
@@ -396,6 +399,9 @@ def get_modifications(network: nx.Graph,
         measurements of any protein in the protein-protein interaction network
         at a particular time of measurement.
     """
+    if not (proteins or sites):
+        return ()
+
     return tuple(
         sorted(
             set(
@@ -406,6 +412,41 @@ def get_modifications(network: nx.Graph,
                     fr"{time} \S+ \d+? \d+" if proteins and sites else
                     (fr"{time} \S+ \d+" if proteins else fr"{time} \S+ \d+ \d+"
                     ), attribute))))
+
+
+def is_modification(network: nx.Graph,
+                    time: int,
+                    modification: str,
+                    proteins: bool = True,
+                    sites: bool = True) -> bool:
+    """
+    Indicate whether a type of post-translational modification is represented in
+    a protein-protein interaction network at a particular time of measurement.
+
+    Args:
+        network: The protein-protein interaction network.
+        time: The time of measurement.
+        modification: The type of post-translational modification.
+        proteins: If true, consider protein-specific types of post-translational
+            modification.
+        sites: If true, consider site-specific types of post-translational
+            modification.
+
+    Returns:
+        True if the type of post-translational modification is represented in
+        the protein-protein interaction network at the time of measurement, else
+        false.
+    """
+    if not (proteins or sites):
+        return False
+
+    return any(
+        re.fullmatch(
+            fr"{time} {modification} \d+? \d+" if proteins and sites else (
+                fr"{time} {modification} \d+"
+                if proteins else fr"{time} \S+ \d+ \d+"), attribute)
+        for protein in network
+        for attribute in network.nodes[protein])
 
 
 def get_sites(network: nx.Graph, time: int, modification: str) -> int:
@@ -426,7 +467,7 @@ def get_sites(network: nx.Graph, time: int, modification: str) -> int:
     """
     return max(
         int(attribute.split(" ")[2]) if re.
-        fullmatch(fr"{time} {modification} \d+ \d+", attribute) else 1
+        fullmatch(fr"{time} {modification} \d+ \d+", attribute) else 0
         for protein in network
         for attribute in network.nodes[protein])
 
@@ -452,6 +493,7 @@ def set_post_translational_modification(network: nx.Graph) -> None:
 
 def set_measurements(
     network: nx.Graph,
+    modifications: Iterable[str] = (),
     site_average: Callable[[Iterable[float]],
                            float] = lambda sites: max(sites, key=abs),
     replicate_average: Callable[[Iterable[float]], float] = statistics.mean,
@@ -465,6 +507,8 @@ def set_measurements(
 
     Args:
         network: The protein-protein interaction network.
+        modifications: The types of post-translational modification
+            to represent in the summary.
         site_average: A function to derive protein-specific measurements from
             site-specific measurements.
         replicate_average: A function to derive site-specific measurements from
@@ -476,7 +520,11 @@ def set_measurements(
             binary logarithm.
     """
     times = get_times(network)
-    modifications = {time: get_modifications(network, time) for time in times}
+    represented_modifications = {
+        time: tuple(modification
+                    for modification in get_modifications(network, time)
+                    if modification in modifications) for time in times
+    }
 
     measurement_range = {
         time: {
@@ -490,14 +538,14 @@ def set_measurements(
                  measurements[1],
                  get_measurements(network, time, modification, site_average,
                                   replicate_average)))
-            for modification in modifications[time]
+            for modification in represented_modifications[time]
         } for time in times
     }
 
     for time in times:
         for protein in network:
             classification = {}
-            for modification in modifications[time]:
+            for modification in represented_modifications[time]:
                 sites = [[
                     network.nodes[protein][attribute] for attribute in
                     network.nodes[protein] if re.fullmatch(
@@ -572,7 +620,7 @@ def set_measurements(
                 else:
                     network.nodes[protein][f"measurement {time}"] = " ".join(
                         f"{modification} {classification[modification]}"
-                        for modification in sorted(classification))
+                        for modification in modifications)
 
             else:
                 network.nodes[protein][f"measurement {time}"] = "MID"

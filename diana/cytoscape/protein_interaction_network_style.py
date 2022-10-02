@@ -733,6 +733,26 @@ COMPONENTS: list[dict[str, dict[str, dict[str, dict[
                                     f"#{102:02X}{102:02X}{255:02X}",
                                 "DOWN":
                                     f"#{0:02X}{0:02X}{255:02X}",
+                                "{modifications[0]} UP":
+                                    f"#{255:02X}{0:02X}{0:02X}",
+                                "{modifications[0]} MID_UP":
+                                    f"#{255:02X}{102:02X}{102:02X}",
+                                "{modifications[0]} MID":
+                                    f"#{128:02X}{128:02X}{128:02X}",
+                                "{modifications[0]} MID_DOWN":
+                                    f"#{102:02X}{102:02X}{255:02X}",
+                                "{modifications[0]} DOWN":
+                                    f"#{0:02X}{0:02X}{255:02X}",
+                                "{modifications[1]} UP":
+                                    f"#{255:02X}{0:02X}{0:02X}",
+                                "{modifications[1]} MID_UP":
+                                    f"#{255:02X}{102:02X}{102:02X}",
+                                "{modifications[1]} MID":
+                                    f"#{128:02X}{128:02X}{128:02X}",
+                                "{modifications[1]} MID_DOWN":
+                                    f"#{102:02X}{102:02X}{255:02X}",
+                                "{modifications[1]} DOWN":
+                                    f"#{0:02X}{0:02X}{255:02X}",
                                 "{modifications[0]} UP "
                                 "{modifications[1]} DOWN":
                                     f"#{0:02X}{255:02X}{0:02X}",
@@ -910,8 +930,9 @@ def get_bar_chart(
     return f"org.cytoscape.BarChart: {bar_chart}"
 
 
-def get_style(
+def get_styles(
     network: nx.Graph,
+    bar_chart_modifications: Iterable[str] = (),
     bar_chart_range: tuple[float, float] = (-1.0, 1.0),
     convert_measurement: Callable[
         [float, Collection[float]],
@@ -928,6 +949,8 @@ def get_style(
 
     Args:
         network: The protein-protein interaction network.
+        bar_chart_modifications: The identifiers of site-specific
+            post-translational modifications to represent as bar charts.
         bar_chart_range: The range of binary logarithms of measurements covered
             by the bar chart.
         convert_measurement: The function to transform binary logarithms of
@@ -961,12 +984,13 @@ def get_style(
                                                  "visualStyle",
                                                  attrib={"name": str(time)})
 
-        for component in COMPONENTS[len(modifications) - 1]:
+        for component in COMPONENTS[max(len(modifications), 2) - 1]:
             component_sub_element = ET.SubElement(visual_style_sub_element,
                                                   component)
 
             for name, dependency in COMPONENTS[
-                    len(modifications) - 1][component]["dependency"].items():
+                    max(len(modifications), 2) -
+                    1][component]["dependency"].items():
                 if isinstance(dependency["value"], str):
                     ET.SubElement(
                         component_sub_element,
@@ -978,7 +1002,7 @@ def get_style(
                     )
 
             for name, visual_property in COMPONENTS[
-                    len(modifications) -
+                    max(len(modifications), 2) -
                     1][component]["visualProperty"].items():
                 if isinstance(visual_property["default"], str):
                     visual_property_sub_element = ET.SubElement(
@@ -1137,7 +1161,19 @@ def get_style(
             visual_property_sub_elements = node_sub_elements.findall(
                 "visualProperty")
 
-            for i, modification in enumerate(modifications[:2]):
+            bar_charts = 0
+            for i, modification in enumerate(bar_chart_modifications):
+                if protein_interaction_network.is_modification(network,
+                                                               time,
+                                                               modification,
+                                                               proteins=False):
+                    bar_charts += 1
+                else:
+                    continue
+
+                if bar_charts > 2:
+                    break
+
                 for visual_property_sub_element in visual_property_sub_elements:
                     if visual_property_sub_element.get(
                             "name") == f"NODE_CUSTOMGRAPHICS_{i+1}":

@@ -18,7 +18,7 @@ from cytoscape import (gene_ontology_network_style,
                        reactome_network_style)
 from databases import corum, gene_ontology, reactome
 from interface import (average, conversion, correction, default, modularization,
-                       test)
+                       prioritization, test)
 from networks import (gene_ontology_network, protein_interaction_network,
                       reactome_network)
 
@@ -63,7 +63,9 @@ def process_workflow(configuration: Mapping[str, Any],
                     replicate_average=average.REPLICATE_AVERAGE[entry.get(
                         "replicate average", "mean")],
                     measurement_conversion=conversion.LOGARITHM[entry.get(
-                        "logarithm")])
+                        "logarithm")],
+                    site_prioritization=prioritization.SITE_PRIORITIZATION[
+                        entry.get("site prioritization", "abs")])
             else:
                 protein_interaction_network.add_proteins_from_table(
                     network,
@@ -381,8 +383,11 @@ def process_workflow(configuration: Mapping[str, Any],
                 network)
 
             if "Cytoscape" in configuration:
-                style = protein_interaction_network_style.get_style(
+                styles = protein_interaction_network_style.get_styles(
                     network,
+                    bar_chart_modifications=configuration["Cytoscape"].get(
+                        "bar chart", {}).get("post-translational modifications",
+                                             []),
                     bar_chart_range=default.MEASUREMENT_RANGE[
                         configuration["Cytoscape"].get("bar chart",
                                                        {}).get("conversion")],
@@ -399,7 +404,7 @@ def process_workflow(configuration: Mapping[str, Any],
                         configuration["Cytoscape"].get("edge transparency")])
 
                 protein_interaction_network_style.export(
-                    style,
+                    styles,
                     f"{logger.name}_{index}" if index else logger.name,
                 )
 
@@ -411,6 +416,9 @@ def process_workflow(configuration: Mapping[str, Any],
 
                 protein_interaction_network.set_measurements(
                     network,
+                    modifications=configuration["Cytoscape"].get(
+                        "node color",
+                        {}).get("post-translational modifications", []),
                     site_average=average.SITE_AVERAGE[
                         configuration["Cytoscape"].get("node color", {}).get(
                             "site average", "maxabs")],
@@ -427,6 +435,13 @@ def process_workflow(configuration: Mapping[str, Any],
             else:
                 protein_interaction_network.set_measurements(
                     network,
+                    modifications=sorted(
+                        set.union(*[
+                            set(
+                                protein_interaction_network.get_modifications(
+                                    network, time)) for time in
+                            protein_interaction_network.get_times(network)
+                        ])),
                     site_average=average.SITE_AVERAGE["maxabs"],
                     replicate_average=average.REPLICATE_AVERAGE["mean"],
                     measurements=default.MEASUREMENT_RANGE[None],
@@ -886,10 +901,10 @@ def process_workflow(configuration: Mapping[str, Any],
             if index else f"{logger.name}_gene_ontology")
 
         if "Cytoscape" in configuration:
-            ontology_network_style = gene_ontology_network_style.get_style(
+            ontology_network_styles = gene_ontology_network_style.get_styles(
                 ontology_network)
             gene_ontology_network_style.export(
-                ontology_network_style, f"{logger.name}_gene_ontology_{index}"
+                ontology_network_styles, f"{logger.name}_gene_ontology_{index}"
                 if index else f"{logger.name}_gene_ontology")
 
     if "Reactome network" in configuration:
@@ -987,10 +1002,10 @@ def process_workflow(configuration: Mapping[str, Any],
             if index else f"{logger.name}_reactome")
 
         if "Cytoscape" in configuration:
-            pathway_network_style = reactome_network_style.get_style(
+            pathway_network_styles = reactome_network_style.get_styles(
                 pathway_network)
             reactome_network_style.export(
-                pathway_network_style, f"{logger.name}_reactome_{index}"
+                pathway_network_styles, f"{logger.name}_reactome_{index}"
                 if index else f"{logger.name}_reactome")
 
     if "community detection" in configuration:

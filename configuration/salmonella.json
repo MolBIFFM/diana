@@ -100,9 +100,11 @@
       },
       "Cytoscape": {
         "bar chart": {
+          "post-translational modifications": ["P", "U"],
           "range": [-2.0, 2.0]
         },
         "node color": {
+          "post-translational modifications": ["P", "U"],
           "measurement": [-1.0, 1.0]
         }
       },
