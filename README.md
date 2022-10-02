@@ -2256,9 +2256,11 @@ related pathways, for example:
 
 ## References
 
-The configuration files in this repository refer to data sets concerning
-differential post-translational modification supplemented with the following
-publications:
+The configuration files in this repository refer to data sets supplemented with
+the following publications:
+
+- Bojkova, D. et al. (2020) **Proteomics of SARS-CoV-2-infected host cells**
+  **reveals therapy targets**, *Nature*, 583, 469-472.
 
 - Fiskin, E. et al. (2016) **Global Analysis of Host and Bacterial**
   **Ubiquitinome in Response to *Salmonella* Typhimurium Infection**, *Mol.*
