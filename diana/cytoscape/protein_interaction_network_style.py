@@ -368,7 +368,7 @@ COMPONENTS: list[dict[str, dict[str, dict[str, dict[
                     "NODE_SIZE": {
                         "default": "35.0",
                         "continuousMapping": {
-                            "attributeName": "{modification}",
+                            "attributeName": "{time} {modification}",
                             "attributeType": "float",
                             "continuousMappingPoint": {
                                 "{min_measurement}": {
@@ -783,7 +783,7 @@ COMPONENTS: list[dict[str, dict[str, dict[str, dict[
                     "NODE_SIZE": {
                         "default": "35.0",
                         "continuousMapping": {
-                            "attributeName": "{modification}",
+                            "attributeName": "{time} {modification}",
                             "attributeType": "float",
                             "continuousMappingPoint": {
                                 "{min_measurement}": {
@@ -1276,7 +1276,7 @@ COMPONENTS: list[dict[str, dict[str, dict[str, dict[
                     "NODE_SIZE": {
                         "default": "35.0",
                         "continuousMapping": {
-                            "attributeName": "{modification} {time}",
+                            "attributeName": "{time} {modification}",
                             "attributeType": "float",
                             "continuousMappingPoint": {
                                 "{min_measurement}": {
@@ -1470,9 +1470,9 @@ def get_styles(
                                         "attributeName":
                                             visual_property["continuousMapping"]
                                             ["attributeName"].format(
+                                                time=time,
                                                 modification=
-                                                node_size_modification,
-                                                time=time),
+                                                node_size_modification),
                                         "attributeType":
                                             visual_property["continuousMapping"]
                                             ["attributeType"]
