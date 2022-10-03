@@ -368,10 +368,10 @@ COMPONENTS: dict[str, dict[str, dict[str, dict[
                                 "greaterValue": "35.0",
                                 "lesserValue": "35.0"
                             },
-                            "{max}": {
-                                "equalValue": "{size}",
-                                "greaterValue": "{size}",
-                                "lesserValue": "{size}"
+                            "{max_number}": {
+                                "equalValue": "{max_size}",
+                                "greaterValue": "{max_size}",
+                                "lesserValue": "{max_size}"
                             },
                         }
                     }
@@ -475,7 +475,7 @@ def get_styles(network: nx.Graph) -> ET.ElementTree:
                                 "continuousMappingPoint"].items():
                             if isinstance(values, dict):
                                 if name == "NODE_SIZE":
-                                    maximum_size = max(
+                                    max_number = max(
                                         reactome_network.get_pathway_sizes(
                                             network).values())
                                     ET.SubElement(
@@ -484,22 +484,23 @@ def get_styles(network: nx.Graph) -> ET.ElementTree:
                                         attrib={
                                             "attrValue":
                                                 key.format(
-                                                    max=float(maximum_size)),
+                                                    max_number=float(max_number)
+                                                ),
                                             "equalValue":
-                                                values["equalValue"].
-                                                format(size=35.0 + math.ceil(
-                                                    math.sqrt(
-                                                        float(maximum_size)))),
+                                                values["equalValue"].format(
+                                                    size=35.0 +
+                                                    math.sqrt(float(max_number))
+                                                ),
                                             "greaterValue":
-                                                values["greaterValue"].
-                                                format(size=35.0 + math.ceil(
-                                                    math.sqrt(
-                                                        float(maximum_size)))),
+                                                values["greaterValue"].format(
+                                                    size=35.0 +
+                                                    math.sqrt(float(max_number))
+                                                ),
                                             "lesserValue":
-                                                values["lesserValue"].
-                                                format(size=35.0 + math.ceil(
-                                                    math.sqrt(
-                                                        float(maximum_size))))
+                                                values["lesserValue"].format(
+                                                    size=35.0 +
+                                                    math.sqrt(float(max_number))
+                                                )
                                         },
                                     )
                                 else:

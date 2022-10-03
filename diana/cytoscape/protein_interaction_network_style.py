@@ -4,6 +4,7 @@ network.
 """
 
 import json
+import math
 import statistics
 import xml.etree.ElementTree as ET
 from typing import Callable, Collection, Iterable, Optional
@@ -365,24 +366,24 @@ COMPONENTS: list[dict[str, dict[str, dict[str, dict[
                         "default": "ROUND_RECTANGLE",
                     },
                     "NODE_SIZE": {
-                    "default": "35.0",
-                    "continuousMapping": {
-                        "attributeName": "{modification}",
-                        "attributeType": "float",
-                        "continuousMappingPoint": {
-                            "{min}": {
-                                "equalValue": "{size}",
-                                "greaterValue": "{size}",
-                                "lesserValue": "{size}"
-                            },
-                            "{max}": {
-                                "equalValue": "{size}",
-                                "greaterValue": "{size}",
-                                "lesserValue": "{size}"
-                            },
+                        "default": "35.0",
+                        "continuousMapping": {
+                            "attributeName": "{modification}",
+                            "attributeType": "float",
+                            "continuousMappingPoint": {
+                                "{min_measurement}": {
+                                    "equalValue": "{min_size}",
+                                    "greaterValue": "{min_size}",
+                                    "lesserValue": "{min_size}"
+                                },
+                                "{max_measurement}": {
+                                    "equalValue": "{max_size}",
+                                    "greaterValue": "{max_size}",
+                                    "lesserValue": "{max_size}"
+                                },
+                            }
                         }
-                    }
-                },
+                    },
                     "NODE_TOOLTIP": {
                         "default": "",
                         "passthroughMapping": {
@@ -780,24 +781,24 @@ COMPONENTS: list[dict[str, dict[str, dict[str, dict[
                         },
                     },
                     "NODE_SIZE": {
-                    "default": "35.0",
-                    "continuousMapping": {
-                        "attributeName": "{modification}",
-                        "attributeType": "float",
-                        "continuousMappingPoint": {
-                            "{min}": {
-                                "equalValue": "{size}",
-                                "greaterValue": "{size}",
-                                "lesserValue": "{size}"
-                            },
-                            "{max}": {
-                                "equalValue": "{size}",
-                                "greaterValue": "{size}",
-                                "lesserValue": "{size}"
-                            },
+                        "default": "35.0",
+                        "continuousMapping": {
+                            "attributeName": "{modification}",
+                            "attributeType": "float",
+                            "continuousMappingPoint": {
+                                "{min_measurement}": {
+                                    "equalValue": "{min_size}",
+                                    "greaterValue": "{min_size}",
+                                    "lesserValue": "{min_size}"
+                                },
+                                "{max_measurement}": {
+                                    "equalValue": "{max_size}",
+                                    "greaterValue": "{max_size}",
+                                    "lesserValue": "{max_size}"
+                                },
+                            }
                         }
-                    }
-                },
+                    },
                     "NODE_TOOLTIP": {
                         "default": "",
                         "passthroughMapping": {
@@ -1273,7 +1274,23 @@ COMPONENTS: list[dict[str, dict[str, dict[str, dict[
                         },
                     },
                     "NODE_SIZE": {
-                        "default": "35.0"
+                        "default": "35.0",
+                        "continuousMapping": {
+                            "attributeName": "{modification} {time}",
+                            "attributeType": "float",
+                            "continuousMappingPoint": {
+                                "{min_measurement}": {
+                                    "equalValue": "{min_size}",
+                                    "greaterValue": "{min_size}",
+                                    "lesserValue": "{min_size}"
+                                },
+                                "{max_measurement}": {
+                                    "equalValue": "{max_size}",
+                                    "greaterValue": "{max_size}",
+                                    "lesserValue": "{max_size}"
+                                },
+                            }
+                        }
                     },
                     "NODE_TOOLTIP": {
                         "default": "",
@@ -1346,7 +1363,7 @@ def get_styles(
     node_size_modification: Optional[str] = None,
     bar_chart_modifications: Iterable[str] = (),
     bar_chart_range: tuple[float, float] = (-1.0, 1.0),
-    convert_measurement: Callable[
+    measurement_conversion: Callable[
         [float, Collection[float]],
         float] = lambda measurement, measurements: measurement,
     site_average: Callable[[Iterable[float]],
@@ -1361,13 +1378,13 @@ def get_styles(
 
     Args:
         network: The protein-protein interaction network.
-        node_size_modification: The identifier of a post-translational
-            modification to represent by node size.
+        node_size_modification: The identifier of a protein-specific
+            post-translational modification to represent by node size.
         bar_chart_modifications: The identifiers of site-specific
             post-translational modifications to represent by bar charts.
         bar_chart_range: The range of binary logarithms of measurements covered
             by the bar chart.
-        convert_measurement: The function to transform binary logarithms of
+        measurement_conversion: The function to transform binary logarithms of
             measurements.
         site_average: The function to derive a protein-specific measurement from
             its site-specific measurements.
@@ -1394,6 +1411,14 @@ def get_styles(
     for time in protein_interaction_network.get_times(network):
         modifications = protein_interaction_network.get_modifications(
             network, time, proteins=False)
+        if (node_size_modification and
+                protein_interaction_network.is_modification(
+                    network, time, node_size_modification, sites=False)):
+            measurements = protein_interaction_network.get_measurements(
+                network,
+                time,
+                node_size_modification,
+                replicate_average=replicate_average)
         visual_style_sub_element = ET.SubElement(styles.getroot(),
                                                  "visualStyle",
                                                  attrib={"name": str(time)})
@@ -1402,8 +1427,8 @@ def get_styles(
             component_sub_element = ET.SubElement(visual_style_sub_element,
                                                   component)
 
-            for name, dependency in COMPONENTS[
-                    max(len(modifications), 2)][component]["dependency"].items():
+            for name, dependency in COMPONENTS[max(
+                    len(modifications), 2)][component]["dependency"].items():
                 if isinstance(dependency["value"], str):
                     ET.SubElement(
                         component_sub_element,
@@ -1414,8 +1439,9 @@ def get_styles(
                         },
                     )
 
-            for name, visual_property in COMPONENTS[
-                    max(len(modifications), 2)][component]["visualProperty"].items():
+            for name, visual_property in COMPONENTS[max(
+                    len(modifications),
+                    2)][component]["visualProperty"].items():
                 if isinstance(visual_property["default"], str):
                     visual_property_sub_element = ET.SubElement(
                         component_sub_element,
@@ -1433,17 +1459,36 @@ def get_styles(
                             ["attributeName"], str) and isinstance(
                                 visual_property["continuousMapping"]
                                 ["attributeType"], str):
-                            continuous_mapping_sub_element = ET.SubElement(
-                                visual_property_sub_element,
-                                "continuousMapping",
-                                attrib={
-                                    "attributeName":
-                                        visual_property["continuousMapping"]
-                                        ["attributeName"],
-                                    "attributeType":
-                                        visual_property["continuousMapping"]
-                                        ["attributeType"]
-                                })
+                            if (name == "NODE_SIZE" and
+                                    node_size_modification and
+                                    protein_interaction_network.is_modification(
+                                        network, time, node_size_modification)):
+                                continuous_mapping_sub_element = ET.SubElement(
+                                    visual_property_sub_element,
+                                    "continuousMapping",
+                                    attrib={
+                                        "attributeName":
+                                            visual_property["continuousMapping"]
+                                            ["attributeName"].format(
+                                                modification=
+                                                node_size_modification,
+                                                time=time),
+                                        "attributeType":
+                                            visual_property["continuousMapping"]
+                                            ["attributeType"]
+                                    })
+                            else:
+                                continuous_mapping_sub_element = ET.SubElement(
+                                    visual_property_sub_element,
+                                    "continuousMapping",
+                                    attrib={
+                                        "attributeName":
+                                            visual_property["continuousMapping"]
+                                            ["attributeName"],
+                                        "attributeType":
+                                            visual_property["continuousMapping"]
+                                            ["attributeType"]
+                                    })
 
                         if isinstance(
                                 visual_property["continuousMapping"]
@@ -1452,7 +1497,60 @@ def get_styles(
                                     "continuousMapping"][
                                         "continuousMappingPoint"].items():
                                 if isinstance(values, dict):
-                                    if name == "EDGE_TRANSPARENCY":
+                                    if (name == "NODE_SIZE" and
+                                            node_size_modification and
+                                            protein_interaction_network.
+                                            is_modification(
+                                                network,
+                                                time,
+                                                node_size_modification,
+                                                sites=False)):
+                                        min_measurement = min(measurements)
+                                        max_measurement = max(measurements)
+                                        ET.SubElement(
+                                            continuous_mapping_sub_element,
+                                            "continuousMappingPoint",
+                                            attrib={
+                                                "attrValue":
+                                                    key.format(min_measurement=
+                                                               min_measurement,
+                                                               max_measurement=
+                                                               max_measurement),
+                                                "equalValue":
+                                                    values["equalValue"].format(
+                                                        min_size=35.0 *
+                                                        math.pow(
+                                                            2.0,
+                                                            min_measurement),
+                                                        max_size=35.0 *
+                                                        math.pow(
+                                                            2.0,
+                                                            max_measurement)),
+                                                "greaterValue":
+                                                    values["greaterValue"].
+                                                    format(
+                                                        min_size=35.0 *
+                                                        math.pow(
+                                                            2.0,
+                                                            min_measurement),
+                                                        max_size=35.0 *
+                                                        math.pow(
+                                                            2.0,
+                                                            max_measurement)),
+                                                "lesserValue":
+                                                    values["lesserValue"].
+                                                    format(
+                                                        min_size=35.0 *
+                                                        math.pow(
+                                                            2.0,
+                                                            min_measurement),
+                                                        max_size=35.0 *
+                                                        math.pow(
+                                                            2.0,
+                                                            max_measurement)),
+                                            },
+                                        )
+                                    elif name == "EDGE_TRANSPARENCY":
                                         ET.SubElement(
                                             continuous_mapping_sub_element,
                                             "continuousMappingPoint",
@@ -1468,8 +1566,6 @@ def get_styles(
                                                     values["lesserValue"]
                                             },
                                         )
-                                    elif (name == "NODE_SIZE" and node_size_modification is not None):
-                                        pass
                                     else:
                                         ET.SubElement(
                                             continuous_mapping_sub_element,
@@ -1598,13 +1694,13 @@ def get_styles(
                                 modification,
                                 protein_interaction_network.get_sites(
                                     network, time, modification),
-                                cy_range=(convert_measurement(
+                                cy_range=(measurement_conversion(
                                     bar_chart_range[0],
                                     protein_interaction_network.
                                     get_measurements(network, time,
                                                      modification, site_average,
                                                      replicate_average)),
-                                          convert_measurement(
+                                          measurement_conversion(
                                               bar_chart_range[1],
                                               protein_interaction_network.
                                               get_measurements(

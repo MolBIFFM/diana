@@ -96,11 +96,17 @@
       "Cytoscape": {
         "bar chart": {
           "post-translational modifications": ["P"],
-          "range": [-2.0, 2.0]
+          "measurement": [-2.0, 2.0]
         },
         "node color": {
-          "post-translational modifications": ["P"],
+          "post-translational modifications": ["P", "A"],
           "measurement": [-1.0, 1.0]
+        },
+        "node shape": {
+          "post-translational modifications": ["P", "A"]
+        },
+        "node size": {
+          "post-translational modifications": ["A"]
         }
       },
       "CORUM enrichment": {

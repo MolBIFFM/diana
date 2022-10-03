@@ -780,12 +780,7 @@ exported.
 [
     {
       "Cytoscape": {
-        "bar chart": {
-          "site average": "maxabs"
-        },
-        "node color": {
-          "site average": "maxabs"
-        }
+        "site average": "maxabs"
       }
     }
 ]
@@ -800,12 +795,7 @@ measurement. Available settings are `"mean"`, `"median"`, `"mid-range"`,
 [
     {
       "Cytoscape": {
-        "bar chart": {
           "replicate average": "mean"
-        },
-        "node color": {
-          "replicate average": "mean"
-        }
       }
     }
 ]
@@ -820,12 +810,7 @@ settings are `"mean"`, `"median"`, `"mid-range"`, `"max"`, `"maxabs"`, `"min"`,
 [
     {
       "Cytoscape": {
-        "bar chart": {
-          "conversion": null
-        },
-        "node color": {
-          "conversion": null
-        }
+        "conversion": null
       }
     }
 ]
@@ -849,14 +834,14 @@ measurement across the protein-protein interaction network, if applicable.
 ```
 The identifiers of site-specific post-translational modifications to represent
 as bar charts. Zero, one, and two identifiers are supported. Specified
-identifiers are considered in order.
+identifiers are represented in order.
 
 ```json
 [
     {
       "Cytoscape": {
         "bar chart": {
-          "range": [-1.0, 1.0],
+          "measurement": [-1.0, 1.0],
         }
       }
     }
@@ -901,6 +886,35 @@ is not set, `[-1.0, 1.0]` if `"conversion"` is set to `"log10"`, `[25.0, 75.0]`
 if `"conversion"` is set to `"percentile"`, `[0.25, 0.75]` if `"conversion"` is
 set to `"quantile"`, `[0.5, 2.0]` if `"conversion"` is set to `"ratio"`, and
 `[-1.0, 1.0]` if `"conversion"` is set to `"standard score"`.
+
+```json
+[
+    {
+      "Cytoscape": {
+        "node shape": {
+          "post-translational modifications": [],
+        }
+      }
+    }
+]
+```
+The identifiers of  post-translational modifications to represent by node color.
+Zero, one, and two identifiers are supported. Specified identifiers are
+represented in order.
+
+```json
+[
+    {
+      "Cytoscape": {
+        "node size": {
+          "post-translational modification": null,
+        }
+      }
+    }
+]
+```
+The identifier of a protein-specific post-translational modification to
+represent by node size.
 
 ```json
 [
@@ -2153,16 +2167,6 @@ Annotations of proteins contain the following information:
   <data key="120 U S2 R2">3.0054</data>
   <data key="gene">TRAF2</data>
   <data key="protein">TNF receptor-associated factor 2</data>
-  <data key="post-translational modification 30">U</data>
-  <data key="post-translational modification 120">U</data>
-  <data key="30 U S1">4.017431773281321</data>
-  <data key="30 U S2">4.001081644434266</data>
-  <data key="30 U S3">2.9012913530601145</data>
-  <data key="30 U S4">4.543341260044583</data>
-  <data key="measurement 30">UP</data>
-  <data key="120 U S1">2.6567938583308726</data>
-  <data key="120 U S2">2.9841153643117204</data>
-  <data key="measurement 120">UP</data>
 </node>
 ```
 Proteins are represented by their primary UniProt accession. `"gene"` and
@@ -2173,15 +2177,6 @@ corresponding ratios, are represented by keys consisting of four components.
 The first component refers to the specified time of measurement, the second to
 the specified type of post-translational modification, the third to the relative
 position of the corresponding modification site and the fourth to the replicate.
-Entries consisting of three components refer to modification site-specific
-averages of replicates.
-
-`"post-translational modification 30"` and
-`"post-translational modification 120"` each refer to the specified types of
-post-translational modification the protein is associated with while
-`"measurement 30"` and `"measurement 120"` each refer to a categorization of the
-protein-specific average of modification sites for particular specified
-times of measurement.
 
 Annotations of protein-protein interactions contain the following information:
 
@@ -2192,7 +2187,6 @@ Annotations of protein-protein interactions contain the following information:
   <data key="IntAct">0.81</data>
   <data key="Reactome">1.0</data>
   <data key="STRING">0.991</data>
-  <data key="score">1.0</data>
 </edge>
 ```
 

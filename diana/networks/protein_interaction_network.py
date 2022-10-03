@@ -4,7 +4,7 @@ import os
 import re
 import statistics
 from typing import (Callable, Collection, Container, Hashable, Iterable,
-                    MutableSequence, Optional)
+                    MutableSequence, Optional, Sequence)
 
 import networkx as nx
 import pandas as pd
@@ -471,7 +471,8 @@ def get_sites(network: nx.Graph, time: int, modification: str) -> int:
         for attribute in network.nodes[protein])
 
 
-def set_post_translational_modification(network: nx.Graph) -> None:
+def set_post_translational_modification(
+    network: nx.Graph, modifications: Sequence[str] = ()) -> None:
     """
     Annotate proteins with summary of type of corresponding modifications.
 
@@ -482,17 +483,17 @@ def set_post_translational_modification(network: nx.Graph) -> None:
         for protein in network:
             network.nodes[protein][
                 f"post-translational modification {time}"] = " ".join(
-                    sorted(
-                        set(
-                            attribute.split(" ")[1]
-                            for attribute in network.nodes[protein]
-                            if re.fullmatch(fr"{time} \S+ (S\d+)? R\d+",
-                                            attribute))))
+                    sorted(set(
+                        attribute.split(" ")[1]
+                        for attribute in network.nodes[protein]
+                        if re.fullmatch(fr"{time} \S+ (S\d+)? R\d+",
+                                        attribute)).intersection(modifications),
+                           key=modifications.index))
 
 
 def set_measurements(
     network: nx.Graph,
-    modifications: Iterable[str] = (),
+    modifications: Sequence[str] = (),
     site_average: Callable[[Iterable[float]],
                            float] = lambda sites: max(sites, key=abs),
     replicate_average: Callable[[Iterable[float]], float] = statistics.mean,
@@ -560,34 +561,42 @@ def set_measurements(
                             for attribute in network.nodes[protein]))
                 ]
 
-                for s, site in enumerate(sites, start=1):
+                if is_modification(network, time, modification, proteins=False):
+                    for s, site in enumerate(sites, start=1):
+                        network.nodes[protein][
+                            f"{time} {modification} S{s}"] = math.log2(
+                                replicate_average([
+                                    math.pow(2.0, replicate)
+                                    for replicate in site
+                                ]))
+                else:
                     network.nodes[protein][
-                        f"{time} {modification} S{s}"] = math.log2(
+                        f"{time} {modification}"] = math.log2(
                             replicate_average([
                                 math.pow(2.0, replicate) for replicate in site
                             ]))
 
                 if sites:
-                    combined_sites = math.log2(
+                    averaged_sites = math.log2(
                         site_average([
                             replicate_average([
                                 math.pow(2.0, replicate) for replicate in site
                             ]) for site in sites
                         ]))
 
-                    if combined_sites >= 1.0 * measurement_range[time][
+                    if averaged_sites >= 1.0 * measurement_range[time][
                             modification][1]:
                         classification[modification] = "UP"
                     elif 1.0 * measurement_range[time][modification][
-                            1] > combined_sites >= 0.5 * measurement_range[
+                            1] > averaged_sites >= 0.5 * measurement_range[
                                 time][modification][1]:
                         classification[modification] = "MID_UP"
                     elif 0.5 * measurement_range[time][modification][
-                            1] > combined_sites > 0.5 * measurement_range[time][
+                            1] > averaged_sites > 0.5 * measurement_range[time][
                                 modification][0]:
                         classification[modification] = "MID"
                     elif 0.5 * measurement_range[time][modification][
-                            0] >= combined_sites > 1.0 * measurement_range[
+                            0] >= averaged_sites > 1.0 * measurement_range[
                                 time][modification][0]:
                         classification[modification] = "MID_DOWN"
                     else:

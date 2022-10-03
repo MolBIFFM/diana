@@ -379,27 +379,28 @@ def process_workflow(configuration: Mapping[str, Any],
                 protein_interaction_network.get_modifications(network, time)
                 for time in protein_interaction_network.get_times(network)):
 
-            protein_interaction_network.set_post_translational_modification(
-                network)
-
             if "Cytoscape" in configuration:
+                protein_interaction_network.set_post_translational_modification(
+                    network,
+                    modifications=configuration["Cytoscape"].get(
+                        "node shape",
+                        {}).get("post-translational modifications", []))
+
                 styles = protein_interaction_network_style.get_styles(
                     network,
                     bar_chart_modifications=configuration["Cytoscape"].get(
                         "bar chart", {}).get("post-translational modifications",
                                              []),
                     bar_chart_range=default.MEASUREMENT_RANGE[
-                        configuration["Cytoscape"].get("bar chart",
-                                                       {}).get("conversion")],
-                    convert_measurement=conversion.MEASUREMENT_CONVERSION[
-                        configuration["Cytoscape"].get("bar chart",
-                                                       {}).get("conversion")],
+                        configuration["Cytoscape"].get("conversion")],
+                    measurement_conversion=conversion.MEASUREMENT_CONVERSION[
+                        configuration["Cytoscape"].get("conversion")],
                     site_average=average.SITE_AVERAGE[
-                        configuration["Cytoscape"].get("bar chart", {}).get(
-                            "site average", "maxabs")],
+                        configuration["Cytoscape"].get("site average",
+                                                       "maxabs")],
                     replicate_average=average.REPLICATE_AVERAGE[
-                        configuration["Cytoscape"].get("bar chart", {}).get(
-                            "replicate average", "mean")],
+                        configuration["Cytoscape"].get("replicate average",
+                                                       "mean")],
                     confidence_score_average=average.CONFIDENCE_SCORE_AVERAGE[
                         configuration["Cytoscape"].get("edge transparency")])
 
@@ -408,49 +409,32 @@ def process_workflow(configuration: Mapping[str, Any],
                     f"{logger.name}_{index}" if index else logger.name,
                 )
 
+                protein_interaction_network.set_measurements(
+                    network,
+                    modifications=configuration["Cytoscape"].get(
+                        "node color", {}).get(
+                            "post-translational modifications", []) +
+                    ([
+                        configuration["Cytoscape"].get("node size", {}).get(
+                            "post-translational modification", None)
+                    ] if configuration["Cytoscape"].get("node size", {}).get(
+                        "post-translational modification", []) is not None else
+                     []),
+                    site_average=average.SITE_AVERAGE[
+                        configuration["Cytoscape"].get("site average",
+                                                       "maxabs")],
+                    replicate_average=average.REPLICATE_AVERAGE[
+                        configuration["Cytoscape"].get("replicate average",
+                                                       "mean")],
+                    measurements=default.MEASUREMENT_RANGE[
+                        configuration["Cytoscape"].get("conversion")],
+                    measurement_conversion=conversion.MEASUREMENT_CONVERSION[
+                        configuration["Cytoscape"].get("conversion")])
+
                 protein_interaction_network.set_edge_weights(
                     network,
                     weight=average.CONFIDENCE_SCORE_AVERAGE[
                         configuration["Cytoscape"].get("edge transparency")],
-                    attribute="score")
-
-                protein_interaction_network.set_measurements(
-                    network,
-                    modifications=configuration["Cytoscape"].get(
-                        "node color",
-                        {}).get("post-translational modifications", []),
-                    site_average=average.SITE_AVERAGE[
-                        configuration["Cytoscape"].get("node color", {}).get(
-                            "site average", "maxabs")],
-                    replicate_average=average.REPLICATE_AVERAGE[
-                        configuration["Cytoscape"].get("node color", {}).get(
-                            "replicate average", "mean")],
-                    measurements=default.MEASUREMENT_RANGE[
-                        configuration["Cytoscape"].get("node color",
-                                                       {}).get("conversion")],
-                    measurement_conversion=conversion.MEASUREMENT_CONVERSION[
-                        configuration["Cytoscape"].get("node color",
-                                                       {}).get("conversion")])
-
-            else:
-                protein_interaction_network.set_measurements(
-                    network,
-                    modifications=sorted(
-                        set.union(*[
-                            set(
-                                protein_interaction_network.get_modifications(
-                                    network, time)) for time in
-                            protein_interaction_network.get_times(network)
-                        ])),
-                    site_average=average.SITE_AVERAGE["maxabs"],
-                    replicate_average=average.REPLICATE_AVERAGE["mean"],
-                    measurements=default.MEASUREMENT_RANGE[None],
-                    measurement_conversion=conversion.
-                    MEASUREMENT_CONVERSION[None])
-
-                protein_interaction_network.set_edge_weights(
-                    network,
-                    weight=average.CONFIDENCE_SCORE_AVERAGE[None],
                     attribute="score")
 
         protein_interaction_network.export(
