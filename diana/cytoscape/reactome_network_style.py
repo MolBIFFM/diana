@@ -358,15 +358,15 @@ COMPONENTS: dict[str, dict[str, dict[str, dict[
                     "default": "ROUND_RECTANGLE"
                 },
                 "NODE_SIZE": {
-                    "default": "35.0",
+                    "default": "0.0",
                     "continuousMapping": {
                         "attributeName": "number of proteins",
                         "attributeType": "float",
                         "continuousMappingPoint": {
                             "0": {
-                                "equalValue": "35.0",
-                                "greaterValue": "35.0",
-                                "lesserValue": "35.0"
+                                "equalValue": "0.0",
+                                "greaterValue": "0.0",
+                                "lesserValue": "0.0"
                             },
                             "{max_number}": {
                                 "equalValue": "{max_size}",
@@ -488,19 +488,16 @@ def get_styles(network: nx.Graph) -> ET.ElementTree:
                                                 ),
                                             "equalValue":
                                                 values["equalValue"].format(
-                                                    size=35.0 +
-                                                    math.sqrt(float(max_number))
-                                                ),
+                                                    size=math.sqrt(
+                                                        float(max_number))),
                                             "greaterValue":
                                                 values["greaterValue"].format(
-                                                    size=35.0 +
-                                                    math.sqrt(float(max_number))
-                                                ),
+                                                    size=math.sqrt(
+                                                        float(max_number))),
                                             "lesserValue":
                                                 values["lesserValue"].format(
-                                                    size=35.0 +
-                                                    math.sqrt(float(max_number))
-                                                )
+                                                    size=math.sqrt(
+                                                        float(max_number)))
                                         },
                                     )
                                 else:
