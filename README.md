@@ -2178,7 +2178,7 @@ components, depending on whether the corresponding measurements are
 site-specific. The first component refers to the specified time of measurement,
 the second to the specified type of post-translational modification. The
 component prefixed `"S"` to the relative position of the corresponding
-modification site and the component prefixed `"R"`to the replicate.
+modification site and the component prefixed `"R"` to the replicate.
 
 Annotations of protein-protein interactions contain the following information:
 
@@ -2193,7 +2193,7 @@ Annotations of protein-protein interactions contain the following information:
 ```
 
 A protein-protein interaction between is associated with database-specific
-confidence scores. `"score"` refers to the average of confidence scores.
+confidence scores.
 
 ## Gene Ontology network
 
