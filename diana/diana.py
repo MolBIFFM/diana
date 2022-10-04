@@ -388,6 +388,9 @@ def process_workflow(configuration: Mapping[str, Any],
 
                 styles = protein_interaction_network_style.get_styles(
                     network,
+                    node_size_modification=configuration["Cytoscape"].get(
+                        "node size", {}).get("post-translational modification",
+                                             None),
                     bar_chart_modifications=configuration["Cytoscape"].get(
                         "bar chart", {}).get("post-translational modifications",
                                              []),
@@ -412,14 +415,8 @@ def process_workflow(configuration: Mapping[str, Any],
                 protein_interaction_network.set_measurements(
                     network,
                     modifications=configuration["Cytoscape"].get(
-                        "node color", {}).get(
-                            "post-translational modifications", []) +
-                    ([
-                        configuration["Cytoscape"].get("node size", {}).get(
-                            "post-translational modification", None)
-                    ] if configuration["Cytoscape"].get("node size", {}).get(
-                        "post-translational modification", []) is not None else
-                     []),
+                        "node color",
+                        {}).get("post-translational modifications", []),
                     site_average=average.SITE_AVERAGE[
                         configuration["Cytoscape"].get("site average",
                                                        "maxabs")],

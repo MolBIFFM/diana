@@ -1410,10 +1410,10 @@ def get_styles(
 
     for time in protein_interaction_network.get_times(network):
         modifications = protein_interaction_network.get_modifications(
-            network, time, proteins=False)
-        if (node_size_modification and
+            network, time)
+        if (node_size_modification is not None and
                 protein_interaction_network.is_modification(
-                    network, time, node_size_modification, sites=False)):
+                    network, time, node_size_modification)):
             measurements = protein_interaction_network.get_measurements(
                 network,
                 time,
@@ -1460,7 +1460,6 @@ def get_styles(
                                 visual_property["continuousMapping"]
                                 ["attributeType"], str):
                             if (name == "NODE_SIZE" and
-                                    node_size_modification and
                                     protein_interaction_network.is_modification(
                                         network, time, node_size_modification)):
                                 continuous_mapping_sub_element = ET.SubElement(
@@ -1498,13 +1497,10 @@ def get_styles(
                                         "continuousMappingPoint"].items():
                                 if isinstance(values, dict):
                                     if (name == "NODE_SIZE" and
-                                            node_size_modification and
                                             protein_interaction_network.
                                             is_modification(
-                                                network,
-                                                time,
-                                                node_size_modification,
-                                                sites=False)):
+                                                network, time,
+                                                node_size_modification)):
                                         min_measurement = min(measurements)
                                         max_measurement = max(measurements)
                                         ET.SubElement(

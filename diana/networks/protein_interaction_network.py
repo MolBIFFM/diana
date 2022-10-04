@@ -415,7 +415,7 @@ def get_modifications(network: nx.Graph,
 
 def is_modification(network: nx.Graph,
                     time: int,
-                    modification: str,
+                    modification: Optional[str],
                     proteins: bool = True,
                     sites: bool = True) -> bool:
     """
@@ -436,7 +436,7 @@ def is_modification(network: nx.Graph,
         the protein-protein interaction network at the time of measurement, else
         false.
     """
-    if not (proteins or sites):
+    if not modification or not (proteins or sites):
         return False
 
     return any(
@@ -503,7 +503,8 @@ def set_measurements(
         float] = lambda measurement, measurements: measurement
 ) -> None:
     """
-    Annotate nodes with summary of measurements.
+    Annotate proteins in a protein-protein interaction network with aggregates
+    and summary of measurements.
 
     Args:
         network: The protein-protein interaction network.
@@ -520,10 +521,10 @@ def set_measurements(
             binary logarithm.
     """
     times = get_times(network)
-    represented_modifications = {
-        time: tuple(modification
-                    for modification in get_modifications(network, time)
-                    if modification in modifications) for time in times
+    averaged_modifications = {
+        time:
+        tuple(modification for modification in get_modifications(network, time))
+        for time in times
     }
 
     measurement_range = {
@@ -538,14 +539,14 @@ def set_measurements(
                  measurements[1],
                  get_measurements(network, time, modification, site_average,
                                   replicate_average)))
-            for modification in represented_modifications[time]
+            for modification in averaged_modifications[time]
         } for time in times
     }
 
     for time in times:
         for protein in network:
-            classification = {}
-            for modification in represented_modifications[time]:
+            summary = {}
+            for modification in averaged_modifications[time]:
                 sites = [
                     [
                         network.nodes[protein][attribute]
@@ -569,14 +570,16 @@ def set_measurements(
                                     math.pow(2.0, replicate)
                                     for replicate in site
                                 ]))
-                else:
-                    network.nodes[protein][
-                        f"{time} {modification}"] = math.log2(
-                            replicate_average([
-                                math.pow(2.0, replicate) for replicate in site
-                            ]))
 
-                if sites:
+                network.nodes[protein][f"{time} {modification}"] = math.log2(
+                    site_average([
+                        replicate_average(
+                            [math.pow(2.0, replicate)
+                             for replicate in site])
+                        for site in sites
+                    ]))
+
+                if sites and modification in modifications:
                     averaged_sites = math.log2(
                         site_average([
                             replicate_average([
@@ -586,53 +589,52 @@ def set_measurements(
 
                     if averaged_sites >= 1.0 * measurement_range[time][
                             modification][1]:
-                        classification[modification] = "UP"
+                        summary[modification] = "UP"
                     elif 1.0 * measurement_range[time][modification][
                             1] > averaged_sites >= 0.5 * measurement_range[
                                 time][modification][1]:
-                        classification[modification] = "MID_UP"
+                        summary[modification] = "MID_UP"
                     elif 0.5 * measurement_range[time][modification][
                             1] > averaged_sites > 0.5 * measurement_range[time][
                                 modification][0]:
-                        classification[modification] = "MID"
+                        summary[modification] = "MID"
                     elif 0.5 * measurement_range[time][modification][
                             0] >= averaged_sites > 1.0 * measurement_range[
                                 time][modification][0]:
-                        classification[modification] = "MID_DOWN"
+                        summary[modification] = "MID_DOWN"
                     else:
-                        classification[modification] = "DOWN"
+                        summary[modification] = "DOWN"
 
-            if classification:
-                if set(classification.values()) == {"UP"}:
+            if summary:
+                if set(summary.values()) == {"UP"}:
                     network.nodes[protein][f"measurement {time}"] = "UP"
-                elif set(classification.values()) == {"MID_UP", "UP"}:
+                elif set(summary.values()) == {"MID_UP", "UP"}:
                     network.nodes[protein][f"measurement {time}"] = "UP"
-                elif set(classification.values()) == {"MID", "MID_UP", "UP"}:
+                elif set(summary.values()) == {"MID", "MID_UP", "UP"}:
                     network.nodes[protein][f"measurement {time}"] = "UP"
 
-                elif set(classification.values()) == {"MID_UP"}:
+                elif set(summary.values()) == {"MID_UP"}:
                     network.nodes[protein][f"measurement {time}"] = "MID_UP"
-                elif set(classification.values()) == {"MID", "MID_UP"}:
+                elif set(summary.values()) == {"MID", "MID_UP"}:
                     network.nodes[protein][f"measurement {time}"] = "MID_UP"
 
-                elif set(classification.values()) == {"MID"}:
+                elif set(summary.values()) == {"MID"}:
                     network.nodes[protein][f"measurement {time}"] = "MID"
 
-                elif set(classification.values()) == {"MID", "MID_DOWN"}:
+                elif set(summary.values()) == {"MID", "MID_DOWN"}:
                     network.nodes[protein][f"measurement {time}"] = "MID_DOWN"
-                elif set(classification.values()) == {"MID_DOWN"}:
+                elif set(summary.values()) == {"MID_DOWN"}:
                     network.nodes[protein][f"measurement {time}"] = "MID_DOWN"
 
-                elif set(
-                        classification.values()) == {"MID", "MID_DOWN", "DOWN"}:
+                elif set(summary.values()) == {"MID", "MID_DOWN", "DOWN"}:
                     network.nodes[protein][f"measurement {time}"] = "DOWN"
-                elif set(classification.values()) == {"MID_DOWN", "DOWN"}:
+                elif set(summary.values()) == {"MID_DOWN", "DOWN"}:
                     network.nodes[protein][f"measurement {time}"] = "DOWN"
-                elif set(classification.values()) == {"DOWN"}:
+                elif set(summary.values()) == {"DOWN"}:
                     network.nodes[protein][f"measurement {time}"] = "DOWN"
                 else:
                     network.nodes[protein][f"measurement {time}"] = " ".join(
-                        f"{modification} {classification[modification]}"
+                        f"{modification} {summary[modification]}"
                         for modification in modifications)
 
             else:
