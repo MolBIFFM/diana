@@ -471,29 +471,8 @@ def get_sites(network: nx.Graph, time: int, modification: str) -> int:
         for attribute in network.nodes[protein])
 
 
-def set_post_translational_modification(
-    network: nx.Graph, modifications: Sequence[str] = ()) -> None:
-    """
-    Annotate proteins with summary of type of corresponding modifications.
-
-    Args:
-        network: The protein-protein interaction network.
-    """
-    for time in get_times(network):
-        for protein in network:
-            network.nodes[protein][
-                f"post-translational modification {time}"] = " ".join(
-                    sorted(set(
-                        attribute.split(" ")[1]
-                        for attribute in network.nodes[protein]
-                        if re.fullmatch(fr"{time} \S+ (S\d+)? R\d+",
-                                        attribute)).intersection(modifications),
-                           key=modifications.index))
-
-
 def set_measurements(
     network: nx.Graph,
-    modifications: Sequence[str] = (),
     site_average: Callable[[Iterable[float]],
                            float] = lambda sites: max(sites, key=abs),
     replicate_average: Callable[[Iterable[float]], float] = statistics.mean,
@@ -508,8 +487,6 @@ def set_measurements(
 
     Args:
         network: The protein-protein interaction network.
-        modifications: The types of post-translational modification
-            to represent in the summary.
         site_average: A function to derive protein-specific measurements from
             site-specific measurements.
         replicate_average: A function to derive site-specific measurements from
@@ -521,7 +498,7 @@ def set_measurements(
             binary logarithm.
     """
     times = get_times(network)
-    averaged_modifications = {
+    modifications = {
         time:
         tuple(modification for modification in get_modifications(network, time))
         for time in times
@@ -539,14 +516,14 @@ def set_measurements(
                  measurements[1],
                  get_measurements(network, time, modification, site_average,
                                   replicate_average)))
-            for modification in averaged_modifications[time]
+            for modification in modifications[time]
         } for time in times
     }
 
     for time in times:
         for protein in network:
             summary = {}
-            for modification in averaged_modifications[time]:
+            for modification in modifications[time]:
                 sites = [
                     [
                         network.nodes[protein][attribute]
@@ -579,7 +556,7 @@ def set_measurements(
                         for site in sites
                     ]))
 
-                if sites and modification in modifications:
+                if sites:
                     averaged_sites = math.log2(
                         site_average([
                             replicate_average([
@@ -607,38 +584,38 @@ def set_measurements(
 
             if summary:
                 if set(summary.values()) == {"UP"}:
-                    network.nodes[protein][f"measurement {time}"] = "UP"
+                    network.nodes[protein][str(time)] = "UP"
                 elif set(summary.values()) == {"MID_UP", "UP"}:
-                    network.nodes[protein][f"measurement {time}"] = "UP"
+                    network.nodes[protein][str(time)] = "UP"
                 elif set(summary.values()) == {"MID", "MID_UP", "UP"}:
-                    network.nodes[protein][f"measurement {time}"] = "UP"
+                    network.nodes[protein][str(time)] = "UP"
 
                 elif set(summary.values()) == {"MID_UP"}:
-                    network.nodes[protein][f"measurement {time}"] = "MID_UP"
+                    network.nodes[protein][str(time)] = "MID_UP"
                 elif set(summary.values()) == {"MID", "MID_UP"}:
-                    network.nodes[protein][f"measurement {time}"] = "MID_UP"
+                    network.nodes[protein][str(time)] = "MID_UP"
 
                 elif set(summary.values()) == {"MID"}:
-                    network.nodes[protein][f"measurement {time}"] = "MID"
+                    network.nodes[protein][str(time)] = "MID"
 
                 elif set(summary.values()) == {"MID", "MID_DOWN"}:
-                    network.nodes[protein][f"measurement {time}"] = "MID_DOWN"
+                    network.nodes[protein][str(time)] = "MID_DOWN"
                 elif set(summary.values()) == {"MID_DOWN"}:
-                    network.nodes[protein][f"measurement {time}"] = "MID_DOWN"
+                    network.nodes[protein][str(time)] = "MID_DOWN"
 
                 elif set(summary.values()) == {"MID", "MID_DOWN", "DOWN"}:
-                    network.nodes[protein][f"measurement {time}"] = "DOWN"
+                    network.nodes[protein][str(time)] = "DOWN"
                 elif set(summary.values()) == {"MID_DOWN", "DOWN"}:
-                    network.nodes[protein][f"measurement {time}"] = "DOWN"
+                    network.nodes[protein][str(time)] = "DOWN"
                 elif set(summary.values()) == {"DOWN"}:
-                    network.nodes[protein][f"measurement {time}"] = "DOWN"
+                    network.nodes[protein][str(time)] = "DOWN"
                 else:
-                    network.nodes[protein][f"measurement {time}"] = " ".join(
+                    network.nodes[protein][str(time)] = " ".join(
                         f"{modification} {summary[modification]}"
                         for modification in modifications)
 
             else:
-                network.nodes[protein][f"measurement {time}"] = "MID"
+                network.nodes[protein][str(time)] = "MID"
 
 
 def get_neighbors_from_biogrid(

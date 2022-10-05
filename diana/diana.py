@@ -380,14 +380,33 @@ def process_workflow(configuration: Mapping[str, Any],
                 for time in protein_interaction_network.get_times(network)):
 
             if "Cytoscape" in configuration:
-                protein_interaction_network.set_post_translational_modification(
+                protein_interaction_network.set_measurements(
                     network,
-                    modifications=configuration["Cytoscape"].get(
-                        "node shape",
-                        {}).get("post-translational modifications", []))
+                    site_average=average.SITE_AVERAGE[
+                        configuration["Cytoscape"].get("site average",
+                                                       "maxabs")],
+                    replicate_average=average.REPLICATE_AVERAGE[
+                        configuration["Cytoscape"].get("replicate average",
+                                                       "mean")],
+                    measurements=default.MEASUREMENT_RANGE[
+                        configuration["Cytoscape"].get("conversion")],
+                    measurement_conversion=conversion.MEASUREMENT_CONVERSION[
+                        configuration["Cytoscape"].get("conversion")])
+
+                protein_interaction_network.set_edge_weights(
+                    network,
+                    weight=average.CONFIDENCE_SCORE_AVERAGE[
+                        configuration["Cytoscape"].get("edge transparency")],
+                    attribute="score")
 
                 styles = protein_interaction_network_style.get_styles(
                     network,
+                    node_shape_modifications=configuration["Cytoscape"].get(
+                        "node shape",
+                        {}).get("post-translational modifications", []),
+                    node_color_modifications=configuration["Cytoscape"].get(
+                        "node color",
+                        {}).get("post-translational modifications", []),
                     node_size_modification=configuration["Cytoscape"].get(
                         "node size", {}).get("post-translational modification",
                                              None),
@@ -411,28 +430,6 @@ def process_workflow(configuration: Mapping[str, Any],
                     styles,
                     f"{logger.name}_{index}" if index else logger.name,
                 )
-
-                protein_interaction_network.set_measurements(
-                    network,
-                    modifications=configuration["Cytoscape"].get(
-                        "node color",
-                        {}).get("post-translational modifications", []),
-                    site_average=average.SITE_AVERAGE[
-                        configuration["Cytoscape"].get("site average",
-                                                       "maxabs")],
-                    replicate_average=average.REPLICATE_AVERAGE[
-                        configuration["Cytoscape"].get("replicate average",
-                                                       "mean")],
-                    measurements=default.MEASUREMENT_RANGE[
-                        configuration["Cytoscape"].get("conversion")],
-                    measurement_conversion=conversion.MEASUREMENT_CONVERSION[
-                        configuration["Cytoscape"].get("conversion")])
-
-                protein_interaction_network.set_edge_weights(
-                    network,
-                    weight=average.CONFIDENCE_SCORE_AVERAGE[
-                        configuration["Cytoscape"].get("edge transparency")],
-                    attribute="score")
 
         protein_interaction_network.export(
             network,

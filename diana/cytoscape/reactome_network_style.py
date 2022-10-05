@@ -10,7 +10,7 @@ COMPONENTS: dict[str, dict[str, dict[str, dict[
         "edge": {
             "dependency": {
                 "arrowColorMatchesEdge": {
-                    "value": "false"
+                    "value": "true"
                 }
             },
             "visualProperty": {

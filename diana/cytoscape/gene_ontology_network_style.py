@@ -1,16 +1,18 @@
 """The Cytoscape style configuration for a Gene Ontology network."""
 import math
+from typing import Type
 import xml.etree.ElementTree as ET
+from attr import attr
 
 import networkx as nx
 from networks import gene_ontology_network
 
-COMPONENTS: dict[str, dict[str, dict[str, dict[
-    str, str | dict[str, str | dict[str, str | dict[str, str]]]]]]] = {
+COMPONENTS: dict[str, dict[str, dict[str, dict[str, str | dict[
+    str, str | dict[str, str | dict[str, bool | int | str | float]]]]]]] = {
         "edge": {
             "dependency": {
                 "arrowColorMatchesEdge": {
-                    "value": "false"
+                    "value": True
                 }
             },
             "visualProperty": {
@@ -18,7 +20,7 @@ COMPONENTS: dict[str, dict[str, dict[str, dict[
                     "default": ""
                 },
                 "EDGE_CURVED": {
-                    "default": "true"
+                    "default": True
                 },
                 "EDGE_LABEL": {
                     "default": ""
@@ -30,13 +32,13 @@ COMPONENTS: dict[str, dict[str, dict[str, dict[
                     "default": "Dialog.plain,plain,10"
                 },
                 "EDGE_LABEL_FONT_SIZE": {
-                    "default": "10"
+                    "default": 10
                 },
                 "EDGE_LABEL_TRANSPARENCY": {
-                    "default": "255"
+                    "default": 255
                 },
                 "EDGE_LABEL_WIDTH": {
-                    "default": "200.0"
+                    "default": 200.0
                 },
                 "EDGE_LINE_TYPE": {
                     "default": "SOLID"
@@ -45,7 +47,7 @@ COMPONENTS: dict[str, dict[str, dict[str, dict[
                     "default": f"#{50:02X}{50:02X}{50:02X}"
                 },
                 "EDGE_SELECTED": {
-                    "default": "false"
+                    "default": False
                 },
                 "EDGE_SELECTED_PAINT": {
                     "default": f"#{255:02X}{0:02X}{0:02X}"
@@ -78,16 +80,16 @@ COMPONENTS: dict[str, dict[str, dict[str, dict[
                     "default": ""
                 },
                 "EDGE_TRANSPARENCY": {
-                    "default": "255"
+                    "default": 255
                 },
                 "EDGE_UNSELECTED_PAINT": {
                     "default": f"#{64:02X}{64:02X}{64:02X}"
                 },
                 "EDGE_VISIBLE": {
-                    "default": "true"
+                    "default": True
                 },
                 "EDGE_WIDTH": {
-                    "default": "2.0"
+                    "default": 2.0
                 },
             },
         },
@@ -98,49 +100,49 @@ COMPONENTS: dict[str, dict[str, dict[str, dict[
                     "default": f"#{255:02X}{255:02X}{255:02X}"
                 },
                 "NETWORK_CENTER_X_LOCATION": {
-                    "default": "0.0"
+                    "default": 0.0
                 },
                 "NETWORK_CENTER_Y_LOCATION": {
-                    "default": "0.0"
+                    "default": 0.0
                 },
                 "NETWORK_CENTER_Z_LOCATION": {
-                    "default": "0.0"
+                    "default": 0.0
                 },
                 "NETWORK_DEPTH": {
-                    "default": "0.0"
+                    "default": 0.0
                 },
                 "NETWORK_EDGE_SELECTION": {
-                    "default": "true"
+                    "default": True
                 },
                 "NETWORK_NODE_SELECTION": {
-                    "default": "true"
+                    "default": True
                 },
                 "NETWORK_SCALE_FACTOR": {
-                    "default": "1.0"
+                    "default": 1.0
                 },
                 "NETWORK_SIZE": {
-                    "default": "550.0"
+                    "default": 550.0
                 },
                 "NETWORK_TITLE": {
                     "default": ""
                 },
                 "NETWORK_WIDTH": {
-                    "default": "550.0"
+                    "default": 550.0
                 },
             },
         },
         "node": {
             "dependency": {
                 "nodeCustomGraphicsSizeSync": {
-                    "value": "true"
+                    "value": True
                 },
                 "nodeSizeLocked": {
-                    "value": "true"
+                    "value": True
                 },
             },
             "visualProperty": {
                 "COMPOUND_NODE_PADDING": {
-                    "default": "10.0"
+                    "default": 10.0
                 },
                 "NODE_BORDER_PAINT": {
                     "default": f"#{204:02X}{204:02X}{204:02X}"
@@ -149,10 +151,10 @@ COMPONENTS: dict[str, dict[str, dict[str, dict[
                     "default": "SOLID"
                 },
                 "NODE_BORDER_TRANSPARENCY": {
-                    "default": "255"
+                    "default": 255
                 },
                 "NODE_BORDER_WIDTH": {
-                    "default": "1.0"
+                    "default": 1.0
                 },
                 "NODE_COMPOUND_SHAPE": {
                     "default": "ROUND_RECTANGLE"
@@ -221,31 +223,31 @@ COMPONENTS: dict[str, dict[str, dict[str, dict[
                     "default": "C,C,c,0.00,0.00"
                 },
                 "NODE_CUSTOMGRAPHICS_SIZE_1": {
-                    "default": "50.0"
+                    "default": 50.0
                 },
                 "NODE_CUSTOMGRAPHICS_SIZE_2": {
-                    "default": "50.0"
+                    "default": 50.0
                 },
                 "NODE_CUSTOMGRAPHICS_SIZE_3": {
-                    "default": "50.0"
+                    "default": 50.0
                 },
                 "NODE_CUSTOMGRAPHICS_SIZE_4": {
-                    "default": "50.0"
+                    "default": 50.0
                 },
                 "NODE_CUSTOMGRAPHICS_SIZE_5": {
-                    "default": "50.0"
+                    "default": 50.0
                 },
                 "NODE_CUSTOMGRAPHICS_SIZE_6": {
-                    "default": "50.0"
+                    "default": 50.0
                 },
                 "NODE_CUSTOMGRAPHICS_SIZE_7": {
-                    "default": "50.0"
+                    "default": 50.0
                 },
                 "NODE_CUSTOMGRAPHICS_SIZE_8": {
-                    "default": "50.0"
+                    "default": 50.0
                 },
                 "NODE_CUSTOMGRAPHICS_SIZE_9": {
-                    "default": "50.0"
+                    "default": 50.0
                 },
                 "NODE_CUSTOMPAINT_1": {
                     "default":
@@ -293,36 +295,16 @@ COMPONENTS: dict[str, dict[str, dict[str, dict[
                         "id=NODE_CUSTOMPAINT_9, name=Node Custom Paint 9)"
                 },
                 "NODE_DEPTH": {
-                    "default": "0.0"
+                    "default": 0.0
                 },
                 "NODE_FILL_COLOR": {
                     "default": f"#{137:02X}{208:02X}{255:02X}",
-                    "continuousMapping": {
-                        "attributeName": "p-value",
-                        "attributeType": "float",
-                        "continuousMappingPoint": {
-                            "0.0": {
-                                "equalValue": f"#{255:02X}{0:02X}{0:02X}",
-                                "greaterValue": f"#{255:02X}{0:02X}{0:02X}",
-                                "lesserValue": f"#{255:02X}{0:02X}{0:02X}"
-                            },
-                            "1.0": {
-                                "equalValue": f"#{255:02X}{255:02X}{255:02X}",
-                                "greaterValue": f"#{255:02X}{255:02X}{255:02X}",
-                                "lesserValue": f"#{255:02X}{255:02X}{255:02X}"
-                            }
-                        }
-                    }
                 },
                 "NODE_HEIGHT": {
-                    "default": "35.0"
+                    "default": 35.0
                 },
                 "NODE_LABEL": {
                     "default": "",
-                    "passthroughMapping": {
-                        "attributeName": "name",
-                        "attributeType": "string",
-                    },
                 },
                 "NODE_LABEL_COLOR": {
                     "default": f"#{0:02X}{0:02X}{0:02X}"
@@ -331,85 +313,143 @@ COMPONENTS: dict[str, dict[str, dict[str, dict[
                     "default": "SansSerif.plain,plain,12"
                 },
                 "NODE_LABEL_FONT_SIZE": {
-                    "default": "12"
+                    "default": 12
                 },
                 "NODE_LABEL_POSITION": {
                     "default": "C,C,c,0.00,0.00"
                 },
                 "NODE_LABEL_TRANSPARENCY": {
-                    "default": "255"
+                    "default": 255
                 },
                 "NODE_LABEL_WIDTH": {
-                    "default": "200.0"
+                    "default": 200.0
                 },
                 "NODE_NESTED_NETWORK_IMAGE_VISIBLE": {
-                    "default": "true"
+                    "default": True
                 },
                 "NODE_PAINT": {
                     "default": f"#{30:02X}{144:02X}{255:02X}"
                 },
                 "NODE_SELECTED": {
-                    "default": "false"
+                    "default": False
                 },
                 "NODE_SELECTED_PAINT": {
                     "default": f"#{255:02X}{255:02X}{0:02X}"
                 },
                 "NODE_SHAPE": {
-                    "default": "ROUND_RECTANGLE",
-                    "discreteMapping": {
-                        "attributeName": "namespace",
-                        "attributeType": "string",
-                        "discreteMappingEntry": {
-                            "cellular component": "RECTANGLE",
-                            "biological process": "TRIANGLE",
-                            "molecular function": "ELLIPSE",
-                        },
-                    },
+                    "default": "ROUND_RECTANGLE"
                 },
                 "NODE_SIZE": {
-                    "default": "0.0",
-                    "continuousMapping": {
-                        "attributeName": "number of proteins",
-                        "attributeType": "float",
-                        "continuousMappingPoint": {
-                            "0": {
-                                "equalValue": "0.0",
-                                "greaterValue": "0.0",
-                                "lesserValue": "0.0"
-                            },
-                            "{max_number}": {
-                                "equalValue": "{max_size}",
-                                "greaterValue": "{max_size}",
-                                "lesserValue": "{max_size}"
-                            },
-                        }
-                    }
+                    "default": 0.0
                 },
                 "NODE_TOOLTIP": {
-                    "default": "",
-                    "passthroughMapping": {
-                        "attributeName": "term",
-                        "attributeType": "string",
-                    },
+                    "default": ""
                 },
                 "NODE_TRANSPARENCY": {
-                    "default": "255"
+                    "default": 255
                 },
                 "NODE_WIDTH": {
-                    "default": "75.0"
+                    "default": 75.0
                 },
                 "NODE_X_LOCATION": {
-                    "default": "0.0"
+                    "default": 0.0
                 },
                 "NODE_Y_LOCATION": {
-                    "default": "0.0"
+                    "default": 0.0
                 },
                 "NODE_Z_LOCATION": {
-                    "default": "0.0"
+                    "default": 0.0
                 },
             },
         },
     }
+
+
+def add_dependency(parent: ET.Element, name: str, value: bool) -> ET.Element:
+    return ET.SubElement(parent,
+                         "dependency",
+                         attrib={
+                             "name": name,
+                             "value": {
+                                 False: "false",
+                                 True: "true"
+                             }[value]
+                         })
+
+
+def add_visual_property(parent: ET.Element, name: str,
+                        default: bool | int | str | float) -> ET.Element:
+    return ET.SubElement(
+        parent,
+        "dependency",
+        attrib={
+            "name": name,
+            "default": {
+                False: "false",
+                True: "true"
+            }[default] if isinstance(default, bool) else str(default)
+        })
+
+
+def add_continuous_mapping(
+    parent: ET.Element, attribute_name: str, attribute_type: Type,
+    entries: dict[int | float, tuple[int | str | float, int | str | float,
+                                     int | str | float]]
+) -> ET.Element:
+    continuous_mapping = ET.SubElement(parent,
+                                       "continuousMapping",
+                                       attrib={
+                                           "attributeName": attribute_name,
+                                           "attributeName": {
+                                               int: "float",
+                                               str: "string",
+                                               float: "float"
+                                           }[attribute_type]
+                                       })
+    for key, (lesser_value, equal_value, greater_value) in entries.items():
+        ET.SubElement(continuous_mapping,
+                      "continuousMappingPoint",
+                      attrib={
+                          "attrValue": str(key),
+                          "lesserValue": str(lesser_value),
+                          "equalValue": str(equal_value),
+                          "greaterValue": str(greater_value)
+                      })
+    return continuous_mapping
+
+
+def add_discrete_mapping(
+        parent: ET.Element, attribute_name: str, attribute_type: Type,
+        entries: dict[int | str | float, int | str | float]) -> ET.Element:
+    discrete_mapping = ET.SubElement(parent,
+                                     "discreteMapping",
+                                     attrib={
+                                         "attributeName": attribute_name,
+                                         "attributeName": {
+                                             int: "float",
+                                             str: "string",
+                                             float: "float"
+                                         }[attribute_type]
+                                     })
+    ET.SubElement(
+        discrete_mapping,
+        "discreteMappingEntry",
+        attrib={str(key): str(value) for key, value in entries.items()})
+    return discrete_mapping
+
+
+def add_passthrough_mapping(parent: ET.Element, attribute_name: str,
+                            attribute_type: Type) -> ET.Element:
+    return ET.SubElement(parent,
+                         "passthroughMapping",
+                         attrib={
+                             "attributeName": attribute_name,
+                             "attributeName": {
+                                 int: "float",
+                                 str: "string",
+                                 float: "float"
+                             }[attribute_type]
+                         })
 
 
 def get_styles(network: nx.Graph) -> ET.ElementTree:
@@ -431,154 +471,42 @@ def get_styles(network: nx.Graph) -> ET.ElementTree:
     visual_style_sub_element = ET.SubElement(styles.getroot(),
                                              "visualStyle",
                                              attrib={"name": "Gene Ontology"})
-
+    visual_properties = {}
     for component, properties in COMPONENTS.items():
         component_sub_element = ET.SubElement(visual_style_sub_element,
                                               component)
-
         for name, dependency in properties["dependency"].items():
-            if isinstance(dependency["value"], str):
-                ET.SubElement(
-                    component_sub_element,
-                    "dependency",
-                    attrib={
-                        "name": name,
-                        "value": dependency["value"]
-                    },
-                )
+            if isinstance(dependency["value"], bool):
+                add_dependency(component_sub_element, name, dependency["value"])
 
         for name, visual_property in properties["visualProperty"].items():
-            if isinstance(visual_property["default"], str):
-                visual_property_sub_element = ET.SubElement(
-                    component_sub_element,
-                    "visualProperty",
-                    attrib={
-                        "name": name,
-                        "default": visual_property["default"]
-                    },
-                )
+            if isinstance(visual_property["default"], (bool, int, str, float)):
+                visual_properties[name] = add_visual_property(
+                    component_sub_element, name, visual_property["default"])
 
-            if visual_property.get("continuousMapping"):
-                if isinstance(visual_property["continuousMapping"], dict):
-                    if isinstance(
-                            visual_property["continuousMapping"]
-                        ["attributeName"], str) and isinstance(
-                            visual_property["continuousMapping"]
-                            ["attributeType"], str):
-                        continuous_mapping_sub_element = ET.SubElement(
-                            visual_property_sub_element,
-                            "continuousMapping",
-                            attrib={
-                                "attributeName":
-                                    visual_property["continuousMapping"]
-                                    ["attributeName"],
-                                "attributeType":
-                                    visual_property["continuousMapping"]
-                                    ["attributeType"]
-                            })
+    add_passthrough_mapping(visual_properties["NODE_LABEL"], "name", str)
+    add_passthrough_mapping(visual_properties["NODE_TOOLTIP"], "term", str)
 
-                    if isinstance(
-                            visual_property["continuousMapping"]
-                        ["continuousMappingPoint"], dict):
-                        for key, values in visual_property["continuousMapping"][
-                                "continuousMappingPoint"].items():
-                            if isinstance(values, dict):
-                                if name == "NODE_SIZE":
-                                    max_number = max(
-                                        gene_ontology_network.get_term_sizes(
-                                            network).values())
-                                    ET.SubElement(
-                                        continuous_mapping_sub_element,
-                                        "continuousMappingPoint",
-                                        attrib={
-                                            "attrValue":
-                                                key.format(
-                                                    max_number=float(max_number)
-                                                ),
-                                            "equalValue":
-                                                values["equalValue"].format(
-                                                    max_size=math.sqrt(
-                                                        float(max_number))),
-                                            "greaterValue":
-                                                values["greaterValue"].format(
-                                                    max_size=math.sqrt(
-                                                        float(max_number))),
-                                            "lesserValue":
-                                                values["lesserValue"].format(
-                                                    size=math.sqrt(
-                                                        float(max_number)))
-                                        },
-                                    )
-                                else:
-                                    ET.SubElement(
-                                        continuous_mapping_sub_element,
-                                        "continuousMappingPoint",
-                                        attrib={
-                                            "attrValue":
-                                                key,
-                                            "equalValue":
-                                                values["equalValue"],
-                                            "greaterValue":
-                                                values["greaterValue"],
-                                            "lesserValue":
-                                                values["lesserValue"]
-                                        },
-                                    )
+    add_discrete_mapping(
+        visual_properties["NODE_SHAPE"], "namespace", str, {
+            "cellular component": "RECTANGLE",
+            "biological process": "TRIANGLE",
+            "molecular function": "ELLIPSE",
+        })
 
-            elif visual_property.get("discreteMapping"):
-                if isinstance(visual_property["discreteMapping"], dict):
-                    if isinstance(
-                            visual_property["discreteMapping"]
-                        ["attributeName"], str) and isinstance(
-                            visual_property["discreteMapping"]["attributeType"],
-                            str):
-                        discrete_mapping_sub_element = ET.SubElement(
-                            visual_property_sub_element,
-                            "discreteMapping",
-                            attrib={
-                                "attributeName":
-                                    visual_property["discreteMapping"]
-                                    ["attributeName"],
-                                "attributeType":
-                                    visual_property["discreteMapping"]
-                                    ["attributeType"],
-                            },
-                        )
-
-                    if isinstance(
-                            visual_property["discreteMapping"]
-                        ["discreteMappingEntry"], dict):
-                        for key, value in visual_property["discreteMapping"][
-                                "discreteMappingEntry"].items():
-                            if isinstance(value, str):
-                                ET.SubElement(
-                                    discrete_mapping_sub_element,
-                                    "discreteMappingEntry",
-                                    attrib={
-                                        "attributeValue": key,
-                                        "value": value,
-                                    },
-                                )
-
-            elif visual_property.get("passthroughMapping"):
-                if isinstance(visual_property["passthroughMapping"], dict):
-                    if isinstance(
-                            visual_property["passthroughMapping"]
-                        ["attributeName"], str) and isinstance(
-                            visual_property["passthroughMapping"]
-                            ["attributeType"], str):
-                        ET.SubElement(
-                            visual_property_sub_element,
-                            "passthroughMapping",
-                            attrib={
-                                "attributeName":
-                                    visual_property["passthroughMapping"]
-                                    ["attributeName"],
-                                "attributeType":
-                                    visual_property["passthroughMapping"]
-                                    ["attributeType"],
-                            },
-                        )
+    add_continuous_mapping(
+        visual_properties["NODE_FILL_COLOR"], "p-value", float, {
+            0.0: (f"#{255:02X}{0:02X}{0:02X}",) * 3,
+            1.0: (f"#{255:02X}{255:02X}{255:02X}",) * 3
+        })
+    max_number_proteins = max(
+        gene_ontology_network.get_term_sizes(network).values())
+    add_continuous_mapping(visual_properties["NODE_SIZE"], "number of proteins",
+                           float, {
+                               0: (0.0,) * 3,
+                               max_number_proteins:
+                                   (math.sqrt(max_number_proteins),) * 3
+                           })
 
     ET.indent(styles)
     return styles
