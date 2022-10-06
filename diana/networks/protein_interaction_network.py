@@ -4,7 +4,7 @@ import os
 import re
 import statistics
 from typing import (Callable, Collection, Container, Hashable, Iterable,
-                    MutableSequence, Optional, Sequence)
+                    MutableSequence, Optional)
 
 import networkx as nx
 import pandas as pd
@@ -436,7 +436,7 @@ def is_modification(network: nx.Graph,
         the protein-protein interaction network at the time of measurement, else
         false.
     """
-    if not modification or not (proteins or sites):
+    if not (proteins or sites):
         return False
 
     return any(
@@ -564,58 +564,28 @@ def set_measurements(
                             ]) for site in sites
                         ]))
 
-                    if averaged_sites >= 1.0 * measurement_range[time][
-                            modification][1]:
+                    if averaged_sites >= max(
+                            measurement_range[time][modification][1], 0.0):
                         summary[modification] = "UP"
-                    elif 1.0 * measurement_range[time][modification][
-                            1] > averaged_sites >= 0.5 * measurement_range[
-                                time][modification][1]:
+                    elif max(measurement_range[time][modification][1],
+                             0.0) > averaged_sites >= 0.5 * max(
+                                 measurement_range[time][modification][1], 0.0):
                         summary[modification] = "MID_UP"
-                    elif 0.5 * measurement_range[time][modification][
-                            1] > averaged_sites > 0.5 * measurement_range[time][
-                                modification][0]:
-                        summary[modification] = "MID"
-                    elif 0.5 * measurement_range[time][modification][
-                            0] >= averaged_sites > 1.0 * measurement_range[
-                                time][modification][0]:
+                    elif 0.5 * min(measurement_range[time][modification][0],
+                                   0.0) >= averaged_sites > min(
+                                       measurement_range[time][modification][0],
+                                       0.0):
                         summary[modification] = "MID_DOWN"
-                    else:
+                    elif min(measurement_range[time][modification][0],
+                             0.0) >= averaged_sites:
                         summary[modification] = "DOWN"
+                    else:
+                        summary[modification] = "MID"
 
             if summary:
-                if set(summary.values()) == {"UP"}:
-                    network.nodes[protein][str(time)] = "UP"
-                elif set(summary.values()) == {"MID_UP", "UP"}:
-                    network.nodes[protein][str(time)] = "UP"
-                elif set(summary.values()) == {"MID", "MID_UP", "UP"}:
-                    network.nodes[protein][str(time)] = "UP"
-
-                elif set(summary.values()) == {"MID_UP"}:
-                    network.nodes[protein][str(time)] = "MID_UP"
-                elif set(summary.values()) == {"MID", "MID_UP"}:
-                    network.nodes[protein][str(time)] = "MID_UP"
-
-                elif set(summary.values()) == {"MID"}:
-                    network.nodes[protein][str(time)] = "MID"
-
-                elif set(summary.values()) == {"MID", "MID_DOWN"}:
-                    network.nodes[protein][str(time)] = "MID_DOWN"
-                elif set(summary.values()) == {"MID_DOWN"}:
-                    network.nodes[protein][str(time)] = "MID_DOWN"
-
-                elif set(summary.values()) == {"MID", "MID_DOWN", "DOWN"}:
-                    network.nodes[protein][str(time)] = "DOWN"
-                elif set(summary.values()) == {"MID_DOWN", "DOWN"}:
-                    network.nodes[protein][str(time)] = "DOWN"
-                elif set(summary.values()) == {"DOWN"}:
-                    network.nodes[protein][str(time)] = "DOWN"
-                else:
-                    network.nodes[protein][str(time)] = " ".join(
-                        f"{modification} {summary[modification]}"
-                        for modification in modifications)
-
-            else:
-                network.nodes[protein][str(time)] = "MID"
+                network.nodes[protein][str(time)] = " ".join(
+                    f"{modification} {summary[modification]}"
+                    for modification in modifications[time])
 
 
 def get_neighbors_from_biogrid(

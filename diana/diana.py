@@ -56,7 +56,8 @@ def process_workflow(configuration: Mapping[str, Any],
                     header=entry.get("header", 1) - 1,
                     time=entry["time"] if entry.get("time") and
                     isinstance(entry["time"], int) else 0,
-                    modification=entry["post-translational modification"]
+                    modification=entry["post-translational modification"].
+                    replace(" ", "")
                     if entry.get("post-translational modification") else "PTM",
                     number_sites=entry.get("sites", 5),
                     number_replicates=entry.get("replicates", 1),
@@ -81,7 +82,8 @@ def process_workflow(configuration: Mapping[str, Any],
                     header=entry.get("header", 1) - 1,
                     time=entry["time"] if entry.get("time") and
                     isinstance(entry["time"], int) else 0,
-                    modification=entry["post-translational modification"]
+                    modification=entry["post-translational modification"].
+                    replace(" ", "")
                     if entry.get("post-translational modification") else "PTM",
                     number_replicates=entry.get("replicates", 1),
                     measurement_conversion=conversion.LOGARITHM[entry.get(
@@ -1586,7 +1588,7 @@ def process_configuration_file(configuration_file: str) -> None:
 
 
 def main() -> None:
-    """Launches concurrent workflow execution."""
+    """Concurrent workflow execution."""
     parser = argparse.ArgumentParser(
         description="DIANA: data integration and network-based analysis for "
         "post-translational modification mass spectrometry data")

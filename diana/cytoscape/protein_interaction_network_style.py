@@ -10,404 +10,368 @@ import xml.etree.ElementTree as ET
 from typing import Callable, Collection, Iterable, Optional
 
 import networkx as nx
+from cytoscape import elements
 from networks import protein_interaction_network
 
 COMPONENTS: dict[str, dict[str, dict[str, dict[
-    str, str | dict[str, str | dict[str, str | dict[str, str]]]]]]] = {
-        "edge": {
-            "dependency": {
-                "arrowColorMatchesEdge": {
-                    "value": "false"
+    str, bool | int | str | float | dict[str, bool | int | str | float | dict[
+        str, bool | int | str |
+        float | dict[str, bool | int | str | float]]]]]]] = {
+            "edge": {
+                "dependency": {
+                    "arrowColorMatchesEdge": {
+                        "value": False
+                    }
+                },
+                "visualProperty": {
+                    "EDGE_BEND": {
+                        "default": ""
+                    },
+                    "EDGE_CURVED": {
+                        "default": True
+                    },
+                    "EDGE_LABEL": {
+                        "default": ""
+                    },
+                    "EDGE_LABEL_COLOR": {
+                        "default": f"#{0:02X}{0:02X}{0:02X}"
+                    },
+                    "EDGE_LABEL_FONT_FACE": {
+                        "default": "Dialog.plain,plain,10"
+                    },
+                    "EDGE_LABEL_FONT_SIZE": {
+                        "default": "10"
+                    },
+                    "EDGE_LABEL_TRANSPARENCY": {
+                        "default": "255"
+                    },
+                    "EDGE_LABEL_WIDTH": {
+                        "default": "200.0"
+                    },
+                    "EDGE_LINE_TYPE": {
+                        "default": "SOLID"
+                    },
+                    "EDGE_PAINT": {
+                        "default": f"#{50:02X}{50:02X}{50:02X}"
+                    },
+                    "EDGE_SELECTED": {
+                        "default": False
+                    },
+                    "EDGE_SELECTED_PAINT": {
+                        "default": f"#{255:02X}{0:02X}{0:02X}"
+                    },
+                    "EDGE_SOURCE_ARROW_SELECTED_PAINT": {
+                        "default": f"#{255:02X}{255:02X}{0:02X}"
+                    },
+                    "EDGE_SOURCE_ARROW_SHAPE": {
+                        "default": "NONE"
+                    },
+                    "EDGE_SOURCE_ARROW_UNSELECTED_PAINT": {
+                        "default": f"#{0:02X}{0:02X}{0:02X}"
+                    },
+                    "EDGE_STROKE_SELECTED_PAINT": {
+                        "default": f"#{255:02X}{0:02X}{0:02X}"
+                    },
+                    "EDGE_STROKE_UNSELECTED_PAINT": {
+                        "default": f"#{132:02X}{132:02X}{132:02X}"
+                    },
+                    "EDGE_TARGET_ARROW_SELECTED_PAINT": {
+                        "default": f"#{255:02X}{255:02X}{0:02X}"
+                    },
+                    "EDGE_TARGET_ARROW_SHAPE": {
+                        "default": "NONE"
+                    },
+                    "EDGE_TARGET_ARROW_UNSELECTED_PAINT": {
+                        "default": f"#{0:02X}{0:02X}{0:02X}"
+                    },
+                    "EDGE_TOOLTIP": {
+                        "default": ""
+                    },
+                    "EDGE_TRANSPARENCY": {
+                        "default": 255
+                    },
+                    "EDGE_UNSELECTED_PAINT": {
+                        "default": f"#{64:02X}{64:02X}{64:02X}"
+                    },
+                    "EDGE_VISIBLE": {
+                        "default": True
+                    },
+                    "EDGE_WIDTH": {
+                        "default": 2.0
+                    },
+                },
+            },
+            "network": {
+                "dependency": {
+                },
+                "visualProperty": {
+                    "NETWORK_BACKGROUND_PAINT": {
+                        "default": f"#{255:02X}{255:02X}{255:02X}"
+                    },
+                    "NETWORK_CENTER_X_LOCATION": {
+                        "default": 0.0
+                    },
+                    "NETWORK_CENTER_Y_LOCATION": {
+                        "default": 0.0
+                    },
+                    "NETWORK_CENTER_Z_LOCATION": {
+                        "default": 0.0
+                    },
+                    "NETWORK_DEPTH": {
+                        "default": 0.0
+                    },
+                    "NETWORK_EDGE_SELECTION": {
+                        "default": True
+                    },
+                    "NETWORK_NODE_SELECTION": {
+                        "default": True
+                    },
+                    "NETWORK_SCALE_FACTOR": {
+                        "default": 1.0
+                    },
+                    "NETWORK_SIZE": {
+                        "default": 550.0
+                    },
+                    "NETWORK_TITLE": {
+                        "default": ""
+                    },
+                    "NETWORK_WIDTH": {
+                        "default": 550.0
+                    },
+                },
+            },
+            "node": {
+                "dependency": {
+                    "nodeCustomGraphicsSizeSync": {
+                        "value": True
+                    },
+                    "nodeSizeLocked": {
+                        "value": False
+                    },
+                },
+                "visualProperty": {
+                    "COMPOUND_NODE_PADDING": {
+                        "default": 10.0
+                    },
+                    "NODE_BORDER_PAINT": {
+                        "default": f"#{204:02X}{204:02X}{204:02X}"
+                    },
+                    "NODE_BORDER_STROKE": {
+                        "default": "SOLID"
+                    },
+                    "NODE_BORDER_TRANSPARENCY": {
+                        "default": 255
+                    },
+                    "NODE_BORDER_WIDTH": {
+                        "default": 0.0
+                    },
+                    "NODE_COMPOUND_SHAPE": {
+                        "default": "ROUND_RECTANGLE"
+                    },
+                    "NODE_CUSTOMGRAPHICS_1": {
+                        "default": "org.cytoscape.ding.customgraphics."
+                                   "NullCustomGraphics,0,[ Remove Graphics ],"
+                    },
+                    "NODE_CUSTOMGRAPHICS_2": {
+                        "default": "org.cytoscape.ding.customgraphics."
+                                   "NullCustomGraphics,0,[ Remove Graphics ],"
+                    },
+                    "NODE_CUSTOMGRAPHICS_3": {
+                        "default": "org.cytoscape.ding.customgraphics."
+                                   "NullCustomGraphics,0,[ Remove Graphics ],"
+                    },
+                    "NODE_CUSTOMGRAPHICS_4": {
+                        "default": "org.cytoscape.ding.customgraphics."
+                                   "NullCustomGraphics,0,[ Remove Graphics ],"
+                    },
+                    "NODE_CUSTOMGRAPHICS_5": {
+                        "default": "org.cytoscape.ding.customgraphics."
+                                   "NullCustomGraphics,0,[ Remove Graphics ],"
+                    },
+                    "NODE_CUSTOMGRAPHICS_6": {
+                        "default": "org.cytoscape.ding.customgraphics."
+                                   "NullCustomGraphics,0,[ Remove Graphics ],"
+                    },
+                    "NODE_CUSTOMGRAPHICS_7": {
+                        "default": "org.cytoscape.ding.customgraphics."
+                                   "NullCustomGraphics,0,[ Remove Graphics ],"
+                    },
+                    "NODE_CUSTOMGRAPHICS_8": {
+                        "default": "org.cytoscape.ding.customgraphics."
+                                   "NullCustomGraphics,0,[ Remove Graphics ],"
+                    },
+                    "NODE_CUSTOMGRAPHICS_9": {
+                        "default": "org.cytoscape.ding.customgraphics."
+                                   "NullCustomGraphics,0,[ Remove Graphics ],"
+                    },
+                    "NODE_CUSTOMGRAPHICS_POSITION_1": {
+                        "default": "C,C,c,0.00,0.00"
+                    },
+                    "NODE_CUSTOMGRAPHICS_POSITION_2": {
+                        "default": "C,C,c,0.00,0.00"
+                    },
+                    "NODE_CUSTOMGRAPHICS_POSITION_3": {
+                        "default": "C,C,c,0.00,0.00"
+                    },
+                    "NODE_CUSTOMGRAPHICS_POSITION_4": {
+                        "default": "C,C,c,0.00,0.00"
+                    },
+                    "NODE_CUSTOMGRAPHICS_POSITION_5": {
+                        "default": "C,C,c,0.00,0.00"
+                    },
+                    "NODE_CUSTOMGRAPHICS_POSITION_6": {
+                        "default": "C,C,c,0.00,0.00"
+                    },
+                    "NODE_CUSTOMGRAPHICS_POSITION_7": {
+                        "default": "C,C,c,0.00,0.00"
+                    },
+                    "NODE_CUSTOMGRAPHICS_POSITION_8": {
+                        "default": "C,C,c,0.00,0.00"
+                    },
+                    "NODE_CUSTOMGRAPHICS_POSITION_9": {
+                        "default": "C,C,c,0.00,0.00"
+                    },
+                    "NODE_CUSTOMGRAPHICS_SIZE_1": {
+                        "default": 50.0
+                    },
+                    "NODE_CUSTOMGRAPHICS_SIZE_2": {
+                        "default": 50.0
+                    },
+                    "NODE_CUSTOMGRAPHICS_SIZE_3": {
+                        "default": 50.0
+                    },
+                    "NODE_CUSTOMGRAPHICS_SIZE_4": {
+                        "default": 50.0
+                    },
+                    "NODE_CUSTOMGRAPHICS_SIZE_5": {
+                        "default": 50.0
+                    },
+                    "NODE_CUSTOMGRAPHICS_SIZE_6": {
+                        "default": 50.0
+                    },
+                    "NODE_CUSTOMGRAPHICS_SIZE_7": {
+                        "default": 50.0
+                    },
+                    "NODE_CUSTOMGRAPHICS_SIZE_8": {
+                        "default": 50.0
+                    },
+                    "NODE_CUSTOMGRAPHICS_SIZE_9": {
+                        "default": 50.0
+                    },
+                    "NODE_CUSTOMPAINT_1": {
+                        "default":
+                            "DefaultVisualizableVisualProperty("
+                            "id=NODE_CUSTOMPAINT_1, name=Node Custom Paint 1)"
+                    },
+                    "NODE_CUSTOMPAINT_2": {
+                        "default":
+                            "DefaultVisualizableVisualProperty("
+                            "id=NODE_CUSTOMPAINT_2, name=Node Custom Paint 2)"
+                    },
+                    "NODE_CUSTOMPAINT_3": {
+                        "default":
+                            "DefaultVisualizableVisualProperty("
+                            "id=NODE_CUSTOMPAINT_3, name=Node Custom Paint 3)"
+                    },
+                    "NODE_CUSTOMPAINT_4": {
+                        "default":
+                            "DefaultVisualizableVisualProperty("
+                            "id=NODE_CUSTOMPAINT_4, name=Node Custom Paint 4)"
+                    },
+                    "NODE_CUSTOMPAINT_5": {
+                        "default":
+                            "DefaultVisualizableVisualProperty("
+                            "id=NODE_CUSTOMPAINT_5, name=Node Custom Paint 5)"
+                    },
+                    "NODE_CUSTOMPAINT_6": {
+                        "default":
+                            "DefaultVisualizableVisualProperty("
+                            "id=NODE_CUSTOMPAINT_6, name=Node Custom Paint 6)"
+                    },
+                    "NODE_CUSTOMPAINT_7": {
+                        "default":
+                            "DefaultVisualizableVisualProperty("
+                            "id=NODE_CUSTOMPAINT_7, name=Node Custom Paint 7)"
+                    },
+                    "NODE_CUSTOMPAINT_8": {
+                        "default":
+                            "DefaultVisualizableVisualProperty("
+                            "id=NODE_CUSTOMPAINT_8, name=Node Custom Paint 8)"
+                    },
+                    "NODE_CUSTOMPAINT_9": {
+                        "default":
+                            "DefaultVisualizableVisualProperty("
+                            "id=NODE_CUSTOMPAINT_9, name=Node Custom Paint 9)"
+                    },
+                    "NODE_DEPTH": {
+                        "default": 0.0
+                    },
+                    "NODE_FILL_COLOR": {
+                        "default": f"#{128:02X}{128:02X}{128:02X}",
+                    },
+                    "NODE_HEIGHT": {
+                        "default": 35.0
+                    },
+                    "NODE_LABEL": {
+                        "default": ""
+                    },
+                    "NODE_LABEL_COLOR": {
+                        "default": f"#{0:02X}{0:02X}{0:02X}"
+                    },
+                    "NODE_LABEL_FONT_FACE": {
+                        "default": "SansSerif.plain,plain,12"
+                    },
+                    "NODE_LABEL_FONT_SIZE": {
+                        "default": 12
+                    },
+                    "NODE_LABEL_POSITION": {
+                        "default": "C,C,c,0.00,0.00"
+                    },
+                    "NODE_LABEL_TRANSPARENCY": {
+                        "default": 255
+                    },
+                    "NODE_LABEL_WIDTH": {
+                        "default": 200.0
+                    },
+                    "NODE_NESTED_NETWORK_IMAGE_VISIBLE": {
+                        "default": True
+                    },
+                    "NODE_PAINT": {
+                        "default": f"#{30:02X}{144:02X}{255:02X}"
+                    },
+                    "NODE_SELECTED": {
+                        "default": False
+                    },
+                    "NODE_SELECTED_PAINT": {
+                        "default": f"#{255:02X}{255:02X}{0:02X}"
+                    },
+                    "NODE_SHAPE": {
+                        "default": "ROUND_RECTANGLE",
+                    },
+                    "NODE_SIZE": {
+                        "default": 35.0,
+                    },
+                    "NODE_TOOLTIP": {
+                        "default": ""
+                    },
+                    "NODE_TRANSPARENCY": {
+                        "default": 255
+                    },
+                    "NODE_WIDTH": {
+                        "default": 75.0
+                    },
+                    "NODE_X_LOCATION": {
+                        "default": 0.0
+                    },
+                    "NODE_Y_LOCATION": {
+                        "default": 0.0
+                    },
+                    "NODE_Z_LOCATION": {
+                        "default": 0.0
+                    },
                 }
-            },
-            "visualProperty": {
-                "EDGE_BEND": {
-                    "default": ""
-                },
-                "EDGE_CURVED": {
-                    "default": "true"
-                },
-                "EDGE_LABEL": {
-                    "default": ""
-                },
-                "EDGE_LABEL_COLOR": {
-                    "default": f"#{0:02X}{0:02X}{0:02X}"
-                },
-                "EDGE_LABEL_FONT_FACE": {
-                    "default": "Dialog.plain,plain,10"
-                },
-                "EDGE_LABEL_FONT_SIZE": {
-                    "default": "10"
-                },
-                "EDGE_LABEL_TRANSPARENCY": {
-                    "default": "255"
-                },
-                "EDGE_LABEL_WIDTH": {
-                    "default": "200.0"
-                },
-                "EDGE_LINE_TYPE": {
-                    "default": "SOLID"
-                },
-                "EDGE_PAINT": {
-                    "default": f"#{50:02X}{50:02X}{50:02X}"
-                },
-                "EDGE_SELECTED": {
-                    "default": "false"
-                },
-                "EDGE_SELECTED_PAINT": {
-                    "default": f"#{255:02X}{0:02X}{0:02X}"
-                },
-                "EDGE_SOURCE_ARROW_SELECTED_PAINT": {
-                    "default": f"#{255:02X}{255:02X}{0:02X}"
-                },
-                "EDGE_SOURCE_ARROW_SHAPE": {
-                    "default": "NONE"
-                },
-                "EDGE_SOURCE_ARROW_UNSELECTED_PAINT": {
-                    "default": f"#{0:02X}{0:02X}{0:02X}"
-                },
-                "EDGE_STROKE_SELECTED_PAINT": {
-                    "default": f"#{255:02X}{0:02X}{0:02X}"
-                },
-                "EDGE_STROKE_UNSELECTED_PAINT": {
-                    "default": f"#{132:02X}{132:02X}{132:02X}"
-                },
-                "EDGE_TARGET_ARROW_SELECTED_PAINT": {
-                    "default": f"#{255:02X}{255:02X}{0:02X}"
-                },
-                "EDGE_TARGET_ARROW_SHAPE": {
-                    "default": "NONE"
-                },
-                "EDGE_TARGET_ARROW_UNSELECTED_PAINT": {
-                    "default": f"#{0:02X}{0:02X}{0:02X}"
-                },
-                "EDGE_TOOLTIP": {
-                    "default": ""
-                },
-                "EDGE_TRANSPARENCY": {
-                    "default": "255",
-                    "continuousMapping": {
-                        "attributeName": "score",
-                        "attributeType": "float",
-                        "continuousMappingPoint": {
-                            "0": {
-                                "equalValue": "0",
-                                "greaterValue": "0",
-                                "lesserValue": "0"
-                            },
-                            "{max}": {
-                                "equalValue": "255",
-                                "greaterValue": "255",
-                                "lesserValue": "255"
-                            },
-                        }
-                    }
-                },
-                "EDGE_UNSELECTED_PAINT": {
-                    "default": f"#{64:02X}{64:02X}{64:02X}"
-                },
-                "EDGE_VISIBLE": {
-                    "default": "true"
-                },
-                "EDGE_WIDTH": {
-                    "default": "2.0"
-                },
-            },
-        },
-        "network": {
-            "dependency": {},
-            "visualProperty": {
-                "NETWORK_BACKGROUND_PAINT": {
-                    "default": f"#{255:02X}{255:02X}{255:02X}"
-                },
-                "NETWORK_CENTER_X_LOCATION": {
-                    "default": "0.0"
-                },
-                "NETWORK_CENTER_Y_LOCATION": {
-                    "default": "0.0"
-                },
-                "NETWORK_CENTER_Z_LOCATION": {
-                    "default": "0.0"
-                },
-                "NETWORK_DEPTH": {
-                    "default": "0.0"
-                },
-                "NETWORK_EDGE_SELECTION": {
-                    "default": "true"
-                },
-                "NETWORK_NODE_SELECTION": {
-                    "default": "true"
-                },
-                "NETWORK_SCALE_FACTOR": {
-                    "default": "1.0"
-                },
-                "NETWORK_SIZE": {
-                    "default": "550.0"
-                },
-                "NETWORK_TITLE": {
-                    "default": ""
-                },
-                "NETWORK_WIDTH": {
-                    "default": "550.0"
-                },
-            },
-        },
-        "node": {
-            "dependency": {
-                "nodeCustomGraphicsSizeSync": {
-                    "value": "true"
-                },
-                "nodeSizeLocked": {
-                    "value": "false"
-                },
-            },
-            "visualProperty": {
-                "COMPOUND_NODE_PADDING": {
-                    "default": "10.0"
-                },
-                "NODE_BORDER_PAINT": {
-                    "default": f"#{204:02X}{204:02X}{204:02X}"
-                },
-                "NODE_BORDER_STROKE": {
-                    "default": "SOLID"
-                },
-                "NODE_BORDER_TRANSPARENCY": {
-                    "default": "255"
-                },
-                "NODE_BORDER_WIDTH": {
-                    "default": "0.0"
-                },
-                "NODE_COMPOUND_SHAPE": {
-                    "default": "ROUND_RECTANGLE"
-                },
-                "NODE_CUSTOMGRAPHICS_1": {
-                    "default": "org.cytoscape.ding.customgraphics."
-                               "NullCustomGraphics,0,[ Remove Graphics ],"
-                },
-                "NODE_CUSTOMGRAPHICS_2": {
-                    "default": "org.cytoscape.ding.customgraphics."
-                               "NullCustomGraphics,0,[ Remove Graphics ],"
-                },
-                "NODE_CUSTOMGRAPHICS_3": {
-                    "default": "org.cytoscape.ding.customgraphics."
-                               "NullCustomGraphics,0,[ Remove Graphics ],"
-                },
-                "NODE_CUSTOMGRAPHICS_4": {
-                    "default": "org.cytoscape.ding.customgraphics."
-                               "NullCustomGraphics,0,[ Remove Graphics ],"
-                },
-                "NODE_CUSTOMGRAPHICS_5": {
-                    "default": "org.cytoscape.ding.customgraphics."
-                               "NullCustomGraphics,0,[ Remove Graphics ],"
-                },
-                "NODE_CUSTOMGRAPHICS_6": {
-                    "default": "org.cytoscape.ding.customgraphics."
-                               "NullCustomGraphics,0,[ Remove Graphics ],"
-                },
-                "NODE_CUSTOMGRAPHICS_7": {
-                    "default": "org.cytoscape.ding.customgraphics."
-                               "NullCustomGraphics,0,[ Remove Graphics ],"
-                },
-                "NODE_CUSTOMGRAPHICS_8": {
-                    "default": "org.cytoscape.ding.customgraphics."
-                               "NullCustomGraphics,0,[ Remove Graphics ],"
-                },
-                "NODE_CUSTOMGRAPHICS_9": {
-                    "default": "org.cytoscape.ding.customgraphics."
-                               "NullCustomGraphics,0,[ Remove Graphics ],"
-                },
-                "NODE_CUSTOMGRAPHICS_POSITION_1": {
-                    "default": "C,C,c,0.00,0.00"
-                },
-                "NODE_CUSTOMGRAPHICS_POSITION_2": {
-                    "default": "C,C,c,0.00,0.00"
-                },
-                "NODE_CUSTOMGRAPHICS_POSITION_3": {
-                    "default": "C,C,c,0.00,0.00"
-                },
-                "NODE_CUSTOMGRAPHICS_POSITION_4": {
-                    "default": "C,C,c,0.00,0.00"
-                },
-                "NODE_CUSTOMGRAPHICS_POSITION_5": {
-                    "default": "C,C,c,0.00,0.00"
-                },
-                "NODE_CUSTOMGRAPHICS_POSITION_6": {
-                    "default": "C,C,c,0.00,0.00"
-                },
-                "NODE_CUSTOMGRAPHICS_POSITION_7": {
-                    "default": "C,C,c,0.00,0.00"
-                },
-                "NODE_CUSTOMGRAPHICS_POSITION_8": {
-                    "default": "C,C,c,0.00,0.00"
-                },
-                "NODE_CUSTOMGRAPHICS_POSITION_9": {
-                    "default": "C,C,c,0.00,0.00"
-                },
-                "NODE_CUSTOMGRAPHICS_SIZE_1": {
-                    "default": "50.0"
-                },
-                "NODE_CUSTOMGRAPHICS_SIZE_2": {
-                    "default": "50.0"
-                },
-                "NODE_CUSTOMGRAPHICS_SIZE_3": {
-                    "default": "50.0"
-                },
-                "NODE_CUSTOMGRAPHICS_SIZE_4": {
-                    "default": "50.0"
-                },
-                "NODE_CUSTOMGRAPHICS_SIZE_5": {
-                    "default": "50.0"
-                },
-                "NODE_CUSTOMGRAPHICS_SIZE_6": {
-                    "default": "50.0"
-                },
-                "NODE_CUSTOMGRAPHICS_SIZE_7": {
-                    "default": "50.0"
-                },
-                "NODE_CUSTOMGRAPHICS_SIZE_8": {
-                    "default": "50.0"
-                },
-                "NODE_CUSTOMGRAPHICS_SIZE_9": {
-                    "default": "50.0"
-                },
-                "NODE_CUSTOMPAINT_1": {
-                    "default":
-                        "DefaultVisualizableVisualProperty("
-                        "id=NODE_CUSTOMPAINT_1, name=Node Custom Paint 1)"
-                },
-                "NODE_CUSTOMPAINT_2": {
-                    "default":
-                        "DefaultVisualizableVisualProperty("
-                        "id=NODE_CUSTOMPAINT_2, name=Node Custom Paint 2)"
-                },
-                "NODE_CUSTOMPAINT_3": {
-                    "default":
-                        "DefaultVisualizableVisualProperty("
-                        "id=NODE_CUSTOMPAINT_3, name=Node Custom Paint 3)"
-                },
-                "NODE_CUSTOMPAINT_4": {
-                    "default":
-                        "DefaultVisualizableVisualProperty("
-                        "id=NODE_CUSTOMPAINT_4, name=Node Custom Paint 4)"
-                },
-                "NODE_CUSTOMPAINT_5": {
-                    "default":
-                        "DefaultVisualizableVisualProperty("
-                        "id=NODE_CUSTOMPAINT_5, name=Node Custom Paint 5)"
-                },
-                "NODE_CUSTOMPAINT_6": {
-                    "default":
-                        "DefaultVisualizableVisualProperty("
-                        "id=NODE_CUSTOMPAINT_6, name=Node Custom Paint 6)"
-                },
-                "NODE_CUSTOMPAINT_7": {
-                    "default":
-                        "DefaultVisualizableVisualProperty("
-                        "id=NODE_CUSTOMPAINT_7, name=Node Custom Paint 7)"
-                },
-                "NODE_CUSTOMPAINT_8": {
-                    "default":
-                        "DefaultVisualizableVisualProperty("
-                        "id=NODE_CUSTOMPAINT_8, name=Node Custom Paint 8)"
-                },
-                "NODE_CUSTOMPAINT_9": {
-                    "default":
-                        "DefaultVisualizableVisualProperty("
-                        "id=NODE_CUSTOMPAINT_9, name=Node Custom Paint 9)"
-                },
-                "NODE_DEPTH": {
-                    "default": "0.0"
-                },
-                "NODE_FILL_COLOR": {
-                    "default": f"#{128:02X}{128:02X}{128:02X}",
-                },
-                "NODE_HEIGHT": {
-                    "default": "35.0"
-                },
-                "NODE_LABEL": {
-                    "default": "",
-                    "passthroughMapping": {
-                        "attributeName": "name",
-                        "attributeType": "string",
-                    },
-                },
-                "NODE_LABEL_COLOR": {
-                    "default": f"#{0:02X}{0:02X}{0:02X}"
-                },
-                "NODE_LABEL_FONT_FACE": {
-                    "default": "SansSerif.plain,plain,12"
-                },
-                "NODE_LABEL_FONT_SIZE": {
-                    "default": "12"
-                },
-                "NODE_LABEL_POSITION": {
-                    "default": "C,C,c,0.00,0.00"
-                },
-                "NODE_LABEL_TRANSPARENCY": {
-                    "default": "255"
-                },
-                "NODE_LABEL_WIDTH": {
-                    "default": "200.0"
-                },
-                "NODE_NESTED_NETWORK_IMAGE_VISIBLE": {
-                    "default": "true"
-                },
-                "NODE_PAINT": {
-                    "default": f"#{30:02X}{144:02X}{255:02X}"
-                },
-                "NODE_SELECTED": {
-                    "default": "false"
-                },
-                "NODE_SELECTED_PAINT": {
-                    "default": f"#{255:02X}{255:02X}{0:02X}"
-                },
-                "NODE_SHAPE": {
-                    "default": "ROUND_RECTANGLE",
-                },
-                "NODE_SIZE": {
-                    "default": "35.0",
-                    "continuousMapping": {
-                        "attributeName": "{time} {modification}",
-                        "attributeType": "float",
-                        "continuousMappingPoint": {
-                            "{min_measurement}": {
-                                "equalValue": "{min_size}",
-                                "greaterValue": "{min_size}",
-                                "lesserValue": "{min_size}"
-                            },
-                            "{max_measurement}": {
-                                "equalValue": "{max_size}",
-                                "greaterValue": "{max_size}",
-                                "lesserValue": "{max_size}"
-                            },
-                        }
-                    }
-                },
-                "NODE_TOOLTIP": {
-                    "default": "",
-                    "passthroughMapping": {
-                        "attributeName": "protein",
-                        "attributeType": "string",
-                    },
-                },
-                "NODE_TRANSPARENCY": {
-                    "default": "255"
-                },
-                "NODE_WIDTH": {
-                    "default": "75.0"
-                },
-                "NODE_X_LOCATION": {
-                    "default": "0.0"
-                },
-                "NODE_Y_LOCATION": {
-                    "default": "0.0"
-                },
-                "NODE_Z_LOCATION": {
-                    "default": "0.0"
-                },
-            },
-        },
-    }
+            }
+        }
 
 
 def get_bar_chart(
@@ -505,307 +469,248 @@ def get_styles(
     })
 
     for time in protein_interaction_network.get_times(network):
-        modifications = protein_interaction_network.get_modifications(
-            network, time)
+        visual_style_sub_element = ET.SubElement(styles.getroot(),
+                                                 "visualStyle",
+                                                 attrib={"name": str(time)})
+        visual_properties: dict[str, dict[str, ET.Element]] = {}
+        for component, properties in COMPONENTS.items():
+            visual_properties[component] = {}
+            component_sub_element = ET.SubElement(visual_style_sub_element,
+                                                  component)
+            for name, dependency in properties["dependency"].items():
+                if isinstance(dependency["value"], bool):
+                    elements.add_dependency(component_sub_element, name,
+                                            dependency["value"])
+
+            for name, visual_property in properties["visualProperty"].items():
+                if isinstance(visual_property["default"],
+                              (bool, int, str, float)):
+                    visual_properties[component][
+                        name] = elements.add_visual_property(
+                            component_sub_element, name,
+                            visual_property["default"])
+
+        elements.add_continuous_mapping(
+            visual_properties["edge"]["EDGE_TRANSPARENCY"], "score", "float", {
+                0.0: (0,) * 3,
+                max_edge_score: (255,) * 3
+            })
+
+        elements.add_passthrough_mapping(
+            visual_properties["node"]["NODE_LABEL"], "name", "string")
+        elements.add_passthrough_mapping(
+            visual_properties["node"]["NODE_TOOLTIP"], "protein", "string")
+
         if (node_size_modification is not None and
                 protein_interaction_network.is_modification(
                     network, time, node_size_modification)):
             measurements = protein_interaction_network.get_measurements(
-                network,
-                time,
-                node_size_modification,
-                replicate_average=replicate_average)
-        visual_style_sub_element = ET.SubElement(styles.getroot(),
-                                                 "visualStyle",
-                                                 attrib={"name": str(time)})
+                network, time, node_size_modification, site_average,
+                replicate_average)
+            if isinstance(
+                    COMPONENTS["node"]["visualProperty"]["NODE_SIZE"]
+                ["default"], float):
+                elements.add_continuous_mapping(
+                    visual_properties["node"]["NODE_SIZE"],
+                    f"{time} {node_size_modification}", "float", {
+                        min(measurements):
+                            (COMPONENTS["node"]["visualProperty"]["NODE_SIZE"]
+                             ["default"] * math.pow(2.0, min(measurements)),) *
+                            3,
+                        max(measurements):
+                            (COMPONENTS["node"]["visualProperty"]["NODE_SIZE"]
+                             ["default"] * math.pow(2.0, max(measurements)),) *
+                            3
+                    })
 
-        for component in COMPONENTS[max(len(modifications), 2)]:
-            component_sub_element = ET.SubElement(visual_style_sub_element,
-                                                  component)
-
-            for name, dependency in COMPONENTS[max(
-                    len(modifications), 2)][component]["dependency"].items():
-                if isinstance(dependency["value"], str):
-                    ET.SubElement(
-                        component_sub_element,
-                        "dependency",
-                        attrib={
-                            "name": name,
-                            "value": dependency["value"]
-                        },
-                    )
-
-            for name, visual_property in COMPONENTS[max(
-                    len(modifications),
-                    2)][component]["visualProperty"].items():
-                if isinstance(visual_property["default"], str):
-                    visual_property_sub_element = ET.SubElement(
-                        component_sub_element,
-                        "visualProperty",
-                        attrib={
-                            "name": name,
-                            "default": visual_property["default"]
-                        },
-                    )
-
-                if visual_property.get("continuousMapping"):
-                    if isinstance(visual_property["continuousMapping"], dict):
-                        if isinstance(
-                                visual_property["continuousMapping"]
-                            ["attributeName"], str) and isinstance(
-                                visual_property["continuousMapping"]
-                                ["attributeType"], str):
-                            if (name == "NODE_SIZE" and
-                                    protein_interaction_network.is_modification(
-                                        network, time, node_size_modification)):
-                                continuous_mapping_sub_element = ET.SubElement(
-                                    visual_property_sub_element,
-                                    "continuousMapping",
-                                    attrib={
-                                        "attributeName":
-                                            visual_property["continuousMapping"]
-                                            ["attributeName"].format(
-                                                time=time,
-                                                modification=
-                                                node_size_modification),
-                                        "attributeType":
-                                            visual_property["continuousMapping"]
-                                            ["attributeType"]
-                                    })
-                            else:
-                                continuous_mapping_sub_element = ET.SubElement(
-                                    visual_property_sub_element,
-                                    "continuousMapping",
-                                    attrib={
-                                        "attributeName":
-                                            visual_property["continuousMapping"]
-                                            ["attributeName"],
-                                        "attributeType":
-                                            visual_property["continuousMapping"]
-                                            ["attributeType"]
-                                    })
-
-                        if isinstance(
-                                visual_property["continuousMapping"]
-                            ["continuousMappingPoint"], dict):
-                            for key, values in visual_property[
-                                    "continuousMapping"][
-                                        "continuousMappingPoint"].items():
-                                if isinstance(values, dict):
-                                    if (name == "NODE_SIZE" and
-                                            protein_interaction_network.
-                                            is_modification(
-                                                network, time,
-                                                node_size_modification)):
-                                        min_measurement = min(measurements)
-                                        max_measurement = max(measurements)
-                                        ET.SubElement(
-                                            continuous_mapping_sub_element,
-                                            "continuousMappingPoint",
-                                            attrib={
-                                                "attrValue":
-                                                    key.format(min_measurement=
-                                                               min_measurement,
-                                                               max_measurement=
-                                                               max_measurement),
-                                                "equalValue":
-                                                    values["equalValue"].format(
-                                                        min_size=35.0 *
-                                                        math.pow(
-                                                            2.0,
-                                                            min_measurement),
-                                                        max_size=35.0 *
-                                                        math.pow(
-                                                            2.0,
-                                                            max_measurement)),
-                                                "greaterValue":
-                                                    values["greaterValue"].
-                                                    format(
-                                                        min_size=35.0 *
-                                                        math.pow(
-                                                            2.0,
-                                                            min_measurement),
-                                                        max_size=35.0 *
-                                                        math.pow(
-                                                            2.0,
-                                                            max_measurement)),
-                                                "lesserValue":
-                                                    values["lesserValue"].
-                                                    format(
-                                                        min_size=35.0 *
-                                                        math.pow(
-                                                            2.0,
-                                                            min_measurement),
-                                                        max_size=35.0 *
-                                                        math.pow(
-                                                            2.0,
-                                                            max_measurement)),
-                                            },
-                                        )
-                                    elif name == "EDGE_TRANSPARENCY":
-                                        ET.SubElement(
-                                            continuous_mapping_sub_element,
-                                            "continuousMappingPoint",
-                                            attrib={
-                                                "attrValue":
-                                                    key.format(
-                                                        max=max_edge_score),
-                                                "equalValue":
-                                                    values["equalValue"],
-                                                "greaterValue":
-                                                    values["greaterValue"],
-                                                "lesserValue":
-                                                    values["lesserValue"]
-                                            },
-                                        )
-                                    else:
-                                        ET.SubElement(
-                                            continuous_mapping_sub_element,
-                                            "continuousMappingPoint",
-                                            attrib={
-                                                "attrValue":
-                                                    key,
-                                                "equalValue":
-                                                    values["equalValue"],
-                                                "greaterValue":
-                                                    values["greaterValue"],
-                                                "lesserValue":
-                                                    values["lesserValue"]
-                                            },
-                                        )
-
-                elif visual_property.get("discreteMapping"):
-                    if isinstance(visual_property["discreteMapping"], dict):
-                        if isinstance(
-                                visual_property["discreteMapping"]
-                            ["attributeName"], str) and isinstance(
-                                visual_property["discreteMapping"]
-                                ["attributeType"], str):
-                            if name in ("NODE_FILL_COLOR", "NODE_SHAPE"):
-                                discrete_mapping_sub_element = ET.SubElement(
-                                    visual_property_sub_element,
-                                    "discreteMapping",
-                                    attrib={
-                                        "attributeName":
-                                            visual_property["discreteMapping"]
-                                            ["attributeName"].format(time=time),
-                                        "attributeType":
-                                            visual_property["discreteMapping"]
-                                            ["attributeType"],
-                                    },
-                                )
-                            else:
-                                discrete_mapping_sub_element = ET.SubElement(
-                                    visual_property_sub_element,
-                                    "discreteMapping",
-                                    attrib={
-                                        "attributeName":
-                                            visual_property["discreteMapping"]
-                                            ["attributeName"],
-                                        "attributeType":
-                                            visual_property["discreteMapping"]
-                                            ["attributeType"],
-                                    },
-                                )
-
-                        if isinstance(
-                                visual_property["discreteMapping"]
-                            ["discreteMappingEntry"], dict):
-                            for key, value in visual_property[
-                                    "discreteMapping"][
-                                        "discreteMappingEntry"].items():
-                                if isinstance(key, str) and isinstance(
-                                        value, str):
-                                    if name in ("NODE_FILL_COLOR",
-                                                "NODE_SHAPE"):
-                                        ET.SubElement(
-                                            discrete_mapping_sub_element,
-                                            "discreteMappingEntry",
-                                            attrib={
-                                                "attributeValue":
-                                                    key.format(modifications=
-                                                               modifications),
-                                                "value":
-                                                    value,
-                                            },
-                                        )
-                                    else:
-                                        ET.SubElement(
-                                            discrete_mapping_sub_element,
-                                            "discreteMappingEntry",
-                                            attrib={
-                                                "attributeValue": key,
-                                                "value": value,
-                                            },
-                                        )
-
-                elif visual_property.get("passthroughMapping"):
-                    if isinstance(visual_property["passthroughMapping"], dict):
-                        if isinstance(
-                                visual_property["passthroughMapping"]
-                            ["attributeName"], str) and isinstance(
-                                visual_property["passthroughMapping"]
-                                ["attributeType"], str):
-                            ET.SubElement(
-                                visual_property_sub_element,
-                                "passthroughMapping",
-                                attrib={
-                                    "attributeName":
-                                        visual_property["passthroughMapping"]
-                                        ["attributeName"],
-                                    "attributeType":
-                                        visual_property["passthroughMapping"]
-                                        ["attributeType"],
-                                },
-                            )
-
-        if node_sub_elements := visual_style_sub_element.find("node"):
-            visual_property_sub_elements = node_sub_elements.findall(
-                "visualProperty")
-
-            bar_charts = 0
-            for i, modification in enumerate(bar_chart_modifications):
-                if protein_interaction_network.is_modification(network,
-                                                               time,
-                                                               modification,
-                                                               proteins=False):
-                    bar_charts += 1
-                else:
+        node_shape_modifications = [
+            modification for modification in node_shape_modifications
+            if protein_interaction_network.is_modification(
+                network, time, modification)
+        ]
+        if 0 < len(node_shape_modifications) < 3:
+            node_shape = {}
+            for value in set(
+                    network.nodes[protein][str(time)] for protein in network):
+                if not isinstance(value, str):
                     continue
 
-                if bar_charts > 2:
-                    break
+                if len(node_shape_modifications) == 1:
+                    if node_shape_modifications[0] in value.split(" ")[::2]:
+                        node_shape[value] = "RECTANGLE"
+                    else:
+                        if isinstance(
+                                COMPONENTS["node"]["visualProperty"]
+                            ["NODE_SHAPE"]["default"], str):
+                            node_shape[value] = COMPONENTS["node"][
+                                "visualProperty"]["NODE_SHAPE"]["default"]
+                else:
+                    if node_shape_modifications[0] in value.split(
+                            " ")[::2] and node_shape_modifications[
+                                1] in value.split(" ")[::2]:
+                        node_shape[value] = "ELLIPSE"
+                    else:
+                        if node_shape_modifications[0] in value.split(" ")[::2]:
+                            node_shape[value] = "RECTANGLE"
+                        elif node_shape_modifications[1] in value.split(
+                                " ")[::2]:
+                            node_shape[value] = "TRIANGLE"
+                        else:
+                            if isinstance(
+                                    COMPONENTS["node"]["visualProperty"]
+                                ["NODE_SHAPE"]["default"], str):
+                                node_shape[value] = COMPONENTS["node"][
+                                    "visualProperty"]["NODE_SHAPE"]["default"]
+        else:
+            if isinstance(
+                    COMPONENTS["node"]["visualProperty"]["NODE_SHAPE"]
+                ["default"], str):
+                node_shape = {
+                    value: COMPONENTS["node"]["visualProperty"]["NODE_SHAPE"]
+                    ["default"]
+                    for value in set(network.nodes[protein][str(time)]
+                                     for protein in network)
+                }
 
-                for visual_property_sub_element in visual_property_sub_elements:
-                    if visual_property_sub_element.get(
-                            "name") == f"NODE_CUSTOMGRAPHICS_{i+1}":
-                        visual_property_sub_element.set(
-                            "default",
-                            get_bar_chart(
-                                time,
-                                modification,
-                                protein_interaction_network.get_sites(
-                                    network, time, modification),
-                                cy_range=(measurement_conversion(
-                                    bar_chart_range[0],
-                                    protein_interaction_network.
-                                    get_measurements(network, time,
-                                                     modification, site_average,
-                                                     replicate_average)),
-                                          measurement_conversion(
-                                              bar_chart_range[1],
-                                              protein_interaction_network.
-                                              get_measurements(
-                                                  network, time, modification,
-                                                  site_average,
-                                                  replicate_average)))))
+        elements.add_discrete_mapping(visual_properties["node"]["NODE_SHAPE"],
+                                      str(time), "string", node_shape)
 
-                    elif visual_property_sub_element.get(
-                            "name") == f"NODE_CUSTOMGRAPHICS_POSITION_{i + 1}":
-                        visual_property_sub_element.set(
-                            "default",
-                            f"{('W', 'E')[i]},{('E', 'W')[i]},c,0.00,0.00",
-                        )
+        node_color_modifications = [
+            modification for modification in node_color_modifications
+            if protein_interaction_network.is_modification(
+                network, time, modification)
+        ]
+        if 0 < len(node_color_modifications) < 3:
+            node_color = {}
+            for value in set(
+                    network.nodes[protein][str(time)] for protein in network):
+                if not isinstance(value, str):
+                    continue
+
+                if len(node_color_modifications) == 1:
+                    if node_color_modifications[0] in value.split(" ")[::2]:
+                        summary = value.split(" ")[value.split(" ").index(
+                            node_color_modifications[0]) + 1]
+                        if summary == "UP":
+                            node_color[value] = f"#{255:02X}{0:02X}{0:02X}"
+                        elif summary == "MID_UP":
+                            node_color[value] = f"#{255:02X}{102:02X}{102:02X}"
+                        elif summary == "MID_DOWN":
+                            node_color[value] = f"#{102:02X}{102:02X}{255:02X}"
+                        elif summary == "DOWN":
+                            node_color[value] = f"#{0:02X}{0:02X}{255:02X}"
+                        else:
+                            node_color[value] = f"#{128:02X}{128:02X}{128:02X}"
+                else:
+                    if node_color_modifications[0] in value.split(
+                            " ")[::2] and node_color_modifications[
+                                0] in value.split(" ")[::2]:
+                        summaries = [
+                            value.split(" ")[value.split(" ").index(
+                                node_color_modifications[i]) + 1]
+                            for i in range(2)
+                        ]
+                        if "UP" in summaries and not ("DOWN" in summaries or
+                                                      "MID_DOWN" in summaries):
+                            node_color[value] = f"#{255:02X}{0:02X}{0:02X}"
+                        elif "MID_UP" in summaries and not (
+                                "DOWN" in summaries or "MID_DOWN" in summaries):
+                            node_color[value] = f"#{255:02X}{102:02X}{102:02X}"
+                        elif "MID_DOWN" in summaries and not (
+                                "UP" in summaries or "MID_UP" in summaries):
+                            node_color[value] = f"#{102:02X}{102:02X}{255:02X}"
+                        elif "DOWN" in summaries and not (
+                                "UP" in summaries or "MID_UP" in summaries):
+                            node_color[value] = f"#{0:02X}{0:02X}{255:02X}"
+                        elif summaries[0] in ("UP",
+                                              "MID_UP") and summaries[1] in (
+                                                  "DOWN", "MID_DOWN"):
+                            node_color[value] = f"#{0:02X}{255:02X}{0:02X}"
+                        elif summaries[0] in ("MID_DOWN",
+                                              "DOWN") and summaries[1] in (
+                                                  "UP", "MID_UP"):
+                            node_color[value] = f"#{255:02X}{255:02X}{0:02X}"
+                        else:
+                            node_color[value] = f"#{128:02X}{128:02X}{128:02X}"
+                    else:
+                        if node_color_modifications[0] in value.split(" ")[::2]:
+                            summary = value.split(" ")[value.split(" ").index(
+                                node_color_modifications[0]) + 1]
+                            if summary == "UP":
+                                node_color[value] = f"#{255:02X}{0:02X}{0:02X}"
+                            elif summary == "MID_UP":
+                                node_color[
+                                    value] = f"#{255:02X}{102:02X}{102:02X}"
+                            elif summary == "MID_DOWN":
+                                node_color[
+                                    value] = f"#{102:02X}{102:02X}{255:02X}"
+                            elif summary == "DOWN":
+                                node_color[value] = f"#{0:02X}{0:02X}{255:02X}"
+                            else:
+                                node_color[
+                                    value] = f"#{128:02X}{128:02X}{128:02X}"
+                        elif node_color_modifications[1] in value.split(
+                                " ")[::2]:
+                            summary = value.split(" ")[value.split(" ").index(
+                                node_color_modifications[1]) + 1]
+                            if summary == "UP":
+                                node_color[value] = f"#{255:02X}{0:02X}{0:02X}"
+                            elif summary == "MID_UP":
+                                node_color[
+                                    value] = f"#{255:02X}{102:02X}{102:02X}"
+                            elif summary == "MID_DOWN":
+                                node_color[
+                                    value] = f"#{102:02X}{102:02X}{255:02X}"
+                            elif summary == "DOWN":
+                                node_color[value] = f"#{0:02X}{0:02X}{255:02X}"
+                            else:
+                                node_color[
+                                    value] = f"#{128:02X}{128:02X}{128:02X}"
+                        else:
+                            node_color[value] = f"#{128:02X}{128:02X}{128:02X}"
+        else:
+            node_color = {
+                value:
+                COMPONENTS["node"]["visualProperty"]["NODE_COLOR"]["default"]
+                for value in set(
+                    network.nodes[protein][str(time)] for protein in network)
+                if isinstance(value, str) and isinstance(
+                    COMPONENTS["node"]["visualProperty"]["NODE_COLOR"]
+                    ["default"], str)
+            }
+
+        elements.add_discrete_mapping(visual_properties["node"]["NODE_COLOR"],
+                                      str(time), "string", node_color)
+
+        bar_chart_modifications = [
+            modification for modification in bar_chart_modifications
+            if protein_interaction_network.is_modification(
+                network, time, modification, proteins=False)
+        ]
+        for m in range(max(len(bar_chart_modifications), 2)):
+            visual_properties["node"][f"NODE_CUSTOMGRAPHICS_{m+1}"].set(
+                "default",
+                get_bar_chart(
+                    time,
+                    bar_chart_modifications[m],
+                    protein_interaction_network.get_sites(
+                        network, time, bar_chart_modifications[m]),
+                    cy_range=(measurement_conversion(
+                        bar_chart_range[0],
+                        protein_interaction_network.get_measurements(
+                            network, time, bar_chart_modifications[m],
+                            site_average, replicate_average)),
+                              measurement_conversion(
+                                  bar_chart_range[1],
+                                  protein_interaction_network.get_measurements(
+                                      network, time, bar_chart_modifications[m],
+                                      site_average, replicate_average)))))
+
+            visual_properties["node"][
+                f"NODE_CUSTOMGRAPHICS_POSITION_{m + 1}"].set(
+                    "default",
+                    f"{('W', 'E')[m]},{('E', 'W')[m]},c,0.00,0.00",
+                )
 
     ET.indent(styles)
     return styles
