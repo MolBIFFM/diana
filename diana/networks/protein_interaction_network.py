@@ -586,7 +586,8 @@ def set_measurements(
                 network.nodes[protein][str(time)] = " ".join(
                     f"{modification} {summary[modification]}"
                     for modification in modifications[time])
-
+            else:
+                network.nodes[protein][str(time)] = ""
 
 def get_neighbors_from_biogrid(
         network: nx.Graph,
