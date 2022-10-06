@@ -532,7 +532,7 @@ def get_styles(
             node_shape = {}
             for value in set(
                     network.nodes[protein][str(time)] for protein in network):
-                if not isinstance(value, str):
+                if not isinstance(value, str) or not value:
                     continue
 
                 if len(node_shape_modifications) == 1:
@@ -584,7 +584,7 @@ def get_styles(
             node_color = {}
             for value in set(
                     network.nodes[protein][str(time)] for protein in network):
-                if not isinstance(value, str):
+                if not isinstance(value, str) or not value:
                     continue
 
                 if len(node_color_modifications) == 1:
