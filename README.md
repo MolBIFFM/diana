@@ -6,14 +6,14 @@ spectrometry data.
 Incorporating protein-protein interactions from BioGRID, CORUM, IntAct, MINT,
 Reactome, and STRING, DIANA assembles protein-protein interaction networks for
 the contextualization of differential post-translational modification relating
-mass spectrometry data, protein-protein interactions, and protein annotation.
+mass spectrometry data with protein-protein interactions and protein annotation.
 
 The enrichment of CORUM protein complexes, Gene Ontology terms, and Reactome
-pathways by proteins representing separate densely interacting portions of
-these protein-protein interaction networks or those exceeding specified changes
-in post-translational modification can be assessed. Densely interacting portions
-of these protein-protein interaction networks exhibiting relatively large
-changes can be determined.
+pathways by proteins associated with relatively large measurements or proteins
+representing densely interacting portions of the assembled protein-protein
+interaction networks can be assessed. Further, densely interacting portions of
+the protein-protein interaction networks enriching relatively large measurements
+can be determined.
 
 Networks of Gene Ontology terms or Reactome pathways, reporting enrichment of
 each term or pathway by the represented proteins, can be generated along
