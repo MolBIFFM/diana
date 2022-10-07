@@ -294,9 +294,10 @@ def map_proteins(network: nx.Graph, organism: int = 9606) -> frozenset[str]:
 
     nx.relabel_nodes(network, mapping, copy=False)
 
-    for protein, name in protein_name.items():
-        network.nodes[protein]["gene"] = gene_name[protein]
-        network.nodes[protein]["protein"] = name
+    for node in network:
+        if node in protein_name:
+            network.nodes[node]["protein"] = protein_name[node]
+            network.nodes[node]["gene"] = gene_name[node]
 
     return frozenset(set(network).difference(mapping))
 
@@ -588,6 +589,7 @@ def set_measurements(
                     for modification in modifications[time])
             else:
                 network.nodes[protein][str(time)] = ""
+
 
 def get_neighbors_from_biogrid(
         network: nx.Graph,
