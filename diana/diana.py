@@ -261,10 +261,13 @@ def process_workflow(configuration: Mapping[str, Any],
                     ))
 
             network.add_nodes_from(interacting_proteins)
+            nodes_to_remove = set(network.nodes())
             for organism in set(configuration["protein-protein interactions"]
                                 [database].get("organism", 9606) for database in
                                 configuration["protein-protein interactions"]):
-                protein_interaction_network.map_proteins(network, organism)
+                nodes_to_remove.intersection_update(
+                    protein_interaction_network.map_proteins(network, organism))
+            network.remove_nodes_from(nodes_to_remove)
 
         if "BioGRID" in configuration["protein-protein interactions"]:
             protein_interaction_network.add_protein_interactions_from_biogrid(

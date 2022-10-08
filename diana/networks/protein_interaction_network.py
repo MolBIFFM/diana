@@ -294,10 +294,10 @@ def map_proteins(network: nx.Graph, organism: int = 9606) -> frozenset[str]:
 
     nx.relabel_nodes(network, mapping, copy=False)
 
-    for node in network:
-        if node in protein_name:
-            network.nodes[node]["protein"] = protein_name[node]
-            network.nodes[node]["gene"] = gene_name[node]
+    for protein, name in protein_name.items():
+        if protein in network:
+            network.nodes[protein]["protein"] = name
+            network.nodes[protein]["gene"] = gene_name[protein]
 
     return frozenset(set(network).difference(mapping))
 
