@@ -338,12 +338,7 @@ def get_proteins(
             for attribute in network.nodes[protein]
             if re.fullmatch(fr"{time} {modification} (S{s+1})? R\d+", attribute)
         ]
-                 for s in range(
-                     max(
-                         int(attribute.split(" ")[2].replace("S", "")) if re.
-                         fullmatch(fr"{time} {modification} S\d+ R\d+",
-                                   attribute) else 1
-                         for attribute in network.nodes[protein]))]
+                 for s in range(get_sites(network, time, modification))]
 
         if sites and not (combined_measurement_range[0] < math.log2(
                 site_average([
@@ -467,7 +462,7 @@ def get_sites(network: nx.Graph, time: int, modification: str) -> int:
     """
     return max(
         int(attribute.split(" ")[2].replace("S", "")) if re.
-        fullmatch(fr"{time} {modification} S\d+ R\d+", attribute) else 0
+        fullmatch(fr"{time} {modification} S\d+ R\d+", attribute) else 1
         for protein in network
         for attribute in network.nodes[protein])
 
@@ -525,20 +520,13 @@ def set_measurements(
         for protein in network:
             summary = {}
             for modification in modifications[time]:
-                sites = [
-                    [
-                        network.nodes[protein][attribute]
-                        for attribute in network.nodes[protein]
-                        if re.fullmatch(
-                            fr"{time} {modification} (S{s+1})? R\d+", attribute)
-                    ]
-                    for s in range(
-                        max(
-                            int(attribute.split(" ")[2].replace("S", "")) if re.
-                            fullmatch(fr"{time} {modification} S\d+ R\d+",
-                                      attribute) else 1
-                            for attribute in network.nodes[protein]))
+                sites = [[
+                    network.nodes[protein][attribute]
+                    for attribute in network.nodes[protein]
+                    if re.fullmatch(fr"{time} {modification} (S{s+1})? R\d+",
+                                    attribute)
                 ]
+                         for s in range(get_sites(network, time, modification))]
 
                 if is_modification(network, time, modification, proteins=False):
                     for s, site in enumerate(sites, start=1):
@@ -1191,12 +1179,7 @@ def get_measurements(
             for attribute in network.nodes[protein]
             if re.fullmatch(fr"{time} {modification} (S{s+1})? R\d+", attribute)
         ]
-                 for s in range(
-                     max(
-                         int(attribute.split(" ")[2].replace("S", "")) if re.
-                         fullmatch(fr"{time} {modification} S\d+ R\d+",
-                                   attribute) else 1
-                         for attribute in network.nodes[protein]))]
+                 for s in range(get_sites(network, time, modification))]
 
         if sites:
             if (site_average is not None and replicate_average is not None):
