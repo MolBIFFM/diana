@@ -336,7 +336,7 @@ def get_proteins(
         sites = [[
             network.nodes[protein][attribute]
             for attribute in network.nodes[protein]
-            if re.fullmatch(fr"{time} {modification} (S{s+1})? R\d+", attribute)
+            if re.fullmatch(fr"{time} {modification} (S{s+1} )?R\d+", attribute)
         ]
                  for s in range(get_sites(network, time, modification, protein))
                 ]
@@ -405,7 +405,7 @@ def get_modifications(network: nx.Graph,
                 for protein in network
                 for attribute in network.nodes[protein]
                 if re.fullmatch(
-                    fr"{time} \S+ (S\d+)? R\d+" if proteins and sites else (
+                    fr"{time} \S+ (S\d+ )?R\d+" if proteins and sites else (
                         fr"{time} \S+ R\d+" if proteins else
                         fr"{time} \S+ S\d+ R\d+"), attribute))))
 
@@ -438,7 +438,7 @@ def is_modification(network: nx.Graph,
 
     return any(
         re.fullmatch(
-            fr"{time} {modification} (S\d+)? R\d+" if proteins and sites else (
+            fr"{time} {modification} (S\d+ )?R\d+" if proteins and sites else (
                 fr"{time} {modification} R\d+"
                 if proteins else fr"{time} \S+ S\d+ R\d+"), attribute)
         for protein in network
@@ -526,7 +526,7 @@ def set_measurements(
                 sites = [[
                     network.nodes[protein][attribute]
                     for attribute in network.nodes[protein]
-                    if re.fullmatch(fr"{time} {modification} (S{s+1})? R\d+",
+                    if re.fullmatch(fr"{time} {modification} (S{s+1} )?R\d+",
                                     attribute)
                 ]
                          for s in range(
@@ -1181,7 +1181,7 @@ def get_measurements(
         sites = [[
             network.nodes[protein][attribute]
             for attribute in network.nodes[protein]
-            if re.fullmatch(fr"{time} {modification} (S{s+1})? R\d+", attribute)
+            if re.fullmatch(fr"{time} {modification} (S{s+1} )?R\d+", attribute)
         ]
                  for s in range(get_sites(network, time, modification, protein))
                 ]
