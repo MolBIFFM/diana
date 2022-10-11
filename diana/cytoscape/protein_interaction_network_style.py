@@ -693,8 +693,10 @@ def get_styles(
                 get_bar_chart(
                     time,
                     bar_chart_modifications[m],
-                    protein_interaction_network.get_sites(
-                        network, time, bar_chart_modifications[m]),
+                    max(
+                        protein_interaction_network.get_sites(
+                            network, time, bar_chart_modifications[m], protein)
+                        for protein in network),
                     cy_range=(measurement_conversion(
                         bar_chart_range[0],
                         protein_interaction_network.get_measurements(
