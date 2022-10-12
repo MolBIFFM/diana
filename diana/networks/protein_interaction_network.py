@@ -371,7 +371,7 @@ def get_times(network: nx.Graph) -> tuple[int, ...]:
                 int(attribute.split(" ")[0])
                 for protein in network
                 for attribute in network.nodes[protein]
-                if re.fullmatch(r"\d+ \S+ \d+? \d+", attribute))))
+                if re.fullmatch(r"\d+ \S+ (S\d+ )?R\d+", attribute))))
 
 
 def get_modifications(network: nx.Graph,
@@ -466,7 +466,8 @@ def get_sites(network: nx.Graph, time: int, modification: str,
     """
     return max(
         int(attribute.split(" ")[2].replace("S", "")) if re.
-        fullmatch(fr"{time} {modification} S\d+ R\d+", attribute) else 1
+        fullmatch(fr"{time} {modification} S\d+ R\d+", attribute) else (
+            1 if re.fullmatch(fr"{time} {modification} R\d+", attribute) else 0)
         for attribute in network.nodes[protein])
 
 
