@@ -498,11 +498,7 @@ def set_measurements(
             binary logarithm.
     """
     times = get_times(network)
-    modifications = {
-        time:
-        tuple(modification for modification in get_modifications(network, time))
-        for time in times
-    }
+    modifications = {time: get_modifications(network, time) for time in times}
 
     measurement_range = {
         time: {
@@ -533,45 +529,46 @@ def set_measurements(
                          for s in range(
                              get_sites(network, time, modification, protein))]
 
-                if is_modification(network, time, modification, proteins=False):
-                    for s, site in enumerate(sites, start=1):
-                        network.nodes[protein][
-                            f"{time} {modification} S{s}"] = math.log2(
+                if sites:
+                    if is_modification(network,
+                                       time,
+                                       modification,
+                                       proteins=False):
+                        for s, site in enumerate(sites, start=1):
+                            network.nodes[protein][
+                                f"{time} {modification} S{s}"] = math.log2(
+                                    replicate_average([
+                                        math.pow(2.0, replicate)
+                                        for replicate in site
+                                    ]))
+
+                    network.nodes[protein][
+                        f"{time} {modification}"] = math.log2(
+                            site_average([
                                 replicate_average([
                                     math.pow(2.0, replicate)
                                     for replicate in site
-                                ]))
+                                ])
+                                for site in sites
+                            ]))
 
-                network.nodes[protein][f"{time} {modification}"] = math.log2(
-                    site_average([
-                        replicate_average(
-                            [math.pow(2.0, replicate)
-                             for replicate in site])
-                        for site in sites
-                    ]))
-
-                if sites:
-                    averaged_sites = math.log2(
-                        site_average([
-                            replicate_average([
-                                math.pow(2.0, replicate) for replicate in site
-                            ]) for site in sites
-                        ]))
-
-                    if averaged_sites >= max(
+                    if network.nodes[protein][f"{time} {modification}"] >= max(
                             measurement_range[time][modification][1], 0.0):
                         summary[modification] = "UP"
                     elif max(measurement_range[time][modification][1],
-                             0.0) > averaged_sites >= 0.5 * max(
-                                 measurement_range[time][modification][1], 0.0):
+                             0.0) > network.nodes[protein][
+                                 f"{time} {modification}"] >= 0.5 * max(
+                                     measurement_range[time][modification][1],
+                                     0.0):
                         summary[modification] = "MID_UP"
-                    elif 0.5 * min(measurement_range[time][modification][0],
-                                   0.0) >= averaged_sites > min(
-                                       measurement_range[time][modification][0],
-                                       0.0):
+                    elif 0.5 * min(
+                            measurement_range[time][modification][0], 0.0
+                    ) >= network.nodes[protein][f"{time} {modification}"] > min(
+                            measurement_range[time][modification][0], 0.0):
                         summary[modification] = "MID_DOWN"
-                    elif min(measurement_range[time][modification][0],
-                             0.0) >= averaged_sites:
+                    elif min(
+                            measurement_range[time][modification][0], 0.0
+                    ) >= network.nodes[protein][f"{time} {modification}"]:
                         summary[modification] = "DOWN"
                     else:
                         summary[modification] = "MID"
