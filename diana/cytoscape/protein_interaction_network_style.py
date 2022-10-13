@@ -670,17 +670,18 @@ def get_styles(
                             node_color[value] = f"#{128:02X}{128:02X}{128:02X}"
         else:
             node_color = {
-                value:
-                COMPONENTS["node"]["visualProperty"]["NODE_COLOR"]["default"]
+                value: COMPONENTS["node"]["visualProperty"]["NODE_FILL_COLOR"]
+                ["default"]
                 for value in set(
                     network.nodes[protein][str(time)] for protein in network)
                 if isinstance(value, str) and isinstance(
-                    COMPONENTS["node"]["visualProperty"]["NODE_COLOR"]
+                    COMPONENTS["node"]["visualProperty"]["NODE_FILL_COLOR"]
                     ["default"], str)
             }
 
-        elements.add_discrete_mapping(visual_properties["node"]["NODE_COLOR"],
-                                      str(time), "string", node_color)
+        elements.add_discrete_mapping(
+            visual_properties["node"]["NODE_FILL_COLOR"], str(time), "string",
+            node_color)
 
         bar_chart_modifications = [
             modification for modification in bar_chart_modifications
