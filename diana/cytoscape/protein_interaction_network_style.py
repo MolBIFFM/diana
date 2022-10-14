@@ -688,7 +688,7 @@ def get_styles(
             if protein_interaction_network.is_modification(
                 network, time, modification, proteins=False)
         ]
-        for m in range(max(len(bar_chart_modifications), 2)):
+        for m in range(min(len(bar_chart_modifications), 2)):
             visual_properties["node"][f"NODE_CUSTOMGRAPHICS_{m+1}"].set(
                 "default",
                 get_bar_chart(
