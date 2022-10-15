@@ -13,13 +13,13 @@ def download_file(url: str,
                   size: int = 8192,
                   pause: float = 60.0) -> None:
     """
-    Downloads a file from a URL, reattempting failed downloads.
+    Downloads a file from a URL, reattempting erroneous downloads.
 
     Args:
         url: The file location.
         local_file_name: The local file name to download the file to.
         size: The buffer size to process the download at.
-        pause: The number of seconds to pause before reattempting a failed
+        pause: The number of seconds to pause before reattempting a erroneous
             download.
     """
     request = urllib.request.Request(
