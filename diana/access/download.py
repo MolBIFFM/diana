@@ -13,14 +13,14 @@ def download_file(url: str,
                   size: int = 8192,
                   pause: float = 60.0) -> None:
     """
-    Downloads a file from a URL, reattempting failed or timed out downloads.
+    Downloads a file from a URL, reattempting failed downloads.
 
     Args:
         url: The file location.
         local_file_name: The local file name to download the file to.
         size: The buffer size to process the download at.
-        pause: The number of seconds to wait before reattempting a failed or
-            timed out download.
+        pause: The number of seconds to pause before reattempting a failed
+            download.
     """
     request = urllib.request.Request(
         url,
@@ -37,5 +37,5 @@ def download_file(url: str,
                         local_file.write(chunk)
             break
 
-        except (urllib.error.URLError, TimeoutError):
+        except urllib.error.URLError:
             time.sleep(pause)
