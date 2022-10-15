@@ -106,7 +106,7 @@
           "post-translational modifications": ["P", "A"]
         },
         "node size": {
-          "post-translational modifications": ["A"]
+          "post-translational modification": "A"
         }
       },
       "CORUM enrichment": {

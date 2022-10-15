@@ -53,6 +53,7 @@ def add_visual_property(parent: ET.Element, name: str,
 
 def add_continuous_mapping(
     parent: ET.Element, attribute_name: str, attribute_type: Literal["float",
+                                                                     "integer",
                                                                      "string"],
     entries: dict[int | float, tuple[int | str | float, int | str | float,
                                      int | str | float]]
@@ -92,7 +93,7 @@ def add_continuous_mapping(
 
 
 def add_discrete_mapping(parent: ET.Element, attribute_name: str,
-                         attribute_type: Literal["float", "string"],
+                         attribute_type: Literal["float", "integer", "string"],
                          entries: dict[str, str]) -> ET.Element:
     """
     Attaches a discrete mapping to a visual property element of a Cytoscape
@@ -116,16 +117,21 @@ def add_discrete_mapping(parent: ET.Element, attribute_name: str,
                                          "attributeName": attribute_name,
                                          "attributeType": attribute_type
                                      })
-    ET.SubElement(
-        discrete_mapping,
-        "discreteMappingEntry",
-        attrib={str(key): str(value) for key, value in entries.items()})
+
+    for key, value in entries.items():
+        ET.SubElement(discrete_mapping,
+                      "discreteMappingEntry",
+                      attrib={
+                          "attributeValue": str(key),
+                          "value": str(value)
+                      })
+
     return discrete_mapping
 
 
 def add_passthrough_mapping(
         parent: ET.Element, attribute_name: str,
-        attribute_type: Literal["float", "string"]) -> ET.Element:
+        attribute_type: Literal["float", "integer", "string"]) -> ET.Element:
     """
     Attaches a passthrough mapping to a visual property element of a Cytoscape
     style.

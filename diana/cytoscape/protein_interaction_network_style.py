@@ -40,13 +40,13 @@ COMPONENTS: dict[str, dict[str, dict[str, dict[
                         "default": "Dialog.plain,plain,10"
                     },
                     "EDGE_LABEL_FONT_SIZE": {
-                        "default": "10"
+                        "default": 10
                     },
                     "EDGE_LABEL_TRANSPARENCY": {
-                        "default": "255"
+                        "default": 255
                     },
                     "EDGE_LABEL_WIDTH": {
-                        "default": "200.0"
+                        "default": 200.0
                     },
                     "EDGE_LINE_TYPE": {
                         "default": "SOLID"

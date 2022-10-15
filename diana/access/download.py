@@ -19,8 +19,8 @@ def download_file(url: str,
         url: The file location.
         local_file_name: The local file name to download the file to.
         size: The buffer size to process the download at.
-        pause: The number of seconds to wait before determining a timeout or
-            reattempting a failed or timed out download.
+        pause: The number of seconds to wait before reattempting a failed or
+            timed out download.
     """
     request = urllib.request.Request(
         url,
@@ -31,12 +31,11 @@ def download_file(url: str,
     while True:
         try:
             with urllib.request.urlopen(
-                    request, timeout=pause,
-                    context=ssl.create_default_context()) as response:
+                    request, context=ssl.create_default_context()) as response:
                 with open(local_file_name, "wb") as local_file:
                     while chunk := response.read(size):
                         local_file.write(chunk)
             break
 
-        except urllib.error.URLError:
+        except (urllib.error.URLError, TimeoutError):
             time.sleep(pause)

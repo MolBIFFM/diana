@@ -423,7 +423,8 @@ def get_styles(network: nx.Graph) -> ET.ElementTree:
     max_number_proteins = max(
         gene_ontology_network.get_term_sizes(network).values())
     elements.add_continuous_mapping(
-        visual_properties["node"]["NODE_SIZE"], "number of proteins", "float", {
+        visual_properties["node"]["NODE_SIZE"], "number of proteins", "integer",
+        {
             0: (0.0,) * 3,
             max_number_proteins: (math.sqrt(max_number_proteins),) * 3
         })
