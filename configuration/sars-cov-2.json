@@ -115,6 +115,26 @@
             "time": 60,
             "post-translational modification": "P",
             "measurement": [-1.0, 1.0]
+          },
+          {
+            "time": 120,
+            "post-translational modification": "A",
+            "measurement": [-1.0, 1.0]
+          },
+          {
+            "time": 360,
+            "post-translational modification": "A",
+            "measurement": [-1.0, 1.0]
+          },
+          {
+            "time": 600,
+            "post-translational modification": "A",
+            "measurement": [-1.0, 1.0]
+          },
+          {
+            "time": 1440,
+            "post-translational modification": "A",
+            "measurement": [-1.0, 1.0]
           }
         ],
         "p": 0.05
@@ -124,6 +144,26 @@
           {
             "time": 60,
             "post-translational modification": "P",
+            "measurement": [-1.0, 1.0]
+          },
+          {
+            "time": 120,
+            "post-translational modification": "A",
+            "measurement": [-1.0, 1.0]
+          },
+          {
+            "time": 360,
+            "post-translational modification": "A",
+            "measurement": [-1.0, 1.0]
+          },
+          {
+            "time": 600,
+            "post-translational modification": "A",
+            "measurement": [-1.0, 1.0]
+          },
+          {
+            "time": 1440,
+            "post-translational modification": "A",
             "measurement": [-1.0, 1.0]
           }
         ],
@@ -135,6 +175,26 @@
             "time": 60,
             "post-translational modification": "P",
             "measurement": [-1.0, 1.0]
+          },
+          {
+            "time": 120,
+            "post-translational modification": "A",
+            "measurement": [-1.0, 1.0]
+          },
+          {
+            "time": 360,
+            "post-translational modification": "A",
+            "measurement": [-1.0, 1.0]
+          },
+          {
+            "time": 600,
+            "post-translational modification": "A",
+            "measurement": [-1.0, 1.0]
+          },
+          {
+            "time": 1440,
+            "post-translational modification": "A",
+            "measurement": [-1.0, 1.0]
           }
         ],
         "p": 0.05
@@ -145,6 +205,26 @@
             "time": 60,
             "post-translational modification": "P",
             "measurement": [-1.0, 1.0]
+          },
+          {
+            "time": 120,
+            "post-translational modification": "A",
+            "measurement": [-1.0, 1.0]
+          },
+          {
+            "time": 360,
+            "post-translational modification": "A",
+            "measurement": [-1.0, 1.0]
+          },
+          {
+            "time": 600,
+            "post-translational modification": "A",
+            "measurement": [-1.0, 1.0]
+          },
+          {
+            "time": 1440,
+            "post-translational modification": "A",
+            "measurement": [-1.0, 1.0]
           }
         ]
       },
@@ -153,6 +233,26 @@
           {
             "time": 60,
             "post-translational modification": "P",
+            "measurement": [-1.0, 1.0]
+          },
+          {
+            "time": 120,
+            "post-translational modification": "A",
+            "measurement": [-1.0, 1.0]
+          },
+          {
+            "time": 360,
+            "post-translational modification": "A",
+            "measurement": [-1.0, 1.0]
+          },
+          {
+            "time": 600,
+            "post-translational modification": "A",
+            "measurement": [-1.0, 1.0]
+          },
+          {
+            "time": 1440,
+            "post-translational modification": "A",
             "measurement": [-1.0, 1.0]
           }
         ]
@@ -164,6 +264,26 @@
               "time": 60,
               "post-translational modification": "P",
               "measurement": [-1.0, 1.0]
+            },
+            {
+              "time": 120,
+              "post-translational modification": "A",
+              "measurement": [-1.0, 1.0]
+            },
+            {
+              "time": 360,
+              "post-translational modification": "A",
+              "measurement": [-1.0, 1.0]
+            },
+            {
+              "time": 600,
+              "post-translational modification": "A",
+              "measurement": [-1.0, 1.0]
+            },
+            {
+              "time": 1440,
+              "post-translational modification": "A",
+              "measurement": [-1.0, 1.0]
             }
           ],
           "p": 0.05
@@ -174,6 +294,26 @@
               "time": 60,
               "post-translational modification": "P",
               "measurement": [-1.0, 1.0]
+            },
+            {
+              "time": 120,
+              "post-translational modification": "A",
+              "measurement": [-1.0, 1.0]
+            },
+            {
+              "time": 360,
+              "post-translational modification": "A",
+              "measurement": [-1.0, 1.0]
+            },
+            {
+              "time": 600,
+              "post-translational modification": "A",
+              "measurement": [-1.0, 1.0]
+            },
+            {
+              "time": 1440,
+              "post-translational modification": "A",
+              "measurement": [-1.0, 1.0]
             }
           ],
           "p": 0.05
@@ -183,6 +323,26 @@
             {
               "time": 60,
               "post-translational modification": "P",
+              "measurement": [-1.0, 1.0]
+            },
+            {
+              "time": 120,
+              "post-translational modification": "A",
+              "measurement": [-1.0, 1.0]
+            },
+            {
+              "time": 360,
+              "post-translational modification": "A",
+              "measurement": [-1.0, 1.0]
+            },
+            {
+              "time": 600,
+              "post-translational modification": "A",
+              "measurement": [-1.0, 1.0]
+            },
+            {
+              "time": 1440,
+              "post-translational modification": "A",
               "measurement": [-1.0, 1.0]
             }
           ],
