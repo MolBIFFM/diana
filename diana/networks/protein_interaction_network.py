@@ -575,8 +575,8 @@ def set_measurements(
 
             if summary:
                 network.nodes[protein][str(time)] = " ".join(
-                    f"{modification} {summary[modification]}"
-                    for modification in modifications[time])
+                    f"{modification} {category}"
+                    for modification, category in summary.items())
             else:
                 network.nodes[protein][str(time)] = ""
 
