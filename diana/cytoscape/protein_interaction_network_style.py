@@ -604,7 +604,7 @@ def get_styles(
                 else:
                     if node_color_modifications[0] in value.split(
                             " ")[::2] and node_color_modifications[
-                                0] in value.split(" ")[::2]:
+                                1] in value.split(" ")[::2]:
                         summaries = [
                             value.split(" ")[value.split(" ").index(
                                 node_color_modifications[i]) + 1]
