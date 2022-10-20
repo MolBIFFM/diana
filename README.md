@@ -4,10 +4,10 @@ DIANA is a command line application facilitating **D**ata **I**ntegration
 spectrometry data.
 
 Incorporating protein-protein interactions from BioGRID, CORUM, IntAct, MINT,
-Reactome, and STRING, DIANA assembles protein-protein interaction networks to
-contextualize differential post-translational modification, combining mass
-spectrometry data with protein-protein interactions as well as protein
-annotation.
+Reactome, and STRING, DIANA assembles and analyzes protein-protein interaction
+networks to contextualize differential post-translational modification,
+combining mass spectrometry data with protein-protein interactions as well as
+protein annotation.
 
 The enrichment of CORUM protein complexes, Gene Ontology terms, and Reactome
 pathways by proteins associated with relatively large measurements or proteins
@@ -2184,13 +2184,20 @@ Annotations of proteins contain the following information:
 Proteins are represented by their primary UniProt accession. `"gene"` and
 `"protein"` refer to the gene and protein names listed in UniProt, respectively.
 
-Extracted mass spectrometric measurements, expressed as binary logarithms of the
+Submitted Mass spectrometric measurements, expressed as binary logarithms of the
 corresponding ratios, are represented by keys consisting of three or four
 components, depending on whether the corresponding measurements are
-site-specific. The first component refers to the specified time of measurement,
-the second to the specified type of post-translational modification. The
-component prefixed `"S"` to the relative position of the corresponding
-modification site and the component prefixed `"R"` to the replicate.
+protein- or site-specific. The first number refers to the specified time of
+measurement, the following identifier to the specified type of
+post-translational modification. The number following `"S"` refers to the
+relative position of the corresponding modification site and the number
+following `"R"` to the replicate.
+
+Further entries refer to the respective averages of sites and replicates,
+respectively. Along with a categorization of measurements, identified by time of
+measurement, these inform the visual representation of the protein in Cytoscape.
+Averages determining statistical analysis are customizable independent of these
+attributes.
 
 Annotations of protein-protein interactions contain the following information:
 
