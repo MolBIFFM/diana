@@ -2166,10 +2166,21 @@ Annotations of proteins contain the following information:
   <data key="120 U S1 R2">2.890972</data>
   <data key="120 U S2 R1">2.962512</data>
   <data key="120 U S2 R2">3.0054</data>
-  <data key="gene">TRAF2</data>
   <data key="protein">TNF receptor-associated factor 2</data>
+  <data key="gene">TRAF2</data>
+  <data key="30 U S1">4.017431773281321</data>
+  <data key="30 U S2">4.001081644434266</data>
+  <data key="30 U S3">2.9012913530601145</data>
+  <data key="30 U S4">4.543341260044583</data>
+  <data key="30 U">4.543341260044583</data>
+  <data key="30">U UP</data>
+  <data key="120 U S1">2.6567938583308726</data>
+  <data key="120 U S2">2.9841153643117204</data>
+  <data key="120 U">2.9841153643117204</data>
+  <data key="120">U UP</data>
 </node>
 ```
+
 Proteins are represented by their primary UniProt accession. `"gene"` and
 `"protein"` refer to the gene and protein names listed in UniProt, respectively.
 
@@ -2190,6 +2201,7 @@ Annotations of protein-protein interactions contain the following information:
   <data key="IntAct">0.81</data>
   <data key="Reactome">1.0</data>
   <data key="STRING">0.991</data>
+  <data key="score">1.0</data>
 </edge>
 ```
 
@@ -2230,7 +2242,7 @@ Annotations of Reactome pathways contain the following information:
 
 ```xml
 <node id="R-HSA-445989">
-  <data key="pathway">TAK1-dependent IKK and NF-kappa-B activation</data>
+  <data key="pathway">TAK1-dependent IKK and NF-kappa-B activation  </data>
   <data key="p-value">1.0</data>
   <data key="number of proteins">5</data>
   <data key="proteins">O75113 P19838 Q12933 Q9NYJ8 Q9Y4K3</data>
@@ -2324,7 +2336,7 @@ DIANA utilizes the following external libraries:
 ---
 
 Development of DIANA was inspired by previous work combining the following
-applications:
+applications and aims to extend upon workflows utilizing them:
 
 - Maere, S. et al. (2005) ***BiNGO*: a Cytoscape plugin to assess**
   **overrepresentation of Gene Ontology categories in Biological Networks**,
