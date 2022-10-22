@@ -162,7 +162,7 @@ def tabular_txt(url: str,
             header=header,
             skiprows=skiprows,
             usecols=usecols,
-            chunksize=chunksize // 4,
+            chunksize=chunksize // 8,
     ):
         for _, row in chunk.iterrows():
             yield row
