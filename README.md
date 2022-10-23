@@ -28,7 +28,7 @@ installed using pip by running the following command
 pip3 install -r diana/requirements.txt
 ```
 
-DIANA is currently developed using Python 3.10.4, Ubuntu 22.04 and Cytoscape
+DIANA is currently developed using Python 3.10.7, Ubuntu 22.10 and Cytoscape
 3.9.1.
 
 ## Command Line Interface
