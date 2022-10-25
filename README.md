@@ -6,8 +6,8 @@ spectrometry data.
 Incorporating protein-protein interactions from BioGRID, CORUM, IntAct, MINT,
 Reactome, and STRING, DIANA assembles and analyzes protein-protein interaction
 networks to contextualize differential post-translational modification,
-combining mass spectrometry data with protein-protein interactions as well as
-protein annotation.
+combining mass spectrometry data with publicly available protein-protein
+interactions as well as protein annotation.
 
 The enrichment of CORUM protein complexes, Gene Ontology terms, and Reactome
 pathways by proteins associated with relatively large measurements or proteins
@@ -2272,8 +2272,8 @@ related pathways, for example:
 
 ## References
 
-The configuration files in this repository refer to data sets supplemented with
-the following publications:
+The configuration files in this repository refer to data sets as supplemented
+with the following publications:
 
 - Bojkova, D. et al. (2020) **Proteomics of SARS-CoV-2-infected host cells**
   **reveals therapy targets**, *Nature*, 583, 469-472.
