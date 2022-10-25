@@ -29,7 +29,7 @@ pip3 install -r diana/requirements.txt
 ```
 
 DIANA is currently developed using Python 3.10.7, Ubuntu 22.10 and Cytoscape
-3.9.1.
+3.9.1. Python source code is formatted automatically using YAPF.
 
 ## Command Line Interface
 
