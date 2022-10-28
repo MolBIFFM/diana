@@ -6,7 +6,7 @@ spectrometry data.
 Incorporating protein-protein interactions from BioGRID, CORUM, IntAct, MINT,
 Reactome, and STRING, DIANA assembles and analyzes protein-protein interaction
 networks to contextualize differential post-translational modification,
-combining mass spectrometry data with publicly available protein-protein
+combining mass spectrometry data with publicly accessible protein-protein
 interactions as well as protein annotation.
 
 The enrichment of CORUM protein complexes, Gene Ontology terms, and Reactome
@@ -781,46 +781,53 @@ exported.
 [
     {
       "Cytoscape": {
-        "site average": "maxabs"
+        "site average": {
+          "PTM": "maxabs"
+        }
       }
     }
 ]
 ```
-The function used to combine distinct modification sites into protein-specific
-measurements. The function is applied to ratios, not their binary logarithm. The
-default setting is `"maxabs"`, corresponding to the largest absolute
-measurement. Available settings are `"mean"`, `"median"`, `"mid-range"`,
+The modification-specific function used to combine distinct modification sites
+into protein-specific measurements. The function is applied to ratios, not their
+binary logarithm. The default setting is `"maxabs"`, corresponding to the
+largest absolute measurement. Available settings are `"mean"`, `"median"`,
+`"mid-range"`, `"max"`, `"maxabs"`, `"min"`, `"minabs"`, `"sum"` and `"sumabs"`.
+
+```json
+[
+    {
+      "Cytoscape": {
+          "replicate average": {
+            "PTM": "mean"
+          }
+      }
+    }
+]
+```
+The modification-specific function used to combine distinct replicates into
+modification site-specific measurements. The function is applied to ratios, not
+their binary logarithm. The default setting is `"mean"`, corresponding to the
+mean of replicates. Available settings are `"mean"`, `"median"`, `"mid-range"`,
 `"max"`, `"maxabs"`, `"min"`, `"minabs"`, `"sum"` and `"sumabs"`.
 
 ```json
 [
     {
       "Cytoscape": {
-          "replicate average": "mean"
+        "conversion": {
+          "PTM": null
+        }
       }
     }
 ]
 ```
-The function used to combine distinct replicates into modification site-specific
-measurements. The function is applied to ratios, not their binary logarithm. The
-default setting is `"mean"`, corresponding to the mean of replicates. Available
-settings are `"mean"`, `"median"`, `"mid-range"`, `"max"`, `"maxabs"`, `"min"`,
-`"minabs"`, `"sum"` and `"sumabs"`.
-
-```json
-[
-    {
-      "Cytoscape": {
-        "conversion": null
-      }
-    }
-]
-```
-The conversion that a measurement range refers to. It defaults to the binary
-logarithm of a measurement for `null` but can be set to `"log10"`,
-`"percentile"`, `"quantile"` or `"ratio"`, `"standard score"`, computed with
-respect to the distribution of a particular modification at a particular time of
-measurement across the protein-protein interaction network, if applicable.
+The modification-specific conversion that a measurement range refers to. It
+defaults to the binary logarithm of a measurement for `null` but can be set to
+`"log10"`, `"percentile"`, `"quantile"` or `"ratio"`, `"standard score"`,
+computed with respect to the distribution of a particular modification at a
+particular time of measurement across the protein-protein interaction network,
+if applicable.
 
 ```json
 [
@@ -835,25 +842,28 @@ measurement across the protein-protein interaction network, if applicable.
 ```
 The identifiers of site-specific post-translational modifications to represent
 as bar charts. Zero, one, and two identifiers are supported. Specified
-identifiers are represented in order.
+identifiers are represented in order. By default, no modifications are
+specified.
 
 ```json
 [
     {
       "Cytoscape": {
         "bar chart": {
-          "measurement": [-1.0, 1.0],
+          "measurement": {
+            "PTM": [-1.0, 1.0]
+          }
         }
       }
     }
 ]
 ```
-The range of the bar charts reporting measurements. The adaptive default setting
-is `[-1.0, 1.0]` if `"conversion"` is not set, `[-1.0, 1.0]` if `"conversion"`
-is set to `"log10"`, `[25.0, 75.0]` if `"conversion"` is set to `"percentile"`,
-`[0.25, 0.75]` if `"conversion"` is set to `"quantile"`, `[0.5, 2.0]` if
-`"conversion"` is set to `"ratio"`, and `[-1.0, 1.0]` if `"conversion"` is set
-to `"standard score"`.
+The modification-specific range of the bar charts reporting measurements. The
+adaptive default setting is `[-1.0, 1.0]` if `"conversion"` is not set,
+`[-1.0, 1.0]` if `"conversion"` is set to `"log10"`, `[25.0, 75.0]` if
+`"conversion"` is set to `"percentile"`, `[0.25, 0.75]` if `"conversion"` is set
+to `"quantile"`, `[0.5, 2.0]` if `"conversion"` is set to `"ratio"`, and
+`[-1.0, 1.0]` if `"conversion"` is set to `"standard score"`.
 
 ```json
 [
@@ -868,25 +878,29 @@ to `"standard score"`.
 ```
 The identifiers of site-specific post-translational modifications to represent
 by node color. Zero, one, and two identifiers are supported. Specified
-identifiers are represented in order.
+identifiers are represented in order. By default, no modifications are
+specified.
 
 ```json
 [
     {
       "Cytoscape": {
         "node color": {
-          "measurement": [-1.0, 1.0]
+          "measurement": {
+            "PTM": [-1.0, 1.0]
+          }
         }
       },
     }
 ]
 ```
-The range of combined measurements categorizing proteins by whether the range is
-exceeded or not. The adaptive default setting is `[-1.0, 1.0]` if `"conversion"`
-is not set, `[-1.0, 1.0]` if `"conversion"` is set to `"log10"`, `[25.0, 75.0]`
-if `"conversion"` is set to `"percentile"`, `[0.25, 0.75]` if `"conversion"` is
-set to `"quantile"`, `[0.5, 2.0]` if `"conversion"` is set to `"ratio"`, and
-`[-1.0, 1.0]` if `"conversion"` is set to `"standard score"`.
+The modification-specific range of combined measurements categorizing proteins
+by whether the range is exceeded or not. The adaptive default setting is
+`[-1.0, 1.0]` if `"conversion"` is not set, `[-1.0, 1.0]` if `"conversion"` is
+set to `"log10"`, `[25.0, 75.0]` if `"conversion"` is set to `"percentile"`,
+`[0.25, 0.75]` if `"conversion"` is set to `"quantile"`, `[0.5, 2.0]` if
+`"conversion"` is set to `"ratio"`, and `[-1.0, 1.0]` if `"conversion"` is set
+to `"standard score"`.
 
 ```json
 [
@@ -901,7 +915,7 @@ set to `"quantile"`, `[0.5, 2.0]` if `"conversion"` is set to `"ratio"`, and
 ```
 The identifiers of  post-translational modifications to represent by node color.
 Zero, one, and two identifiers are supported. Specified identifiers are
-represented in order.
+represented in order. By default, no modifications are specified.
 
 ```json
 [
@@ -915,7 +929,7 @@ represented in order.
 ]
 ```
 The identifier of a protein-specific post-translational modification to
-represent by node size.
+represent by node size. By default, no modification is specified.
 
 ```json
 [
@@ -1091,7 +1105,8 @@ The time of measurement considered to determine a subset of proteins.
     }
 ]
 ```
-The modification considered to determine a subset of proteins.
+The post-translational modification considered to determine a subset of
+proteins.
 
 ```json
 [
@@ -1123,8 +1138,8 @@ The modification considered to determine a subset of proteins.
 The function used to combine distinct modification sites into protein-specific
 measurements. The function is applied to ratios, not their binary logarithm.
 The default setting is `"maxabs"`, corresponding to the largest absolute
-measurement. Available settings are `"mean"`, `"median"`, `"mid-range"`, `"max"`,
-`"maxabs"`, `"min"`, `"minabs"`, `"sum"` and `"sumabs"`.
+measurement. Available settings are `"mean"`, `"median"`, `"mid-range"`,
+`"max"`, `"maxabs"`, `"min"`, `"minabs"`, `"sum"` and `"sumabs"`.
 
 ```json
 [
@@ -1352,8 +1367,8 @@ The modification considered to determine a subset of proteins.
 The function used to combine distinct modification sites into protein-specific
 measurements. The function is applied to ratios, not their binary logarithm. The
 default setting is `"maxabs"`, corresponding to the largest absolute
-measurement. Available settings are `"mean"`, `"median"`, `"mid-range"`, `"max"`,
-`"maxabs"`, `"min"`, `"minabs"`, `"sum"` and `"sumabs"`.
+measurement. Available settings are `"mean"`, `"median"`, `"mid-range"`,
+`"max"`, `"maxabs"`, `"min"`, `"minabs"`, `"sum"` and `"sumabs"`.
 
 ```json
 [
@@ -1908,8 +1923,8 @@ The modification considered to determine a subset of proteins.
 The function used to combine distinct modification sites into protein-specific
 measurements. The function is applied to ratios, not their binary logarithm. The
 default setting is `"maxabs"`, corresponding to the largest absolute
-measurement. Available settings are `"mean"`, `"median"`, `"mid-range"`, `"max"`,
-`"maxabs"`, `"min"`, `"minabs"`, `"sum"` and `"sumabs"`.
+measurement. Available settings are `"mean"`, `"median"`, `"mid-range"`,
+`"max"`, `"maxabs"`, `"min"`, `"minabs"`, `"sum"` and `"sumabs"`.
 
 ```json
 [
@@ -2076,76 +2091,89 @@ The Gene Ontology namespaces to consider. The default setting is
     {
       "community detection": {
         "measurement enrichment": {
-            "site average": "maxabs"
+            "site average": {
+              "PTM": "maxabs"
+            }
         },
         "measurement location": {
-            "site average": "maxabs"
+            "site average": {
+              "PTM": "maxabs"
+            }
         }
       }
     }
 ]
 ```
-The function used to combine distinct modification sites into protein-specific
-measurements. The default setting is `"maxabs"`, corresponding to the largest
-absolute value. Available settings are `"mean"`, `"median"`, `"mid-range"`,
-`"max"`, `"maxabs"`, `"min"`, `"minabs"`, `"sum"`, `"sumabs"` and `null` to
-consider modification sites separately.
+The modification-specific function used to combine distinct modification sites
+into protein-specific measurements. The default setting is `"maxabs"`,
+corresponding to the largest absolute value. Available settings are `"mean"`,
+`"median"`, `"mid-range"`, `"max"`, `"maxabs"`, `"min"`, `"minabs"`, `"sum"`,
+`"sumabs"` and `null` to consider modification sites separately.
 
 ```json
 [
     {
       "community detection": {
         "measurement enrichment": {
-            "replicate average": "mean"
+            "replicate average": {
+              "PTM": "mean"
+            }
         },
         "measurement location": {
-            "replicate average": "mean"
+            "replicate average": {
+              "PTM": "mean"
+            }
         }
       }
     }
 ]
 ```
-The function used to combine distinct replicates into modification site-specific
-measurements. The default setting is `"mean"`, corresponding to the mean of
-replicates. Available settings are `"mean"`, `"median"`, `"mid-range"`, `"max"`,
-`"maxabs"`, `"min"`, `"minabs"`, `"sum"`, `"sumabs"` and `null` to consider
-replicates separately.
+The modification-specific function used to combine distinct replicates into
+modification site-specific measurements. The default setting is `"mean"`,
+corresponding to the mean of replicates. Available settings are `"mean"`,
+`"median"`, `"mid-range"`, `"max"`, `"maxabs"`, `"min"`, `"minabs"`, `"sum"`,
+`"sumabs"` and `null` to consider replicates separately.
 
 ```json
 [
     {
       "community detection": {
         "measurement enrichment": {
-          "conversion": null
+          "conversion": {
+            "PTM": null
+          }
         }
       }
     }
 ]
 ```
-The conversion that a measurement range refers to. It defaults to the binary
-logarithm of a measurement for `null` but can be set to `"log10"`,
-`"percentile"`, `"quantile"`, `"ratio"` or `"standard score"`, computed with
-respect to the distribution of a particular modification at a particular time of
-measurement across each community of the protein-protein interaction network if
-applicable.
+The modification-specific conversion that a measurement range refers to. It
+defaults to the binary logarithm of a measurement for `null` but can be set to
+`"log10"`, `"percentile"`, `"quantile"`, `"ratio"` or `"standard score"`,
+computed with respect to the distribution of a particular modification at a
+particular time of measurement across each community of the protein-protein
+interaction network if applicable.
 
 ```json
 [
     {
       "community detection": {
         "measurement enrichment": {
-          "measurement": [-1.0, 1.0]
+          "measurement": {
+            "PTM": [-1.0, 1.0]
+          }
         }
       }
     }
 ]
 ```
-The range of measurements to group proteins by whether the range is exceeded or
-not. The adaptive default setting is `[-1.0, 1.0]` if `"conversion"` is not set,
-`[-1.0, 1.0]` if `"conversion"` is set to `"log10"`, `[25.0, 75.0]` if
-`"conversion"` is set to `"percentile"`, `[0.25, 0.75]` if `"conversion"` is set
-to `"quantile"`, `[0.5, 2.0]` if `"conversion"` is set to `"ratio"`, and
-`[-1.0, 1.0]` if `"conversion"` is set to `"standard score"`.
+The modification-specific range of measurements to categorize proteins by
+whether the range is exceeded or not. The adaptive default setting is
+`[-1.0, 1.0]` if `"conversion"` is not set, `[-1.0, 1.0]` if `"conversion"` is
+set to `"log10"`, `[25.0, 75.0]` if `"conversion"` is set to `"percentile"`,
+`[0.25, 0.75]` if `"conversion"` is set to `"quantile"`, `[0.5, 2.0]` if
+`"conversion"` is set to `"ratio"`, and `[-1.0, 1.0]` if `"conversion"` is set
+to `"standard score"`.
 
 ## Protein-protein interaction network
 

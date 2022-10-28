@@ -472,14 +472,12 @@ def get_sites(network: nx.Graph, time: int, modification: str,
 
 
 def set_measurements(
-    network: nx.Graph,
-    site_average: Callable[[Iterable[float]],
-                           float] = lambda sites: max(sites, key=abs),
-    replicate_average: Callable[[Iterable[float]], float] = statistics.mean,
-    measurements: tuple[float, float] = (-1.0, 1.0),
-    measurement_conversion: Callable[
-        [float, Collection[float]],
-        float] = lambda measurement, measurements: measurement
+    network: nx.Graph, site_average: dict[str, Callable[[Iterable[float]],
+                                                        float]],
+    replicate_average: dict[str, Callable[[Iterable[float]], float]],
+    measurements: dict[str, tuple[float, float]],
+    measurement_conversion: dict[str, Callable[[float, Collection[float]],
+                                               float]]
 ) -> None:
     """
     Annotate proteins in a protein-protein interaction network with aggregates
@@ -487,15 +485,14 @@ def set_measurements(
 
     Args:
         network: The protein-protein interaction network.
-        site_average: A function to derive protein-specific measurements from
-            site-specific measurements.
-        replicate_average: A function to derive site-specific measurements from
-            replicates.
-        measurements: Proteins are categorized by whether their representative
-            exceed either this range, the range defined by half the bounds or
-            none.
-        measurement_conversion: The function used convert the bounds to their
-            binary logarithm.
+        site_average: Modification-specific functions to derive protein-specific
+            measurements from site-specific measurements.
+        replicate_average: Modification-specific functions to derive
+            site-specific measurements from replicate measurements.
+        measurements: Modification-specific range of averaged measurements by
+            which proteins are categorized.
+        measurement_conversion: Modification-specific functions used convert the
+            measurement range bounds to their binary logarithm.
     """
     times = get_times(network)
     modifications = {time: get_modifications(network, time) for time in times}
@@ -503,15 +500,23 @@ def set_measurements(
     measurement_range = {
         time: {
             modification:
-            (measurement_conversion(
-                measurements[0],
-                get_measurements(network, time, modification, site_average,
-                                 replicate_average),
-            ),
-             measurement_conversion(
-                 measurements[1],
-                 get_measurements(network, time, modification, site_average,
-                                  replicate_average)))
+            (measurement_conversion.get(
+                modification, lambda measurement, measurements: measurement)(
+                    measurements.get(modification, (-1.0, 1.0))[0],
+                    get_measurements(
+                        network, time, modification,
+                        site_average.get(modification,
+                                         lambda sites: max(sites, key=abs)),
+                        replicate_average.get(modification, statistics.mean)),
+                ),
+             measurement_conversion.get(
+                 modification, lambda measurement, measurements: measurement)(
+                     measurements.get(modification, (-1.0, 1.0))[1],
+                     get_measurements(
+                         network, time, modification,
+                         site_average.get(modification,
+                                          lambda sites: max(sites, key=abs)),
+                         replicate_average.get(modification, statistics.mean))))
             for modification in modifications[time]
         } for time in times
     }
@@ -537,20 +542,24 @@ def set_measurements(
                         for s, site in enumerate(sites, start=1):
                             network.nodes[protein][
                                 f"{time} {modification} S{s}"] = math.log2(
-                                    replicate_average([
-                                        math.pow(2.0, replicate)
-                                        for replicate in site
-                                    ]))
+                                    replicate_average.get(
+                                        modification, statistics.mean)([
+                                            math.pow(2.0, replicate)
+                                            for replicate in site
+                                        ]))
 
                     network.nodes[protein][
                         f"{time} {modification}"] = math.log2(
-                            site_average([
-                                replicate_average([
-                                    math.pow(2.0, replicate)
-                                    for replicate in site
-                                ])
-                                for site in sites
-                            ]))
+                            site_average.get(
+                                modification,
+                                lambda sites: max(sites, key=abs))([
+                                    replicate_average.get(
+                                        modification, statistics.mean)([
+                                            math.pow(2.0, replicate)
+                                            for replicate in site
+                                        ])
+                                    for site in sites
+                                ]))
 
                     if network.nodes[protein][
                             f"{time} {modification}"] >= measurement_range[
@@ -1217,12 +1226,11 @@ def get_measurements(
 def get_measurement_enrichment(
     network: nx.Graph,
     communities: Iterable[nx.Graph],
-    measurements: tuple[float, float] = (-1.0, 1.0),
-    measurement_conversion: Callable[
-        [float, Collection[float]],
-        float] = lambda measurement, measurements: measurement,
-    site_average: Optional[Callable[[Iterable[float]], float]] = None,
-    replicate_average: Optional[Callable[[Iterable[float]], float]] = None,
+    measurements: dict[str, tuple[float, float]],
+    measurement_conversion: dict[str, Callable[[float, Collection[float]],
+                                               float]],
+    site_average: dict[str, Optional[Callable[[Iterable[float]], float]]],
+    replicate_average: dict[str, Optional[Callable[[Iterable[float]], float]]],
     enrichment_test: Callable[
         [int, int, int, int],
         float] = lambda k, M, n, N: scipy.stats.hypergeom.sf(k - 1, M, n, N),
@@ -1237,14 +1245,14 @@ def get_measurement_enrichment(
     Args:
         network: The protein-protein interaction network.
         communities: The communities of the protein-protein interaction network.
-        measurements: Proteins are classified by whether their representative
-            measurement exceeds this range.
-        measurement_conversion: The function used convert the bounds to their
-            binary logarithm.
-        site_average: An optional function to derive protein-specific
-            measurements from site-specific measurements.
-        replicate_average: An optional function to derive site-specific
-            measurements from replicates.
+        measurements: Modification-specific range of averaged measurements by
+            which proteins are categorized.
+        measurement_conversion: Modification-specific functions used convert the
+            measurement range bounds to their binary logarithm.
+        site_average: Optional modification-specific functions to derive
+            protein-specific measurements from site-specific measurements.
+        replicate_average: Optional modification-specific functions to derive
+            site-specific measurements from replicate measurements.
         enrichment_test: The statistical test used to assess enrichment of
             proteins with large measurements by a community.
         multiple_testing_correction: The procedure to correct for multiple
@@ -1260,44 +1268,52 @@ def get_measurement_enrichment(
 
     for time in get_times(network):
         for modification in get_modifications(network, time):
-            measurement_range = (measurement_conversion(
-                measurements[0],
-                get_measurements(network, time, modification, site_average,
-                                 replicate_average)),
-                                 measurement_conversion(
-                                     measurements[1],
-                                     get_measurements(network, time,
-                                                      modification,
-                                                      site_average,
-                                                      replicate_average)))
+            measurement_range = (
+                measurement_conversion.get(
+                    modification,
+                    lambda measurement, measurements: measurement)(
+                        measurements.get(modification, (-1.0, 1.0))[0],
+                        get_measurements(network, time, modification,
+                                         site_average.get(modification),
+                                         replicate_average.get(modification))),
+                measurement_conversion.get(
+                    modification,
+                    lambda measurement, measurements: measurement)(
+                        measurements.get(modification, (-1.0, 1.0))[1],
+                        get_measurements(network, time, modification,
+                                         site_average.get(modification),
+                                         replicate_average.get(modification))))
 
             modified_proteins = len([
                 measurement for measurement in get_measurements(
-                    network, time, modification, site_average,
-                    replicate_average) if measurement
+                    network, time, modification, site_average.get(modification),
+                    replicate_average.get(modification)) if measurement
             ])
 
             modified_community_proteins = [
                 len([
                     measurement for measurement in get_measurements(
-                        community, time, modification, site_average,
-                        replicate_average) if measurement
+                        community, time, modification,
+                        site_average.get(modification),
+                        replicate_average.get(modification)) if measurement
                 ]) for community in communities
             ]
 
             target_proteins = len([
                 measurement for measurement in get_measurements(
-                    network, time, modification, site_average,
-                    replicate_average) if measurement <= measurement_range[0] or
+                    network, time, modification, site_average.get(modification),
+                    replicate_average.get(modification))
+                if measurement <= measurement_range[0] or
                 measurement >= measurement_range[1]
             ])
 
             target_community_proteins = [
                 len([
                     measurement
-                    for measurement in
-                    get_measurements(community, time, modification,
-                                     site_average, replicate_average)
+                    for measurement in get_measurements(
+                        community, time, modification,
+                        site_average.get(modification),
+                        replicate_average.get(modification))
                     if measurement <= measurement_range[0] or
                     measurement >= measurement_range[1]
                 ])
@@ -1325,8 +1341,8 @@ def get_measurement_enrichment(
 def get_measurement_location(
     network: nx.Graph,
     communities: Iterable[nx.Graph],
-    site_average: Optional[Callable[[Iterable[float]], float]] = None,
-    replicate_average: Optional[Callable[[Iterable[float]], float]] = None,
+    site_average: dict[str, Optional[Callable[[Iterable[float]], float]]],
+    replicate_average: dict[str, Optional[Callable[[Iterable[float]], float]]],
     location_test: Callable[
         [Collection[float], Collection[float]],
         float] = lambda x, y: scipy.stats.ranksums(x, y).pvalue,
@@ -1341,10 +1357,10 @@ def get_measurement_location(
     Args:
         network: The protein-protein interaction network.
         communities: The communities of the protein-protein interaction network.
-        site_average: An optional function to derive protein-specific
-            measurements from site-specific measurements.
-        replicate_average: An optional function to derive site-specific
-            measurements from replicates.
+        site_average: Optional modification-specific functions to derive
+            protein-specific measurements from site-specific measurements.
+        replicate_average: Optional modification-specific functions to derive
+            site-specific measurements from replicate measurements.
         location_test: The statistical test used to assess location of
             proteins with large measurements by a community.
         multiple_testing_correction: The procedure to correct for multiple
@@ -1365,13 +1381,16 @@ def get_measurement_location(
                     nx.union_all([m
                                   for m in communities
                                   if m != community]), time, modification,
-                    site_average, replicate_average)
+                    site_average.get(modification),
+                    replicate_average.get(modification))
                 for community in communities
             ]
 
             community_measurements = [
-                get_measurements(community, time, modification, site_average,
-                                 replicate_average) for community in communities
+                get_measurements(community, time, modification,
+                                 site_average.get(modification),
+                                 replicate_average.get(modification))
+                for community in communities
             ]
 
             p_values.update({(community, time, modification):

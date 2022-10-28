@@ -409,15 +409,18 @@ def get_styles(network: nx.Graph) -> ET.ElementTree:
 
     elements.add_continuous_mapping(
         visual_properties["node"]["NODE_FILL_COLOR"], "p-value", "float", {
-            0.0: (f"#{255:02X}{0:02X}{0:02X}",) * 3,
-            1.0: (f"#{255:02X}{255:02X}{255:02X}",) * 3
+            0.0: (f"#{255:02X}{0:02X}{0:02X}", f"#{255:02X}{0:02X}{0:02X}",
+                  f"#{255:02X}{0:02X}{0:02X}"),
+            1.0: (f"#{255:02X}{255:02X}{255:02X}",
+                  f"#{255:02X}{255:02X}{255:02X}",
+                  f"#{255:02X}{255:02X}{255:02X}")
         })
     max_number_proteins = max(
         reactome_network.get_pathway_sizes(network).values())
     elements.add_continuous_mapping(
         visual_properties["node"]["NODE_SIZE"], "number of proteins", "integer",
         {
-            0: (0.0,) * 3,
+            0: (0.0, 0.0, 0.0),
             max_number_proteins: (math.sqrt(max_number_proteins),) * 3
         })
 

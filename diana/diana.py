@@ -385,24 +385,61 @@ def process_workflow(configuration: Mapping[str, Any],
                 for time in protein_interaction_network.get_times(network)):
 
             if "Cytoscape" in configuration:
+                measurements = {
+                    modification: default.MEASUREMENT_RANGE.get(
+                        conversion, default.MEASUREMENT_RANGE[None])
+                    for modification, conversion in configuration["Cytoscape"].
+                    get("node color", {}).get("conversion", {}).items()
+                }
+
+                for modification, measurement_range in configuration[
+                        "Cytoscape"].get("node color",
+                                         {}).get("measurement", {}).items():
+                    measurements[modification] = measurement_range
+
                 protein_interaction_network.set_measurements(
                     network,
-                    site_average=average.SITE_AVERAGE[
-                        configuration["Cytoscape"].get("site average",
-                                                       "maxabs")],
-                    replicate_average=average.REPLICATE_AVERAGE[
-                        configuration["Cytoscape"].get("replicate average",
-                                                       "mean")],
-                    measurements=default.MEASUREMENT_RANGE[
-                        configuration["Cytoscape"].get("conversion")],
-                    measurement_conversion=conversion.MEASUREMENT_CONVERSION[
-                        configuration["Cytoscape"].get("conversion")])
+                    site_average={
+                        modification:
+                        average.SITE_AVERAGE.get(site_average,
+                                                 average.SITE_AVERAGE["maxabs"])
+                        for modification,
+                        site_average in configuration["Cytoscape"].get(
+                            "site average", {}).items()
+                    },
+                    replicate_average={
+                        modification: average.REPLICATE_AVERAGE.get(
+                            replicate_average,
+                            average.REPLICATE_AVERAGE["mean"]) for modification,
+                        replicate_average in configuration["Cytoscape"].get(
+                            "replicate average", {}).items()
+                    },
+                    measurements=measurements,
+                    measurement_conversion={
+                        modification: conversion.MEASUREMENT_CONVERSION.get(
+                            measurement_conversion,
+                            conversion.MEASUREMENT_CONVERSION[None])
+                        for modification, measurement_conversion in
+                        configuration["Cytoscape"].get("conversion", {})
+                    })
 
                 protein_interaction_network.set_edge_weights(
                     network,
                     weight=average.CONFIDENCE_SCORE_AVERAGE[
                         configuration["Cytoscape"].get("edge transparency")],
                     attribute="score")
+
+                bar_chart_range = {
+                    modification: default.MEASUREMENT_RANGE.get(
+                        conversion, default.MEASUREMENT_RANGE[None])
+                    for modification, conversion in configuration["Cytoscape"].
+                    get("bar chart", {}).get("conversion", {}).items()
+                }
+
+                for modification, measurement_range in configuration[
+                        "Cytoscape"].get("bar chart",
+                                         {}).get("measurement", {}).items():
+                    bar_chart_range[modification] = measurement_range
 
                 styles = protein_interaction_network_style.get_styles(
                     network,
@@ -418,16 +455,29 @@ def process_workflow(configuration: Mapping[str, Any],
                     bar_chart_modifications=configuration["Cytoscape"].get(
                         "bar chart", {}).get("post-translational modifications",
                                              []),
-                    bar_chart_range=default.MEASUREMENT_RANGE[
-                        configuration["Cytoscape"].get("conversion")],
-                    measurement_conversion=conversion.MEASUREMENT_CONVERSION[
-                        configuration["Cytoscape"].get("conversion")],
-                    site_average=average.SITE_AVERAGE[
-                        configuration["Cytoscape"].get("site average",
-                                                       "maxabs")],
-                    replicate_average=average.REPLICATE_AVERAGE[
-                        configuration["Cytoscape"].get("replicate average",
-                                                       "mean")],
+                    bar_chart_range=bar_chart_range,
+                    measurement_conversion={
+                        modification: conversion.MEASUREMENT_CONVERSION.get(
+                            measurement_conversion,
+                            conversion.MEASUREMENT_CONVERSION[None])
+                        for modification, measurement_conversion in
+                        configuration["Cytoscape"].get("conversion", {})
+                    },
+                    site_average={
+                        modification:
+                        average.SITE_AVERAGE.get(site_average,
+                                                 average.SITE_AVERAGE["maxabs"])
+                        for modification,
+                        site_average in configuration["Cytoscape"].get(
+                            "site average", {}).items()
+                    },
+                    replicate_average={
+                        modification: average.REPLICATE_AVERAGE.get(
+                            replicate_average,
+                            average.REPLICATE_AVERAGE["mean"]) for modification,
+                        replicate_average in configuration["Cytoscape"].get(
+                            "replicate average", {}).items()
+                    },
                     confidence_score_average=average.CONFIDENCE_SCORE_AVERAGE[
                         configuration["Cytoscape"].get("edge transparency")])
 
@@ -1458,26 +1508,47 @@ def process_workflow(configuration: Mapping[str, Any],
                                         f"{pathway}\t{name}\t{p:.2e}")
 
         if "measurement enrichment" in configuration["community detection"]:
+            measurements = {
+                modification:
+                default.MEASUREMENT_RANGE.get(conversion,
+                                              default.MEASUREMENT_RANGE[None])
+                for modification, conversion in
+                configuration["community detection"]
+                ["measurement enrichment"].get("conversion", {}).items()
+            }
+
+            for modification, measurement_range in configuration[
+                    "community detection"]["measurement enrichment"].get(
+                        "measurement", {}).items():
+                measurements[modification] = measurement_range
+
             enrichment = protein_interaction_network.get_measurement_enrichment(
                 network,
                 communities,
-                measurements=default.MEASUREMENT_RANGE[
+                measurements=measurements,
+                measurement_conversion={
+                    modification: conversion.MEASUREMENT_CONVERSION.get(
+                        measurement_conversion,
+                        conversion.MEASUREMENT_CONVERSION[None])
+                    for modification, measurement_conversion in
                     configuration["community detection"]
-                    ["measurement enrichment"].get("conversion")],
-                measurement_conversion=conversion.MEASUREMENT_CONVERSION[
-                    configuration["community detection"]
-                    ["measurement enrichment"].get("conversion")],
-                site_average=average.SITE_AVERAGE[
-                    configuration["community detection"]
-                    ["measurement enrichment"].get("site average", "maxabs")] if
-                configuration["community detection"]["measurement enrichment"].
-                get("site average", "maxabs") is not None else None,
-                replicate_average=average.REPLICATE_AVERAGE[
-                    configuration["community detection"]
-                    ["measurement enrichment"].get("replicate average", "mean")]
-                if configuration["community detection"]
-                ["measurement enrichment"].get("replicate average",
-                                               "mean") is not None else None,
+                    ["measurement enrichment"].get("conversion", {})
+                },
+                site_average={
+                    modification: average.SITE_AVERAGE.get(
+                        site_average, average.SITE_AVERAGE["maxabs"])
+                    if site_average is not None else None for modification,
+                    site_average in configuration["community detection"]
+                    ["measurement enrichment"].get("site average", {}).items()
+                },
+                replicate_average={
+                    modification: average.REPLICATE_AVERAGE.get(
+                        replicate_average, average.REPLICATE_AVERAGE["mean"])
+                    if replicate_average is not None else None for modification,
+                    replicate_average in configuration["community detection"]
+                    ["measurement enrichment"].get("replicate average",
+                                                   {}).items()
+                },
                 enrichment_test=test.ENRICHMENT_TEST[(
                     configuration["community detection"]
                     ["measurement enrichment"].get("test", "hypergeometric"),
@@ -1508,16 +1579,21 @@ def process_workflow(configuration: Mapping[str, Any],
             location = protein_interaction_network.get_measurement_location(
                 network,
                 communities,
-                site_average=average.SITE_AVERAGE[
-                    configuration["community detection"]
-                    ["measurement location"].get("site average", "maxabs")]
-                if configuration["community detection"]["measurement location"].
-                get("site average", "maxabs") is not None else None,
-                replicate_average=average.REPLICATE_AVERAGE[
-                    configuration["community detection"]
-                    ["measurement location"].get("replicate average", "mean")]
-                if configuration["community detection"]["measurement location"].
-                get("replicate average", "mean") is not None else None,
+                site_average={
+                    modification: average.SITE_AVERAGE.get(
+                        site_average, average.SITE_AVERAGE["maxabs"])
+                    if site_average is not None else None for modification,
+                    site_average in configuration["community detection"]
+                    ["measurement location"].get("site average", {}).items()
+                },
+                replicate_average={
+                    modification: average.REPLICATE_AVERAGE.get(
+                        replicate_average, average.REPLICATE_AVERAGE["mean"])
+                    if replicate_average is not None else None
+                    for modification, replicate_average in
+                    configuration["community detection"]["measurement location"]
+                    .get("replicate average", {}).items()
+                },
                 location_test=test.LOCATION_TEST[(
                     configuration["community detection"]
                     ["measurement location"].get("test",

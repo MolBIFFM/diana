@@ -413,21 +413,17 @@ def get_bar_chart(
 
 
 def get_styles(
-    network: nx.Graph,
-    node_shape_modifications: Iterable[str],
+    network: nx.Graph, node_shape_modifications: Iterable[str],
     node_color_modifications: Iterable[str],
-    node_size_modification: Optional[str] = None,
-    bar_chart_modifications: Iterable[str] = (),
-    bar_chart_range: tuple[float, float] = (-1.0, 1.0),
-    measurement_conversion: Callable[
-        [float, Collection[float]],
-        float] = lambda measurement, measurements: measurement,
-    site_average: Callable[[Iterable[float]],
-                           float] = lambda sites: max(sites, key=abs),
-    replicate_average: Callable[[Iterable[float]], float] = statistics.mean,
-    confidence_score_average: Callable[[dict[str, float]],
-                                       float] = lambda confidence_scores: float(
-                                           bool(confidence_scores.values()))
+    node_size_modification: Optional[str],
+    bar_chart_modifications: Iterable[str], bar_chart_range: dict[str,
+                                                                  tuple[float,
+                                                                        float]],
+    measurement_conversion: dict[str, Callable[[float, Collection[float]],
+                                               float]],
+    site_average: dict[str, Callable[[Iterable[float]], float]],
+    replicate_average: dict[str, Callable[[Iterable[float]], float]],
+    confidence_score_average: Callable[[dict[str, float]], float]
 ) -> ET.ElementTree:
     """
     Returns the Cytoscape styles for a protein-protein interaction network.
@@ -442,14 +438,14 @@ def get_styles(
             post-translational modification to represent by node size.
         bar_chart_modifications: The identifiers of site-specific
             post-translational modifications to represent by bar charts.
-        bar_chart_range: The range of binary logarithms of measurements covered
-            by the bar chart.
-        measurement_conversion: The function to transform binary logarithms of
-            measurements.
-        site_average: The function to derive a protein-specific measurement from
-            its site-specific measurements.
-        replicate_average: The function to derive a site-specific measurement
-            from its replicates.
+        bar_chart_range: Modification-specific range of binary logarithms of
+            measurements represented by the corresponding bar chart.
+        measurement_conversion: Modification-specific functions to transform
+            binary logarithms of measurements.
+        site_average: Modification-specific functions to derive
+            protein-specific measurements from their site-specific measurements.
+        replicate_average: Modification-specific functions to derive
+            site-specific measurements from their replicate measurements.
         confidence_score_average: The function to derive an edge-specific
             confidence score from confidence scores reported in different
             databases.
@@ -492,8 +488,8 @@ def get_styles(
 
         elements.add_continuous_mapping(
             visual_properties["edge"]["EDGE_TRANSPARENCY"], "score", "float", {
-                0.0: (0,) * 3,
-                max_edge_score: (255,) * 3
+                0.0: (0, 0, 0),
+                max_edge_score: (255, 255, 255)
             })
 
         elements.add_passthrough_mapping(
@@ -505,8 +501,10 @@ def get_styles(
                 protein_interaction_network.is_modification(
                     network, time, node_size_modification)):
             measurements = protein_interaction_network.get_measurements(
-                network, time, node_size_modification, site_average,
-                replicate_average)
+                network, time, node_size_modification,
+                site_average.get(node_size_modification,
+                                 lambda sites: max(sites, key=abs)),
+                replicate_average.get(node_size_modification, statistics.mean))
             if isinstance(
                     COMPONENTS["node"]["visualProperty"]["NODE_SIZE"]
                 ["default"], float):
@@ -698,16 +696,33 @@ def get_styles(
                         protein_interaction_network.get_sites(
                             network, time, bar_chart_modifications[m], protein)
                         for protein in network),
-                    cy_range=(measurement_conversion(
-                        bar_chart_range[0],
-                        protein_interaction_network.get_measurements(
-                            network, time, bar_chart_modifications[m],
-                            site_average, replicate_average)),
-                              measurement_conversion(
-                                  bar_chart_range[1],
-                                  protein_interaction_network.get_measurements(
-                                      network, time, bar_chart_modifications[m],
-                                      site_average, replicate_average)))))
+                    cy_range=(
+                        measurement_conversion.get(
+                            bar_chart_modifications[m],
+                            lambda measurement, measurements: measurement)(
+                                bar_chart_range.get(bar_chart_modifications[m],
+                                                    (-1.0, 1.0))[0],
+                                protein_interaction_network.get_measurements(
+                                    network, time, bar_chart_modifications[m],
+                                    site_average.get(
+                                        bar_chart_modifications[m],
+                                        lambda sites: max(sites, key=abs)),
+                                    replicate_average.get(
+                                        bar_chart_modifications[m],
+                                        statistics.mean))),
+                        measurement_conversion.get(
+                            bar_chart_modifications[m],
+                            lambda measurement, measurements: measurement)(
+                                bar_chart_range.get(bar_chart_modifications[m],
+                                                    (-1.0, 1.0))[1],
+                                protein_interaction_network.get_measurements(
+                                    network, time, bar_chart_modifications[m],
+                                    site_average.get(
+                                        bar_chart_modifications[m],
+                                        lambda sites: max(sites, key=abs)),
+                                    replicate_average.get(
+                                        bar_chart_modifications[m],
+                                        statistics.mean))))))
 
             visual_properties["node"][
                 f"NODE_CUSTOMGRAPHICS_POSITION_{m + 1}"].set(
