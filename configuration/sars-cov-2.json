@@ -96,11 +96,12 @@
       "Cytoscape": {
         "bar chart": {
           "post-translational modifications": ["P"],
-          "measurement": [-2.0, 2.0]
+          "measurement": {
+            "P": [-2.0, 2.0]
+          }
         },
         "node color": {
-          "post-translational modifications": ["P", "A"],
-          "measurement": [-1.0, 1.0]
+          "post-translational modifications": ["P", "A"]
         },
         "node shape": {
           "post-translational modifications": ["P", "A"]
@@ -113,28 +114,23 @@
         "subsets": [
           {
             "time": 60,
-            "post-translational modification": "P",
-            "measurement": [-1.0, 1.0]
+            "post-translational modification": "P"
           },
           {
             "time": 120,
-            "post-translational modification": "A",
-            "measurement": [-1.0, 1.0]
+            "post-translational modification": "A"
           },
           {
             "time": 360,
-            "post-translational modification": "A",
-            "measurement": [-1.0, 1.0]
+            "post-translational modification": "A"
           },
           {
             "time": 600,
-            "post-translational modification": "A",
-            "measurement": [-1.0, 1.0]
+            "post-translational modification": "A"
           },
           {
             "time": 1440,
-            "post-translational modification": "A",
-            "measurement": [-1.0, 1.0]
+            "post-translational modification": "A"
           }
         ],
         "p": 0.05
@@ -143,28 +139,23 @@
         "subsets": [
           {
             "time": 60,
-            "post-translational modification": "P",
-            "measurement": [-1.0, 1.0]
+            "post-translational modification": "P"
           },
           {
             "time": 120,
-            "post-translational modification": "A",
-            "measurement": [-1.0, 1.0]
+            "post-translational modification": "A"
           },
           {
             "time": 360,
-            "post-translational modification": "A",
-            "measurement": [-1.0, 1.0]
+            "post-translational modification": "A"
           },
           {
             "time": 600,
-            "post-translational modification": "A",
-            "measurement": [-1.0, 1.0]
+            "post-translational modification": "A"
           },
           {
             "time": 1440,
-            "post-translational modification": "A",
-            "measurement": [-1.0, 1.0]
+            "post-translational modification": "A"
           }
         ],
         "p": 0.05
@@ -173,28 +164,23 @@
         "subsets": [
           {
             "time": 60,
-            "post-translational modification": "P",
-            "measurement": [-1.0, 1.0]
+            "post-translational modification": "P"
           },
           {
             "time": 120,
-            "post-translational modification": "A",
-            "measurement": [-1.0, 1.0]
+            "post-translational modification": "A"
           },
           {
             "time": 360,
-            "post-translational modification": "A",
-            "measurement": [-1.0, 1.0]
+            "post-translational modification": "A"
           },
           {
             "time": 600,
-            "post-translational modification": "A",
-            "measurement": [-1.0, 1.0]
+            "post-translational modification": "A"
           },
           {
             "time": 1440,
-            "post-translational modification": "A",
-            "measurement": [-1.0, 1.0]
+            "post-translational modification": "A"
           }
         ],
         "p": 0.05
@@ -203,28 +189,23 @@
         "subsets": [
           {
             "time": 60,
-            "post-translational modification": "P",
-            "measurement": [-1.0, 1.0]
+            "post-translational modification": "P"
           },
           {
             "time": 120,
-            "post-translational modification": "A",
-            "measurement": [-1.0, 1.0]
+            "post-translational modification": "A"
           },
           {
             "time": 360,
-            "post-translational modification": "A",
-            "measurement": [-1.0, 1.0]
+            "post-translational modification": "A"
           },
           {
             "time": 600,
-            "post-translational modification": "A",
-            "measurement": [-1.0, 1.0]
+            "post-translational modification": "A"
           },
           {
             "time": 1440,
-            "post-translational modification": "A",
-            "measurement": [-1.0, 1.0]
+            "post-translational modification": "A"
           }
         ]
       },
@@ -232,28 +213,23 @@
         "subsets": [
           {
             "time": 60,
-            "post-translational modification": "P",
-            "measurement": [-1.0, 1.0]
+            "post-translational modification": "P"
           },
           {
             "time": 120,
-            "post-translational modification": "A",
-            "measurement": [-1.0, 1.0]
+            "post-translational modification": "A"
           },
           {
             "time": 360,
-            "post-translational modification": "A",
-            "measurement": [-1.0, 1.0]
+            "post-translational modification": "A"
           },
           {
             "time": 600,
-            "post-translational modification": "A",
-            "measurement": [-1.0, 1.0]
+            "post-translational modification": "A"
           },
           {
             "time": 1440,
-            "post-translational modification": "A",
-            "measurement": [-1.0, 1.0]
+            "post-translational modification": "A"
           }
         ]
       },
@@ -262,28 +238,23 @@
           "subsets": [
             {
               "time": 60,
-              "post-translational modification": "P",
-              "measurement": [-1.0, 1.0]
+              "post-translational modification": "P"
             },
             {
               "time": 120,
-              "post-translational modification": "A",
-              "measurement": [-1.0, 1.0]
+              "post-translational modification": "A"
             },
             {
               "time": 360,
-              "post-translational modification": "A",
-              "measurement": [-1.0, 1.0]
+              "post-translational modification": "A"
             },
             {
               "time": 600,
-              "post-translational modification": "A",
-              "measurement": [-1.0, 1.0]
+              "post-translational modification": "A"
             },
             {
               "time": 1440,
-              "post-translational modification": "A",
-              "measurement": [-1.0, 1.0]
+              "post-translational modification": "A"
             }
           ],
           "p": 0.05
@@ -292,28 +263,23 @@
           "subsets": [
             {
               "time": 60,
-              "post-translational modification": "P",
-              "measurement": [-1.0, 1.0]
+              "post-translational modification": "P"
             },
             {
               "time": 120,
-              "post-translational modification": "A",
-              "measurement": [-1.0, 1.0]
+              "post-translational modification": "A"
             },
             {
               "time": 360,
-              "post-translational modification": "A",
-              "measurement": [-1.0, 1.0]
+              "post-translational modification": "A"
             },
             {
               "time": 600,
-              "post-translational modification": "A",
-              "measurement": [-1.0, 1.0]
+              "post-translational modification": "A"
             },
             {
               "time": 1440,
-              "post-translational modification": "A",
-              "measurement": [-1.0, 1.0]
+              "post-translational modification": "A"
             }
           ],
           "p": 0.05
@@ -322,35 +288,29 @@
           "subsets": [
             {
               "time": 60,
-              "post-translational modification": "P",
-              "measurement": [-1.0, 1.0]
+              "post-translational modification": "P"
             },
             {
               "time": 120,
-              "post-translational modification": "A",
-              "measurement": [-1.0, 1.0]
+              "post-translational modification": "A"
             },
             {
               "time": 360,
-              "post-translational modification": "A",
-              "measurement": [-1.0, 1.0]
+              "post-translational modification": "A"
             },
             {
               "time": 600,
-              "post-translational modification": "A",
-              "measurement": [-1.0, 1.0]
+              "post-translational modification": "A"
             },
             {
               "time": 1440,
-              "post-translational modification": "A",
-              "measurement": [-1.0, 1.0]
+              "post-translational modification": "A"
             }
           ],
           "p": 0.05
         },
         "measurement enrichment": {
-          "p": 0.05,
-          "measurement": [-1.0, 1.0]
+          "p": 0.05
         },
         "measurement location": {
           "p": 0.05
