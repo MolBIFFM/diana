@@ -193,7 +193,7 @@ is `0`.
     {
       "proteins": [
         {
-          "post-translational modification": "PTM"
+          "PTM": "PTM"
         }
       ]
     }
@@ -834,7 +834,7 @@ if applicable.
     {
       "Cytoscape": {
         "bar chart": {
-          "post-translational modifications": [],
+          "PTMs": [],
         }
       }
     }
@@ -870,7 +870,7 @@ to `"quantile"`, `[0.5, 2.0]` if `"conversion"` is set to `"ratio"`, and
     {
       "Cytoscape": {
         "node color": {
-          "post-translational modifications": [],
+          "PTMs": [],
         }
       }
     }
@@ -907,7 +907,7 @@ to `"standard score"`.
     {
       "Cytoscape": {
         "node shape": {
-          "post-translational modifications": [],
+          "PTMs": [],
         }
       }
     }
@@ -922,7 +922,7 @@ represented in order. By default, no modifications are specified.
     {
       "Cytoscape": {
         "node size": {
-          "post-translational modification": null,
+          "PTM": null,
         }
       }
     }
@@ -1055,50 +1055,21 @@ completely supported setting is `9606`, corresponding to Homo sapiens.
       "CORUM enrichment": {
         "subsets": [
           {
-            "time": null
+            "PTM": null
           }
         ]
       },
       "Gene Ontology enrichment": {
         "subsets": [
           {
-            "time": null
+            "PTM": null
           }
         ]
       },
       "Reactome enrichment": {
         "subsets": [
           {
-            "time": null
-          }
-        ]
-      }
-    }
-]
-```
-The time of measurement considered to determine a subset of proteins.
-
-```json
-[
-    {
-      "CORUM enrichment": {
-        "subsets": [
-          {
-            "post-translational modification": null
-          }
-        ]
-      },
-      "Gene Ontology enrichment": {
-        "subsets": [
-          {
-            "post-translational modification": null
-          }
-        ]
-      },
-      "Reactome enrichment": {
-        "subsets": [
-          {
-            "post-translational modification": null
+            "PTM": null
           }
         ]
       }
@@ -1106,7 +1077,7 @@ The time of measurement considered to determine a subset of proteins.
 ]
 ```
 The post-translational modification considered to determine a subset of
-proteins.
+proteins for each applicable time of measurement.
 
 ```json
 [
@@ -1306,43 +1277,22 @@ of proteins from the protein-protein interaction network.
       "Gene Ontology network": {
         "subsets": [
           {
-            "time": null
+            "PTM": null
           }
         ]
       },
       "Reactome network": {
         "subsets": [
           {
-            "time": null
+            "PTM": null
           }
         ]
       }
     }
 ]
 ```
-The time of measurement considered to determine a subset of proteins.
-
-```json
-[
-    {
-      "Gene Ontology network": {
-        "subsets": [
-          {
-            "post-translational modification": null
-          }
-        ]
-      },
-      "Reactome network": {
-        "subsets": [
-          {
-            "post-translational modification": null
-          }
-        ]
-      }
-    }
-]
-```
-The modification considered to determine a subset of proteins.
+The post-translational modification considered to determine a subset of
+proteins for each applicable time of measurement.
 
 ```json
 [
@@ -1836,21 +1786,21 @@ protein-protein interaction network. The default setting is `false`.
         "CORUM enrichment": {
           "subsets": [
             {
-              "time": null
+              "PTM": null
             }
           ]
         },
         "Gene Ontology enrichment": {
           "subsets": [
             {
-              "time": null
+              "PTM": null
             }
           ]
         },
         "Reactome enrichment": {
           "subsets": [
             {
-              "time": null
+              "PTM": null
             }
           ]
         }
@@ -1858,38 +1808,8 @@ protein-protein interaction network. The default setting is `false`.
     }
 ]
 ```
-The time of measurement considered to determine a subset of proteins.
-
-```json
-[
-    {
-      "community detection": {
-        "CORUM enrichment": {
-          "subsets": [
-            {
-              "post-translational modification": null
-            }
-          ]
-        },
-        "Gene Ontology enrichment": {
-          "subsets": [
-            {
-              "post-translational modification": null
-            }
-          ]
-        },
-        "Reactome enrichment": {
-          "subsets": [
-            {
-              "post-translational modification": null
-            }
-          ]
-        }
-      }
-    }
-]
-```
-The modification considered to determine a subset of proteins.
+The post-translational modification considered to determine a subset of
+proteins for each applicable time of measurement.
 
 ```json
 [

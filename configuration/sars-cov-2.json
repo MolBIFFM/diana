@@ -3,7 +3,7 @@
       "proteins": [
         {
           "time": 60,
-          "post-translational modification": "P",
+          "PTM": "P",
           "file": "data/sars-cov-2/phosphorylation/1-s2.0-S1097276520305499-mmc2.xlsx",
           "sheet": "Supplemental_01",
           "accession column": "T: Master Protein Accessions",
@@ -16,7 +16,7 @@
         },
         {
           "time": 120,
-          "post-translational modification": "A",
+          "PTM": "A",
           "file": "data/sars-cov-2/expression/41586_2020_2332_MOESM3_ESM.xlsx",
           "sheet": "Tabelle1",
           "accession column": "UniProt Accession",
@@ -28,7 +28,7 @@
         },
         {
           "time": 360,
-          "post-translational modification": "A",
+          "PTM": "A",
           "file": "data/sars-cov-2/expression/41586_2020_2332_MOESM3_ESM.xlsx",
           "sheet": "Tabelle1",
           "accession column": "UniProt Accession",
@@ -40,7 +40,7 @@
         },
         {
           "time": 600,
-          "post-translational modification": "A",
+          "PTM": "A",
           "file": "data/sars-cov-2/expression/41586_2020_2332_MOESM3_ESM.xlsx",
           "sheet": "Tabelle1",
           "accession column": "UniProt Accession",
@@ -52,7 +52,7 @@
         },
         {
           "time": 1440,
-          "post-translational modification": "A",
+          "PTM": "A",
           "file": "data/sars-cov-2/expression/41586_2020_2332_MOESM3_ESM.xlsx",
           "sheet": "Tabelle1",
           "accession column": "UniProt Accession",
@@ -95,42 +95,25 @@
       },
       "Cytoscape": {
         "bar chart": {
-          "post-translational modifications": ["P"],
+          "PTMs": ["P"],
           "measurement": {
             "P": [-2.0, 2.0]
           }
         },
         "node color": {
-          "post-translational modifications": ["P", "A"]
+          "PTMs": ["P", "A"]
         },
         "node shape": {
-          "post-translational modifications": ["P", "A"]
+          "PTMs": ["P", "A"]
         },
         "node size": {
-          "post-translational modification": "A"
+          "PTM": "A"
         }
       },
       "CORUM enrichment": {
         "subsets": [
           {
-            "time": 60,
-            "post-translational modification": "P"
-          },
-          {
-            "time": 120,
-            "post-translational modification": "A"
-          },
-          {
-            "time": 360,
-            "post-translational modification": "A"
-          },
-          {
-            "time": 600,
-            "post-translational modification": "A"
-          },
-          {
-            "time": 1440,
-            "post-translational modification": "A"
+            "PTM": "P"
           }
         ],
         "p": 0.05
@@ -138,24 +121,7 @@
       "Gene Ontology enrichment": {
         "subsets": [
           {
-            "time": 60,
-            "post-translational modification": "P"
-          },
-          {
-            "time": 120,
-            "post-translational modification": "A"
-          },
-          {
-            "time": 360,
-            "post-translational modification": "A"
-          },
-          {
-            "time": 600,
-            "post-translational modification": "A"
-          },
-          {
-            "time": 1440,
-            "post-translational modification": "A"
+            "PTM": "P"
           }
         ],
         "p": 0.05
@@ -163,24 +129,7 @@
       "Reactome enrichment": {
         "subsets": [
           {
-            "time": 60,
-            "post-translational modification": "P"
-          },
-          {
-            "time": 120,
-            "post-translational modification": "A"
-          },
-          {
-            "time": 360,
-            "post-translational modification": "A"
-          },
-          {
-            "time": 600,
-            "post-translational modification": "A"
-          },
-          {
-            "time": 1440,
-            "post-translational modification": "A"
+            "PTM": "P"
           }
         ],
         "p": 0.05
@@ -188,48 +137,14 @@
       "Gene Ontology network": {
         "subsets": [
           {
-            "time": 60,
-            "post-translational modification": "P"
-          },
-          {
-            "time": 120,
-            "post-translational modification": "A"
-          },
-          {
-            "time": 360,
-            "post-translational modification": "A"
-          },
-          {
-            "time": 600,
-            "post-translational modification": "A"
-          },
-          {
-            "time": 1440,
-            "post-translational modification": "A"
+            "PTM": "P"
           }
         ]
       },
       "Reactome network": {
         "subsets": [
           {
-            "time": 60,
-            "post-translational modification": "P"
-          },
-          {
-            "time": 120,
-            "post-translational modification": "A"
-          },
-          {
-            "time": 360,
-            "post-translational modification": "A"
-          },
-          {
-            "time": 600,
-            "post-translational modification": "A"
-          },
-          {
-            "time": 1440,
-            "post-translational modification": "A"
+            "PTM": "P"
           }
         ]
       },
@@ -237,24 +152,7 @@
         "CORUM enrichment": {
           "subsets": [
             {
-              "time": 60,
-              "post-translational modification": "P"
-            },
-            {
-              "time": 120,
-              "post-translational modification": "A"
-            },
-            {
-              "time": 360,
-              "post-translational modification": "A"
-            },
-            {
-              "time": 600,
-              "post-translational modification": "A"
-            },
-            {
-              "time": 1440,
-              "post-translational modification": "A"
+              "PTM": "P"
             }
           ],
           "p": 0.05
@@ -262,24 +160,7 @@
         "Gene Ontology enrichment": {
           "subsets": [
             {
-              "time": 60,
-              "post-translational modification": "P"
-            },
-            {
-              "time": 120,
-              "post-translational modification": "A"
-            },
-            {
-              "time": 360,
-              "post-translational modification": "A"
-            },
-            {
-              "time": 600,
-              "post-translational modification": "A"
-            },
-            {
-              "time": 1440,
-              "post-translational modification": "A"
+              "PTM": "P"
             }
           ],
           "p": 0.05
@@ -287,24 +168,7 @@
         "Reactome enrichment": {
           "subsets": [
             {
-              "time": 60,
-              "post-translational modification": "P"
-            },
-            {
-              "time": 120,
-              "post-translational modification": "A"
-            },
-            {
-              "time": 360,
-              "post-translational modification": "A"
-            },
-            {
-              "time": 600,
-              "post-translational modification": "A"
-            },
-            {
-              "time": 1440,
-              "post-translational modification": "A"
+              "PTM": "P"
             }
           ],
           "p": 0.05

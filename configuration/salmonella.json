@@ -3,7 +3,7 @@
       "proteins": [
         {
           "time": 30,
-          "post-translational modification": "P",
+          "PTM": "P",
           "file": "data/salmonella/phosphorylation/Supplementary_Table_01.xlsx",
           "sheet": "Supplementary1",
           "accession column": "Protein",
@@ -19,7 +19,7 @@
         },
         {
           "time": 120,
-          "post-translational modification": "P",
+          "PTM": "P",
           "file": "data/salmonella/phosphorylation/Supplementary_Table_01.xlsx",
           "sheet": "Supplementary1",
           "accession column": "Protein",
@@ -35,7 +35,7 @@
         },
         {
           "time": 30,
-          "post-translational modification": "U",
+          "PTM": "U",
           "file": "data/salmonella/ubiquitination/20151119_HeLa_HCT116_05h_2h_all.xlsx",
           "sheet": "20151119_HeLa_HCT116_05h_2h_all",
           "accession column": "Protein",
@@ -52,7 +52,7 @@
         },
         {
           "time": 120,
-          "post-translational modification": "U",
+          "PTM": "U",
           "file": "data/salmonella/ubiquitination/20151119_HeLa_HCT116_05h_2h_all.xlsx",
           "sheet": "20151119_HeLa_HCT116_05h_2h_all",
           "accession column": "Protein",
@@ -100,36 +100,23 @@
       },
       "Cytoscape": {
         "bar chart": {
-          "post-translational modifications": ["P", "U"],
+          "PTMs": ["P", "U"],
           "measurement": {
             "P": [-2.0, 2.0],
             "U": [-2.0, 2.0]
           }
         },
         "node color": {
-          "post-translational modifications": ["P", "U"]
+          "PTMs": ["P", "U"]
         },
         "node shape": {
-          "post-translational modifications": ["P", "U"]
+          "PTMs": ["P", "U"]
         }
       },
       "CORUM enrichment": {
         "subsets": [
           {
-            "time": 30,
-            "post-translational modification": "P"
-          },
-          {
-            "time": 120,
-            "post-translational modification": "P"
-          },
-          {
-            "time": 30,
-            "post-translational modification": "U"
-          },
-          {
-            "time": 120,
-            "post-translational modification": "U"
+            "PTM": "P"
           }
         ],
         "p": 0.05
@@ -137,20 +124,7 @@
       "Gene Ontology enrichment": {
         "subsets": [
           {
-            "time": 30,
-            "post-translational modification": "P"
-          },
-          {
-            "time": 120,
-            "post-translational modification": "P"
-          },
-          {
-            "time": 30,
-            "post-translational modification": "U"
-          },
-          {
-            "time": 120,
-            "post-translational modification": "U"
+            "PTM": "P"
           }
         ],
         "p": 0.05
@@ -158,20 +132,7 @@
       "Reactome enrichment": {
         "subsets": [
           {
-            "time": 30,
-            "post-translational modification": "P"
-          },
-          {
-            "time": 120,
-            "post-translational modification": "P"
-          },
-          {
-            "time": 30,
-            "post-translational modification": "U"
-          },
-          {
-            "time": 120,
-            "post-translational modification": "U"
+            "PTM": "P"
           }
         ],
         "p": 0.05
@@ -179,40 +140,14 @@
       "Gene Ontology network": {
         "subsets": [
           {
-            "time": 30,
-            "post-translational modification": "P"
-          },
-          {
-            "time": 120,
-            "post-translational modification": "P"
-          },
-          {
-            "time": 30,
-            "post-translational modification": "U"
-          },
-          {
-            "time": 120,
-            "post-translational modification": "U"
+            "PTM": "P"
           }
         ]
       },
       "Reactome network": {
         "subsets": [
           {
-            "time": 30,
-            "post-translational modification": "P"
-          },
-          {
-            "time": 120,
-            "post-translational modification": "P"
-          },
-          {
-            "time": 30,
-            "post-translational modification": "U"
-          },
-          {
-            "time": 120,
-            "post-translational modification": "U"
+            "PTM": "P"
           }
         ]
       },
@@ -220,20 +155,7 @@
         "CORUM enrichment": {
           "subsets": [
             {
-              "time": 30,
-              "post-translational modification": "P"
-            },
-            {
-              "time": 120,
-              "post-translational modification": "P"
-            },
-            {
-              "time": 30,
-              "post-translational modification": "U"
-            },
-            {
-              "time": 120,
-              "post-translational modification": "U"
+              "PTM": "P"
             }
           ],
           "p": 0.05
@@ -241,20 +163,7 @@
         "Gene Ontology enrichment": {
           "subsets": [
             {
-              "time": 30,
-              "post-translational modification": "P"
-            },
-            {
-              "time": 120,
-              "post-translational modification": "P"
-            },
-            {
-              "time": 30,
-              "post-translational modification": "U"
-            },
-            {
-              "time": 120,
-              "post-translational modification": "U"
+              "PTM": "P"
             }
           ],
           "p": 0.05
@@ -262,20 +171,7 @@
         "Reactome enrichment": {
           "subsets": [
             {
-              "time": 30,
-              "post-translational modification": "P"
-            },
-            {
-              "time": 120,
-              "post-translational modification": "P"
-            },
-            {
-              "time": 30,
-              "post-translational modification": "U"
-            },
-            {
-              "time": 120,
-              "post-translational modification": "U"
+              "PTM": "P"
             }
           ],
           "p": 0.05

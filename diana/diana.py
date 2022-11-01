@@ -56,9 +56,8 @@ def process_workflow(configuration: Mapping[str, Any],
                     header=entry.get("header", 1) - 1,
                     time=entry["time"] if entry.get("time") and
                     isinstance(entry["time"], int) else 0,
-                    modification=entry["post-translational modification"].
-                    replace(" ", "")
-                    if entry.get("post-translational modification") else "PTM",
+                    modification=entry["PTM"].replace(" ", "")
+                    if entry.get("PTM") else "PTM",
                     number_sites=entry.get("sites", 5),
                     number_replicates=entry.get("replicates", 1),
                     replicate_average=average.REPLICATE_AVERAGE[entry.get(
@@ -82,9 +81,8 @@ def process_workflow(configuration: Mapping[str, Any],
                     header=entry.get("header", 1) - 1,
                     time=entry["time"] if entry.get("time") and
                     isinstance(entry["time"], int) else 0,
-                    modification=entry["post-translational modification"].
-                    replace(" ", "")
-                    if entry.get("post-translational modification") else "PTM",
+                    modification=entry["PTM"].replace(" ", "")
+                    if entry.get("PTM") else "PTM",
                     number_replicates=entry.get("replicates", 1),
                     measurement_conversion=conversion.LOGARITHM[entry.get(
                         "logarithm")])
@@ -444,17 +442,13 @@ def process_workflow(configuration: Mapping[str, Any],
                 styles = protein_interaction_network_style.get_styles(
                     network,
                     node_shape_modifications=configuration["Cytoscape"].get(
-                        "node shape",
-                        {}).get("post-translational modifications", []),
+                        "node shape", {}).get("PTMs", []),
                     node_color_modifications=configuration["Cytoscape"].get(
-                        "node color",
-                        {}).get("post-translational modifications", []),
+                        "node color", {}).get("PTMs", []),
                     node_size_modification=configuration["Cytoscape"].get(
-                        "node size", {}).get("post-translational modification",
-                                             None),
+                        "node size", {}).get("PTM", None),
                     bar_chart_modifications=configuration["Cytoscape"].get(
-                        "bar chart", {}).get("post-translational modifications",
-                                             []),
+                        "bar chart", {}).get("PTMs", []),
                     bar_chart_range=bar_chart_range,
                     measurement_conversion={
                         modification: conversion.MEASUREMENT_CONVERSION.get(
@@ -498,60 +492,56 @@ def process_workflow(configuration: Mapping[str, Any],
             else:
                 proteins = set()
 
-            for subset in configuration["CORUM enrichment"]["subsets"]:
-                if subset.get("time") in protein_interaction_network.get_times(
-                        network) and subset.get(
-                            "post-translational modification"
-                        ) in protein_interaction_network.get_modifications(
-                            network, subset["time"]):
-                    measurement_range = (
-                        conversion.MEASUREMENT_CONVERSION[subset.get(
-                            "conversion")](
+            for time in protein_interaction_network.get_times(network):
+                for subset in configuration["CORUM enrichment"]["subsets"]:
+                    if subset.get(
+                            "PTM"
+                    ) in protein_interaction_network.get_modifications(
+                            network, time):
+                        measurement_range = (
+                            conversion.
+                            MEASUREMENT_CONVERSION[subset.get("conversion")](
                                 subset.get(
                                     "measurement", default.MEASUREMENT_RANGE[
                                         subset.get("conversion")])[0],
                                 protein_interaction_network.get_measurements(
-                                    network, subset["time"],
-                                    subset["post-translational modification"],
+                                    network, time, subset["PTM"],
                                     average.SITE_AVERAGE[subset.get(
                                         "site average", "maxabs")],
                                     average.REPLICATE_AVERAGE[subset.get(
                                         "replicate average", "mean")])),
-                        conversion.MEASUREMENT_CONVERSION[subset.get(
-                            "conversion")](
-                                subset.get(
-                                    "measurement", default.MEASUREMENT_RANGE[
-                                        subset.get("conversion")])[1],
-                                protein_interaction_network.get_measurements(
-                                    network, subset["time"],
-                                    subset["post-translational modification"],
+                            conversion.MEASUREMENT_CONVERSION[subset.get(
+                                "conversion")]
+                            (subset.get(
+                                "measurement", default.MEASUREMENT_RANGE[
+                                    subset.get("conversion")])[1],
+                             protein_interaction_network.get_measurements(
+                                 network, time, subset["PTM"],
+                                 average.SITE_AVERAGE[subset.get(
+                                     "site average", "maxabs")],
+                                 average.REPLICATE_AVERAGE[subset.get(
+                                     "replicate average", "mean")])))
+
+                        if configuration["CORUM enrichment"].get(
+                                "intersection", False):
+                            proteins.intersection_update(
+                                protein_interaction_network.get_proteins(
+                                    network, time, subset["PTM"],
                                     average.SITE_AVERAGE[subset.get(
                                         "site average", "maxabs")],
                                     average.REPLICATE_AVERAGE[subset.get(
-                                        "replicate average", "mean")])))
+                                        "replicate average",
+                                        "mean")], measurement_range))
 
-                    if configuration["CORUM enrichment"].get(
-                            "intersection", False):
-                        proteins.intersection_update(
-                            protein_interaction_network.get_proteins(
-                                network, subset["time"],
-                                subset["post-translational modification"],
-                                average.SITE_AVERAGE[subset.get(
-                                    "site average", "maxabs")],
-                                average.REPLICATE_AVERAGE[subset.get(
-                                    "replicate average",
-                                    "mean")], measurement_range))
-
-                    else:
-                        proteins.update(
-                            protein_interaction_network.get_proteins(
-                                network, subset["time"],
-                                subset["post-translational modification"],
-                                average.SITE_AVERAGE[subset.get(
-                                    "site average", "maxabs")],
-                                average.REPLICATE_AVERAGE[subset.get(
-                                    "replicate average",
-                                    "mean")], measurement_range))
+                        else:
+                            proteins.update(
+                                protein_interaction_network.get_proteins(
+                                    network, time, subset["PTM"],
+                                    average.SITE_AVERAGE[subset.get(
+                                        "site average", "maxabs")],
+                                    average.REPLICATE_AVERAGE[subset.get(
+                                        "replicate average",
+                                        "mean")], measurement_range))
 
             corum_enrichment = corum.get_enrichment(
                 [frozenset(proteins)],
@@ -604,62 +594,60 @@ def process_workflow(configuration: Mapping[str, Any],
             else:
                 proteins = set()
 
-            for subset in configuration["Gene Ontology enrichment"]["subsets"]:
-                if subset.get("time") in protein_interaction_network.get_times(
-                        network) and subset.get(
-                            "post-translational modification"
-                        ) in protein_interaction_network.get_modifications(
-                            network, subset["time"]):
-                    measurement_range = (
-                        conversion.MEASUREMENT_CONVERSION[subset.get(
-                            "conversion")](
+            for time in protein_interaction_network.get_times(network):
+                for subset in configuration["Gene Ontology enrichment"][
+                        "subsets"]:
+                    if subset.get(
+                            "PTM"
+                    ) in protein_interaction_network.get_modifications(
+                            network, time):
+                        measurement_range = (
+                            conversion.
+                            MEASUREMENT_CONVERSION[subset.get("conversion")](
                                 subset.get(
                                     "measurement", default.MEASUREMENT_RANGE[
                                         subset.get("conversion")])[0],
                                 protein_interaction_network.get_measurements(
-                                    network, subset["time"],
-                                    subset["post-translational modification"],
+                                    network, time, subset["PTM"],
                                     average.SITE_AVERAGE[subset.get(
                                         "site average", "maxabs")],
                                     average.REPLICATE_AVERAGE[subset.get(
                                         "replicate average", "mean")])),
-                        conversion.MEASUREMENT_CONVERSION[subset.get(
-                            "conversion")](
-                                subset.get(
-                                    "measurement", default.MEASUREMENT_RANGE[
-                                        subset.get("conversion")])[1],
-                                protein_interaction_network.get_measurements(
-                                    network,
-                                    subset["time"],
-                                    subset["post-translational modification"],
+                            conversion.MEASUREMENT_CONVERSION[subset.get(
+                                "conversion")]
+                            (subset.get(
+                                "measurement", default.MEASUREMENT_RANGE[
+                                    subset.get("conversion")])[1],
+                             protein_interaction_network.get_measurements(
+                                 network,
+                                 time,
+                                 subset["PTM"],
+                                 average.SITE_AVERAGE[subset.get(
+                                     "site average", "maxabs")],
+                                 average.REPLICATE_AVERAGE[subset.get(
+                                     "replicate average", "mean")],
+                             )))
+
+                        if configuration["Gene Ontology enrichment"].get(
+                                "intersection", False):
+                            proteins.intersection_update(
+                                protein_interaction_network.get_proteins(
+                                    network, time, subset["PTM"],
                                     average.SITE_AVERAGE[subset.get(
                                         "site average", "maxabs")],
                                     average.REPLICATE_AVERAGE[subset.get(
-                                        "replicate average", "mean")],
-                                )))
+                                        "replicate average",
+                                        "mean")], measurement_range))
 
-                    if configuration["Gene Ontology enrichment"].get(
-                            "intersection", False):
-                        proteins.intersection_update(
-                            protein_interaction_network.get_proteins(
-                                network, subset["time"],
-                                subset["post-translational modification"],
-                                average.SITE_AVERAGE[subset.get(
-                                    "site average", "maxabs")],
-                                average.REPLICATE_AVERAGE[subset.get(
-                                    "replicate average",
-                                    "mean")], measurement_range))
-
-                    else:
-                        proteins.update(
-                            protein_interaction_network.get_proteins(
-                                network, subset["time"],
-                                subset["post-translational modification"],
-                                average.SITE_AVERAGE[subset.get(
-                                    "site average", "maxabs")],
-                                average.REPLICATE_AVERAGE[subset.get(
-                                    "replicate average",
-                                    "mean")], measurement_range))
+                        else:
+                            proteins.update(
+                                protein_interaction_network.get_proteins(
+                                    network, time, subset["PTM"],
+                                    average.SITE_AVERAGE[subset.get(
+                                        "site average", "maxabs")],
+                                    average.REPLICATE_AVERAGE[subset.get(
+                                        "replicate average",
+                                        "mean")], measurement_range))
 
             gene_ontology_enrichment = gene_ontology.get_enrichment(
                 [frozenset(proteins)],
@@ -725,60 +713,56 @@ def process_workflow(configuration: Mapping[str, Any],
             else:
                 proteins = set()
 
-            for subset in configuration["Reactome enrichment"]["subsets"]:
-                if subset.get("time") in protein_interaction_network.get_times(
-                        network) and subset.get(
-                            "post-translational modification"
-                        ) in protein_interaction_network.get_modifications(
-                            network, subset["time"]):
-                    measurement_range = (
-                        conversion.MEASUREMENT_CONVERSION[subset.get(
-                            "conversion")](
+            for time in protein_interaction_network.get_times(time):
+                for subset in configuration["Reactome enrichment"]["subsets"]:
+                    if subset.get(
+                            "PTM"
+                    ) in protein_interaction_network.get_modifications(
+                            network, time):
+                        measurement_range = (
+                            conversion.
+                            MEASUREMENT_CONVERSION[subset.get("conversion")](
                                 subset.get(
                                     "measurement", default.MEASUREMENT_RANGE[
                                         subset.get("conversion")])[0],
                                 protein_interaction_network.get_measurements(
-                                    network, subset["time"],
-                                    subset["post-translational modification"],
+                                    network, time, subset["PTM"],
                                     average.SITE_AVERAGE[subset.get(
                                         "site average", "maxabs")],
                                     average.REPLICATE_AVERAGE[subset.get(
                                         "replicate average", "mean")])),
-                        conversion.MEASUREMENT_CONVERSION[subset.get(
-                            "conversion")](
-                                subset.get(
-                                    "measurement", default.MEASUREMENT_RANGE[
-                                        subset.get("conversion")])[1],
-                                protein_interaction_network.get_measurements(
-                                    network, subset["time"],
-                                    subset["post-translational modification"],
+                            conversion.MEASUREMENT_CONVERSION[subset.get(
+                                "conversion")]
+                            (subset.get(
+                                "measurement", default.MEASUREMENT_RANGE[
+                                    subset.get("conversion")])[1],
+                             protein_interaction_network.get_measurements(
+                                 network, time, subset["PTM"],
+                                 average.SITE_AVERAGE[subset.get(
+                                     "site average", "maxabs")],
+                                 average.REPLICATE_AVERAGE[subset.get(
+                                     "replicate average", "mean")])))
+
+                        if configuration["Reactome enrichment"].get(
+                                "intersection", False):
+                            proteins.intersection_update(
+                                protein_interaction_network.get_proteins(
+                                    network, time, subset["PTM"],
                                     average.SITE_AVERAGE[subset.get(
                                         "site average", "maxabs")],
                                     average.REPLICATE_AVERAGE[subset.get(
-                                        "replicate average", "mean")])))
+                                        "replicate average",
+                                        "mean")], measurement_range))
 
-                    if configuration["Reactome enrichment"].get(
-                            "intersection", False):
-                        proteins.intersection_update(
-                            protein_interaction_network.get_proteins(
-                                network, subset["time"],
-                                subset["post-translational modification"],
-                                average.SITE_AVERAGE[subset.get(
-                                    "site average", "maxabs")],
-                                average.REPLICATE_AVERAGE[subset.get(
-                                    "replicate average",
-                                    "mean")], measurement_range))
-
-                    else:
-                        proteins.update(
-                            protein_interaction_network.get_proteins(
-                                network, subset["time"],
-                                subset["post-translational modification"],
-                                average.SITE_AVERAGE[subset.get(
-                                    "site average", "maxabs")],
-                                average.REPLICATE_AVERAGE[subset.get(
-                                    "replicate average",
-                                    "mean")], measurement_range))
+                        else:
+                            proteins.update(
+                                protein_interaction_network.get_proteins(
+                                    network, time, subset["PTM"],
+                                    average.SITE_AVERAGE[subset.get(
+                                        "site average", "maxabs")],
+                                    average.REPLICATE_AVERAGE[subset.get(
+                                        "replicate average",
+                                        "mean")], measurement_range))
 
             reactome_enrichment = reactome.get_enrichment(
                 [frozenset(proteins)],
@@ -828,60 +812,56 @@ def process_workflow(configuration: Mapping[str, Any],
             else:
                 proteins = set()
 
-            for subset in configuration["Gene Ontology network"]["subsets"]:
-                if subset.get("time") in protein_interaction_network.get_times(
-                        network) and subset.get(
-                            "post-translational modification"
-                        ) in protein_interaction_network.get_modifications(
-                            network, subset["time"]):
-                    measurement_range = (
-                        conversion.MEASUREMENT_CONVERSION[subset.get(
-                            "conversion")](
+            for time in protein_interaction_network.get_times(time):
+                for subset in configuration["Gene Ontology network"]["subsets"]:
+                    if subset.get(
+                            "PTM"
+                    ) in protein_interaction_network.get_modifications(
+                            network, time):
+                        measurement_range = (
+                            conversion.
+                            MEASUREMENT_CONVERSION[subset.get("conversion")](
                                 subset.get(
                                     "measurement", default.MEASUREMENT_RANGE[
                                         subset.get("conversion")])[0],
                                 protein_interaction_network.get_measurements(
-                                    network, subset["time"],
-                                    subset["post-translational modification"],
+                                    network, time, subset["PTM"],
                                     average.SITE_AVERAGE[subset.get(
                                         "site average", "maxabs")],
                                     average.REPLICATE_AVERAGE[subset.get(
                                         "replicate average", "mean")])),
-                        conversion.MEASUREMENT_CONVERSION[subset.get(
-                            "conversion")](
-                                subset.get(
-                                    "measurement", default.MEASUREMENT_RANGE[
-                                        subset.get("conversion")])[1],
-                                protein_interaction_network.get_measurements(
-                                    network, subset["time"],
-                                    subset["post-translational modification"],
+                            conversion.MEASUREMENT_CONVERSION[subset.get(
+                                "conversion")]
+                            (subset.get(
+                                "measurement", default.MEASUREMENT_RANGE[
+                                    subset.get("conversion")])[1],
+                             protein_interaction_network.get_measurements(
+                                 network, time, subset["PTM"],
+                                 average.SITE_AVERAGE[subset.get(
+                                     "site average", "maxabs")],
+                                 average.REPLICATE_AVERAGE[subset.get(
+                                     "replicate average", "mean")])))
+
+                        if configuration["Gene Ontology network"].get(
+                                "intersection", False):
+                            proteins.intersection_update(
+                                protein_interaction_network.get_proteins(
+                                    network, time, subset["PTM"],
                                     average.SITE_AVERAGE[subset.get(
                                         "site average", "maxabs")],
                                     average.REPLICATE_AVERAGE[subset.get(
-                                        "replicate average", "mean")])))
+                                        "replicate average",
+                                        "mean")], measurement_range))
 
-                    if configuration["Gene Ontology network"].get(
-                            "intersection", False):
-                        proteins.intersection_update(
-                            protein_interaction_network.get_proteins(
-                                network, subset["time"],
-                                subset["post-translational modification"],
-                                average.SITE_AVERAGE[subset.get(
-                                    "site average", "maxabs")],
-                                average.REPLICATE_AVERAGE[subset.get(
-                                    "replicate average",
-                                    "mean")], measurement_range))
-
-                    else:
-                        proteins.update(
-                            protein_interaction_network.get_proteins(
-                                network, subset["time"],
-                                subset["post-translational modification"],
-                                average.SITE_AVERAGE[subset.get(
-                                    "site average", "maxabs")],
-                                average.REPLICATE_AVERAGE[subset.get(
-                                    "replicate average",
-                                    "mean")], measurement_range))
+                        else:
+                            proteins.update(
+                                protein_interaction_network.get_proteins(
+                                    network, time, subset["PTM"],
+                                    average.SITE_AVERAGE[subset.get(
+                                        "site average", "maxabs")],
+                                    average.REPLICATE_AVERAGE[subset.get(
+                                        "replicate average",
+                                        "mean")], measurement_range))
 
             ontology_network = gene_ontology_network.get_network(
                 proteins,
@@ -947,60 +927,56 @@ def process_workflow(configuration: Mapping[str, Any],
             else:
                 proteins = set()
 
-            for subset in configuration["Reactome network"]["subsets"]:
-                if subset.get("time") in protein_interaction_network.get_times(
-                        network) and subset.get(
-                            "post-translational modification"
-                        ) in protein_interaction_network.get_modifications(
-                            network, subset["time"]):
-                    measurement_range = (
-                        conversion.MEASUREMENT_CONVERSION[subset.get(
-                            "conversion")](
+            for time in protein_interaction_network.get_times(time):
+                for subset in configuration["Reactome network"]["subsets"]:
+                    if subset.get(
+                            "PTM"
+                    ) in protein_interaction_network.get_modifications(
+                            network, time):
+                        measurement_range = (
+                            conversion.
+                            MEASUREMENT_CONVERSION[subset.get("conversion")](
                                 subset.get(
                                     "measurement", default.MEASUREMENT_RANGE[
                                         subset.get("conversion")])[0],
                                 protein_interaction_network.get_measurements(
-                                    network, subset["time"],
-                                    subset["post-translational modification"],
+                                    network, time, subset["PTM"],
                                     average.SITE_AVERAGE[subset.get(
                                         "site average", "maxabs")],
                                     average.REPLICATE_AVERAGE[subset.get(
                                         "replicate average", "mean")])),
-                        conversion.MEASUREMENT_CONVERSION[subset.get(
-                            "conversion")](
-                                subset.get(
-                                    "measurement", default.MEASUREMENT_RANGE[
-                                        subset.get("conversion")])[1],
-                                protein_interaction_network.get_measurements(
-                                    network, subset["time"],
-                                    subset["post-translational modification"],
+                            conversion.MEASUREMENT_CONVERSION[subset.get(
+                                "conversion")]
+                            (subset.get(
+                                "measurement", default.MEASUREMENT_RANGE[
+                                    subset.get("conversion")])[1],
+                             protein_interaction_network.get_measurements(
+                                 network, time, subset["PTM"],
+                                 average.SITE_AVERAGE[subset.get(
+                                     "site average", "maxabs")],
+                                 average.REPLICATE_AVERAGE[subset.get(
+                                     "replicate average", "mean")])))
+
+                        if configuration["Reactome network"].get(
+                                "intersection", False):
+                            proteins.intersection_update(
+                                protein_interaction_network.get_proteins(
+                                    network, time, subset["PTM"],
                                     average.SITE_AVERAGE[subset.get(
                                         "site average", "maxabs")],
                                     average.REPLICATE_AVERAGE[subset.get(
-                                        "replicate average", "mean")])))
+                                        "replicate average",
+                                        "mean")], measurement_range))
 
-                    if configuration["Reactome network"].get(
-                            "intersection", False):
-                        proteins.intersection_update(
-                            protein_interaction_network.get_proteins(
-                                network, subset["time"],
-                                subset["post-translational modification"],
-                                average.SITE_AVERAGE[subset.get(
-                                    "site average", "maxabs")],
-                                average.REPLICATE_AVERAGE[subset.get(
-                                    "replicate average",
-                                    "mean")], measurement_range))
-
-                    else:
-                        proteins.update(
-                            protein_interaction_network.get_proteins(
-                                network, subset["time"],
-                                subset["post-translational modification"],
-                                average.SITE_AVERAGE[subset.get(
-                                    "site average", "maxabs")],
-                                average.REPLICATE_AVERAGE[subset.get(
-                                    "replicate average",
-                                    "mean")], measurement_range))
+                        else:
+                            proteins.update(
+                                protein_interaction_network.get_proteins(
+                                    network, time, subset["PTM"],
+                                    average.SITE_AVERAGE[subset.get(
+                                        "site average", "maxabs")],
+                                    average.REPLICATE_AVERAGE[subset.get(
+                                        "replicate average",
+                                        "mean")], measurement_range))
 
             pathway_network = reactome_network.get_network(
                 proteins,
@@ -1078,65 +1054,70 @@ def process_workflow(configuration: Mapping[str, Any],
                         community: set() for community in communities
                     }
 
-                for subset in configuration["community detection"][
-                        "CORUM enrichment"]["subsets"]:
-                    if subset.get(
-                            "time") in protein_interaction_network.get_times(
-                                network
-                            ) and subset.get(
-                                "post-translational modification"
-                            ) in protein_interaction_network.get_modifications(
-                                network, subset["time"]):
-                        for community in subset_proteins:
-                            measurement_range = (
-                                conversion.MEASUREMENT_CONVERSION[subset.get(
-                                    "conversion")]
-                                (subset.get(
-                                    "measurement", default.MEASUREMENT_RANGE[
-                                        subset.get("conversion")])[0],
-                                 protein_interaction_network.get_measurements(
-                                     community, subset["time"],
-                                     subset["post-translational modification"],
-                                     average.SITE_AVERAGE[subset.get(
-                                         "site average", "maxabs")],
-                                     average.REPLICATE_AVERAGE[subset.get(
-                                         "replicate average", "mean")])),
-                                conversion.MEASUREMENT_CONVERSION[subset.get(
-                                    "conversion")]
-                                (subset.get(
-                                    "measurement", default.MEASUREMENT_RANGE[
-                                        subset.get("conversion")])[1],
-                                 protein_interaction_network.get_measurements(
-                                     community, subset["time"],
-                                     subset["post-translational modification"],
-                                     average.SITE_AVERAGE[subset.get(
-                                         "site average", "maxabs")],
-                                     average.REPLICATE_AVERAGE[subset.get(
-                                         "replicate average", "mean")])))
+                for time in protein_interaction_network.get_times(network):
+                    for subset in configuration["community detection"][
+                            "CORUM enrichment"]["subsets"]:
+                        if subset.get(
+                                "PTM"
+                        ) in protein_interaction_network.get_modifications(
+                                network, time):
+                            for community in subset_proteins:
+                                measurement_range = (
+                                    conversion.MEASUREMENT_CONVERSION[
+                                        subset.get("conversion")]
+                                    (subset.get(
+                                        "measurement",
+                                        default.MEASUREMENT_RANGE[subset.get(
+                                            "conversion")])[0],
+                                     protein_interaction_network.
+                                     get_measurements(
+                                         community, time, subset["PTM"],
+                                         average.SITE_AVERAGE[subset.get(
+                                             "site average", "maxabs")],
+                                         average.REPLICATE_AVERAGE[subset.get(
+                                             "replicate average", "mean")])),
+                                    conversion.MEASUREMENT_CONVERSION[
+                                        subset.get("conversion")]
+                                    (subset.get(
+                                        "measurement",
+                                        default.MEASUREMENT_RANGE[subset.get(
+                                            "conversion")])[1],
+                                     protein_interaction_network.
+                                     get_measurements(
+                                         community, time, subset["PTM"],
+                                         average.SITE_AVERAGE[subset.get(
+                                             "site average", "maxabs")],
+                                         average.REPLICATE_AVERAGE[subset.get(
+                                             "replicate average", "mean")])))
 
-                            if configuration["community detection"][
-                                    "CORUM enrichment"].get(
-                                        "intersection", False):
-                                subset_proteins[community].intersection_update(
-                                    protein_interaction_network.get_proteins(
-                                        community, subset["time"], subset[
-                                            "post-translational modification"],
-                                        average.SITE_AVERAGE[subset.get(
-                                            "site average", "maxabs")],
-                                        average.REPLICATE_AVERAGE[subset.get(
-                                            "replicate average",
-                                            "mean")], measurement_range))
+                                if configuration["community detection"][
+                                        "CORUM enrichment"].get(
+                                            "intersection", False):
+                                    subset_proteins[
+                                        community].intersection_update(
+                                            protein_interaction_network.
+                                            get_proteins(
+                                                community, time, subset["PTM"],
+                                                average.SITE_AVERAGE[subset.get(
+                                                    "site average", "maxabs")],
+                                                average.REPLICATE_AVERAGE[
+                                                    subset.get(
+                                                        "replicate average",
+                                                        "mean")],
+                                                measurement_range))
 
-                            else:
-                                subset_proteins[community].update(
-                                    protein_interaction_network.get_proteins(
-                                        community, subset["time"], subset[
-                                            "post-translational modification"],
-                                        average.SITE_AVERAGE[subset.get(
-                                            "site average", "maxabs")],
-                                        average.REPLICATE_AVERAGE[subset.get(
-                                            "replicate average",
-                                            "mean")], measurement_range))
+                                else:
+                                    subset_proteins[community].update(
+                                        protein_interaction_network.
+                                        get_proteins(
+                                            community, time, subset["PTM"],
+                                            average.SITE_AVERAGE[subset.get(
+                                                "site average", "maxabs")],
+                                            average.REPLICATE_AVERAGE[
+                                                subset.get(
+                                                    "replicate average",
+                                                    "mean")],
+                                            measurement_range))
 
                 corum_enrichment = corum.get_enrichment(
                     [
@@ -1220,65 +1201,70 @@ def process_workflow(configuration: Mapping[str, Any],
                         community: set() for community in communities
                     }
 
-                for subset in configuration["community detection"][
-                        "Gene Ontology enrichment"]["subsets"]:
-                    if subset.get(
-                            "time") in protein_interaction_network.get_times(
-                                network
-                            ) and subset.get(
-                                "post-translational modification"
-                            ) in protein_interaction_network.get_modifications(
-                                network, subset["time"]):
-                        for community in subset_proteins:
-                            measurement_range = (
-                                conversion.MEASUREMENT_CONVERSION[subset.get(
-                                    "conversion")]
-                                (subset.get(
-                                    "measurement", default.MEASUREMENT_RANGE[
-                                        subset.get("conversion")])[0],
-                                 protein_interaction_network.get_measurements(
-                                     community, subset["time"],
-                                     subset["post-translational modification"],
-                                     average.SITE_AVERAGE[subset.get(
-                                         "site average", "maxabs")],
-                                     average.REPLICATE_AVERAGE[subset.get(
-                                         "replicate average", "mean")])),
-                                conversion.MEASUREMENT_CONVERSION[subset.get(
-                                    "conversion")]
-                                (subset.get(
-                                    "measurement", default.MEASUREMENT_RANGE[
-                                        subset.get("conversion")])[1],
-                                 protein_interaction_network.get_measurements(
-                                     community, subset["time"],
-                                     subset["post-translational modification"],
-                                     average.SITE_AVERAGE[subset.get(
-                                         "site average", "maxabs")],
-                                     average.REPLICATE_AVERAGE[subset.get(
-                                         "replicate average", "mean")])))
+                for time in protein_interaction_network.get_times(network):
+                    for subset in configuration["community detection"][
+                            "Gene Ontology enrichment"]["subsets"]:
+                        if subset.get(
+                                "PTM"
+                        ) in protein_interaction_network.get_modifications(
+                                network, time):
+                            for community in subset_proteins:
+                                measurement_range = (
+                                    conversion.MEASUREMENT_CONVERSION[
+                                        subset.get("conversion")]
+                                    (subset.get(
+                                        "measurement",
+                                        default.MEASUREMENT_RANGE[subset.get(
+                                            "conversion")])[0],
+                                     protein_interaction_network.
+                                     get_measurements(
+                                         community, time, subset["PTM"],
+                                         average.SITE_AVERAGE[subset.get(
+                                             "site average", "maxabs")],
+                                         average.REPLICATE_AVERAGE[subset.get(
+                                             "replicate average", "mean")])),
+                                    conversion.MEASUREMENT_CONVERSION[
+                                        subset.get("conversion")]
+                                    (subset.get(
+                                        "measurement",
+                                        default.MEASUREMENT_RANGE[subset.get(
+                                            "conversion")])[1],
+                                     protein_interaction_network.
+                                     get_measurements(
+                                         community, time, subset["PTM"],
+                                         average.SITE_AVERAGE[subset.get(
+                                             "site average", "maxabs")],
+                                         average.REPLICATE_AVERAGE[subset.get(
+                                             "replicate average", "mean")])))
 
-                            if configuration["community detection"][
-                                    "Gene Ontology enrichment"].get(
-                                        "intersection", False):
-                                subset_proteins[community].intersection_update(
-                                    protein_interaction_network.get_proteins(
-                                        community, subset["time"], subset[
-                                            "post-translational modification"],
-                                        average.SITE_AVERAGE[subset.get(
-                                            "site average", "maxabs")],
-                                        average.REPLICATE_AVERAGE[subset.get(
-                                            "replicate average",
-                                            "mean")], measurement_range))
+                                if configuration["community detection"][
+                                        "Gene Ontology enrichment"].get(
+                                            "intersection", False):
+                                    subset_proteins[
+                                        community].intersection_update(
+                                            protein_interaction_network.
+                                            get_proteins(
+                                                community, time, subset["PTM"],
+                                                average.SITE_AVERAGE[subset.get(
+                                                    "site average", "maxabs")],
+                                                average.REPLICATE_AVERAGE[
+                                                    subset.get(
+                                                        "replicate average",
+                                                        "mean")],
+                                                measurement_range))
 
-                            else:
-                                subset_proteins[community].update(
-                                    protein_interaction_network.get_proteins(
-                                        community, subset["time"], subset[
-                                            "post-translational modification"],
-                                        average.SITE_AVERAGE[subset.get(
-                                            "site average", "maxabs")],
-                                        average.REPLICATE_AVERAGE[subset.get(
-                                            "replicate average",
-                                            "mean")], measurement_range))
+                                else:
+                                    subset_proteins[community].update(
+                                        protein_interaction_network.
+                                        get_proteins(
+                                            community, time, subset["PTM"],
+                                            average.SITE_AVERAGE[subset.get(
+                                                "site average", "maxabs")],
+                                            average.REPLICATE_AVERAGE[
+                                                subset.get(
+                                                    "replicate average",
+                                                    "mean")],
+                                            measurement_range))
 
                 gene_ontology_enrichment = gene_ontology.get_enrichment(
                     [
@@ -1380,66 +1366,72 @@ def process_workflow(configuration: Mapping[str, Any],
                         community: set() for community in communities
                     }
 
-                for subset in configuration["community detection"][
-                        "Reactome enrichment"]["subsets"]:
-                    if subset.get(
-                            "time") in protein_interaction_network.get_times(
-                                network
-                            ) and subset.get(
-                                "post-translational modification"
-                            ) in protein_interaction_network.get_modifications(
-                                network, subset["time"]):
-                        for community in subset_proteins:
-                            measurement_range = (
-                                conversion.MEASUREMENT_CONVERSION[subset.get(
-                                    "conversion")]
-                                (subset.get(
-                                    "measurement", default.MEASUREMENT_RANGE[
-                                        subset.get("conversion")])[0],
-                                 protein_interaction_network.get_measurements(
-                                     community,
-                                     subset["time"],
-                                     subset["post-translational modification"],
-                                     average.SITE_AVERAGE[subset.get(
-                                         "site average", "maxabs")],
-                                     average.REPLICATE_AVERAGE[subset.get(
-                                         "replicate average", "mean")],
-                                 )), conversion.MEASUREMENT_CONVERSION[
-                                     subset.get("conversion")]
-                                (subset.get(
-                                    "measurement", default.MEASUREMENT_RANGE[
-                                        subset.get("conversion")])[1],
-                                 protein_interaction_network.get_measurements(
-                                     community, subset["time"],
-                                     subset["post-translational modification"],
-                                     average.SITE_AVERAGE[subset.get(
-                                         "site average", "maxabs")],
-                                     average.REPLICATE_AVERAGE[subset.get(
-                                         "replicate average", "mean")])))
+                for time in protein_interaction_network.get_times(network):
+                    for subset in configuration["community detection"][
+                            "Reactome enrichment"]["subsets"]:
+                        if subset.get(
+                                "PTM"
+                        ) in protein_interaction_network.get_modifications(
+                                network, time):
+                            for community in subset_proteins:
+                                measurement_range = (
+                                    conversion.MEASUREMENT_CONVERSION[
+                                        subset.get("conversion")]
+                                    (subset.get(
+                                        "measurement",
+                                        default.MEASUREMENT_RANGE[subset.get(
+                                            "conversion")])[0],
+                                     protein_interaction_network.
+                                     get_measurements(
+                                         community,
+                                         time,
+                                         subset["PTM"],
+                                         average.SITE_AVERAGE[subset.get(
+                                             "site average", "maxabs")],
+                                         average.REPLICATE_AVERAGE[subset.get(
+                                             "replicate average", "mean")],
+                                     )), conversion.MEASUREMENT_CONVERSION[
+                                         subset.get("conversion")]
+                                    (subset.get(
+                                        "measurement",
+                                        default.MEASUREMENT_RANGE[subset.get(
+                                            "conversion")])[1],
+                                     protein_interaction_network.
+                                     get_measurements(
+                                         community, time, subset["PTM"],
+                                         average.SITE_AVERAGE[subset.get(
+                                             "site average", "maxabs")],
+                                         average.REPLICATE_AVERAGE[subset.get(
+                                             "replicate average", "mean")])))
 
-                            if configuration["community detection"][
-                                    "Reactome enrichment"].get(
-                                        "intersection", False):
-                                subset_proteins[community].intersection_update(
-                                    protein_interaction_network.get_proteins(
-                                        community, subset["time"], subset[
-                                            "post-translational modification"],
-                                        average.SITE_AVERAGE[subset.get(
-                                            "site average", "maxabs")],
-                                        average.REPLICATE_AVERAGE[subset.get(
-                                            "replicate average",
-                                            "mean")], measurement_range))
+                                if configuration["community detection"][
+                                        "Reactome enrichment"].get(
+                                            "intersection", False):
+                                    subset_proteins[
+                                        community].intersection_update(
+                                            protein_interaction_network.
+                                            get_proteins(
+                                                community, time, subset["PTM"],
+                                                average.SITE_AVERAGE[subset.get(
+                                                    "site average", "maxabs")],
+                                                average.REPLICATE_AVERAGE[
+                                                    subset.get(
+                                                        "replicate average",
+                                                        "mean")],
+                                                measurement_range))
 
-                            else:
-                                subset_proteins[community].update(
-                                    protein_interaction_network.get_proteins(
-                                        community, subset["time"], subset[
-                                            "post-translational modification"],
-                                        average.SITE_AVERAGE[subset.get(
-                                            "site average", "maxabs")],
-                                        average.REPLICATE_AVERAGE[subset.get(
-                                            "replicate average",
-                                            "mean")], measurement_range))
+                                else:
+                                    subset_proteins[community].update(
+                                        protein_interaction_network.
+                                        get_proteins(
+                                            community, time, subset["PTM"],
+                                            average.SITE_AVERAGE[subset.get(
+                                                "site average", "maxabs")],
+                                            average.REPLICATE_AVERAGE[
+                                                subset.get(
+                                                    "replicate average",
+                                                    "mean")],
+                                            measurement_range))
 
                 reactome_enrichment = reactome.get_enrichment(
                     [
@@ -1670,7 +1662,7 @@ def main() -> None:
     """Concurrent workflow execution."""
     parser = argparse.ArgumentParser(
         description="DIANA: data integration and network-based analysis for "
-        "post-translational modification mass spectrometry data")
+        "PTM mass spectrometry data")
 
     parser.add_argument("-c",
                         "--configuration",
