@@ -111,66 +111,34 @@
         }
       },
       "CORUM enrichment": {
-        "subsets": [
-          {
-            "PTM": "P"
-          }
-        ],
+        "PTMs": ["P"],
         "p": 0.05
       },
       "Gene Ontology enrichment": {
-        "subsets": [
-          {
-            "PTM": "P"
-          }
-        ],
+        "PTMs": ["P"],
         "p": 0.05
       },
       "Reactome enrichment": {
-        "subsets": [
-          {
-            "PTM": "P"
-          }
-        ],
+        "PTMs": ["P"],
         "p": 0.05
       },
       "Gene Ontology network": {
-        "subsets": [
-          {
-            "PTM": "P"
-          }
-        ]
+        "PTMs": ["P"]
       },
       "Reactome network": {
-        "subsets": [
-          {
-            "PTM": "P"
-          }
-        ]
+        "PTMs": ["P"]
       },
       "community detection": {
         "CORUM enrichment": {
-          "subsets": [
-            {
-              "PTM": "P"
-            }
-          ],
+          "PTMs": ["P"],
           "p": 0.05
         },
         "Gene Ontology enrichment": {
-          "subsets": [
-            {
-              "PTM": "P"
-            }
-          ],
+          "PTMs": ["P"],
           "p": 0.05
         },
         "Reactome enrichment": {
-          "subsets": [
-            {
-              "PTM": "P"
-            }
-          ],
+          "PTMs": ["P"],
           "p": 0.05
         },
         "measurement enrichment": {

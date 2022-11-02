@@ -1053,55 +1053,38 @@ completely supported setting is `9606`, corresponding to Homo sapiens.
 [
     {
       "CORUM enrichment": {
-        "subsets": [
-          {
-            "PTM": null
-          }
-        ]
+        "PTMs": []
       },
       "Gene Ontology enrichment": {
-        "subsets": [
-          {
-            "PTM": null
-          }
-        ]
+        "PTMs": []
       },
       "Reactome enrichment": {
-        "subsets": [
-          {
-            "PTM": null
-          }
-        ]
+        "PTMs": []
       }
     }
 ]
 ```
-The post-translational modification considered to determine a subset of
-proteins for each applicable time of measurement.
+The post-translational modifications considered to determine subsets of
+proteins to which enrichment analysis is restricted. Subsets consist of proteins
+exceeding a specified range of protein-specific measurements.
 
 ```json
 [
     {
       "CORUM enrichment": {
-        "subsets": [
-          {
-            "site average": "maxabs"
-          }
-        ]
+        "site average": {
+          "PTM": "maxabs"
+        }
       },
       "Gene Ontology enrichment": {
-        "subsets": [
-          {
-            "site average": "maxabs"
-          }
-        ]
+        "site average": {
+          "PTM": "maxabs"
+        }
       },
       "Reactome enrichment": {
-        "subsets": [
-          {
-            "site average": "maxabs"
-          }
-        ]
+        "site average": {
+          "PTM": "maxabs"
+        }
       }
     }
 ]
@@ -1116,25 +1099,19 @@ measurement. Available settings are `"mean"`, `"median"`, `"mid-range"`,
 [
     {
       "CORUM enrichment": {
-        "subsets": [
-          {
-            "replicate average": "mean"
-          }
-        ]
+        "replicate average": {
+          "PTM": "mean"
+        }
       },
       "Gene Ontology enrichment": {
-        "subsets": [
-          {
-            "replicate average": "mean"
-          }
-        ]
+        "replicate average": {
+          "PTM": "mean"
+        }
       },
       "Reactome enrichment": {
-        "subsets": [
-          {
-            "replicate average": "mean"
-          }
-        ]
+        "replicate average": {
+          "PTM": "mean"
+        }
       }
     }
 ]
@@ -1149,25 +1126,19 @@ Available settings are `"mean"`, `"median"`, `"mid-range"`, `"max"`, `"maxabs"`,
 [
     {
       "CORUM enrichment": {
-        "subsets": [
-          {
-            "conversion": null
-          }
-        ]
+        "conversion": {
+          "PTM": null
+        }
       },
       "Gene Ontology enrichment": {
-        "subsets": [
-          {
-            "conversion": null
-          }
-        ]
+        "conversion": {
+          "PTM": null
+        }
       },
       "Reactome enrichment": {
-        "subsets": [
-          {
-            "conversion": null
-          }
-        ]
+        "conversion": {
+          "PTM": null
+        }
       }
     }
 ]
@@ -1182,25 +1153,19 @@ measurement across the protein-protein interaction network, if applicable.
 [
     {
       "CORUM enrichment": {
-        "subsets": [
-          {
-            "measurement": [-1.0, 1.0]
-          }
-        ]
+        "measurement": {
+          "PTM": [-1.0, 1.0]
+        }
       },
       "Gene Ontology enrichment": {
-        "subsets": [
-          {
-            "measurement": [-1.0, 1.0]
-          }
-        ]
+        "measurement": {
+          "PTM": [-1.0, 1.0]
+        }
       },
       "Reactome enrichment": {
-        "subsets": [
-          {
-            "measurement": [-1.0, 1.0]
-          }
-        ]
+        "measurement": {
+          "PTM": [-1.0, 1.0]
+        }
       }
     }
 ]
@@ -1275,41 +1240,30 @@ of proteins from the protein-protein interaction network.
 [
     {
       "Gene Ontology network": {
-        "subsets": [
-          {
-            "PTM": null
-          }
-        ]
+        "PTMs": []
       },
       "Reactome network": {
-        "subsets": [
-          {
-            "PTM": null
-          }
-        ]
+        "PTMs": []
       }
     }
 ]
 ```
-The post-translational modification considered to determine a subset of
-proteins for each applicable time of measurement.
+The post-translational modifications considered to determine subsets of
+proteins to which enrichment analysis is restricted. Subsets consist of proteins
+exceeding a specified range of protein-specific measurements.
 
 ```json
 [
     {
       "Gene Ontology network": {
-        "subsets": [
-          {
-            "site average": "maxabs"
-          }
-        ]
+        "site average": {
+          "PTM": "maxabs"
+        }
       },
       "Reactome network": {
-        "subsets": [
-          {
-            "site average": "maxabs"
-          }
-        ]
+        "site average": {
+          "PTM": "maxabs"
+        }
       }
     }
 ]
@@ -1324,18 +1278,14 @@ measurement. Available settings are `"mean"`, `"median"`, `"mid-range"`,
 [
     {
       "Gene Ontology network": {
-        "subsets": [
-          {
-            "replicate average": "mean"
-          }
-        ]
+        "replicate average": {
+          "PTM": "mean"
+        }
       },
       "Reactome network": {
-        "subsets": [
-          {
-            "replicate average": "mean"
-          }
-        ]
+        "replicate average": {
+          "PTM": "mean"
+        }
       }
     }
 ]
@@ -1350,18 +1300,14 @@ settings are `"mean"`, `"median"`, `"mid-range"`, `"max"`, `"maxabs"`, `"min"`,
 [
     {
       "Gene Ontology network": {
-        "subsets": [
-          {
-            "conversion": null
-          }
-        ]
+        "conversion": {
+          "PTM": null
+        }
       },
       "Reactome network": {
-        "subsets": [
-          {
-            "conversion": null
-          }
-        ]
+        "conversion": {
+          "PTM": null
+        }
       }
     }
 ]
@@ -1376,18 +1322,14 @@ measurement across the protein-protein interaction network, if applicable.
 [
     {
       "Gene Ontology network": {
-        "subsets": [
-          {
-            "measurement": [-1.0, 1.0]
-          }
-        ]
+        "measurement": {
+          "PTM": [-1.0, 1.0]
+        }
       },
       "Reactome network": {
-        "subsets": [
-          {
-            "measurement": [-1.0, 1.0]
-          }
-        ]
+        "measurement": {
+          "PTM": [-1.0, 1.0]
+        }
       }
     }
 ]
@@ -1784,57 +1726,40 @@ protein-protein interaction network. The default setting is `false`.
     {
       "community detection": {
         "CORUM enrichment": {
-          "subsets": [
-            {
-              "PTM": null
-            }
-          ]
+          "PTMs": []
         },
         "Gene Ontology enrichment": {
-          "subsets": [
-            {
-              "PTM": null
-            }
-          ]
+          "PTMs": []
         },
         "Reactome enrichment": {
-          "subsets": [
-            {
-              "PTM": null
-            }
-          ]
+          "PTMs": []
         }
       }
     }
 ]
 ```
-The post-translational modification considered to determine a subset of
-proteins for each applicable time of measurement.
+The post-translational modifications considered to determine subsets of
+proteins to which enrichment analysis is restricted. Subsets consist of proteins
+exceeding a specified range of protein-specific measurements.
 
 ```json
 [
     {
       "community detection": {
         "CORUM enrichment": {
-          "subsets": [
-            {
-              "site average": "maxabs"
-            }
-          ]
+          "site average": {
+            "PTM": "maxabs"
+          }
         },
         "Gene Ontology enrichment": {
-          "subsets": [
-            {
-              "site average": "maxabs"
-            }
-          ]
+          "site average": {
+            "PTM": "maxabs"
+          }
         },
         "Reactome enrichment": {
-          "subsets": [
-            {
-              "site average": "maxabs"
-            }
-          ]
+          "site average": {
+            "PTM": "maxabs"
+          }
         }
       }
     }
@@ -1851,25 +1776,19 @@ measurement. Available settings are `"mean"`, `"median"`, `"mid-range"`,
     {
       "community detection": {
         "CORUM enrichment": {
-          "subsets": [
-            {
-              "replicate average": "mean"
-            }
-          ]
+          "replicate average": {
+            "PTM": "mean"
+          }
         },
         "Gene Ontology enrichment": {
-          "subsets": [
-            {
-              "replicate average": "mean"
-            }
-          ]
+          "replicate average": {
+            "PTM": "mean"
+          }
         },
         "Reactome enrichment": {
-          "subsets": [
-            {
-              "replicate average": "mean"
-            }
-          ]
+          "replicate average": {
+            "PTM": "mean"
+          }
         }
       }
     }
@@ -1886,25 +1805,19 @@ settings are `"mean"`, `"median"`, `"mid-range"`, `"max"`, `"maxabs"`, `"min"`,
     {
       "community detection": {
         "CORUM enrichment": {
-          "subsets": [
-            {
-              "conversion": null
-            }
-          ]
+          "conversion": {
+            "PTM": null
+          }
         },
         "Gene Ontology enrichment": {
-          "subsets": [
-            {
-              "conversion": null
-            }
-          ]
+          "conversion": {
+            "PTM": null
+          }
         },
         "Reactome enrichment": {
-          "subsets": [
-            {
-              "conversion": null
-            }
-          ]
+          "conversion": {
+            "PTM": null
+          }
         }
       }
     }
@@ -1922,25 +1835,19 @@ if applicable.
     {
       "community detection": {
         "CORUM enrichment": {
-          "subsets": [
-            {
-              "measurement": [-1.0, 1.0]
-            }
-          ]
+          "measurement": {
+            "PTM": [-1.0, 1.0]
+          }
         },
         "Gene Ontology enrichment": {
-          "subsets": [
-            {
-              "measurement": [-1.0, 1.0]
-            }
-          ]
+          "measurement": {
+            "PTM": [-1.0, 1.0]
+          }
         },
         "Reactome enrichment": {
-          "subsets": [
-            {
-              "measurement": [-1.0, 1.0]
-            }
-          ]
+          "measurement": {
+            "PTM": [-1.0, 1.0]
+          }
         }
       }
     }
