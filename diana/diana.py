@@ -9,7 +9,7 @@ import logging
 import os
 import re
 import sys
-from typing import Any, Mapping, Sequence
+from typing import Any, Mapping
 
 import networkx as nx
 
