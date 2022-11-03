@@ -1045,9 +1045,12 @@ completely supported setting is `9606`, corresponding to Homo sapiens.
     }
 ]
 ```
-The post-translational modifications considered to determine subsets of
-proteins to which enrichment analysis is restricted. Subsets consist of proteins
-exceeding a specified range of protein-specific measurements.
+The post-translational modifications considered to determine subsets of proteins
+to the combination of which enrichment analysis is restricted. If restricted,
+enrichment by these proteins is computed with respect to proteins represented in
+the protein-protein interaction network, instead of the entire species-specific
+Gene Ontology annotation. Subsets consist of proteins exceeding a specified
+range of protein-specific measurements.
 
 ```json
 [
@@ -1194,9 +1197,12 @@ of proteins from the protein-protein interaction network.
     }
 ]
 ```
-The post-translational modifications considered to determine subsets of
-proteins to which enrichment analysis is restricted. Subsets consist of proteins
-exceeding a specified range of protein-specific measurements.
+The post-translational modifications considered to determine subsets of proteins
+to the combination of which enrichment analysis is restricted. If restricted,
+enrichment by these proteins is computed with respect to proteins represented in
+the protein-protein interaction network, instead of the entire species-specific
+Gene Ontology annotation. Subsets consist of proteins exceeding a specified
+range of protein-specific measurements.
 
 ```json
 [
@@ -1663,9 +1669,12 @@ protein-protein interaction network. The default setting is `false`.
     }
 ]
 ```
-The post-translational modifications considered to determine subsets of
-proteins to which enrichment analysis is restricted. Subsets consist of proteins
-exceeding a specified range of protein-specific measurements.
+The post-translational modifications considered to determine subsets of proteins
+to the combinations of which enrichment analysis for each module is restricted.
+If restricted, enrichment by these proteins is computed with respect to the
+union of the subsets across the protein-protein interaction network, instead of
+the entire species-specific Gene Ontology annotation. Subsets consist of
+proteins exceeding a specified range of protein-specific measurements.
 
 ```json
 [

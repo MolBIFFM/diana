@@ -139,7 +139,7 @@ def get_enrichment(
     multiple_testing_correction: Callable[[dict[Hashable, float]], Mapping[
         Hashable, float]] = correction.benjamini_yekutieli,
     organism: int = 9606,
-    annotation_as_reference: bool = False
+    reference: Optional[Container[str]] = None
 ) -> dict[frozenset[str], dict[tuple[str, str], float]]:
     """
     Test sets of proteins for enrichment of Reactome pathways.
@@ -151,9 +151,9 @@ def get_enrichment(
         multiple_testing_correction: The procedure to correct for multiple
             testing of multiple pathways and sets of proteins.
         organism: The NCBI taxonomy identifier for the organism of interest.
-        annotation_as_reference: If True, compute enrichment with respect to the
-            species-specific Reactome pathway annotation, otherwise with respect
-            to the union of the sets of proteins.
+        reference: If not None, compute enrichment with respect to the
+            this reference set of proteins, otherwise with respect to the
+            species-specific Gene Ontology annotation in namespaces.
 
     Returns:
         Corrected p-value for the enrichment of each Reactome pathway by
@@ -165,7 +165,7 @@ def get_enrichment(
 
     annotation: dict[str, set[str]] = {}
     for protein, pathway in get_pathway_annotation(organism):
-        if annotation_as_reference or any(protein in prt for prt in proteins):
+        if reference is None or protein in reference:
             if pathway not in annotation:
                 annotation[pathway] = set()
             annotation[pathway].add(protein)

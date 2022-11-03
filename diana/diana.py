@@ -486,7 +486,7 @@ def process_workflow(configuration: Mapping[str, Any],
         )
 
     if "Gene Ontology enrichment" in configuration:
-        if "subsets" in configuration["Gene Ontology enrichment"]:
+        if "PTMs" in configuration["Gene Ontology enrichment"]:
             if configuration["Gene Ontology enrichment"].get(
                     "intersection", False):
                 proteins = set(network.nodes())
@@ -622,7 +622,7 @@ def process_workflow(configuration: Mapping[str, Any],
                                 f"{name}\t{p:.2e}")
 
     if "Reactome enrichment" in configuration:
-        if "subsets" in configuration["Reactome enrichment"]:
+        if "PTMs" in configuration["Reactome enrichment"]:
             if configuration["Reactome enrichment"].get("intersection", False):
                 proteins = set(network.nodes())
             else:
@@ -734,7 +734,7 @@ def process_workflow(configuration: Mapping[str, Any],
                                 f"{name}\t{p:.2e}")
 
     if "Gene Ontology network" in configuration:
-        if "subsets" in configuration["Gene Ontology network"]:
+        if "PTMs" in configuration["Gene Ontology network"]:
             if configuration["Gene Ontology network"].get(
                     "intersection", False):
                 proteins = set(network.nodes())
@@ -864,7 +864,7 @@ def process_workflow(configuration: Mapping[str, Any],
                 if index else f"{logger.name}_gene_ontology")
 
     if "Reactome network" in configuration:
-        if "subsets" in configuration["Reactome network"]:
+        if "PTMs" in configuration["Reactome network"]:
             if configuration["Reactome network"].get("intersection", False):
                 proteins = set(network.nodes())
             else:
@@ -997,7 +997,7 @@ def process_workflow(configuration: Mapping[str, Any],
         export = {community: False for community in communities}
 
         if "Gene Ontology enrichment" in configuration["community detection"]:
-            if "subsets" in configuration["community detection"][
+            if "PTMs" in configuration["community detection"][
                     "Gene Ontology enrichment"]:
                 if configuration["community detection"][
                         "Gene Ontology enrichment"].get("intersection", False):
@@ -1138,8 +1138,11 @@ def process_workflow(configuration: Mapping[str, Any],
                                 "biological process"
                             ])
                     ],
-                    annotation_as_reference=configuration["community detection"]
-                    ["Gene Ontology enrichment"].get("annotation", False))
+                    reference=set.union(*(subset_proteins[community]
+                                          for community in communities))
+                    if configuration["community detection"]
+                    ["Gene Ontology enrichment"].get("annotation",
+                                                     False) else None)
 
                 for k, community in enumerate(sorted(
                         communities,
@@ -1180,8 +1183,10 @@ def process_workflow(configuration: Mapping[str, Any],
                                 "biological process"
                             ])
                     ],
-                    annotation_as_reference=configuration["community detection"]
-                    ["Gene Ontology enrichment"].get("annotation", False))
+                    reference=network.nodes()
+                    if configuration["community detection"]
+                    ["Gene Ontology enrichment"].get("annotation",
+                                                     False) else None)
 
                 for k, community in enumerate(sorted(
                         communities,
@@ -1199,7 +1204,7 @@ def process_workflow(configuration: Mapping[str, Any],
                                         f"{k}\t{term}\t{name}\t{p:.2e}")
 
         if "Reactome enrichment" in configuration["community detection"]:
-            if "subsets" in configuration["community detection"][
+            if "PTMs" in configuration["community detection"][
                     "Reactome enrichment"]:
                 if configuration["community detection"][
                         "Reactome enrichment"].get("intersection", False):
@@ -1328,8 +1333,11 @@ def process_workflow(configuration: Mapping[str, Any],
                                                     "Benjamini-Yekutieli")],
                     organism=configuration["community detection"]
                     ["Reactome enrichment"].get("organism", 9606),
-                    annotation_as_reference=configuration["community detection"]
-                    ["Reactome enrichment"].get("annotation", False))
+                    reference=set.union(*(subset_proteins[community]
+                                          for community in communities))
+                    if configuration["community detection"]
+                    ["Gene Ontology enrichment"].get("annotation",
+                                                     False) else None)
 
                 for k, community in enumerate(sorted(
                         communities,
@@ -1360,8 +1368,10 @@ def process_workflow(configuration: Mapping[str, Any],
                                                     "Benjamini-Yekutieli")],
                     organism=configuration["community detection"]
                     ["Reactome enrichment"].get("organism", 9606),
-                    annotation_as_reference=configuration["community detection"]
-                    ["Reactome enrichment"].get("annotation", False))
+                    reference=network.nodes()
+                    if configuration["community detection"]
+                    ["Gene Ontology enrichment"].get("annotation",
+                                                     False) else None)
 
                 for k, community in enumerate(sorted(
                         communities,

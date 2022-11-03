@@ -1,6 +1,6 @@
 """The interface for the Gene Ontology database."""
 from typing import (Callable, Collection, Container, Hashable, Iterable,
-                    Iterator, Mapping)
+                    Iterator, Mapping, Optional)
 
 import scipy.stats
 from access import iterate
@@ -129,7 +129,7 @@ def get_enrichment(
     organism: int = 9606,
     namespaces: Collection[str] = ("cellular_component", "molecular_function",
                                    "biological_process"),
-    annotation_as_reference: bool = False
+    reference: Optional[Container[str]] = None
 ) -> dict[frozenset, dict[tuple[str, str], float]]:
     """
     Test sets of proteins for enrichment of Gene Ontology terms.
@@ -142,10 +142,9 @@ def get_enrichment(
             testing of multiple terms and sets of proteins.
         organism: The NCBI taxonomy identifier for the organism of interest.
         namespaces: The Gene Ontology namespaces.
-        annotation_as_reference: If True, compute enrichment with respect to the
-            species-specific Gene Ontology annotation in namespaces, otherwise
-            with respect to the union of the sets of proteins.
-
+        reference: If not None, compute enrichment with respect to the
+            this reference set of proteins, otherwise with respect to the
+            species-specific Gene Ontology annotation in namespaces.
     Returns:
         Corrected p-value for the enrichment of each Gene Ontology term by each
         network.
@@ -163,7 +162,7 @@ def get_enrichment(
     annotation: dict[str, set[str]] = {}
     for protein, annotated_term in get_annotation(
             organism, convert_namespaces(namespaces)):
-        if annotation_as_reference or any(protein in prt for prt in proteins):
+        if reference is None or protein in reference:
             for primary_term in go_id.get(annotated_term, {annotated_term}):
                 if primary_term not in annotation:
                     annotation[primary_term] = set()
