@@ -9,12 +9,11 @@ networks to contextualize differential post-translational modification,
 combining submitted mass spectrometry data with publicly accessible
 protein-protein interactions as well as additional protein annotation.
 
-The enrichment of CORUM protein complexes, Gene Ontology terms, and Reactome
-pathways by proteins associated with relatively large measurements or proteins
-representing densely interacting portions of the assembled protein-protein
-interaction networks can be assessed. Further, densely interacting portions of
-the protein-protein interaction networks enriching relatively large measurements
-can be determined.
+The enrichment of Gene Ontology terms, and Reactome pathways by proteins
+associated with relatively large measurements or proteins representing densely
+interacting portions of the assembled protein-protein interaction networks can
+be assessed. Further, densely interacting portions of the protein-protein
+interaction networks enriching relatively large measurements can be determined.
 
 Networks of Gene Ontology terms or Reactome pathways, reporting enrichment of
 each term or pathway by the represented proteins, can be generated along
@@ -960,9 +959,6 @@ of proteins from the protein-protein interaction network.
 ```json
 [
     {
-      "CORUM enrichment": {
-        "test": "hypergeometric"
-      },
       "Gene Ontology enrichment": {
         "test": "hypergeometric"
       },
@@ -979,9 +975,6 @@ settings are `"binomial"` and `"hypergeometric"`.
 ```json
 [
     {
-      "CORUM enrichment": {
-        "increase": true
-      },
       "Gene Ontology enrichment": {
         "increase": true
       },
@@ -997,9 +990,6 @@ setting is `true`.
 ```json
 [
     {
-      "CORUM enrichment": {
-        "correction": "Benjamini-Yekutieli"
-      },
       "Gene Ontology enrichment": {
         "correction": "Benjamini-Yekutieli"
       },
@@ -1016,9 +1006,6 @@ The procedure to correct p-values for multiple testing. The default setting is
 ```json
 [
     {
-      "CORUM enrichment": {
-        "p": 1.0
-      },
       "Gene Ontology enrichment": {
         "p": 1.0
       },
@@ -1034,9 +1021,6 @@ setting is `1.0`.
 ```json
 [
     {
-      "CORUM enrichment": {
-        "organism": 9606
-      },
       "Gene Ontology enrichment": {
         "organism": 9606
       },
@@ -1052,9 +1036,6 @@ completely supported setting is `9606`, corresponding to Homo sapiens.
 ```json
 [
     {
-      "CORUM enrichment": {
-        "PTMs": []
-      },
       "Gene Ontology enrichment": {
         "PTMs": []
       },
@@ -1071,11 +1052,6 @@ exceeding a specified range of protein-specific measurements.
 ```json
 [
     {
-      "CORUM enrichment": {
-        "site average": {
-          "PTM": "maxabs"
-        }
-      },
       "Gene Ontology enrichment": {
         "site average": {
           "PTM": "maxabs"
@@ -1098,11 +1074,6 @@ measurement. Available settings are `"mean"`, `"median"`, `"mid-range"`,
 ```json
 [
     {
-      "CORUM enrichment": {
-        "replicate average": {
-          "PTM": "mean"
-        }
-      },
       "Gene Ontology enrichment": {
         "replicate average": {
           "PTM": "mean"
@@ -1125,11 +1096,6 @@ Available settings are `"mean"`, `"median"`, `"mid-range"`, `"max"`, `"maxabs"`,
 ```json
 [
     {
-      "CORUM enrichment": {
-        "conversion": {
-          "PTM": null
-        }
-      },
       "Gene Ontology enrichment": {
         "conversion": {
           "PTM": null
@@ -1152,11 +1118,6 @@ measurement across the protein-protein interaction network, if applicable.
 ```json
 [
     {
-      "CORUM enrichment": {
-        "measurement": {
-          "PTM": [-1.0, 1.0]
-        }
-      },
       "Gene Ontology enrichment": {
         "measurement": {
           "PTM": [-1.0, 1.0]
@@ -1180,9 +1141,6 @@ set to `"quantile"`, `[0.5, 2.0]` if `"conversion"` is set to `"ratio"`, and
 ```json
 [
     {
-      "CORUM enrichment": {
-        "intersection": false
-      },
       "Gene Ontology enrichment": {
         "intersection": false
       },
@@ -1195,18 +1153,6 @@ set to `"quantile"`, `[0.5, 2.0]` if `"conversion"` is set to `"ratio"`, and
 If `true`, compute enrichment with respect to the intersection of specified
 subsets of proteins from the protein-protein interaction network instead of
 their union. The default setting is `false`.
-
-```json
-[
-    {
-      "CORUM enrichment": {
-        "purification methods": []
-      }
-    }
-]
-```
-A list of accepted PSI-MI identifiers or terms for protein complex purification
-methods. The default setting is `[]`, corresponding to any annotation.
 
 ```json
 [
@@ -1550,9 +1496,6 @@ tests.
 [
     {
       "community detection": {
-        "CORUM enrichment": {
-          "increase": true
-        },
         "Gene Ontology enrichment": {
           "increase": true
         },
@@ -1577,9 +1520,6 @@ a community. The default setting is `true`.
 [
     {
       "community detection": {
-        "CORUM enrichment": {
-          "correction": "Benjamini-Yekutieli"
-        },
         "Gene Ontology enrichment": {
           "correction": "Benjamini-Yekutieli"
         },
@@ -1604,9 +1544,6 @@ The procedure to correct p-values for multiple testing. The default setting is
 [
     {
       "community detection": {
-        "CORUM enrichment": {
-          "p": 1.0
-        },
         "Gene Ontology enrichment": {
           "p": 1.0
         },
@@ -1629,9 +1566,6 @@ The corrected p-value threshold. The default setting is `1.0`.
 [
     {
       "community detection": {
-        "CORUM enrichment": {
-          "test": "hypergeometric"
-        },
         "Gene Ontology enrichment": {
           "test": "hypergeometric"
         },
@@ -1684,9 +1618,6 @@ measurements. The default value is `true`.
 [
     {
       "community detection": {
-        "CORUM enrichment": {
-          "organism": 9606
-        },
         "Gene Ontology enrichment": {
           "organism": 9606
         },
@@ -1704,9 +1635,6 @@ completely supported setting is `9606`, corresponding to Homo sapiens.
 [
     {
       "community detection": {
-        "CORUM enrichment": {
-          "annotation": false
-        },
         "Gene Ontology enrichment": {
           "annotation": false
         },
@@ -1725,9 +1653,6 @@ protein-protein interaction network. The default setting is `false`.
 [
     {
       "community detection": {
-        "CORUM enrichment": {
-          "PTMs": []
-        },
         "Gene Ontology enrichment": {
           "PTMs": []
         },
@@ -1746,11 +1671,6 @@ exceeding a specified range of protein-specific measurements.
 [
     {
       "community detection": {
-        "CORUM enrichment": {
-          "site average": {
-            "PTM": "maxabs"
-          }
-        },
         "Gene Ontology enrichment": {
           "site average": {
             "PTM": "maxabs"
@@ -1775,11 +1695,6 @@ measurement. Available settings are `"mean"`, `"median"`, `"mid-range"`,
 [
     {
       "community detection": {
-        "CORUM enrichment": {
-          "replicate average": {
-            "PTM": "mean"
-          }
-        },
         "Gene Ontology enrichment": {
           "replicate average": {
             "PTM": "mean"
@@ -1804,11 +1719,6 @@ settings are `"mean"`, `"median"`, `"mid-range"`, `"max"`, `"maxabs"`, `"min"`,
 [
     {
       "community detection": {
-        "CORUM enrichment": {
-          "conversion": {
-            "PTM": null
-          }
-        },
         "Gene Ontology enrichment": {
           "conversion": {
             "PTM": null
@@ -1834,11 +1744,6 @@ if applicable.
 [
     {
       "community detection": {
-        "CORUM enrichment": {
-          "measurement": {
-            "PTM": [-1.0, 1.0]
-          }
-        },
         "Gene Ontology enrichment": {
           "measurement": {
             "PTM": [-1.0, 1.0]
@@ -1864,9 +1769,6 @@ set to `"quantile"`, `[0.5, 2.0]` if `"conversion"` is set to `"ratio"`, and
 [
     {
       "community detection": {
-        "CORUM enrichment": {
-          "intersection": false
-        },
         "Gene Ontology enrichment": {
           "intersection": false
         },
@@ -1880,20 +1782,6 @@ set to `"quantile"`, `[0.5, 2.0]` if `"conversion"` is set to `"ratio"`, and
 If `true`, compute enrichment with respect to the intersection of specified
 subsets of proteins from the protein-protein interaction network instead of
 their union. The default setting is `false`.
-
-```json
-[
-    {
-      "community detection": {
-        "CORUM enrichment": {
-          "purification methods": []
-        }
-      }
-    }
-]
-```
-A list of accepted PSI-MI identifiers or terms for protein complex purification
-methods. The default setting is `[]`, corresponding to any annotation.
 
 ```json
 [

@@ -110,10 +110,6 @@
           "PTM": "A"
         }
       },
-      "CORUM enrichment": {
-        "PTMs": ["P"],
-        "p": 0.05
-      },
       "Gene Ontology enrichment": {
         "PTMs": ["P"],
         "p": 0.05
@@ -129,10 +125,6 @@
         "PTMs": ["P"]
       },
       "community detection": {
-        "CORUM enrichment": {
-          "PTMs": ["P"],
-          "p": 0.05
-        },
         "Gene Ontology enrichment": {
           "PTMs": ["P"],
           "p": 0.05
