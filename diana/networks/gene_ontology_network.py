@@ -5,7 +5,8 @@ Nodes are Gene Ontology terms associated with proteins from a species of
 interest. Edges are directed term relationships within the Gene Ontology.
 """
 
-from typing import Callable, Collection, Container, Hashable, Iterable, Mapping
+from typing import (Callable, Collection, Container, Hashable, Iterable,
+                    Mapping, Optional)
 
 import networkx as nx
 import scipy.stats
@@ -13,17 +14,17 @@ from algorithms import correction
 from databases import gene_ontology
 
 
-def get_network(
-    proteins: Iterable[str] = frozenset(),
-    namespaces: Collection[str] = ("cellular_component", "molecular_function",
-                                   "biological_process"),
-    enrichment_test: Callable[
-        [int, int, int, int],
-        float] = lambda k, M, n, N: scipy.stats.hypergeom.sf(k - 1, M, n, N),
-    multiple_testing_correction: Callable[[dict[Hashable, float]], Mapping[
-        Hashable, float]] = correction.benjamini_yekutieli,
-    organism: int = 9606,
-    reference: Container[str] = frozenset()) -> nx.DiGraph:
+def get_network(proteins: Iterable[str],
+                namespaces: Collection[str] = ("cellular_component",
+                                               "molecular_function",
+                                               "biological_process"),
+                enrichment_test: Callable[[int, int, int, int], float] = lambda
+                k, M, n, N: scipy.stats.hypergeom.sf(k - 1, M, n, N),
+                multiple_testing_correction: Callable[
+                    [dict[Hashable, float]],
+                    Mapping[Hashable, float]] = correction.benjamini_yekutieli,
+                organism: int = 9606,
+                reference: Optional[Container[str]] = None) -> nx.DiGraph:
     """
     Assemble a Gene Ontology network from proteins.
 
@@ -35,6 +36,9 @@ def get_network(
         multiple_testing_correction: The procedure to correct for testing of
             multiple terms.
         organism: The NCBI taxonomy identifier for the organism of interest.
+        reference: Optional reference set of proteins with respect to which
+            enrichment is computed. If not provided, the entire Gene Ontology
+            annotation specific to the organism of interest is used.
 
     Returns:
         The Gene Ontology network.
@@ -63,7 +67,7 @@ def get_network(
             if primary_term not in annotation:
                 annotation[primary_term] = set()
 
-            if not reference or protein in reference:
+            if reference is None or protein in reference:
                 annotation[primary_term].add(protein)
 
     network.remove_nodes_from(

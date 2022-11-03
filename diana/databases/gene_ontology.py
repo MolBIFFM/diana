@@ -142,9 +142,10 @@ def get_enrichment(
             testing of multiple terms and sets of proteins.
         organism: The NCBI taxonomy identifier for the organism of interest.
         namespaces: The Gene Ontology namespaces.
-        reference: If not None, compute enrichment with respect to the
-            this reference set of proteins, otherwise with respect to the
-            species-specific Gene Ontology annotation in namespaces.
+        reference: Optional reference set of proteins with respect to which
+            enrichment is computed. If not provided, the entire Gene Ontology
+            annotation specific to the organism of interest is used.
+
     Returns:
         Corrected p-value for the enrichment of each Gene Ontology term by each
         network.

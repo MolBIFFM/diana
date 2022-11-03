@@ -5,7 +5,7 @@ Nodes are Reactome pathways associated with proteins from a species of interest.
 Edges are directed pathway relationships within Reactome.
 """
 
-from typing import Callable, Container, Hashable, Iterable, Mapping
+from typing import Callable, Container, Hashable, Iterable, Mapping, Optional
 
 import networkx as nx
 import scipy.stats
@@ -13,15 +13,14 @@ from algorithms import correction
 from databases import reactome
 
 
-def get_network(
-    proteins: Iterable[str] = frozenset(),
-    enrichment_test: Callable[
-        [int, int, int, int],
-        float] = lambda k, M, n, N: scipy.stats.hypergeom.sf(k - 1, M, n, N),
-    multiple_testing_correction: Callable[[dict[Hashable, float]], Mapping[
-        Hashable, float]] = correction.benjamini_yekutieli,
-    organism: int = 9606,
-    reference: Container[str] = frozenset()) -> nx.DiGraph:
+def get_network(proteins: Iterable[str],
+                enrichment_test: Callable[[int, int, int, int], float] = lambda
+                k, M, n, N: scipy.stats.hypergeom.sf(k - 1, M, n, N),
+                multiple_testing_correction: Callable[
+                    [dict[Hashable, float]],
+                    Mapping[Hashable, float]] = correction.benjamini_yekutieli,
+                organism: int = 9606,
+                reference: Optional[Container[str]] = None) -> nx.DiGraph:
     """
     Assemble a Reactome network from proteins.
 
@@ -32,6 +31,9 @@ def get_network(
         multiple_testing_correction: The procedure to correct for testing of
             multiple pathways.
         organism: The NCBI taxonomy identifier for the organism of interest.
+        reference: Optional reference set of proteins with respect to which
+            enrichment is computed. If not provided, the entire Reactome pathway
+            annotation specific to the organism of interest is used.
 
     Returns:
         The Reactome network.
