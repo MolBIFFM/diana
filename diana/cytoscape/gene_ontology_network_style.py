@@ -428,8 +428,8 @@ def get_styles(network: nx.Graph) -> ET.ElementTree:
     elements.add_continuous_mapping(
         visual_properties["node"]["NODE_SIZE"], "number of proteins", "integer",
         {
-            0: (0.0, 0.0, 0.0),
-            max_number_proteins: (math.sqrt(max_number_proteins),) * 3
+            0: (1.0, 1.0, 1.0),
+            max_number_proteins: (1.0 + math.sqrt(max_number_proteins),) * 3
         })
 
     ET.indent(styles)
