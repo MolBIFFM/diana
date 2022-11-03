@@ -9,7 +9,7 @@ import logging
 import os
 import re
 import sys
-from typing import Any, Mapping, Optional, Sequence
+from typing import Any, Mapping, Sequence
 
 import networkx as nx
 
@@ -23,13 +23,13 @@ from networks import (gene_ontology_network, protein_interaction_network,
                       reactome_network)
 
 
-def process_workflow(configuration: Mapping[str, Any],
-                     logger: logging.Logger,
-                     index: Optional[int] = None) -> None:
+def process_workflow(identifier: str, configuration: Mapping[str, Any],
+                     logger: logging.Logger) -> None:
     """
-    Executes a workflow specified in configuration.
+    Executes a workflow with identifier specified in configuration.
 
     Args:
+        identifier: An identifier for the workflow.
         configuration: The specification of a workflow.
         logger: A logger.
     """
@@ -475,15 +475,9 @@ def process_workflow(configuration: Mapping[str, Any],
                     confidence_score_average=average.CONFIDENCE_SCORE_AVERAGE[
                         configuration["Cytoscape"].get("edge transparency")])
 
-                protein_interaction_network_style.export(
-                    styles,
-                    f"{logger.name}_{index}" if index else logger.name,
-                )
+                protein_interaction_network_style.export(styles, identifier)
 
-        protein_interaction_network.export(
-            network,
-            f"{logger.name}_{index}" if index else logger.name,
-        )
+        protein_interaction_network.export(network, identifier)
 
     if "Gene Ontology enrichment" in configuration:
         if "PTMs" in configuration["Gene Ontology enrichment"]:
@@ -852,16 +846,13 @@ def process_workflow(configuration: Mapping[str, Any],
                 organism=configuration["Gene Ontology network"].get(
                     "organism", 9606))
 
-        gene_ontology_network.export(
-            ontology_network, f"{logger.name}_gene_ontology_{index}"
-            if index else f"{logger.name}_gene_ontology")
+        gene_ontology_network.export(ontology_network, identifier)
 
         if "Cytoscape" in configuration:
             ontology_network_styles = gene_ontology_network_style.get_styles(
                 ontology_network)
-            gene_ontology_network_style.export(
-                ontology_network_styles, f"{logger.name}_gene_ontology_{index}"
-                if index else f"{logger.name}_gene_ontology")
+            gene_ontology_network_style.export(ontology_network_styles,
+                                               identifier)
 
     if "Reactome network" in configuration:
         if "PTMs" in configuration["Reactome network"]:
@@ -962,16 +953,12 @@ def process_workflow(configuration: Mapping[str, Any],
                 organism=configuration["Reactome network"].get(
                     "organism", 9606))
 
-        reactome_network.export(
-            pathway_network, f"{logger.name}_reactome_{index}"
-            if index else f"{logger.name}_reactome")
+        reactome_network.export(pathway_network, identifier)
 
         if "Cytoscape" in configuration:
             pathway_network_styles = reactome_network_style.get_styles(
                 pathway_network)
-            reactome_network_style.export(
-                pathway_network_styles, f"{logger.name}_reactome_{index}"
-                if index else f"{logger.name}_reactome")
+            reactome_network_style.export(pathway_network_styles, identifier)
 
     if "community detection" in configuration:
         protein_interaction_network.set_edge_weights(
@@ -1510,14 +1497,11 @@ def process_workflow(configuration: Mapping[str, Any],
                 reverse=True),
                                       start=1):
             if export[community]:
-                protein_interaction_network.export(
-                    community,
-                    f"{logger.name}_{index}_{k}"
-                    if index else f"{logger.name}_{k}",
-                )
+                protein_interaction_network.export(community,
+                                                   f"{identifier}_{k}")
 
 
-def process_configuration(configurations: Sequence[Mapping[str, Any]],
+def process_configuration(configurations: dict[str, dict[str, Any]],
                           logger: logging.Logger) -> None:
     """
     Executes workflows specified in configurations sequentially.
@@ -1526,11 +1510,8 @@ def process_configuration(configurations: Sequence[Mapping[str, Any]],
         configurations: The specification of workflows.
         logger: A configuration-specific logger.
     """
-    if len(configurations) > 1:
-        for i, configuration in enumerate(configurations, start=1):
-            process_workflow(configuration, logger, i)
-    else:
-        process_workflow(configurations[0], logger)
+    for identifier, configuration in configurations.items():
+        process_workflow(identifier, configuration, logger)
 
 
 def process_configuration_file(configuration_file: str) -> None:

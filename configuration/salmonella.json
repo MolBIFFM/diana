@@ -1,118 +1,133 @@
-[
-    {
-      "proteins": [
-        {
-          "time": 30,
-          "PTM": "P",
-          "file": "data/salmonella/phosphorylation/Supplementary_Table_01.xlsx",
-          "sheet": "Supplementary1",
-          "accession column": "Protein",
-          "position column": "Positions.within.proteins",
-          "replicate columns": [
-            "Ratio.H.L.normalized.E1",
-            "Ratio.H.L.normalized.E2",
-            "Ratio.H.L.normalized.E3",
-            "Ratio.H.L.normalized.E4"
-          ],
-          "replicates": 2,
-          "logarithm": 2
-        },
-        {
-          "time": 120,
-          "PTM": "P",
-          "file": "data/salmonella/phosphorylation/Supplementary_Table_01.xlsx",
-          "sheet": "Supplementary1",
-          "accession column": "Protein",
-          "position column": "Positions.within.proteins",
-          "replicate columns": [
-            "Ratio.M.L.normalized.E1",
-            "Ratio.M.L.normalized.E2",
-            "Ratio.M.L.normalized.E3",
-            "Ratio.M.L.normalized.E4"
-          ],
-          "replicates": 2,
-          "logarithm": 2
-        },
-        {
-          "time": 30,
-          "PTM": "U",
-          "file": "data/salmonella/ubiquitination/20151119_HeLa_HCT116_05h_2h_all.xlsx",
-          "sheet": "20151119_HeLa_HCT116_05h_2h_all",
-          "accession column": "Protein",
-          "position column": "Positions within proteins",
-          "position format": "(?=(?:^|;)(.+?)(?:;|$))",
-          "replicate columns": [
-            "Ratio H/L normalized HCT116_05_R1",
-            "Ratio H/L normalized HCT116_05_R2",
-            "Ratio H/L normalized HCT116_05_R3",
-            "Ratio H/L normalized HCT116_05_R4"
-          ],
-          "replicates": 2,
-          "logarithm": 2
-        },
-        {
-          "time": 120,
-          "PTM": "U",
-          "file": "data/salmonella/ubiquitination/20151119_HeLa_HCT116_05h_2h_all.xlsx",
-          "sheet": "20151119_HeLa_HCT116_05h_2h_all",
-          "accession column": "Protein",
-          "position column": "Positions within proteins",
-          "position format": "(?=(?:^|;)(.+?)(?:;|$))",
-          "replicate columns": [
-            "Ratio H/L normalized HCT116_2_R1",
-            "Ratio H/L normalized HCT116_2_R2",
-            "Ratio H/L normalized HCT116_2_R3",
-            "Ratio H/L normalized HCT116_2_R4"
-          ],
-          "replicates": 2,
-          "logarithm": 2
-        }
-      ],
-      "protein-protein interactions": {
-        "BioGRID": {
-          "experimental system": [
-            "Affinity Capture-Luminescence",
-            "Affinity Capture-MS",
-            "Affinity Capture-RNA",
-            "Affinity Capture-Western",
-            "Biochemical Activity",
-            "Co-crystal Structure",
-            "Co-purification",
-            "FRET",
-            "PCA",
-            "Two-hybrid"
-          ]
-        },
-        "CORUM": {
-        },
-        "IntAct": {
-          "score": 0.27
-        },
-        "MINT": {
-          "score": 0.27
-        },
-        "Reactome": {
-        },
-        "STRING": {
-          "experiments score": 0.7,
-          "combined score": 0.7
+{
+  "salmonella": {
+    "proteins": [
+      {
+        "time": 30,
+        "PTM": "P",
+        "file": "data/salmonella/phosphorylation/Supplementary_Table_01.xlsx",
+        "sheet": "Supplementary1",
+        "accession column": "Protein",
+        "position column": "Positions.within.proteins",
+        "replicate columns": [
+          "Ratio.H.L.normalized.E1",
+          "Ratio.H.L.normalized.E2",
+          "Ratio.H.L.normalized.E3",
+          "Ratio.H.L.normalized.E4"
+        ],
+        "replicates": 2,
+        "logarithm": 2
+      },
+      {
+        "time": 120,
+        "PTM": "P",
+        "file": "data/salmonella/phosphorylation/Supplementary_Table_01.xlsx",
+        "sheet": "Supplementary1",
+        "accession column": "Protein",
+        "position column": "Positions.within.proteins",
+        "replicate columns": [
+          "Ratio.M.L.normalized.E1",
+          "Ratio.M.L.normalized.E2",
+          "Ratio.M.L.normalized.E3",
+          "Ratio.M.L.normalized.E4"
+        ],
+        "replicates": 2,
+        "logarithm": 2
+      },
+      {
+        "time": 30,
+        "PTM": "U",
+        "file": "data/salmonella/ubiquitination/20151119_HeLa_HCT116_05h_2h_all.xlsx",
+        "sheet": "20151119_HeLa_HCT116_05h_2h_all",
+        "accession column": "Protein",
+        "position column": "Positions within proteins",
+        "position format": "(?=(?:^|;)(.+?)(?:;|$))",
+        "replicate columns": [
+          "Ratio H/L normalized HCT116_05_R1",
+          "Ratio H/L normalized HCT116_05_R2",
+          "Ratio H/L normalized HCT116_05_R3",
+          "Ratio H/L normalized HCT116_05_R4"
+        ],
+        "replicates": 2,
+        "logarithm": 2
+      },
+      {
+        "time": 120,
+        "PTM": "U",
+        "file": "data/salmonella/ubiquitination/20151119_HeLa_HCT116_05h_2h_all.xlsx",
+        "sheet": "20151119_HeLa_HCT116_05h_2h_all",
+        "accession column": "Protein",
+        "position column": "Positions within proteins",
+        "position format": "(?=(?:^|;)(.+?)(?:;|$))",
+        "replicate columns": [
+          "Ratio H/L normalized HCT116_2_R1",
+          "Ratio H/L normalized HCT116_2_R2",
+          "Ratio H/L normalized HCT116_2_R3",
+          "Ratio H/L normalized HCT116_2_R4"
+        ],
+        "replicates": 2,
+        "logarithm": 2
+      }
+    ],
+    "protein-protein interactions": {
+      "BioGRID": {
+        "experimental system": [
+          "Affinity Capture-Luminescence",
+          "Affinity Capture-MS",
+          "Affinity Capture-RNA",
+          "Affinity Capture-Western",
+          "Biochemical Activity",
+          "Co-crystal Structure",
+          "Co-purification",
+          "FRET",
+          "PCA",
+          "Two-hybrid"
+        ]
+      },
+      "CORUM": {
+      },
+      "IntAct": {
+        "score": 0.27
+      },
+      "MINT": {
+        "score": 0.27
+      },
+      "Reactome": {
+      },
+      "STRING": {
+        "experiments score": 0.7,
+        "combined score": 0.7
+      }
+    },
+    "Cytoscape": {
+      "bar chart": {
+        "PTMs": ["P", "U"],
+        "measurement": {
+          "P": [-2.0, 2.0],
+          "U": [-2.0, 2.0]
         }
       },
-      "Cytoscape": {
-        "bar chart": {
-          "PTMs": ["P", "U"],
-          "measurement": {
-            "P": [-2.0, 2.0],
-            "U": [-2.0, 2.0]
-          }
-        },
-        "node color": {
-          "PTMs": ["P", "U"]
-        },
-        "node shape": {
-          "PTMs": ["P", "U"]
-        }
+      "node color": {
+        "PTMs": ["P", "U"]
       },
+      "node shape": {
+        "PTMs": ["P", "U"]
+      }
+    },
+    "Gene Ontology enrichment": {
+      "PTMs": ["P"],
+      "p": 0.05
+    },
+    "Reactome enrichment": {
+      "PTMs": ["P"],
+      "p": 0.05
+    },
+    "Gene Ontology network": {
+      "PTMs": ["P"]
+    },
+    "Reactome network": {
+      "PTMs": ["P"]
+    },
+    "community detection": {
       "Gene Ontology enrichment": {
         "PTMs": ["P"],
         "p": 0.05
@@ -121,27 +136,12 @@
         "PTMs": ["P"],
         "p": 0.05
       },
-      "Gene Ontology network": {
-        "PTMs": ["P"]
+      "measurement enrichment": {
+        "p": 0.05
       },
-      "Reactome network": {
-        "PTMs": ["P"]
-      },
-      "community detection": {
-        "Gene Ontology enrichment": {
-          "PTMs": ["P"],
-          "p": 0.05
-        },
-        "Reactome enrichment": {
-          "PTMs": ["P"],
-          "p": 0.05
-        },
-        "measurement enrichment": {
-          "p": 0.05
-        },
-        "measurement location": {
-          "p": 0.05
-        }
+      "measurement location": {
+        "p": 0.05
       }
     }
-  ]
+  }
+}

@@ -1,107 +1,122 @@
-[
-    {
-      "proteins": [
-        {
-          "time": 15,
-          "PTM": "P",
-          "file": "data/shigella/phosphorylation/mcp.M113.029918-2.xls",
-          "sheet": "Raw Data",
-          "header": 2,
-          "accession column": "protein",
-          "accession format": "sp\\|(.+?)\\|[A-Z0-9]+_HUMAN",
-          "position column": "phosphosites",
-          "position format": "(?:^|,)(\\d+)_[STY]",
-          "replicate columns": [
-            "wt15minvscontrolratio"
-          ]
-        },
-        {
-          "time": 30,
-          "PTM": "P",
-          "file": "data/shigella/phosphorylation/mcp.M113.029918-2.xls",
-          "sheet": "Raw Data",
-          "header": 2,
-          "accession column": "protein",
-          "accession format": "sp\\|(.+?)\\|[A-Z0-9]+_HUMAN",
-          "position column": "phosphosites",
-          "position format": "(?:^|,)(\\d+)_[STY]",
-          "replicate columns": [
-            "wt30minvscontrolratio"
-          ]
-        },
-        {
-          "time": 60,
-          "PTM": "P",
-          "file": "data/shigella/phosphorylation/mcp.M113.029918-2.xls",
-          "sheet": "Raw Data",
-          "header": 2,
-          "accession column": "protein",
-          "accession format": "sp\\|(.+?)\\|[A-Z0-9]+_HUMAN",
-          "position column": "phosphosites",
-          "position format": "(?:^|,)(\\d+)_[STY]",
-          "replicate columns": [
-            "wt60minvscontrolratio"
-          ]
-        },
-        {
-          "time": 120,
-          "PTM": "P",
-          "file": "data/shigella/phosphorylation/mcp.M113.029918-2.xls",
-          "sheet": "Raw Data",
-          "header": 2,
-          "accession column": "protein",
-          "accession format": "sp\\|(.+?)\\|[A-Z0-9]+_HUMAN",
-          "position column": "phosphosites",
-          "position format": "(?:^|,)(\\d+)_[STY]",
-          "replicate columns": [
-            "wt120minvscontrolratio"
-          ]
-        }
-      ],
-      "protein-protein interactions": {
-        "BioGRID": {
-          "experimental system": [
-            "Affinity Capture-Luminescence",
-            "Affinity Capture-MS",
-            "Affinity Capture-RNA",
-            "Affinity Capture-Western",
-            "Biochemical Activity",
-            "Co-crystal Structure",
-            "Co-purification",
-            "FRET",
-            "PCA",
-            "Two-hybrid"
-          ]
-        },
-        "CORUM": {
-        },
-        "IntAct": {
-          "score": 0.27
-        },
-        "MINT": {
-          "score": 0.27
-        },
-        "Reactome": {
-        },
-        "STRING": {
-          "experiments score": 0.7,
-          "combined score": 0.7
+{
+  "shigella": {
+    "proteins": [
+      {
+        "time": 15,
+        "PTM": "P",
+        "file": "data/shigella/phosphorylation/mcp.M113.029918-2.xls",
+        "sheet": "Raw Data",
+        "header": 2,
+        "accession column": "protein",
+        "accession format": "sp\\|(.+?)\\|[A-Z0-9]+_HUMAN",
+        "position column": "phosphosites",
+        "position format": "(?:^|,)(\\d+)_[STY]",
+        "replicate columns": [
+          "wt15minvscontrolratio"
+        ]
+      },
+      {
+        "time": 30,
+        "PTM": "P",
+        "file": "data/shigella/phosphorylation/mcp.M113.029918-2.xls",
+        "sheet": "Raw Data",
+        "header": 2,
+        "accession column": "protein",
+        "accession format": "sp\\|(.+?)\\|[A-Z0-9]+_HUMAN",
+        "position column": "phosphosites",
+        "position format": "(?:^|,)(\\d+)_[STY]",
+        "replicate columns": [
+          "wt30minvscontrolratio"
+        ]
+      },
+      {
+        "time": 60,
+        "PTM": "P",
+        "file": "data/shigella/phosphorylation/mcp.M113.029918-2.xls",
+        "sheet": "Raw Data",
+        "header": 2,
+        "accession column": "protein",
+        "accession format": "sp\\|(.+?)\\|[A-Z0-9]+_HUMAN",
+        "position column": "phosphosites",
+        "position format": "(?:^|,)(\\d+)_[STY]",
+        "replicate columns": [
+          "wt60minvscontrolratio"
+        ]
+      },
+      {
+        "time": 120,
+        "PTM": "P",
+        "file": "data/shigella/phosphorylation/mcp.M113.029918-2.xls",
+        "sheet": "Raw Data",
+        "header": 2,
+        "accession column": "protein",
+        "accession format": "sp\\|(.+?)\\|[A-Z0-9]+_HUMAN",
+        "position column": "phosphosites",
+        "position format": "(?:^|,)(\\d+)_[STY]",
+        "replicate columns": [
+          "wt120minvscontrolratio"
+        ]
+      }
+    ],
+    "protein-protein interactions": {
+      "BioGRID": {
+        "experimental system": [
+          "Affinity Capture-Luminescence",
+          "Affinity Capture-MS",
+          "Affinity Capture-RNA",
+          "Affinity Capture-Western",
+          "Biochemical Activity",
+          "Co-crystal Structure",
+          "Co-purification",
+          "FRET",
+          "PCA",
+          "Two-hybrid"
+        ]
+      },
+      "CORUM": {
+      },
+      "IntAct": {
+        "score": 0.27
+      },
+      "MINT": {
+        "score": 0.27
+      },
+      "Reactome": {
+      },
+      "STRING": {
+        "experiments score": 0.7,
+        "combined score": 0.7
+      }
+    },
+    "Cytoscape": {
+      "bar chart": {
+        "PTMs": ["P"],
+        "measurement": {
+          "P": [-2.0, 2.0]
         }
       },
-      "Cytoscape": {
-        "bar chart": {
-          "PTMs": ["P"],
-          "measurement": {
-            "P": [-2.0, 2.0]
-          }
-        },
-        "node color": {
-          "PTMs": ["P"]
-        },
-        "node shape": {
-          "PTMs": ["P"]
-        }
+      "node color": {
+        "PTMs": ["P"]
       },
+      "node shape": {
+        "PTMs": ["P"]
+      }
+    },
+    "Gene Ontology enrichment": {
+      "PTMs": ["P"],
+      "p": 0.05
+    },
+    "Reactome enrichment": {
+      "PTMs": ["P"],
+      "p": 0.05
+    },
+    "Gene Ontology network": {
+      "PTMs": ["P"]
+    },
+    "Reactome network": {
+      "PTMs": ["P"]
+    },
+    "community detection": {
       "Gene Ontology enrichment": {
         "PTMs": ["P"],
         "p": 0.05
@@ -110,27 +125,12 @@
         "PTMs": ["P"],
         "p": 0.05
       },
-      "Gene Ontology network": {
-        "PTMs": ["P"]
+      "measurement enrichment": {
+        "p": 0.05
       },
-      "Reactome network": {
-        "PTMs": ["P"]
-      },
-      "community detection": {
-        "Gene Ontology enrichment": {
-          "PTMs": ["P"],
-          "p": 0.05
-        },
-        "Reactome enrichment": {
-          "PTMs": ["P"],
-          "p": 0.05
-        },
-        "measurement enrichment": {
-          "p": 0.05
-        },
-        "measurement location": {
-          "p": 0.05
-        }
+      "measurement location": {
+        "p": 0.05
       }
     }
-  ]
+  }
+}

@@ -47,29 +47,29 @@ Multiple configuration files are processed concurrently.
 Input proteins are read from tabular input files.
 
 ```json
-[
-    {
-      "proteins": [
-        {
-          "file": null
-        }
-      ]
-    }
-]
+{
+	"configuration": {
+    "proteins": [
+      {
+        "file": null
+      }
+    ]
+  }
+}
 ```
 The tabular input file with UniProt protein accessions and, optionally,
 additional mass spectrometry data.
 
 ```json
-[
-    {
-      "proteins": [
-        {
-          "accession column": null
-        }
-      ]
-    }
-]
+{
+	"configuration": {
+    "proteins": [
+      {
+        "accession column": null
+      }
+    ]
+  }
+}
 ```
 The table column to extract UniProt protein accessions from. These are mapped to
 primary UniProt accessions or discarded if not present in Swiss-Prot. Isoform
@@ -77,15 +77,15 @@ identifiers are maintained on primary, but not transferred from secondary
 accessions.
 
 ```json
-[
-    {
-      "proteins": [
-        {
-          "accession format": "^(.+?)$"
-        }
-      ]
-    }
-]
+{
+	"configuration": {
+    "proteins": [
+      {
+        "accession format": "^(.+?)$"
+      }
+    ]
+  }
+}
 ```
 A regular expression used to extract all matching protein accessions from a
 spreadsheet cell entry in the table, possibly removing additional components of
@@ -93,106 +93,106 @@ the entry. The default setting is `"^(.+?)$"`, corresponding to the entire
 entry.
 
 ```json
-[
-    {
-      "proteins": [
-        {
-          "sheet": 1
-        }
-      ]
-    }
-]
+{
+	"configuration": {
+    "proteins": [
+      {
+        "sheet": 1
+      }
+    ]
+  }
+}
 ```
 The spreadsheet from a file to extract input from. The default setting is `1`
 corresponding to the first spreadsheet of the file.
 
 ```json
-[
-    {
-      "proteins": [
-        {
-          "header": 1
-        }
-      ]
-    }
-]
+{
+	"configuration": {
+    "proteins": [
+      {
+        "header": 1
+      }
+    ]
+  }
+}
 ```
 The line number of the header, allowing to skip preceding lines. The default
 setting is `1`, corresponding to the first line of the sheet.
 
 ```json
-[
-    {
-      "proteins": [
-        {
-          "accessions": []
-        }
-      ]
-    }
-]
+{
+	"configuration": {
+    "proteins": [
+      {
+        "accessions": []
+      }
+    ]
+  }
+}
 ```
 
 A list of input UniProt protein accessions, alternative to extraction from a
 tabular file.
 
 ```json
-[
-    {
-      "networks": [
-        {
-          "network": null
-        }
-      ]
-    }
-]
+{
+	"configuration": {
+    "networks": [
+      {
+        "network": null
+      }
+    ]
+  }
+}
 ```
 A list of protein-protein interaction networks as exported by workflows. The
 union of input protein-protein interaction networks and input proteins is used.
 
 ```json
-[
-    {
-      "proteins": [
-        {
-          "organism": 9606
-        }
-      ],
-      "networks": [
-        {
-          "organism": 9606
-        }
-      ]
-    }
-]
+{
+	"configuration": {
+    "proteins": [
+      {
+        "organism": 9606
+      }
+    ],
+    "networks": [
+      {
+        "organism": 9606
+      }
+    ]
+  }
+}
 ```
 The NCBI taxonomy ID of the organism of interest. The default and currently only
 completely supported setting is `9606`, corresponding to Homo sapiens.
 
 ```json
-[
-    {
-      "proteins": [
-        {
-          "time": 0
-        }
-      ]
-    }
-]
+{
+	"configuration": {
+    "proteins": [
+      {
+        "time": 0
+      }
+    ]
+  }
+}
 ```
 The time of measurement to be associated with the measurements from the input
 file for reference in the specification of further analyses. The default setting
 is `0`.
 
 ```json
-[
-    {
-      "proteins": [
-        {
-          "PTM": "PTM"
-        }
-      ]
-    }
-]
+{
+	"configuration": {
+    "proteins": [
+      {
+        "PTM": "PTM"
+      }
+    ]
+  }
+}
 ```
 The identifier for the type of post-translational modification associate with
 measurements from the input file for reference in the specification of further
@@ -201,15 +201,15 @@ post-translational modification per time of measurement are supported by
 Cytoscape styles.
 
 ```json
-[
-    {
-      "proteins": [
-        {
-          "position column": null
-        }
-      ]
-    }
-]
+{
+	"configuration": {
+    "proteins": [
+      {
+        "position column": null
+      }
+    ]
+  }
+}
 ```
 The table column reporting modification sites of measurements, according to
 which they are ordered. If an entry contains fewer positions than measurements,
@@ -218,87 +218,87 @@ positions than measurements, only as many leading entries as there are
 measurements are used.
 
 ```json
-[
-    {
-      "proteins": [
-        {
-          "position format": "^(.+?)$"
-        }
-      ]
-    }
-]
+{
+	"configuration": {
+    "proteins": [
+      {
+        "position format": "^(.+?)$"
+      }
+    ]
+  }
+}
 ```
 A regular expression used to extract matching modification sites from an
 entry in the table, allowing to remove additions to the site number. The default
 setting is `"^(.+?)$"`, corresponding to the entire entry.
 
 ```json
-[
-    {
-      "proteins": [
-        {
-          "replicate columns": []
-        }
-      ]
-    }
-]
+{
+	"configuration": {
+    "proteins": [
+      {
+        "replicate columns": []
+      }
+    ]
+  }
+}
 ```
 A list of columns to extract replicate measurements from. The default setting is
 `[]`, corresponding to no association with mass spectrometry data.
 
 ```json
-[
-    {
-      "proteins": [
-        {
-          "replicate format": "^(.+?)$"
-        }
-      ]
-    }
-]
+{
+	"configuration": {
+    "proteins": [
+      {
+        "replicate format": "^(.+?)$"
+      }
+    ]
+  }
+}
 ```
 A regular expression used to extract matching replicate measurements from an
 entry in the table, allowing to remove additions to the measurement. The default
 setting is `"^(.+?)$"`, corresponding to the entire entry.
 
 ```json
-[
-    {
-      "proteins": [
-        {
-          "replicates": 1
-        }
-      ]
-    }
-]
+{
+	"configuration": {
+    "proteins": [
+      {
+        "replicates": 1
+      }
+    ]
+  }
+}
 ```
 An inclusive threshold on the number of replicates required to consider a
 measurement. The default setting is `1`.
 
 ```json
-[
-    {
-      "proteins": [
-        {
-          "sites": 5
-        }
-      ]
-    }
-]
+{
+	"configuration": {
+    "proteins": [
+      {
+        "sites": 5
+      }
+    ]
+  }
+}
 ```
 The maximum number of measurements to associate with each protein prioritized by
 largest absolute measurement. The default setting is `5`.
 
 ```json
-[
-    {
-      "proteins": [
-        {
-          "site prioritization": "abs"
-        }
-      ]
-    }
-]
+{
+	"configuration": {
+    "proteins": [
+      {
+        "site prioritization": "abs"
+      }
+    ]
+  }
+}
 ```
 A function of a site-specific measurement to prioritize it over others. The
 default setting is `"abs"` corresponding to the absolute value. Available
@@ -306,15 +306,15 @@ settings are `"abs"` as well as `"increase"`, and `"decrease"`to prioritize
 measurements signifying an increase or decrease, respectively.
 
 ```json
-[
-    {
-      "proteins": [
-        {
-          "replicate average": "mean"
-        }
-      ]
-    }
-]
+{
+	"configuration": {
+    "proteins": [
+      {
+        "replicate average": "mean"
+      }
+    ]
+  }
+}
 ```
 The function used to combine replicates into a single measurement. The function
 is applied to ratios, not their binary logarithm. Cytoscape styles refer to this
@@ -323,15 +323,15 @@ average. The default setting is `"mean"`. Available settings are `"mean"`,
 and `"sumabs"`.
 
 ```json
-[
-    {
-      "proteins": [
-        {
-          "logarithm": null
-        }
-      ]
-    }
-]
+{
+	"configuration": {
+    "proteins": [
+      {
+        "logarithm": null
+      }
+    ]
+  }
+}
 ```
 The base of the logarithm that measurements are reported as. By default, ratios
 are assumed and no conversion is performed, corresponding to `null`. Available
@@ -345,30 +345,30 @@ any source is queried. Database-specific requirements can be defined, where
 each must be satisfied for an interaction to be incorporated.
 
 ```json
-[
-    {
-      "protein-protein interactions": {
-        "BioGRID": {
-          "neighbors": 0
-        },
-        "CORUM": {
-          "neighbors": 0
-        },
-        "IntAct": {
-          "neighbors": 0
-        },
-        "MINT": {
-          "neighbors": 0
-        },
-        "Reactome": {
-          "neighbors": 0
-        },
-        "STRING": {
-          "neighbors": 0
-        }
+{
+	"configuration": {
+    "protein-protein interactions": {
+      "BioGRID": {
+        "neighbors": 0
+      },
+      "CORUM": {
+        "neighbors": 0
+      },
+      "IntAct": {
+        "neighbors": 0
+      },
+      "MINT": {
+        "neighbors": 0
+      },
+      "Reactome": {
+        "neighbors": 0
+      },
+      "STRING": {
+        "neighbors": 0
       }
     }
-]
+  }
+}
 ```
 An integer specifying the extension of the network using species-specific
 proteins which are separated by up to `"neighbors"` protein-protein interactions
@@ -376,394 +376,393 @@ from the input proteins in the corresponding database. The default setting is 0,
 corresponding to no extension.
 
 ```json
-[
-    {
-      "protein-protein interactions": {
-        "BioGRID": {
-          "organism": 9606
-        },
-        "CORUM": {
-          "organism": 9606
-        },
-        "IntAct": {
-          "organism": 9606
-        },
-        "MINT": {
-          "organism": 9606
-        },
-        "Reactome": {
-          "organism": 9606
-        },
-        "STRING": {
-          "organism": 9606
-        }
+{
+	"configuration": {
+    "protein-protein interactions": {
+      "BioGRID": {
+        "organism": 9606
+      },
+      "CORUM": {
+        "organism": 9606
+      },
+      "IntAct": {
+        "organism": 9606
+      },
+      "MINT": {
+        "organism": 9606
+      },
+      "Reactome": {
+        "organism": 9606
+      },
+      "STRING": {
+        "organism": 9606
       }
     }
-]
+  }
+}
 ```
 The NCBI taxonomy ID for the organism of interest. The default and currently
 only completely supported setting is `9606`, corresponding to Homo sapiens.
 
 
 ```json
-[
-    {
-      "protein-protein interactions": {
-        "BioGRID": {
-          "interaction throughput": []
-        }
+{
+	"configuration": {
+    "protein-protein interactions": {
+      "BioGRID": {
+        "interaction throughput": []
       }
     }
-]
+  }
+}
 ```
 A list of accepted interaction throughput annotations. The default setting is
 `[]`, corresponding to any annotation.
 
 ```json
-[
-    {
-      "protein-protein interactions": {
-        "BioGRID": {
-          "experimental system": []
-        }
+{
+	"configuration": {
+    "protein-protein interactions": {
+      "BioGRID": {
+        "experimental system": []
       }
     }
-]
+  }
+}
 ```
 A list of accepted experimental system annotations. The default setting is `[]`,
 corresponding to any annotation.
 
 ```json
-[
-    {
-      "protein-protein interactions": {
-        "BioGRID": {
-          "experimental system type": []
-        }
+{
+	"configuration": {
+    "protein-protein interactions": {
+      "BioGRID": {
+        "experimental system type": []
       }
     }
-]
+  }
+}
 ```
 A list of accepted experimental system type annotations. The default setting is
 `[]`, corresponding to any annotation.
 
 ```json
-[
-    {
-      "protein-protein interactions": {
-        "BioGRID": {
-          "multi-validated physical": false
-        }
+{
+	"configuration": {
+    "protein-protein interactions": {
+      "BioGRID": {
+        "multi-validated physical": false
       }
     }
-]
+  }
+}
 ```
 If `true`, restrict query to multi-validated physical protein-protein
 interactions. The default setting is `false`.
 
 ```json
-[
-    {
-      "protein-protein interactions": {
-        "BioGRID": {
-          "version": null
-        }
+{
+	"configuration": {
+    "protein-protein interactions": {
+      "BioGRID": {
+        "version": null
       }
     }
-]
+  }
+}
 ```
 The version of the BioGRID database to query. The default setting is `null`,
 corresponding to the latest version.
 
 ```json
-[
-    {
-      "protein-protein interactions": {
-        "CORUM": {
-          "purification methods": []
-        }
+{
+	"configuration": {
+    "protein-protein interactions": {
+      "CORUM": {
+        "purification methods": []
       }
     }
-]
+  }
+}
 ```
 A list of accepted PSI-MI identifiers or terms for protein complex purification
 methods. The default setting is `[]`, corresponding to any annotation.
 
 ```json
-[
-    {
-      "protein-protein interactions": {
-        "IntAct": {
-          "interaction detection methods": []
-        },
-        "MINT": {
-          "interaction detection methods": []
-        }
+{
+	"configuration": {
+    "protein-protein interactions": {
+      "IntAct": {
+        "interaction detection methods": []
+      },
+      "MINT": {
+        "interaction detection methods": []
       }
     }
-]
+  }
+}
 ```
 A list of accepted PSI-MI identifiers or terms for interaction detection
 methods. The default setting is `[]`, corresponding to any annotation.
 
 ```json
-[
-    {
-      "protein-protein interactions": {
-        "IntAct": {
-          "interaction types": []
-        },
-        "MINT": {
-          "interaction types": []
-        }
+{
+	"configuration": {
+    "protein-protein interactions": {
+      "IntAct": {
+        "interaction types": []
+      },
+      "MINT": {
+        "interaction types": []
       }
     }
-]
+  }
+}
 ```
 A list of accepted PSI-MI identifiers or terms for interaction types. The
 default setting is `[]`, corresponding to any annotation.
 
 ```json
-[
-    {
-      "protein-protein interactions": {
-        "IntAct": {
-          "score": 0.0
-        },
-        "MINT": {
-          "score": 0.0
-        }
+{
+	"configuration": {
+    "protein-protein interactions": {
+      "IntAct": {
+        "score": 0.0
+      },
+      "MINT": {
+        "score": 0.0
       }
     }
-]
+  }
+}
 ```
 A PSI-MI score threshold. The default setting is `0.0`.
 
 ```json
-[
-    {
-      "protein-protein interactions": {
-        "Reactome": {
-          "interaction context": []
-        }
+{
+	"configuration": {
+    "protein-protein interactions": {
+      "Reactome": {
+        "interaction context": []
       }
     }
-]
+  }
+}
 ```
 A list of accepted interaction context annotations. The default setting is `[]`,
 corresponding to any annotation.
 
 ```json
-[
-    {
-      "protein-protein interactions": {
-        "Reactome": {
-          "interaction type": []
-        }
+{
+	"configuration": {
+    "protein-protein interactions": {
+      "Reactome": {
+        "interaction type": []
       }
     }
-]
+  }
+}
 ```
 A list of accepted interaction type annotations. The default setting is `[]`,
 corresponding to any annotation.
 
 ```json
-[
-    {
-      "protein-protein interactions": {
-        "STRING": {
-          "neighborhood score": 0.0
-        }
+{
+	"configuration": {
+    "protein-protein interactions": {
+      "STRING": {
+        "neighborhood score": 0.0
       }
     }
-]
+  }
+}
 ```
 The STRING gene neighborhood score threshold. The default setting is `0.0`.
 
 ```json
-[
-    {
-      "protein-protein interactions": {
-        "STRING": {
-          "neighborhood transferred score": 0.0
-        }
+{
+	"configuration": {
+    "protein-protein interactions": {
+      "STRING": {
+        "neighborhood transferred score": 0.0
       }
     }
-]
+  }
+}
 ```
 The STRING transferred gene neighborhood score threshold. The default setting is
 `0.0`.
 
 ```json
-[
-    {
-      "protein-protein interactions": {
-        "STRING": {
-          "fusion score": 0.0
-        }
+{
+	"configuration": {
+    "protein-protein interactions": {
+      "STRING": {
+        "fusion score": 0.0
       }
     }
-]
+  }
+}
 ```
 The STRING gene fusion score threshold. The default setting is `0.0`.
 
 ```json
-[
-    {
-      "protein-protein interactions": {
-        "STRING": {
-          "cooccurrence score": 0.0
-        }
+{
+	"configuration": {
+    "protein-protein interactions": {
+      "STRING": {
+        "cooccurrence score": 0.0
       }
     }
-]
+  }
+}
 ```
 The STRING gene cooccurrence score threshold. The default setting is `0.0`.
 
 ```json
-[
-    {
-      "protein-protein interactions": {
-        "STRING": {
-          "coexpression score": 0.0
-        }
+{
+	"configuration": {
+    "protein-protein interactions": {
+      "STRING": {
+        "coexpression score": 0.0
       }
     }
-]
+  }
+}
 ```
 The STRING gene coexpression score threshold. The default setting is `0.0`.
 
 ```json
-[
-    {
-      "protein-protein interactions": {
-        "STRING": {
-          "coexpression transferred score": 0.0
-        }
+{
+	"configuration": {
+    "protein-protein interactions": {
+      "STRING": {
+        "coexpression transferred score": 0.0
       }
     }
-]
+  }
+}
 ```
 The STRING transferred gene coexpression score threshold. The default setting is
 `0.0`.
 
 ```json
-[
-    {
-      "protein-protein interactions": {
-        "STRING": {
-          "experiments score": 0.0
-        }
+{
+	"configuration": {
+    "protein-protein interactions": {
+      "STRING": {
+        "experiments score": 0.0
       }
     }
-]
+  }
+}
 ```
 The STRING experiments score threshold. The default setting is `0.0`.
 
 ```json
-[
-    {
-      "protein-protein interactions": {
-        "STRING": {
-          "experiments transferred score": 0.0
-        }
+{
+	"configuration": {
+    "protein-protein interactions": {
+      "STRING": {
+        "experiments transferred score": 0.0
       }
     }
-]
+  }
+}
 ```
 The STRING transferred experiments score threshold. The default setting is
 `0.0`.
 
 ```json
-[
-    {
-      "protein-protein interactions": {
-        "STRING": {
-          "database score": 0.0
-        }
+{
+	"configuration": {
+    "protein-protein interactions": {
+      "STRING": {
+        "database score": 0.0
       }
     }
-]
+  }
+}
 ```
 The STRING database score threshold. The default setting is `0.0`.
 
 ```json
-[
-    {
-      "protein-protein interactions": {
-        "STRING": {
-          "database transferred score": 0.0
-        }
+{
+	"configuration": {
+    "protein-protein interactions": {
+      "STRING": {
+        "database transferred score": 0.0
       }
     }
-]
+  }
+}
 ```
 The STRING transferred database score threshold. The default setting is `0.0`.
 
 ```json
-[
-    {
-      "protein-protein interactions": {
-        "STRING": {
-          "textmining score": 0.0
-        }
+{
+	"configuration": {
+    "protein-protein interactions": {
+      "STRING": {
+        "textmining score": 0.0
       }
     }
-]
+  }
+}
 ```
 The STRING textmining score threshold. The default setting is `0.0`.
 
 ```json
-[
-    {
-      "protein-protein interactions": {
-        "STRING": {
-          "textmining transferred score": 0.0
-        }
+{
+	"configuration": {
+    "protein-protein interactions": {
+      "STRING": {
+        "textmining transferred score": 0.0
       }
     }
-]
+  }
+}
 ```
 The STRING transferred textmining score threshold. The default setting is `0.0`.
 
 ```json
-[
-    {
-      "protein-protein interactions": {
-        "STRING": {
-          "combined score": 0.0
-        }
+{
+	"configuration": {
+    "protein-protein interactions": {
+      "STRING": {
+        "combined score": 0.0
       }
     }
-]
+  }
+}
 ```
 The STRING combined score threshold. The default setting is `0.0`.
 
 ```json
-[
-    {
-      "protein-protein interactions": {
-        "STRING": {
-          "physical": false
-        }
+{
+	"configuration": {
+    "protein-protein interactions": {
+      "STRING": {
+        "physical": false
       }
     }
-]
+  }
+}
 ```
 If `true`, restrict query to physical protein-protein interactions. The default
 setting is `false`.
 
 ```json
-[
-    {
-      "protein-protein interactions": {
-        "STRING": {
-          "version": 11.5
-        }
+{
+	"configuration": {
+    "protein-protein interactions": {
+      "STRING": {
+        "version": 11.5
       }
     }
-]
-
+  }
+}
 ```
 The version of STRING to query. The default setting is `11.5`.
 
@@ -773,15 +772,15 @@ The specification of Cytoscape styles. If not present, no Cytoscape styles are
 exported.
 
 ```json
-[
-    {
-      "Cytoscape": {
-        "site average": {
-          "PTM": "maxabs"
-        }
+{
+	"configuration": {
+    "Cytoscape": {
+      "site average": {
+        "PTM": "maxabs"
       }
     }
-]
+  }
+}
 ```
 The modification-specific function used to combine distinct modification sites
 into protein-specific measurements. The function is applied to ratios, not their
@@ -790,15 +789,15 @@ largest absolute measurement. Available settings are `"mean"`, `"median"`,
 `"mid-range"`, `"max"`, `"maxabs"`, `"min"`, `"minabs"`, `"sum"` and `"sumabs"`.
 
 ```json
-[
-    {
-      "Cytoscape": {
-          "replicate average": {
-            "PTM": "mean"
-          }
+{
+	"configuration": {
+    "Cytoscape": {
+      "replicate average": {
+        "PTM": "mean"
       }
     }
-]
+  }
+}
 ```
 The modification-specific function used to combine distinct replicates into
 modification site-specific measurements. The function is applied to ratios, not
@@ -807,15 +806,15 @@ mean of replicates. Available settings are `"mean"`, `"median"`, `"mid-range"`,
 `"max"`, `"maxabs"`, `"min"`, `"minabs"`, `"sum"` and `"sumabs"`.
 
 ```json
-[
-    {
-      "Cytoscape": {
-        "conversion": {
-          "PTM": null
-        }
+{
+	"configuration": {
+    "Cytoscape": {
+      "conversion": {
+        "PTM": null
       }
     }
-]
+  }
+}
 ```
 The modification-specific conversion that a measurement range refers to. It
 defaults to the binary logarithm of a measurement for `null` but can be set to
@@ -825,15 +824,15 @@ particular time of measurement across the protein-protein interaction network,
 if applicable.
 
 ```json
-[
-    {
-      "Cytoscape": {
-        "bar chart": {
-          "PTMs": [],
-        }
+{
+	"configuration": {
+    "Cytoscape": {
+      "bar chart": {
+        "PTMs": [],
       }
     }
-]
+  }
+}
 ```
 The identifiers of site-specific post-translational modifications to represent
 as bar charts. Zero, one, and two identifiers are supported. Specified
@@ -841,17 +840,17 @@ identifiers are represented in order. By default, no modifications are
 specified.
 
 ```json
-[
-    {
-      "Cytoscape": {
-        "bar chart": {
-          "measurement": {
-            "PTM": [-1.0, 1.0]
-          }
+{
+	"configuration": {
+    "Cytoscape": {
+      "bar chart": {
+        "measurement": {
+          "PTM": [-1.0, 1.0]
         }
       }
     }
-]
+  }
+}
 ```
 The modification-specific range of the bar charts reporting measurements. The
 adaptive default setting is `[-1.0, 1.0]` if `"conversion"` is not set,
@@ -861,15 +860,15 @@ to `"quantile"`, `[0.5, 2.0]` if `"conversion"` is set to `"ratio"`, and
 `[-1.0, 1.0]` if `"conversion"` is set to `"standard score"`.
 
 ```json
-[
-    {
-      "Cytoscape": {
-        "node color": {
-          "PTMs": [],
-        }
+{
+	"configuration": {
+    "Cytoscape": {
+      "node color": {
+        "PTMs": [],
       }
     }
-]
+  }
+}
 ```
 The identifiers of site-specific post-translational modifications to represent
 by node color. Zero, one, and two identifiers are supported. Specified
@@ -877,17 +876,17 @@ identifiers are represented in order. By default, no modifications are
 specified.
 
 ```json
-[
-    {
-      "Cytoscape": {
-        "node color": {
-          "measurement": {
-            "PTM": [-1.0, 1.0]
-          }
+{
+	"configuration": {
+    "Cytoscape": {
+      "node color": {
+        "measurement": {
+          "PTM": [-1.0, 1.0]
         }
-      },
+      }
     }
-]
+  }
+}
 ```
 The modification-specific range of combined measurements categorizing proteins
 by whether the range is exceeded or not. The adaptive default setting is
@@ -898,42 +897,42 @@ set to `"log10"`, `[25.0, 75.0]` if `"conversion"` is set to `"percentile"`,
 to `"standard score"`.
 
 ```json
-[
-    {
-      "Cytoscape": {
-        "node shape": {
-          "PTMs": [],
-        }
+{
+	"configuration": {
+    "Cytoscape": {
+      "node shape": {
+        "PTMs": [],
       }
     }
-]
+  }
+}
 ```
 The identifiers of  post-translational modifications to represent by node color.
 Zero, one, and two identifiers are supported. Specified identifiers are
 represented in order. By default, no modifications are specified.
 
 ```json
-[
-    {
-      "Cytoscape": {
-        "node size": {
-          "PTM": null,
-        }
+{
+	"configuration": {
+    "Cytoscape": {
+      "node size": {
+        "PTM": null,
       }
     }
-]
+  }
+}
 ```
 The identifier of a protein-specific post-translational modification to
 represent by node size. By default, no modification is specified.
 
 ```json
-[
-    {
-      "Cytoscape": {
-        "edge transparency": null,
-      }
+{
+	"configuration": {
+    "Cytoscape": {
+      "edge transparency": null,
     }
-]
+  }
+}
 ```
 The function used to combine edge confidence scores from in IntAct, MINT and
 STRING, and, lacking a corresponding score, 1.0 for all interactions from
@@ -953,93 +952,93 @@ associated measurements, either by a union or intersection of specified subsets
 of proteins from the protein-protein interaction network.
 
 ```json
-[
-    {
-      "Gene Ontology enrichment": {
-        "test": "hypergeometric"
-      },
-      "Reactome enrichment": {
-        "test": "hypergeometric"
-      }
+{
+	"configuration": {
+    "Gene Ontology enrichment": {
+      "test": "hypergeometric"
+    },
+    "Reactome enrichment": {
+      "test": "hypergeometric"
     }
-]
+  }
+}
 ```
 The statistical test to assess enrichment of each complex, term or pathway by
 the submitted proteins. The default setting is `"hypergeometric"`. Available
 settings are `"binomial"` and `"hypergeometric"`.
 
 ```json
-[
-    {
-      "Gene Ontology enrichment": {
-        "increase": true
-      },
-      "Reactome enrichment": {
-        "increase": true
-      }
+{
+	"configuration": {
+    "Gene Ontology enrichment": {
+      "increase": true
+    },
+    "Reactome enrichment": {
+      "increase": true
     }
-]
+  }
+}
 ```
 If `true`, assess enrichment, otherwise depletion. The default setting is
 `true`.
 
 ```json
-[
-    {
-      "Gene Ontology enrichment": {
-        "correction": "Benjamini-Yekutieli"
-      },
-      "Reactome enrichment": {
-        "correction": "Benjamini-Yekutieli"
-      }
+{
+	"configuration": {
+    "Gene Ontology enrichment": {
+      "correction": "Benjamini-Yekutieli"
+    },
+    "Reactome enrichment": {
+      "correction": "Benjamini-Yekutieli"
     }
-]
+  }
+}
 ```
 The procedure to correct p-values for multiple testing. The default setting is
 `"Benjamini-Yekutieli"`. Available settings are `"Benjamini-Hochberg"`,
 `"Benjamini-Yekutieli"`, `"Holm"` and `"Hommel"`.
 
 ```json
-[
-    {
-      "Gene Ontology enrichment": {
-        "p": 1.0
-      },
-      "Reactome enrichment": {
-        "p": 1.0
-      }
+{
+	"configuration": {
+    "Gene Ontology enrichment": {
+      "p": 1.0
+    },
+    "Reactome enrichment": {
+      "p": 1.0
     }
-]
+  }
+}
 ```
 The corrected p-value threshold to report and output a community. The default
 setting is `1.0`.
 
 ```json
-[
-    {
-      "Gene Ontology enrichment": {
-        "organism": 9606
-      },
-       "Reactome enrichment": {
-        "organism": 9606
-      }
+{
+	"configuration": {
+    "Gene Ontology enrichment": {
+      "organism": 9606
+    },
+      "Reactome enrichment": {
+      "organism": 9606
     }
-]
+  }
+}
 ```
 The NCBI taxonomy ID of the organism of interest. The default and currently only
 completely supported setting is `9606`, corresponding to Homo sapiens.
 
 ```json
-[
-    {
-      "Gene Ontology enrichment": {
-        "PTMs": []
-      },
-      "Reactome enrichment": {
-        "PTMs": []
-      }
+{
+	"configuration": {
+    "Gene Ontology enrichment": {
+      "PTMs": []
+    },
+    "Reactome enrichment": {
+      "PTMs": []
     }
-]
+  }
+}
 ```
 The post-translational modifications considered to determine subsets of proteins
 to the combination of which enrichment analysis is restricted. If restricted,
@@ -1049,20 +1048,20 @@ Gene Ontology annotation. Subsets consist of proteins exceeding a specified
 range of protein-specific measurements.
 
 ```json
-[
-    {
-      "Gene Ontology enrichment": {
-        "site average": {
-          "PTM": "maxabs"
-        }
-      },
-      "Reactome enrichment": {
-        "site average": {
-          "PTM": "maxabs"
-        }
+{
+	"configuration": {
+    "Gene Ontology enrichment": {
+      "site average": {
+        "PTM": "maxabs"
+      }
+    },
+    "Reactome enrichment": {
+      "site average": {
+        "PTM": "maxabs"
       }
     }
-]
+  }
+}
 ```
 The function used to combine distinct modification sites into protein-specific
 measurements. The function is applied to ratios, not their binary logarithm.
@@ -1071,20 +1070,20 @@ measurement. Available settings are `"mean"`, `"median"`, `"mid-range"`,
 `"max"`, `"maxabs"`, `"min"`, `"minabs"`, `"sum"` and `"sumabs"`.
 
 ```json
-[
-    {
-      "Gene Ontology enrichment": {
-        "replicate average": {
-          "PTM": "mean"
-        }
-      },
-      "Reactome enrichment": {
-        "replicate average": {
-          "PTM": "mean"
-        }
+{
+	"configuration": {
+    "Gene Ontology enrichment": {
+      "replicate average": {
+        "PTM": "mean"
+      }
+    },
+    "Reactome enrichment": {
+      "replicate average": {
+        "PTM": "mean"
       }
     }
-]
+  }
+}
 ```
 The function used to combine distinct replicates into modification site-specific
 measurements. The function is applied to ratios, not their binary logarithm.
@@ -1093,20 +1092,20 @@ Available settings are `"mean"`, `"median"`, `"mid-range"`, `"max"`, `"maxabs"`,
 `"min"`, `"minabs"`, `"sum"` and `"sumabs"`.
 
 ```json
-[
-    {
-      "Gene Ontology enrichment": {
-        "conversion": {
-          "PTM": null
-        }
-      },
-      "Reactome enrichment": {
-        "conversion": {
-          "PTM": null
-        }
+{
+	"configuration": {
+    "Gene Ontology enrichment": {
+      "conversion": {
+        "PTM": null
+      }
+    },
+    "Reactome enrichment": {
+      "conversion": {
+        "PTM": null
       }
     }
-]
+  }
+}
 ```
 The conversion that a measurement range refers to. It defaults to the binary
 logarithm of a measurement for `null` but can be set to `"log10"`,
@@ -1115,20 +1114,20 @@ respect to the distribution of a particular modification at a particular time of
 measurement across the protein-protein interaction network, if applicable.
 
 ```json
-[
-    {
-      "Gene Ontology enrichment": {
-        "measurement": {
-          "PTM": [-1.0, 1.0]
-        }
-      },
-      "Reactome enrichment": {
-        "measurement": {
-          "PTM": [-1.0, 1.0]
-        }
+{
+	"configuration": {
+    "Gene Ontology enrichment": {
+      "measurement": {
+        "PTM": [-1.0, 1.0]
+      }
+    },
+    "Reactome enrichment": {
+      "measurement": {
+        "PTM": [-1.0, 1.0]
       }
     }
-]
+  }
+}
 ```
 The range of combined measurements categorizing proteins by whether the range is
 exceeded or not. The adaptive default setting is `[-1.0, 1.0]` if `"conversion"`
@@ -1138,33 +1137,33 @@ set to `"quantile"`, `[0.5, 2.0]` if `"conversion"` is set to `"ratio"`, and
 `[-1.0, 1.0]` if `"conversion"` is set to `"standard score"`.
 
 ```json
-[
-    {
-      "Gene Ontology enrichment": {
-        "intersection": false
-      },
-      "Reactome enrichment": {
-        "intersection": false
-      }
+{
+	"configuration": {
+    "Gene Ontology enrichment": {
+      "intersection": false
+    },
+    "Reactome enrichment": {
+      "intersection": false
     }
-]
+  }
+}
 ```
 If `true`, compute enrichment with respect to the intersection of specified
 subsets of proteins from the protein-protein interaction network instead of
 their union. The default setting is `false`.
 
 ```json
-[
-    {
-      "Gene Ontology enrichment": {
-        "namespaces": [
-          "cellular component",
-          "molecular function",
-          "biological process"
-        ]
-      }
+{
+	"configuration": {
+    "Gene Ontology enrichment": {
+      "namespaces": [
+        "cellular component",
+        "molecular function",
+        "biological process"
+      ]
     }
-]
+  }
+}
 ```
 The Gene Ontology namespaces to consider. The default setting is
 `["cellular component", "molecular function" "biological process"]`.
@@ -1182,16 +1181,16 @@ associated measurements, either by a union or intersection of specified subsets
 of proteins from the protein-protein interaction network.
 
 ```json
-[
-    {
-      "Gene Ontology network": {
-        "PTMs": []
-      },
-      "Reactome network": {
-        "PTMs": []
-      }
+{
+	"configuration": {
+    "Gene Ontology network": {
+      "PTMs": []
+    },
+    "Reactome network": {
+      "PTMs": []
     }
-]
+  }
+}
 ```
 The post-translational modifications considered to determine subsets of proteins
 to the combination of which enrichment analysis is restricted. If restricted,
@@ -1201,20 +1200,20 @@ Gene Ontology annotation. Subsets consist of proteins exceeding a specified
 range of protein-specific measurements.
 
 ```json
-[
-    {
-      "Gene Ontology network": {
-        "site average": {
-          "PTM": "maxabs"
-        }
-      },
-      "Reactome network": {
-        "site average": {
-          "PTM": "maxabs"
-        }
+{
+	"configuration": {
+    "Gene Ontology network": {
+      "site average": {
+        "PTM": "maxabs"
+      }
+    },
+    "Reactome network": {
+      "site average": {
+        "PTM": "maxabs"
       }
     }
-]
+  }
+}
 ```
 The function used to combine distinct modification sites into protein-specific
 measurements. The function is applied to ratios, not their binary logarithm. The
@@ -1223,20 +1222,20 @@ measurement. Available settings are `"mean"`, `"median"`, `"mid-range"`,
 `"max"`, `"maxabs"`, `"min"`, `"minabs"`, `"sum"` and `"sumabs"`.
 
 ```json
-[
-    {
-      "Gene Ontology network": {
-        "replicate average": {
-          "PTM": "mean"
-        }
-      },
-      "Reactome network": {
-        "replicate average": {
-          "PTM": "mean"
-        }
+{
+	"configuration": {
+    "Gene Ontology network": {
+      "replicate average": {
+        "PTM": "mean"
+      }
+    },
+    "Reactome network": {
+      "replicate average": {
+        "PTM": "mean"
       }
     }
-]
+  }
+}
 ```
 The function used to combine distinct replicates into modification site-specific
 measurements. The function is applied to ratios, not their binary logarithm. The
@@ -1245,20 +1244,20 @@ settings are `"mean"`, `"median"`, `"mid-range"`, `"max"`, `"maxabs"`, `"min"`,
 `"minabs"`, `"sum"` and `"sumabs"`.
 
 ```json
-[
-    {
-      "Gene Ontology network": {
-        "conversion": {
-          "PTM": null
-        }
-      },
-      "Reactome network": {
-        "conversion": {
-          "PTM": null
-        }
+{
+	"configuration": {
+    "Gene Ontology network": {
+      "conversion": {
+        "PTM": null
+      }
+    },
+    "Reactome network": {
+      "conversion": {
+        "PTM": null
       }
     }
-]
+  }
+}
 ```
 The conversion that a measurement range refers to. It defaults to the binary
 logarithm of a measurement for `null` but can be set to `"log10"`,
@@ -1267,20 +1266,20 @@ respect to the distribution of a particular modification at a particular time of
 measurement across the protein-protein interaction network, if applicable.
 
 ```json
-[
-    {
-      "Gene Ontology network": {
-        "measurement": {
-          "PTM": [-1.0, 1.0]
-        }
-      },
-      "Reactome network": {
-        "measurement": {
-          "PTM": [-1.0, 1.0]
-        }
+{
+	"configuration": {
+    "Gene Ontology network": {
+      "measurement": {
+        "PTM": [-1.0, 1.0]
+      }
+    },
+    "Reactome network": {
+      "measurement": {
+        "PTM": [-1.0, 1.0]
       }
     }
-]
+  }
+}
 ```
 The range of combined measurements categorizing proteins by whether the range is
 exceeded or not. The adaptive default setting is `[-1.0, 1.0]` if `"conversion"`
@@ -1290,79 +1289,79 @@ set to `"quantile"`, `[0.5, 2.0]` if `"conversion"` is set to `"ratio"`, and
 `[-1.0, 1.0]` if `"conversion"` is set to `"standard score"`.
 
 ```json
-[
-    {
-      "Gene Ontology network": {
-        "intersection": false
-      },
-      "Reactome network": {
-        "intersection": false
-      }
+{
+	"configuration": {
+    "Gene Ontology network": {
+      "intersection": false
+    },
+    "Reactome network": {
+      "intersection": false
     }
-]
+  }
+}
 ```
 If `true`, compute enrichment with respect to the intersection of specified
 subsets of proteins from the protein-protein interaction network instead of
 their union. The default setting is `false`.
 
 ```json
-[
-    {
-      "Gene Ontology network": {
-        "test": "hypergeometric"
-      },
-      "Reactome network": {
-        "test": "hypergeometric"
-      }
+{
+	"configuration": {
+    "Gene Ontology network": {
+      "test": "hypergeometric"
+    },
+    "Reactome network": {
+      "test": "hypergeometric"
     }
-]
+  }
+}
 ```
 The statistical test to assess enrichment of each term or pathway by the
 submitted proteins. The default setting is `"hypergeometric"`. Available
 settings are `"binomial"` and `"hypergeometric"`.
 
 ```json
-[
-    {
-      "Gene Ontology network": {
-        "increase": true
-      },
-      "Reactome network": {
-        "increase": true
-      }
+{
+	"configuration": {
+    "Gene Ontology network": {
+      "increase": true
+    },
+    "Reactome network": {
+      "increase": true
     }
-]
+  }
+}
 ```
 If `true`, assess enrichment, otherwise depletion. The default setting is
 `true`.
 
 ```json
-[
-    {
-      "Gene Ontology network": {
-        "correction": "Benjamini-Yekutieli"
-      },
-      "Reactome network": {
-        "correction": "Benjamini-Yekutieli"
-      }
+{
+	"configuration": {
+    "Gene Ontology network": {
+      "correction": "Benjamini-Yekutieli"
+    },
+    "Reactome network": {
+      "correction": "Benjamini-Yekutieli"
     }
-]
+  }
+}
 ```
 The procedure to correct p-values for multiple testing. The default setting is
 `"Benjamini-Yekutieli"`. Available settings are `"Benjamini-Hochberg"`,
 `"Benjamini-Yekutieli"`, `"Holm"` and `"Hommel"`.
 
 ```json
-[
-    {
-      "Gene Ontology network": {
-        "annotation": false
-      },
-      "Reactome network": {
-        "annotation": false
-      }
+{
+	"configuration": {
+    "Gene Ontology network": {
+      "annotation": false
+    },
+    "Reactome network": {
+      "annotation": false
     }
-]
+  }
+}
 ```
 If `true`, compute enrichment with respect to the entire annotation, specific to
 the organism of interest, otherwise with respect to proteins represented in the
@@ -1370,33 +1369,33 @@ protein-protein interaction network to assess enrichment within specified
 subsets of them. The default setting is `false`.
 
 ```json
-[
-    {
-      "Gene Ontology network": {
-        "organism": 9606
-      },
-      "Reactome network": {
-        "organism": 9606
-      }
+{
+	"configuration": {
+    "Gene Ontology network": {
+      "organism": 9606
+    },
+    "Reactome network": {
+      "organism": 9606
     }
-]
+  }
+}
 ```
 
 The NCBI taxonomy ID of the organism of interest. The default and currently only
 completely supported setting is `9606`, corresponding to Homo sapiens.
 
 ```json
-[
-    {
-      "Gene Ontology network": {
-        "namespaces": [
-          "cellular component",
-          "molecular function",
-          "biological process"
-        ]
-      }
+{
+	"configuration": {
+    "Gene Ontology network": {
+      "namespaces": [
+        "cellular component",
+        "molecular function",
+        "biological process"
+      ]
     }
-]
+  }
+}
 ```
 The Gene Ontology namespaces to consider. The default setting is
 `["cellular component", "molecular function" "biological process"]`.
@@ -1407,38 +1406,38 @@ Communities of the protein-protein interaction network can be extracted using
 parameterized modularity maximization and iterative subdivision.
 
 ```json
-[
-    {
-      "community detection": {
-        "algorithm": "Louvain"
-      }
+{
+	"configuration": {
+    "community detection": {
+      "algorithm": "Louvain"
     }
-]
+  }
+}
 ```
 The community detection algorithm. The default setting is `"Louvain"`. Available
 settings are `"Clauset-Newman-Moore"` and `"Louvain"`.
 
 ```json
-[
-    {
-      "community detection": {
-        "resolution": 1.0
-      }
+{
+	"configuration": {
+    "community detection": {
+      "resolution": 1.0
     }
-]
+  }
+}
 ```
 The resolution parameter of modularity which is maximized. The default setting
 is `1.0`. Larger resolutions generate smaller communities, emphasizing the
 expected number of intra-community edges.
 
 ```json
-[
-    {
-      "community detection": {
-        "edge weight": null
-      }
+{
+	"configuration": {
+    "community detection": {
+      "edge weight": null
     }
-]
+  }
+}
 ```
 The function used to combine edge confidence scores from in IntAct, MINT and
 STRING, and, lacking of corresponding score, 1.0 for all interactions from
@@ -1449,13 +1448,13 @@ corresponding to an unweighted network. Available settings are `null`, `"mean"`,
 of queried databases supporting the protein-protein interaction.
 
 ```json
-[
-    {
-      "community detection": {
-        "community size": null
-      }
+{
+	"configuration": {
+    "community detection": {
+      "community size": null
     }
-]
+  }
+}
 ```
 An upper bound on the number of proteins per community. Modules are iteratively
 subdivided until this threshold is met. The adaptive default setting is the
@@ -1463,13 +1462,13 @@ number of proteins in the network, resulting in a single iteration of the
 community detection algorithm.
 
 ```json
-[
-    {
-      "community detection": {
-        "community size average": "mean"
-      }
+{
+	"configuration": {
+    "community detection": {
+      "community size average": "mean"
     }
-]
+  }
+}
 ```
 The function used to combine community sizes in terms of nodes into the value
 decisive to meeting the community size threshold. The default setting is
@@ -1495,106 +1494,106 @@ A community is exported if is significant according to any of the specified
 tests.
 
 ```json
-[
-    {
-      "community detection": {
-        "Gene Ontology enrichment": {
-          "increase": true
-        },
-        "Reactome enrichment": {
-          "increase": true
-        },
-        "measurement enrichment": {
-          "increase": true
-        },
-        "measurement location": {
-          "increase": true
-        }
+{
+	"configuration": {
+    "community detection": {
+      "Gene Ontology enrichment": {
+        "increase": true
+      },
+      "Reactome enrichment": {
+        "increase": true
+      },
+      "measurement enrichment": {
+        "increase": true
+      },
+      "measurement location": {
+        "increase": true
       }
     }
-]
+  }
+}
 ```
 If `true`, assess enrichment, otherwise depletion concerning enrichment and
 relative increase, otherwise relative decrease of measurements in a community.
 The default setting is `true`.
 
 ```json
-[
-    {
-      "community detection": {
-        "Gene Ontology enrichment": {
-          "correction": "Benjamini-Yekutieli"
-        },
-        "Reactome enrichment": {
-          "correction": "Benjamini-Yekutieli"
-        },
-        "measurement enrichment": {
-          "correction": "Benjamini-Yekutieli"
-        },
-        "measurement location": {
-          "correction": "Benjamini-Yekutieli"
-        }
+{
+	"configuration": {
+    "community detection": {
+      "Gene Ontology enrichment": {
+        "correction": "Benjamini-Yekutieli"
+      },
+      "Reactome enrichment": {
+        "correction": "Benjamini-Yekutieli"
+      },
+      "measurement enrichment": {
+        "correction": "Benjamini-Yekutieli"
+      },
+      "measurement location": {
+        "correction": "Benjamini-Yekutieli"
       }
     }
-]
+  }
+}
 ```
 The procedure to correct p-values for multiple testing. The default setting is
 `"Benjamini-Yekutieli"`. Available settings are `"Benjamini-Hochberg"`,
 `"Benjamini-Yekutieli"`, `"Holm"` and `"Hommel"`.
 
 ```json
-[
-    {
-      "community detection": {
-        "Gene Ontology enrichment": {
-          "p": 1.0
-        },
-        "Reactome enrichment": {
-          "p": 1.0
-        },
-        "measurement enrichment": {
-          "p": 1.0
-        },
-        "measurement location": {
-          "p": 1.0
-        }
+{
+	"configuration": {
+    "community detection": {
+      "Gene Ontology enrichment": {
+        "p": 1.0
+      },
+      "Reactome enrichment": {
+        "p": 1.0
+      },
+      "measurement enrichment": {
+        "p": 1.0
+      },
+      "measurement location": {
+        "p": 1.0
       }
     }
-]
+  }
+}
 ```
 The corrected p-value threshold. The default setting is `1.0`.
 
 ```json
-[
-    {
-      "community detection": {
-        "Gene Ontology enrichment": {
-          "test": "hypergeometric"
-        },
-        "Reactome enrichment": {
-          "test": "hypergeometric"
-        },
-        "measurement enrichment": {
-          "test": "hypergeometric"
-        }
+{
+	"configuration": {
+    "community detection": {
+      "Gene Ontology enrichment": {
+        "test": "hypergeometric"
+      },
+      "Reactome enrichment": {
+        "test": "hypergeometric"
+      },
+      "measurement enrichment": {
+        "test": "hypergeometric"
       }
     }
-]
+  }
+}
 ```
 The statistical test to assess enrichment of each complex, term or pathway by
 the each of the communities. The default setting is `"hypergeometric"`.
 Available settings are `"binomial"` and `"hypergeometric"`.
 
 ```json
-[
-    {
-      "community detection": {
-        "measurement location": {
-          "test": "Mann-Whitney-Wilcoxon"
-        }
+{
+	"configuration": {
+    "community detection": {
+      "measurement location": {
+        "test": "Mann-Whitney-Wilcoxon"
       }
     }
-]
+  }
+}
 ```
 The statistical test to compare locations of modification- and time-specific
 distributions of measurements across each community with the distribution of the
@@ -1603,67 +1602,67 @@ remaining protein-protein interaction network. The default setting is
 `"Welch"`.
 
 ```json
-[
-    {
-      "community detection": {
-        "measurement location": {
-          "absolute": true
-        }
+{
+	"configuration": {
+    "community detection": {
+      "measurement location": {
+        "absolute": true
       }
     }
-]
+  }
+}
 ```
 If `true` test the absolute values of the measurements, otherwise the
 measurements. The default value is `true`.
 
 ```json
-[
-    {
-      "community detection": {
-        "Gene Ontology enrichment": {
-          "organism": 9606
-        },
-        "Reactome enrichment": {
-          "organism": 9606
-        }
+{
+	"configuration": {
+    "community detection": {
+      "Gene Ontology enrichment": {
+        "organism": 9606
+      },
+      "Reactome enrichment": {
+        "organism": 9606
       }
     }
-]
+  }
+}
 ```
 The NCBI taxonomy ID of the organism of interest. The default and currently only
 completely supported setting is `9606`, corresponding to Homo sapiens.
 
 ```json
-[
-    {
-      "community detection": {
-        "Gene Ontology enrichment": {
-          "annotation": false
-        },
-        "Reactome enrichment": {
-          "annotation": false
-        }
+{
+	"configuration": {
+    "community detection": {
+      "Gene Ontology enrichment": {
+        "annotation": false
+      },
+      "Reactome enrichment": {
+        "annotation": false
       }
     }
-]
+  }
+}
 ```
 If `true`, compute enrichment with respect to the entire annotation, specific to
 the organism of interest, otherwise with respect to proteins represented in the
 protein-protein interaction network. The default setting is `false`.
 
 ```json
-[
-    {
-      "community detection": {
-        "Gene Ontology enrichment": {
-          "PTMs": []
-        },
-        "Reactome enrichment": {
-          "PTMs": []
-        }
+{
+	"configuration": {
+    "community detection": {
+      "Gene Ontology enrichment": {
+        "PTMs": []
+      },
+      "Reactome enrichment": {
+        "PTMs": []
       }
     }
-]
+  }
+}
 ```
 The post-translational modifications considered to determine subsets of proteins
 to the combinations of which enrichment analysis for each module is restricted.
@@ -1673,22 +1672,22 @@ the entire species-specific Gene Ontology annotation. Subsets consist of
 proteins exceeding a specified range of protein-specific measurements.
 
 ```json
-[
-    {
-      "community detection": {
-        "Gene Ontology enrichment": {
-          "site average": {
-            "PTM": "maxabs"
-          }
-        },
-        "Reactome enrichment": {
-          "site average": {
-            "PTM": "maxabs"
-          }
+{
+	"configuration": {
+    "community detection": {
+      "Gene Ontology enrichment": {
+        "site average": {
+          "PTM": "maxabs"
+        }
+      },
+      "Reactome enrichment": {
+        "site average": {
+          "PTM": "maxabs"
         }
       }
     }
-]
+  }
+}
 ```
 The function used to combine distinct modification sites into protein-specific
 measurements. The function is applied to ratios, not their binary logarithm. The
@@ -1697,22 +1696,22 @@ measurement. Available settings are `"mean"`, `"median"`, `"mid-range"`,
 `"max"`, `"maxabs"`, `"min"`, `"minabs"`, `"sum"` and `"sumabs"`.
 
 ```json
-[
-    {
-      "community detection": {
-        "Gene Ontology enrichment": {
-          "replicate average": {
-            "PTM": "mean"
-          }
-        },
-        "Reactome enrichment": {
-          "replicate average": {
-            "PTM": "mean"
-          }
+{
+	"configuration": {
+    "community detection": {
+      "Gene Ontology enrichment": {
+        "replicate average": {
+          "PTM": "mean"
+        }
+      },
+      "Reactome enrichment": {
+        "replicate average": {
+          "PTM": "mean"
         }
       }
     }
-]
+  }
+}
 ```
 The function used to combine distinct replicates into modification site-specific
 measurements. The function is applied to ratios, not their binary logarithm. The
@@ -1721,22 +1720,22 @@ settings are `"mean"`, `"median"`, `"mid-range"`, `"max"`, `"maxabs"`, `"min"`,
 `"minabs"`, `"sum"` and `"sumabs"`.
 
 ```json
-[
-    {
-      "community detection": {
-        "Gene Ontology enrichment": {
-          "conversion": {
-            "PTM": null
-          }
-        },
-        "Reactome enrichment": {
-          "conversion": {
-            "PTM": null
-          }
+{
+	"configuration": {
+    "community detection": {
+      "Gene Ontology enrichment": {
+        "conversion": {
+          "PTM": null
+        }
+      },
+      "Reactome enrichment": {
+        "conversion": {
+          "PTM": null
         }
       }
     }
-]
+  }
+}
 ```
 The conversion that a measurement range refers to. It defaults to the binary
 logarithm of a measurement for `null` but can be set to`"log10"`,
@@ -1746,22 +1745,22 @@ measurement across each community of the protein-protein interaction network,
 if applicable.
 
 ```json
-[
-    {
-      "community detection": {
-        "Gene Ontology enrichment": {
-          "measurement": {
-            "PTM": [-1.0, 1.0]
-          }
-        },
-        "Reactome enrichment": {
-          "measurement": {
-            "PTM": [-1.0, 1.0]
-          }
+{
+	"configuration": {
+    "community detection": {
+      "Gene Ontology enrichment": {
+        "measurement": {
+          "PTM": [-1.0, 1.0]
+        }
+      },
+      "Reactome enrichment": {
+        "measurement": {
+          "PTM": [-1.0, 1.0]
         }
       }
     }
-]
+  }
+}
 ```
 The range of combined measurements categorizing proteins by whether the range is
 exceeded or not. The adaptive default setting is `[-1.0, 1.0]` if `"conversion"`
@@ -1771,58 +1770,58 @@ set to `"quantile"`, `[0.5, 2.0]` if `"conversion"` is set to `"ratio"`, and
 `[-1.0, 1.0]` if `"conversion"` is set to `"standard score"`.
 
 ```json
-[
-    {
-      "community detection": {
-        "Gene Ontology enrichment": {
-          "intersection": false
-        },
-        "Reactome enrichment": {
-          "intersection": false
-        }
+{
+	"configuration": {
+    "community detection": {
+      "Gene Ontology enrichment": {
+        "intersection": false
+      },
+      "Reactome enrichment": {
+        "intersection": false
       }
     }
-]
+  }
+}
 ```
 If `true`, compute enrichment with respect to the intersection of specified
 subsets of proteins from the protein-protein interaction network instead of
 their union. The default setting is `false`.
 
 ```json
-[
-    {
-      "community detection": {
-        "Gene Ontology enrichment": {
-          "namespaces": [
-              "cellular component",
-              "molecular function",
-              "biological process"
-            ]
-        }
+{
+	"configuration": {
+    "community detection": {
+      "Gene Ontology enrichment": {
+        "namespaces": [
+            "cellular component",
+            "molecular function",
+            "biological process"
+          ]
       }
     }
-]
+  }
+}
 ```
 The Gene Ontology namespaces to consider. The default setting is
 `["cellular component", "molecular function" "biological process"]`.
 
 ```json
-[
-    {
-      "community detection": {
-        "measurement enrichment": {
-            "site average": {
-              "PTM": "maxabs"
-            }
-        },
-        "measurement location": {
-            "site average": {
-              "PTM": "maxabs"
-            }
+{
+	"configuration": {
+    "community detection": {
+      "measurement enrichment": {
+        "site average": {
+          "PTM": "maxabs"
+        }
+      },
+      "measurement location": {
+        "site average": {
+          "PTM": "maxabs"
         }
       }
     }
-]
+  }
+}
 ```
 The modification-specific function used to combine distinct modification sites
 into protein-specific measurements. The default setting is `"maxabs"`,
@@ -1831,22 +1830,22 @@ corresponding to the largest absolute value. Available settings are `"mean"`,
 `"sumabs"` and `null` to consider modification sites separately.
 
 ```json
-[
-    {
-      "community detection": {
-        "measurement enrichment": {
-            "replicate average": {
-              "PTM": "mean"
-            }
-        },
-        "measurement location": {
-            "replicate average": {
-              "PTM": "mean"
-            }
+{
+	"configuration": {
+    "community detection": {
+      "measurement enrichment": {
+        "replicate average": {
+          "PTM": "mean"
+        }
+      },
+      "measurement location": {
+        "replicate average": {
+          "PTM": "mean"
         }
       }
     }
-]
+  }
+}
 ```
 The modification-specific function used to combine distinct replicates into
 modification site-specific measurements. The default setting is `"mean"`,
@@ -1855,17 +1854,17 @@ corresponding to the mean of replicates. Available settings are `"mean"`,
 `"sumabs"` and `null` to consider replicates separately.
 
 ```json
-[
-    {
-      "community detection": {
-        "measurement enrichment": {
-          "conversion": {
-            "PTM": null
-          }
+{
+	"configuration": {
+    "community detection": {
+      "measurement enrichment": {
+        "conversion": {
+          "PTM": null
         }
       }
     }
-]
+  }
+}
 ```
 The modification-specific conversion that a measurement range refers to. It
 defaults to the binary logarithm of a measurement for `null` but can be set to
@@ -1875,17 +1874,17 @@ particular time of measurement across each community of the protein-protein
 interaction network if applicable.
 
 ```json
-[
-    {
-      "community detection": {
-        "measurement enrichment": {
-          "measurement": {
-            "PTM": [-1.0, 1.0]
-          }
+{
+	"configuration": {
+    "community detection": {
+      "measurement enrichment": {
+        "measurement": {
+          "PTM": [-1.0, 1.0]
         }
       }
     }
-]
+  }
+}
 ```
 The modification-specific range of measurements to categorize proteins by
 whether the range is exceeded or not. The adaptive default setting is
