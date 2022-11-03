@@ -1501,7 +1501,7 @@ def process_workflow(identifier: str, configuration: Mapping[str, Any],
                                                    f"{identifier}_{k}")
 
 
-def process_configuration(configurations: dict[str, dict[str, Any]],
+def process_configuration(configurations: Mapping[str, Mapping[str, Any]],
                           logger: logging.Logger) -> None:
     """
     Executes workflows specified in configurations sequentially.
