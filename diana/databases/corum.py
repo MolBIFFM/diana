@@ -1,11 +1,8 @@
 """The interface for the CORUM database."""
 import re
-from typing import (Callable, Container, Hashable, Iterable, Iterator, Mapping,
-                    Optional)
+from typing import Container, Iterator, Optional
 
-import scipy.stats
 from access import iterate
-from algorithms import correction
 
 from databases import uniprot
 
