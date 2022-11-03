@@ -980,8 +980,8 @@ settings are `"binomial"` and `"hypergeometric"`.
     }
 ]
 ```
-If `true`, assess overrepresentation, otherwise underrepresentation. The default
-setting is `true`.
+If `true`, assess enrichment, otherwise depletion. The default setting is
+`true`.
 
 ```json
 [
@@ -1333,8 +1333,8 @@ settings are `"binomial"` and `"hypergeometric"`.
     }
 ]
 ```
-If `true`, assess overrepresentation, otherwise underrepresentation. The default
-setting is `true`.
+If `true`, assess enrichment, otherwise depletion. The default setting is
+`true`.
 
 ```json
 [
@@ -1514,9 +1514,9 @@ tests.
     }
 ]
 ```
-If `true`, assess overrepresentation, otherwise underrepresentation concerning
-enrichment and relative increase, otherwise relative decrease of measurements in
-a community. The default setting is `true`.
+If `true`, assess enrichment, otherwise depletion concerning enrichment and
+relative increase, otherwise relative decrease of measurements in a community.
+The default setting is `true`.
 
 ```json
 [
