@@ -3,21 +3,17 @@ DIANA is a command line application facilitating **D**ata **I**ntegration
 **A**nd **N**etwork-based **A**nalysis for post-translational modification mass
 spectrometry data.
 
-Incorporating protein-protein interactions from BioGRID, CORUM, IntAct, MINT,
-Reactome, and STRING, DIANA assembles and analyzes protein-protein interaction
-networks to contextualize measured differential post-translational modification,
-integrating submitted mass spectrometry data with publicly accessible
-protein-protein interactions as well as protein annotation.
+Provided mass-spectrometry data, DIANA automates customizable analysis of
+differential post-translational modification of proteins in the context of
+protein-protein interaction networks incorporating interactions from BioGRID,
+CORUM, IntAct, MINT, Reactome, and STRING.
 
-The enrichment of Gene Ontology terms and Reactome pathways by proteins
-associated with distinctive measurements or sets of proteins representing
-individual densely interacting portions of the obtained protein-protein
-interaction networks can be assessed statistically as well as the distribution
-of measurements across these portions.
+Network analysis assesses the enrichment of Gene Ontology terms and Reactome
+pathways by individual densely interacting sets of proteins associated with
+distinctive ranges of mass-spectrometry measurements as well as the distribution
+of measurements across the protein-protein interaction network.
 
-Networks of Gene Ontology terms or Reactome pathways, reporting enrichment of
-each term or pathway by the proteins submitted, can be generated along
-customized Cytoscape style specifications.
+The assembled networks are exported along Cytoscape style specifications.
 
 ## Setup
 External dependencies, consisting of NetworkX, pandas, and SciPy, can be
@@ -150,7 +146,7 @@ tabular file.
     }
 ]
 ```
-A list of protein-protein interaction networks as exported from workflows. The
+A list of protein-protein interaction networks as exported by workflows. The
 union of input protein-protein interaction networks and input proteins is used.
 
 ```json
