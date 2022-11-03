@@ -10,10 +10,10 @@ combining submitted mass spectrometry data with publicly accessible
 protein-protein interactions as well as protein annotation.
 
 The enrichment of Gene Ontology terms and Reactome pathways by proteins
-associated with distinctive measurements or proteins representing densely
-interacting portions of these protein-protein interaction networks can
+associated with distinctive measurements or proteins representing individual
+densely interacting portions of these protein-protein interaction networks can
 be assessed as well as the representation of relatively large measurements
-within densely interacting portions.
+within these portions.
 
 Networks of Gene Ontology terms or Reactome pathways, reporting enrichment of
 each term or pathway by the proteins submitted, can be generated along
