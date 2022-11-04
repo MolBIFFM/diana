@@ -11,7 +11,8 @@ CORUM, IntAct, MINT, Reactome, and STRING.
 Network analysis assesses the enrichment of Gene Ontology terms and Reactome
 pathways by individual densely interacting sets of proteins associated with
 distinctive ranges of mass-spectrometry measurements as well as the distribution
-of measurements across the protein-protein interaction network.
+of measurements across these portions of the protein-protein interaction
+network.
 
 The assembled networks are exported along Cytoscape style specifications.
 
@@ -944,12 +945,12 @@ of queried databases supporting the protein-protein interaction.
 
 ---
 
-CORUM protein complex, Gene Ontology term and Reactome pathway enrichment of the
-protein-protein interaction network can be assessed.
+Gene Ontology term and Reactome pathway enrichment of the protein-protein
+interaction network can be assessed.
 
-The proteins considered can be restricted, based on mass spectrometric
-associated measurements, either by a union or intersection of specified subsets
-of proteins from the protein-protein interaction network.
+The proteins considered can be restricted, based on their associated mass
+spectrometric measurements, either by a union or intersection of specified
+subsets of proteins exceeding a specified range of measurements.
 
 ```json
 {
@@ -1477,18 +1478,16 @@ and `"min"`.
 
 ---
 
-CORUM protein complex, Gene Ontology term and Reactome pathway enrichment by
-separate communities can be assessed. The proteins considered can be
-restricted, based on ranges of associated mass spectrometric measurements,
-either by a union or intersection of specified subsets of proteins from the
-protein-protein interaction network.
+Gene Ontology term and Reactome pathway enrichment by separate communities can
+be assessed. The proteins considered can be restricted, based on their
+associated mass spectrometric measurements, either by a union or intersection of
+specified subsets of proteins exceeding a specified range of measurements.
 
-To assess the distribution of mass spectrometry measurements across communities,
-these can be categorized to measure the enrichment of proteins exceeding a
-specified absolute or relative threshold.
-
+To assess the distribution of mass spectrometry measurements across communities
+of the protein-protein interaction network, proteins can be categorized to
+measure the enrichment of proteins exceeding a specified range of measurements.
 Alternatively, the distribution of measurements within separate communities can
-be compared with the remaining network.
+be compared with that of the remaining network.
 
 A community is exported if is significant according to any of the specified
 tests.
