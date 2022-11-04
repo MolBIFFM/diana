@@ -846,13 +846,14 @@ def process_workflow(identifier: str, configuration: Mapping[str, Any],
                 organism=configuration["Gene Ontology network"].get(
                     "organism", 9606))
 
-        gene_ontology_network.export(ontology_network, identifier)
+        gene_ontology_network.export(ontology_network,
+                                     f"{identifier}_gene_ontology")
 
         if "Cytoscape" in configuration:
             ontology_network_styles = gene_ontology_network_style.get_styles(
                 ontology_network)
             gene_ontology_network_style.export(ontology_network_styles,
-                                               identifier)
+                                               f"{identifier}_gene_ontology")
 
     if "Reactome network" in configuration:
         if "PTMs" in configuration["Reactome network"]:
@@ -953,12 +954,13 @@ def process_workflow(identifier: str, configuration: Mapping[str, Any],
                 organism=configuration["Reactome network"].get(
                     "organism", 9606))
 
-        reactome_network.export(pathway_network, identifier)
+        reactome_network.export(pathway_network, f"{identifier}_reactome")
 
         if "Cytoscape" in configuration:
             pathway_network_styles = reactome_network_style.get_styles(
                 pathway_network)
-            reactome_network_style.export(pathway_network_styles, identifier)
+            reactome_network_style.export(pathway_network_styles,
+                                          f"{identifier}_reactome")
 
     if "community detection" in configuration:
         protein_interaction_network.set_edge_weights(

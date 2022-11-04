@@ -769,7 +769,7 @@ The version of STRING to query. The default setting is `11.5`.
 
 ---
 
-The specification of Cytoscape styles. If not present, no Cytoscape styles are
+The specification of Cytoscape styles. If not present, Cytoscape styles are not
 exported.
 
 ```json
