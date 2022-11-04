@@ -49,7 +49,7 @@ Input proteins are read from tabular input files.
 
 ```json
 {
-	"configuration": {
+  "configuration": {
     "proteins": [
       {
         "file": null
@@ -63,7 +63,7 @@ additional mass spectrometry data.
 
 ```json
 {
-	"configuration": {
+  "configuration": {
     "proteins": [
       {
         "accession column": null
@@ -79,7 +79,7 @@ accessions.
 
 ```json
 {
-	"configuration": {
+  "configuration": {
     "proteins": [
       {
         "accession format": "^(.+?)$"
@@ -95,7 +95,7 @@ entry.
 
 ```json
 {
-	"configuration": {
+  "configuration": {
     "proteins": [
       {
         "sheet": 1
@@ -109,7 +109,7 @@ corresponding to the first spreadsheet of the file.
 
 ```json
 {
-	"configuration": {
+  "configuration": {
     "proteins": [
       {
         "header": 1
@@ -123,7 +123,7 @@ setting is `1`, corresponding to the first line of the sheet.
 
 ```json
 {
-	"configuration": {
+  "configuration": {
     "proteins": [
       {
         "accessions": []
@@ -138,7 +138,7 @@ tabular file.
 
 ```json
 {
-	"configuration": {
+  "configuration": {
     "networks": [
       {
         "network": null
@@ -152,7 +152,7 @@ union of input protein-protein interaction networks and input proteins is used.
 
 ```json
 {
-	"configuration": {
+  "configuration": {
     "proteins": [
       {
         "organism": 9606
@@ -171,7 +171,7 @@ completely supported setting is `9606`, corresponding to Homo sapiens.
 
 ```json
 {
-	"configuration": {
+  "configuration": {
     "proteins": [
       {
         "time": 0
@@ -186,7 +186,7 @@ is `0`.
 
 ```json
 {
-	"configuration": {
+  "configuration": {
     "proteins": [
       {
         "PTM": "PTM"
@@ -203,7 +203,7 @@ Cytoscape styles.
 
 ```json
 {
-	"configuration": {
+  "configuration": {
     "proteins": [
       {
         "position column": null
@@ -220,7 +220,7 @@ measurements are used.
 
 ```json
 {
-	"configuration": {
+  "configuration": {
     "proteins": [
       {
         "position format": "^(.+?)$"
@@ -235,7 +235,7 @@ setting is `"^(.+?)$"`, corresponding to the entire entry.
 
 ```json
 {
-	"configuration": {
+  "configuration": {
     "proteins": [
       {
         "replicate columns": []
@@ -249,7 +249,7 @@ A list of columns to extract replicate measurements from. The default setting is
 
 ```json
 {
-	"configuration": {
+  "configuration": {
     "proteins": [
       {
         "replicate format": "^(.+?)$"
@@ -264,7 +264,7 @@ setting is `"^(.+?)$"`, corresponding to the entire entry.
 
 ```json
 {
-	"configuration": {
+  "configuration": {
     "proteins": [
       {
         "replicates": 1
@@ -278,7 +278,7 @@ measurement. The default setting is `1`.
 
 ```json
 {
-	"configuration": {
+  "configuration": {
     "proteins": [
       {
         "sites": 5
@@ -292,7 +292,7 @@ largest absolute measurement. The default setting is `5`.
 
 ```json
 {
-	"configuration": {
+  "configuration": {
     "proteins": [
       {
         "site prioritization": "abs"
@@ -308,7 +308,7 @@ measurements signifying an increase or decrease, respectively.
 
 ```json
 {
-	"configuration": {
+  "configuration": {
     "proteins": [
       {
         "replicate average": "mean"
@@ -325,7 +325,7 @@ and `"sumabs"`.
 
 ```json
 {
-	"configuration": {
+  "configuration": {
     "proteins": [
       {
         "logarithm": null
@@ -347,7 +347,7 @@ each must be satisfied for an interaction to be incorporated.
 
 ```json
 {
-	"configuration": {
+  "configuration": {
     "protein-protein interactions": {
       "BioGRID": {
         "neighbors": 0
@@ -378,7 +378,7 @@ corresponding to no extension.
 
 ```json
 {
-	"configuration": {
+  "configuration": {
     "protein-protein interactions": {
       "BioGRID": {
         "organism": 9606
@@ -408,7 +408,7 @@ only completely supported setting is `9606`, corresponding to Homo sapiens.
 
 ```json
 {
-	"configuration": {
+  "configuration": {
     "protein-protein interactions": {
       "BioGRID": {
         "interaction throughput": []
@@ -422,7 +422,7 @@ A list of accepted interaction throughput annotations. The default setting is
 
 ```json
 {
-	"configuration": {
+  "configuration": {
     "protein-protein interactions": {
       "BioGRID": {
         "experimental system": []
@@ -436,7 +436,7 @@ corresponding to any annotation.
 
 ```json
 {
-	"configuration": {
+  "configuration": {
     "protein-protein interactions": {
       "BioGRID": {
         "experimental system type": []
@@ -450,7 +450,7 @@ A list of accepted experimental system type annotations. The default setting is
 
 ```json
 {
-	"configuration": {
+  "configuration": {
     "protein-protein interactions": {
       "BioGRID": {
         "multi-validated physical": false
@@ -464,7 +464,7 @@ interactions. The default setting is `false`.
 
 ```json
 {
-	"configuration": {
+  "configuration": {
     "protein-protein interactions": {
       "BioGRID": {
         "version": null
@@ -478,7 +478,7 @@ corresponding to the latest version.
 
 ```json
 {
-	"configuration": {
+  "configuration": {
     "protein-protein interactions": {
       "CORUM": {
         "purification methods": []
@@ -492,7 +492,7 @@ methods. The default setting is `[]`, corresponding to any annotation.
 
 ```json
 {
-	"configuration": {
+  "configuration": {
     "protein-protein interactions": {
       "IntAct": {
         "interaction detection methods": []
@@ -509,7 +509,7 @@ methods. The default setting is `[]`, corresponding to any annotation.
 
 ```json
 {
-	"configuration": {
+  "configuration": {
     "protein-protein interactions": {
       "IntAct": {
         "interaction types": []
@@ -526,7 +526,7 @@ default setting is `[]`, corresponding to any annotation.
 
 ```json
 {
-	"configuration": {
+  "configuration": {
     "protein-protein interactions": {
       "IntAct": {
         "score": 0.0
@@ -542,7 +542,7 @@ A PSI-MI score threshold. The default setting is `0.0`.
 
 ```json
 {
-	"configuration": {
+  "configuration": {
     "protein-protein interactions": {
       "Reactome": {
         "interaction context": []
@@ -556,7 +556,7 @@ corresponding to any annotation.
 
 ```json
 {
-	"configuration": {
+  "configuration": {
     "protein-protein interactions": {
       "Reactome": {
         "interaction type": []
@@ -570,7 +570,7 @@ corresponding to any annotation.
 
 ```json
 {
-	"configuration": {
+  "configuration": {
     "protein-protein interactions": {
       "STRING": {
         "neighborhood score": 0.0
@@ -583,7 +583,7 @@ The STRING gene neighborhood score threshold. The default setting is `0.0`.
 
 ```json
 {
-	"configuration": {
+  "configuration": {
     "protein-protein interactions": {
       "STRING": {
         "neighborhood transferred score": 0.0
@@ -597,7 +597,7 @@ The STRING transferred gene neighborhood score threshold. The default setting is
 
 ```json
 {
-	"configuration": {
+  "configuration": {
     "protein-protein interactions": {
       "STRING": {
         "fusion score": 0.0
@@ -610,7 +610,7 @@ The STRING gene fusion score threshold. The default setting is `0.0`.
 
 ```json
 {
-	"configuration": {
+  "configuration": {
     "protein-protein interactions": {
       "STRING": {
         "cooccurrence score": 0.0
@@ -623,7 +623,7 @@ The STRING gene cooccurrence score threshold. The default setting is `0.0`.
 
 ```json
 {
-	"configuration": {
+  "configuration": {
     "protein-protein interactions": {
       "STRING": {
         "coexpression score": 0.0
@@ -636,7 +636,7 @@ The STRING gene coexpression score threshold. The default setting is `0.0`.
 
 ```json
 {
-	"configuration": {
+  "configuration": {
     "protein-protein interactions": {
       "STRING": {
         "coexpression transferred score": 0.0
@@ -650,7 +650,7 @@ The STRING transferred gene coexpression score threshold. The default setting is
 
 ```json
 {
-	"configuration": {
+  "configuration": {
     "protein-protein interactions": {
       "STRING": {
         "experiments score": 0.0
@@ -663,7 +663,7 @@ The STRING experiments score threshold. The default setting is `0.0`.
 
 ```json
 {
-	"configuration": {
+  "configuration": {
     "protein-protein interactions": {
       "STRING": {
         "experiments transferred score": 0.0
@@ -677,7 +677,7 @@ The STRING transferred experiments score threshold. The default setting is
 
 ```json
 {
-	"configuration": {
+  "configuration": {
     "protein-protein interactions": {
       "STRING": {
         "database score": 0.0
@@ -690,7 +690,7 @@ The STRING database score threshold. The default setting is `0.0`.
 
 ```json
 {
-	"configuration": {
+  "configuration": {
     "protein-protein interactions": {
       "STRING": {
         "database transferred score": 0.0
@@ -703,7 +703,7 @@ The STRING transferred database score threshold. The default setting is `0.0`.
 
 ```json
 {
-	"configuration": {
+  "configuration": {
     "protein-protein interactions": {
       "STRING": {
         "textmining score": 0.0
@@ -716,7 +716,7 @@ The STRING textmining score threshold. The default setting is `0.0`.
 
 ```json
 {
-	"configuration": {
+  "configuration": {
     "protein-protein interactions": {
       "STRING": {
         "textmining transferred score": 0.0
@@ -729,7 +729,7 @@ The STRING transferred textmining score threshold. The default setting is `0.0`.
 
 ```json
 {
-	"configuration": {
+  "configuration": {
     "protein-protein interactions": {
       "STRING": {
         "combined score": 0.0
@@ -742,7 +742,7 @@ The STRING combined score threshold. The default setting is `0.0`.
 
 ```json
 {
-	"configuration": {
+  "configuration": {
     "protein-protein interactions": {
       "STRING": {
         "physical": false
@@ -756,7 +756,7 @@ setting is `false`.
 
 ```json
 {
-	"configuration": {
+  "configuration": {
     "protein-protein interactions": {
       "STRING": {
         "version": 11.5
@@ -774,7 +774,7 @@ exported.
 
 ```json
 {
-	"configuration": {
+  "configuration": {
     "Cytoscape": {
       "site average": {
         "PTM": "maxabs"
@@ -791,7 +791,7 @@ largest absolute measurement. Available settings are `"mean"`, `"median"`,
 
 ```json
 {
-	"configuration": {
+  "configuration": {
     "Cytoscape": {
       "replicate average": {
         "PTM": "mean"
@@ -808,7 +808,7 @@ mean of replicates. Available settings are `"mean"`, `"median"`, `"mid-range"`,
 
 ```json
 {
-	"configuration": {
+  "configuration": {
     "Cytoscape": {
       "conversion": {
         "PTM": null
@@ -826,7 +826,7 @@ if applicable.
 
 ```json
 {
-	"configuration": {
+  "configuration": {
     "Cytoscape": {
       "bar chart": {
         "PTMs": [],
@@ -842,7 +842,7 @@ specified.
 
 ```json
 {
-	"configuration": {
+  "configuration": {
     "Cytoscape": {
       "bar chart": {
         "measurement": {
@@ -862,7 +862,7 @@ to `"quantile"`, `[0.5, 2.0]` if `"conversion"` is set to `"ratio"`, and
 
 ```json
 {
-	"configuration": {
+  "configuration": {
     "Cytoscape": {
       "node color": {
         "PTMs": [],
@@ -878,7 +878,7 @@ specified.
 
 ```json
 {
-	"configuration": {
+  "configuration": {
     "Cytoscape": {
       "node color": {
         "measurement": {
@@ -899,7 +899,7 @@ to `"standard score"`.
 
 ```json
 {
-	"configuration": {
+  "configuration": {
     "Cytoscape": {
       "node shape": {
         "PTMs": [],
@@ -914,7 +914,7 @@ represented in order. By default, no modifications are specified.
 
 ```json
 {
-	"configuration": {
+  "configuration": {
     "Cytoscape": {
       "node size": {
         "PTM": null,
@@ -928,7 +928,7 @@ represent by node size. By default, no modification is specified.
 
 ```json
 {
-	"configuration": {
+  "configuration": {
     "Cytoscape": {
       "edge transparency": null,
     }
@@ -954,7 +954,7 @@ subsets of proteins exceeding a specified range of measurements.
 
 ```json
 {
-	"configuration": {
+  "configuration": {
     "Gene Ontology enrichment": {
       "test": "hypergeometric"
     },
@@ -970,7 +970,7 @@ settings are `"binomial"` and `"hypergeometric"`.
 
 ```json
 {
-	"configuration": {
+  "configuration": {
     "Gene Ontology enrichment": {
       "increase": true
     },
@@ -985,7 +985,7 @@ If `true`, assess enrichment, otherwise depletion. The default setting is
 
 ```json
 {
-	"configuration": {
+  "configuration": {
     "Gene Ontology enrichment": {
       "correction": "Benjamini-Yekutieli"
     },
@@ -1001,7 +1001,7 @@ The procedure to correct p-values for multiple testing. The default setting is
 
 ```json
 {
-	"configuration": {
+  "configuration": {
     "Gene Ontology enrichment": {
       "p": 1.0
     },
@@ -1016,7 +1016,7 @@ setting is `1.0`.
 
 ```json
 {
-	"configuration": {
+  "configuration": {
     "Gene Ontology enrichment": {
       "organism": 9606
     },
@@ -1031,7 +1031,7 @@ completely supported setting is `9606`, corresponding to Homo sapiens.
 
 ```json
 {
-	"configuration": {
+  "configuration": {
     "Gene Ontology enrichment": {
       "PTMs": []
     },
@@ -1050,7 +1050,7 @@ range of protein-specific measurements.
 
 ```json
 {
-	"configuration": {
+  "configuration": {
     "Gene Ontology enrichment": {
       "site average": {
         "PTM": "maxabs"
@@ -1072,7 +1072,7 @@ measurement. Available settings are `"mean"`, `"median"`, `"mid-range"`,
 
 ```json
 {
-	"configuration": {
+  "configuration": {
     "Gene Ontology enrichment": {
       "replicate average": {
         "PTM": "mean"
@@ -1094,7 +1094,7 @@ Available settings are `"mean"`, `"median"`, `"mid-range"`, `"max"`, `"maxabs"`,
 
 ```json
 {
-	"configuration": {
+  "configuration": {
     "Gene Ontology enrichment": {
       "conversion": {
         "PTM": null
@@ -1116,7 +1116,7 @@ measurement across the protein-protein interaction network, if applicable.
 
 ```json
 {
-	"configuration": {
+  "configuration": {
     "Gene Ontology enrichment": {
       "measurement": {
         "PTM": [-1.0, 1.0]
@@ -1139,7 +1139,7 @@ set to `"quantile"`, `[0.5, 2.0]` if `"conversion"` is set to `"ratio"`, and
 
 ```json
 {
-	"configuration": {
+  "configuration": {
     "Gene Ontology enrichment": {
       "intersection": false
     },
@@ -1155,7 +1155,7 @@ their union. The default setting is `false`.
 
 ```json
 {
-	"configuration": {
+  "configuration": {
     "Gene Ontology enrichment": {
       "namespaces": [
         "cellular component",
@@ -1183,7 +1183,7 @@ of proteins from the protein-protein interaction network.
 
 ```json
 {
-	"configuration": {
+  "configuration": {
     "Gene Ontology network": {
       "PTMs": []
     },
@@ -1202,7 +1202,7 @@ range of protein-specific measurements.
 
 ```json
 {
-	"configuration": {
+  "configuration": {
     "Gene Ontology network": {
       "site average": {
         "PTM": "maxabs"
@@ -1224,7 +1224,7 @@ measurement. Available settings are `"mean"`, `"median"`, `"mid-range"`,
 
 ```json
 {
-	"configuration": {
+  "configuration": {
     "Gene Ontology network": {
       "replicate average": {
         "PTM": "mean"
@@ -1246,7 +1246,7 @@ settings are `"mean"`, `"median"`, `"mid-range"`, `"max"`, `"maxabs"`, `"min"`,
 
 ```json
 {
-	"configuration": {
+  "configuration": {
     "Gene Ontology network": {
       "conversion": {
         "PTM": null
@@ -1268,7 +1268,7 @@ measurement across the protein-protein interaction network, if applicable.
 
 ```json
 {
-	"configuration": {
+  "configuration": {
     "Gene Ontology network": {
       "measurement": {
         "PTM": [-1.0, 1.0]
@@ -1291,7 +1291,7 @@ set to `"quantile"`, `[0.5, 2.0]` if `"conversion"` is set to `"ratio"`, and
 
 ```json
 {
-	"configuration": {
+  "configuration": {
     "Gene Ontology network": {
       "intersection": false
     },
@@ -1307,7 +1307,7 @@ their union. The default setting is `false`.
 
 ```json
 {
-	"configuration": {
+  "configuration": {
     "Gene Ontology network": {
       "test": "hypergeometric"
     },
@@ -1323,7 +1323,7 @@ settings are `"binomial"` and `"hypergeometric"`.
 
 ```json
 {
-	"configuration": {
+  "configuration": {
     "Gene Ontology network": {
       "increase": true
     },
@@ -1338,7 +1338,7 @@ If `true`, assess enrichment, otherwise depletion. The default setting is
 
 ```json
 {
-	"configuration": {
+  "configuration": {
     "Gene Ontology network": {
       "correction": "Benjamini-Yekutieli"
     },
@@ -1354,7 +1354,7 @@ The procedure to correct p-values for multiple testing. The default setting is
 
 ```json
 {
-	"configuration": {
+  "configuration": {
     "Gene Ontology network": {
       "annotation": false
     },
@@ -1371,7 +1371,7 @@ subsets of them. The default setting is `false`.
 
 ```json
 {
-	"configuration": {
+  "configuration": {
     "Gene Ontology network": {
       "organism": 9606
     },
@@ -1387,7 +1387,7 @@ completely supported setting is `9606`, corresponding to Homo sapiens.
 
 ```json
 {
-	"configuration": {
+  "configuration": {
     "Gene Ontology network": {
       "namespaces": [
         "cellular component",
@@ -1408,7 +1408,7 @@ parameterized modularity maximization and iterative subdivision.
 
 ```json
 {
-	"configuration": {
+  "configuration": {
     "community detection": {
       "algorithm": "Louvain"
     }
@@ -1420,7 +1420,7 @@ settings are `"Clauset-Newman-Moore"` and `"Louvain"`.
 
 ```json
 {
-	"configuration": {
+  "configuration": {
     "community detection": {
       "resolution": 1.0
     }
@@ -1433,7 +1433,7 @@ expected number of intra-community edges.
 
 ```json
 {
-	"configuration": {
+  "configuration": {
     "community detection": {
       "edge weight": null
     }
@@ -1450,7 +1450,7 @@ of queried databases supporting the protein-protein interaction.
 
 ```json
 {
-	"configuration": {
+  "configuration": {
     "community detection": {
       "community size": null
     }
@@ -1464,7 +1464,7 @@ community detection algorithm.
 
 ```json
 {
-	"configuration": {
+  "configuration": {
     "community detection": {
       "community size average": "mean"
     }
@@ -1494,7 +1494,7 @@ tests.
 
 ```json
 {
-	"configuration": {
+  "configuration": {
     "community detection": {
       "Gene Ontology enrichment": {
         "increase": true
@@ -1518,7 +1518,7 @@ The default setting is `true`.
 
 ```json
 {
-	"configuration": {
+  "configuration": {
     "community detection": {
       "Gene Ontology enrichment": {
         "correction": "Benjamini-Yekutieli"
@@ -1542,7 +1542,7 @@ The procedure to correct p-values for multiple testing. The default setting is
 
 ```json
 {
-	"configuration": {
+  "configuration": {
     "community detection": {
       "Gene Ontology enrichment": {
         "p": 1.0
@@ -1564,7 +1564,7 @@ The corrected p-value threshold. The default setting is `1.0`.
 
 ```json
 {
-	"configuration": {
+  "configuration": {
     "community detection": {
       "Gene Ontology enrichment": {
         "test": "hypergeometric"
@@ -1585,7 +1585,7 @@ Available settings are `"binomial"` and `"hypergeometric"`.
 
 ```json
 {
-	"configuration": {
+  "configuration": {
     "community detection": {
       "measurement location": {
         "test": "Mann-Whitney-Wilcoxon"
@@ -1602,7 +1602,7 @@ remaining protein-protein interaction network. The default setting is
 
 ```json
 {
-	"configuration": {
+  "configuration": {
     "community detection": {
       "measurement location": {
         "absolute": true
@@ -1616,7 +1616,7 @@ measurements. The default value is `true`.
 
 ```json
 {
-	"configuration": {
+  "configuration": {
     "community detection": {
       "Gene Ontology enrichment": {
         "organism": 9606
@@ -1633,7 +1633,7 @@ completely supported setting is `9606`, corresponding to Homo sapiens.
 
 ```json
 {
-	"configuration": {
+  "configuration": {
     "community detection": {
       "Gene Ontology enrichment": {
         "annotation": false
@@ -1651,7 +1651,7 @@ protein-protein interaction network. The default setting is `false`.
 
 ```json
 {
-	"configuration": {
+  "configuration": {
     "community detection": {
       "Gene Ontology enrichment": {
         "PTMs": []
@@ -1672,7 +1672,7 @@ proteins exceeding a specified range of protein-specific measurements.
 
 ```json
 {
-	"configuration": {
+  "configuration": {
     "community detection": {
       "Gene Ontology enrichment": {
         "site average": {
@@ -1696,7 +1696,7 @@ measurement. Available settings are `"mean"`, `"median"`, `"mid-range"`,
 
 ```json
 {
-	"configuration": {
+  "configuration": {
     "community detection": {
       "Gene Ontology enrichment": {
         "replicate average": {
@@ -1720,7 +1720,7 @@ settings are `"mean"`, `"median"`, `"mid-range"`, `"max"`, `"maxabs"`, `"min"`,
 
 ```json
 {
-	"configuration": {
+  "configuration": {
     "community detection": {
       "Gene Ontology enrichment": {
         "conversion": {
@@ -1745,7 +1745,7 @@ if applicable.
 
 ```json
 {
-	"configuration": {
+  "configuration": {
     "community detection": {
       "Gene Ontology enrichment": {
         "measurement": {
@@ -1770,7 +1770,7 @@ set to `"quantile"`, `[0.5, 2.0]` if `"conversion"` is set to `"ratio"`, and
 
 ```json
 {
-	"configuration": {
+  "configuration": {
     "community detection": {
       "Gene Ontology enrichment": {
         "intersection": false
@@ -1788,7 +1788,7 @@ their union. The default setting is `false`.
 
 ```json
 {
-	"configuration": {
+  "configuration": {
     "community detection": {
       "Gene Ontology enrichment": {
         "namespaces": [
@@ -1806,7 +1806,7 @@ The Gene Ontology namespaces to consider. The default setting is
 
 ```json
 {
-	"configuration": {
+  "configuration": {
     "community detection": {
       "measurement enrichment": {
         "site average": {
@@ -1830,7 +1830,7 @@ corresponding to the largest absolute value. Available settings are `"mean"`,
 
 ```json
 {
-	"configuration": {
+  "configuration": {
     "community detection": {
       "measurement enrichment": {
         "replicate average": {
@@ -1854,7 +1854,7 @@ corresponding to the mean of replicates. Available settings are `"mean"`,
 
 ```json
 {
-	"configuration": {
+  "configuration": {
     "community detection": {
       "measurement enrichment": {
         "conversion": {
@@ -1874,7 +1874,7 @@ interaction network if applicable.
 
 ```json
 {
-	"configuration": {
+  "configuration": {
     "community detection": {
       "measurement enrichment": {
         "measurement": {
