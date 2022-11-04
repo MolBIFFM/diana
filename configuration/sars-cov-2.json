@@ -13,54 +13,6 @@
             "Ratio Virus/Mock (log2)"
           ],
           "logarithm": 2
-        },
-        {
-          "time": 120,
-          "PTM": "A",
-          "file": "data/sars-cov-2/expression/41586_2020_2332_MOESM3_ESM.xlsx",
-          "sheet": "Tabelle1",
-          "accession column": "UniProt Accession",
-          "position format": "(?=(?:^|;)(.+?)(?:;|$))",
-          "replicate columns": [
-            "Ratio 2h"
-          ],
-          "logarithm": 2
-        },
-        {
-          "time": 360,
-          "PTM": "A",
-          "file": "data/sars-cov-2/expression/41586_2020_2332_MOESM3_ESM.xlsx",
-          "sheet": "Tabelle1",
-          "accession column": "UniProt Accession",
-          "position format": "(?=(?:^|;)(.+?)(?:;|$))",
-          "replicate columns": [
-            "Ratio 6h"
-          ],
-          "logarithm": 2
-        },
-        {
-          "time": 600,
-          "PTM": "A",
-          "file": "data/sars-cov-2/expression/41586_2020_2332_MOESM3_ESM.xlsx",
-          "sheet": "Tabelle1",
-          "accession column": "UniProt Accession",
-          "position format": "(?=(?:^|;)(.+?)(?:;|$))",
-          "replicate columns": [
-            "Ratio 10h "
-          ],
-          "logarithm": 2
-        },
-        {
-          "time": 1440,
-          "PTM": "A",
-          "file": "data/sars-cov-2/expression/41586_2020_2332_MOESM3_ESM.xlsx",
-          "sheet": "Tabelle1",
-          "accession column": "UniProt Accession",
-          "position format": "(?=(?:^|;)(.+?)(?:;|$))",
-          "replicate columns": [
-            "Ratio 24h"
-          ],
-          "logarithm": 2
         }
       ],
       "protein-protein interactions": {
@@ -101,13 +53,13 @@
           }
         },
         "node color": {
-          "PTMs": ["P", "A"]
+          "PTMs": ["P"]
         },
         "node shape": {
-          "PTMs": ["P", "A"]
+          "PTMs": ["P"]
         },
         "node size": {
-          "PTM": "A"
+          "PTM": "P"
         }
       },
       "Gene Ontology enrichment": {

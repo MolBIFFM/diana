@@ -100,6 +100,9 @@
       },
       "node shape": {
         "PTMs": ["P"]
+      },
+      "node size": {
+        "PTM": "P"
       }
     },
     "Gene Ontology enrichment": {
