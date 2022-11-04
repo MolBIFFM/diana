@@ -4,11 +4,10 @@ modification mass spectrometry data
 """
 import argparse
 import concurrent.futures
+import csv
 import json
-import logging
 import os
 import re
-import sys
 from typing import Any, Mapping
 
 import networkx as nx
@@ -23,15 +22,13 @@ from networks import (gene_ontology_network, protein_interaction_network,
                       reactome_network)
 
 
-def process_workflow(identifier: str, configuration: Mapping[str, Any],
-                     logger: logging.Logger) -> None:
+def process_workflow(identifier: str, configuration: Mapping[str, Any]) -> None:
     """
     Executes a workflow with identifier specified in configuration.
 
     Args:
         identifier: An identifier for the workflow.
         configuration: The specification of a workflow.
-        logger: A logger.
     """
     network = protein_interaction_network.get_network()
 
@@ -479,254 +476,6 @@ def process_workflow(identifier: str, configuration: Mapping[str, Any],
 
         protein_interaction_network.export(network, identifier)
 
-    if "Gene Ontology enrichment" in configuration:
-        if "PTMs" in configuration["Gene Ontology enrichment"]:
-            if configuration["Gene Ontology enrichment"].get(
-                    "intersection", False):
-                proteins = set(network.nodes())
-            else:
-                proteins = set()
-
-            for time in protein_interaction_network.get_times(network):
-                for m in configuration["Gene Ontology enrichment"].get(
-                        "PTMs", []):
-                    if m in protein_interaction_network.get_modifications(
-                            network, time):
-                        measurement_range = (
-                            conversion.MEASUREMENT_CONVERSION[
-                                configuration["Gene Ontology enrichment"].get(
-                                    "conversion", {}).get(m)]
-                            (configuration["Gene Ontology enrichment"].get(
-                                "measurement",
-                                default.MEASUREMENT_RANGE[configuration[
-                                    "Gene Ontology enrichment"].get(
-                                        "conversion", {}).get(m)])[0],
-                             protein_interaction_network.get_measurements(
-                                 network, time, m,
-                                 average.SITE_AVERAGE[configuration[
-                                     "Gene Ontology enrichment"].get(
-                                         "site average", {}).get(m, "maxabs")],
-                                 average.REPLICATE_AVERAGE[configuration[
-                                     "Gene Ontology enrichment"].get(
-                                         "replicate average",
-                                         {}).get(m,
-                                                 "mean")])),
-                            conversion.MEASUREMENT_CONVERSION[
-                                configuration["Gene Ontology enrichment"].get(
-                                    "conversion", {}).get(m)]
-                            (configuration["Gene Ontology enrichment"].get(
-                                "measurement",
-                                default.MEASUREMENT_RANGE[configuration[
-                                    "Gene Ontology enrichment"].get(
-                                        "conversion", {}).get(m)])[1],
-                             protein_interaction_network.get_measurements(
-                                 network, time, m,
-                                 average.SITE_AVERAGE[configuration[
-                                     "Gene Ontology enrichment"].get(
-                                         "site average", {}).get(m, "maxabs")],
-                                 average.REPLICATE_AVERAGE[configuration[
-                                     "Gene Ontology enrichment"].get(
-                                         "replicate average",
-                                         {}).get(m, "mean")])))
-
-                        if configuration["Gene Ontology enrichment"].get(
-                                "intersection", False):
-                            proteins.intersection_update(
-                                protein_interaction_network.get_proteins(
-                                    network, time, m,
-                                    average.SITE_AVERAGE[configuration[
-                                        "Gene Ontology enrichment"].get(
-                                            "site average",
-                                            {}).get(m, "maxabs")],
-                                    average.REPLICATE_AVERAGE[configuration[
-                                        "Gene Ontology enrichment"].get(
-                                            "replicate average",
-                                            {}).get(m, "mean")],
-                                    measurement_range))
-
-                        else:
-                            proteins.update(
-                                protein_interaction_network.get_proteins(
-                                    network, time, m,
-                                    average.SITE_AVERAGE[configuration[
-                                        "Gene Ontology enrichment"].get(
-                                            "site average",
-                                            {}).get(m, "maxabs")],
-                                    average.REPLICATE_AVERAGE[configuration[
-                                        "Gene Ontology enrichment"].get(
-                                            "replicate average",
-                                            {}).get(m, "mean")],
-                                    measurement_range))
-
-            gene_ontology_enrichment = gene_ontology.get_enrichment(
-                [frozenset(proteins)],
-                enrichment_test=test.ENRICHMENT_TEST[(
-                    configuration["Gene Ontology enrichment"].get(
-                        "test", "hypergeometric"),
-                    configuration["Gene Ontology enrichment"].get(
-                        "increase", True))],
-                multiple_testing_correction=correction.CORRECTION[
-                    configuration["Gene Ontology enrichment"].get(
-                        "correction", "Benjamini-Yekutieli")],
-                organism=configuration["Gene Ontology enrichment"].get(
-                    "organism", 9606),
-                namespaces=[
-                    namespace.replace(" ", "_")
-                    for namespace in configuration["Gene Ontology enrichment"].
-                    get("namespaces", [
-                        "cellular component", "molecular function",
-                        "biological process"
-                    ])
-                ])
-
-            for (term, name), p in sorted(
-                    gene_ontology_enrichment[frozenset(proteins)].items(),
-                    key=lambda item: item[1]):
-                if p <= configuration["Gene Ontology enrichment"].get("p", 1.0):
-                    logger.info(f"Gene Ontology enrichment\tnetwork\t{term}\t"
-                                f"{name}\t{p:.2e}")
-
-        else:
-            gene_ontology_enrichment = gene_ontology.get_enrichment(
-                [frozenset(network.nodes())],
-                enrichment_test=test.ENRICHMENT_TEST[(
-                    configuration["Gene Ontology enrichment"].get(
-                        "test", "hypergeometric"),
-                    configuration["Gene Ontology enrichment"].get(
-                        "increase", True))],
-                multiple_testing_correction=correction.CORRECTION[
-                    configuration["Gene Ontology enrichment"].get(
-                        "correction", "Benjamini-Yekutieli")],
-                organism=configuration["Gene Ontology enrichment"].get(
-                    "organism", 9606),
-                namespaces=[
-                    namespace.replace(" ", "_")
-                    for namespace in configuration["Gene Ontology enrichment"].
-                    get("namespaces", [
-                        "cellular component", "molecular function",
-                        "biological process"
-                    ])
-                ])
-
-            for (term, name), p in sorted(gene_ontology_enrichment[frozenset(
-                    network.nodes())].items(),
-                                          key=lambda item: item[1]):
-                if p <= configuration["Gene Ontology enrichment"].get("p", 1.0):
-                    logger.info(f"Gene Ontology enrichment\tnetwork\t{term}\t"
-                                f"{name}\t{p:.2e}")
-
-    if "Reactome enrichment" in configuration:
-        if "PTMs" in configuration["Reactome enrichment"]:
-            if configuration["Reactome enrichment"].get("intersection", False):
-                proteins = set(network.nodes())
-            else:
-                proteins = set()
-
-            for time in protein_interaction_network.get_times(network):
-                for m in configuration["Reactome enrichment"].get("PTMs", []):
-                    if m in protein_interaction_network.get_modifications(
-                            network, time):
-                        measurement_range = (
-                            conversion.MEASUREMENT_CONVERSION[
-                                configuration["Reactome enrichment"].get(
-                                    "conversion", {}).get(m)]
-                            (configuration["Reactome enrichment"].get(
-                                "measurement", default.MEASUREMENT_RANGE[
-                                    configuration["Reactome enrichment"].get(
-                                        "conversion", {}).get(m)])[0],
-                             protein_interaction_network.get_measurements(
-                                 network, time, m, average.SITE_AVERAGE[
-                                     configuration["Reactome enrichment"].get(
-                                         "site average", {}).get(m, "maxabs")],
-                                 average.REPLICATE_AVERAGE[
-                                     configuration["Reactome enrichment"].get(
-                                         "replicate average",
-                                         {}).get(m, "mean")])),
-                            conversion.MEASUREMENT_CONVERSION[
-                                configuration["Reactome enrichment"].get(
-                                    "conversion", {}).get(m)]
-                            (configuration["Reactome enrichment"].get(
-                                "measurement", default.MEASUREMENT_RANGE[
-                                    configuration["Reactome enrichment"].get(
-                                        "conversion", {}).get(m)])[1],
-                             protein_interaction_network.get_measurements(
-                                 network, time, m, average.SITE_AVERAGE[
-                                     configuration["Reactome enrichment"].get(
-                                         "site average", {}).get(m, "maxabs")],
-                                 average.REPLICATE_AVERAGE[
-                                     configuration["Reactome enrichment"].get(
-                                         "replicate average",
-                                         {}).get(m, "mean")])))
-
-                        if configuration["Reactome enrichment"].get(
-                                "intersection", False):
-                            proteins.intersection_update(
-                                protein_interaction_network.get_proteins(
-                                    network, time, m,
-                                    average.SITE_AVERAGE[configuration[
-                                        "Reactome enrichment"].get(
-                                            "site average",
-                                            {}).get(m, "maxabs")],
-                                    average.REPLICATE_AVERAGE[configuration[
-                                        "Reactome enrichment"].get(
-                                            "replicate average",
-                                            {}).get(m, "mean")],
-                                    measurement_range))
-
-                        else:
-                            proteins.update(
-                                protein_interaction_network.get_proteins(
-                                    network, time, m,
-                                    average.SITE_AVERAGE[configuration[
-                                        "Reactome enrichment"].get(
-                                            "site average",
-                                            {}).get(m, "maxabs")],
-                                    average.REPLICATE_AVERAGE[configuration[
-                                        "Reactome enrichment"].get(
-                                            "replicate average",
-                                            {}).get(m, "mean")],
-                                    measurement_range))
-
-            reactome_enrichment = reactome.get_enrichment(
-                [frozenset(proteins)],
-                enrichment_test=test.ENRICHMENT_TEST[(
-                    configuration["Reactome enrichment"].get(
-                        "test", "hypergeometric"),
-                    configuration["Reactome enrichment"].get("increase",
-                                                             True))],
-                multiple_testing_correction=correction.CORRECTION[
-                    configuration["Reactome enrichment"].get(
-                        "correction", "Benjamini-Yekutieli")],
-                organism=configuration["Reactome enrichment"].get(
-                    "organism", 9606))
-
-            for (pathway, name), p in sorted(
-                    reactome_enrichment[frozenset(proteins)].items(),
-                    key=lambda item: item[1]):
-                if p <= configuration["Reactome enrichment"].get("p", 1.0):
-                    logger.info(f"Reactome enrichment\tnetwork\t{pathway}\t"
-                                f"{name}\t{p:.2e}")
-        else:
-            reactome_enrichment = reactome.get_enrichment(
-                [frozenset(network.nodes())],
-                enrichment_test=test.ENRICHMENT_TEST[(
-                    configuration["Reactome enrichment"].get(
-                        "test", "hypergeometric"),
-                    configuration["Reactome enrichment"].get("increase",
-                                                             True))],
-                multiple_testing_correction=correction.CORRECTION[
-                    configuration["Reactome enrichment"].get(
-                        "correction", "Benjamini-Yekutieli")],
-                organism=configuration["Reactome enrichment"].get(
-                    "organism", 9606))
-
-            for (pathway, name), p in sorted(reactome_enrichment[frozenset(
-                    network.nodes())].items(),
-                                             key=lambda item: item[1]):
-                if p <= configuration["Reactome enrichment"].get("p", 1.0):
-                    logger.info(f"Reactome enrichment\tnetwork\t{pathway}\t"
-                                f"{name}\t{p:.2e}")
-
     if "Gene Ontology network" in configuration:
         if "PTMs" in configuration["Gene Ontology network"]:
             if configuration["Gene Ontology network"].get(
@@ -985,9 +734,160 @@ def process_workflow(identifier: str, configuration: Mapping[str, Any],
 
         export = {community: False for community in communities}
 
-        if "Gene Ontology enrichment" in configuration["community detection"]:
-            if "PTMs" in configuration["community detection"][
-                    "Gene Ontology enrichment"]:
+    if ("Gene Ontology enrichment" in configuration or
+            "Gene Ontology enrichment" in configuration.get(
+                "community detection", {})):
+        with open(f"{identifier}_gene_ontology.tsv",
+                  "w",
+                  newline="",
+                  encoding="utf-8") as gene_ontology_table:
+            gene_ontology_writer = csv.writer(gene_ontology_table,
+                                              dialect="excel-tab")
+            gene_ontology_writer.writerow(
+                ["network", "term", "name", "p-value"])
+
+            if "PTMs" in configuration.get("Gene Ontology enrichment", {}):
+                if configuration["Gene Ontology enrichment"].get(
+                        "intersection", False):
+                    proteins = set(network.nodes())
+                else:
+                    proteins = set()
+
+                for time in protein_interaction_network.get_times(network):
+                    for m in configuration["Gene Ontology enrichment"].get(
+                            "PTMs", []):
+                        if m in protein_interaction_network.get_modifications(
+                                network, time):
+                            measurement_range = (
+                                conversion.MEASUREMENT_CONVERSION[configuration[
+                                    "Gene Ontology enrichment"].get(
+                                        "conversion", {}).get(m)]
+                                (configuration["Gene Ontology enrichment"].get(
+                                    "measurement",
+                                    default.MEASUREMENT_RANGE[configuration[
+                                        "Gene Ontology enrichment"].get(
+                                            "conversion", {}).get(m)])[0],
+                                 protein_interaction_network.get_measurements(
+                                     network, time, m,
+                                     average.SITE_AVERAGE[configuration[
+                                         "Gene Ontology enrichment"].get(
+                                             "site average",
+                                             {}).get(m, "maxabs")],
+                                     average.REPLICATE_AVERAGE[configuration[
+                                         "Gene Ontology enrichment"].get(
+                                             "replicate average",
+                                             {}).get(m, "mean")])),
+                                conversion.MEASUREMENT_CONVERSION[configuration[
+                                    "Gene Ontology enrichment"].get(
+                                        "conversion", {}).get(m)]
+                                (configuration["Gene Ontology enrichment"].get(
+                                    "measurement",
+                                    default.MEASUREMENT_RANGE[configuration[
+                                        "Gene Ontology enrichment"].get(
+                                            "conversion", {}).get(m)])[1],
+                                 protein_interaction_network.get_measurements(
+                                     network, time, m,
+                                     average.SITE_AVERAGE[configuration[
+                                         "Gene Ontology enrichment"].get(
+                                             "site average",
+                                             {}).get(m, "maxabs")],
+                                     average.REPLICATE_AVERAGE[configuration[
+                                         "Gene Ontology enrichment"].get(
+                                             "replicate average",
+                                             {}).get(m, "mean")])))
+
+                            if configuration["Gene Ontology enrichment"].get(
+                                    "intersection", False):
+                                proteins.intersection_update(
+                                    protein_interaction_network.get_proteins(
+                                        network, time, m,
+                                        average.SITE_AVERAGE[configuration[
+                                            "Gene Ontology enrichment"].get(
+                                                "site average",
+                                                {}).get(m, "maxabs")],
+                                        average.REPLICATE_AVERAGE[configuration[
+                                            "Gene Ontology enrichment"].get(
+                                                "replicate average",
+                                                {}).get(m, "mean")],
+                                        measurement_range))
+
+                            else:
+                                proteins.update(
+                                    protein_interaction_network.get_proteins(
+                                        network, time, m,
+                                        average.SITE_AVERAGE[configuration[
+                                            "Gene Ontology enrichment"].get(
+                                                "site average",
+                                                {}).get(m, "maxabs")],
+                                        average.REPLICATE_AVERAGE[configuration[
+                                            "Gene Ontology enrichment"].get(
+                                                "replicate average",
+                                                {}).get(m, "mean")],
+                                        measurement_range))
+
+                gene_ontology_enrichment = gene_ontology.get_enrichment(
+                    [frozenset(proteins)],
+                    enrichment_test=test.ENRICHMENT_TEST[(
+                        configuration["Gene Ontology enrichment"].get(
+                            "test", "hypergeometric"),
+                        configuration["Gene Ontology enrichment"].get(
+                            "increase", True))],
+                    multiple_testing_correction=correction.CORRECTION[
+                        configuration["Gene Ontology enrichment"].get(
+                            "correction", "Benjamini-Yekutieli")],
+                    organism=configuration["Gene Ontology enrichment"].get(
+                        "organism", 9606),
+                    namespaces=[
+                        namespace.replace(" ", "_") for namespace in
+                        configuration["Gene Ontology enrichment"].get(
+                            "namespaces", [
+                                "cellular component", "molecular function",
+                                "biological process"
+                            ])
+                    ])
+
+                for (term, name), p in sorted(
+                        gene_ontology_enrichment[frozenset(proteins)].items(),
+                        key=lambda item: item[1]):
+                    if p <= configuration["Gene Ontology enrichment"].get(
+                            "p", 1.0):
+                        gene_ontology_writer.writerow(
+                            ["network", term, name, p])
+
+            elif "Gene Ontology enrichment" in configuration:
+                gene_ontology_enrichment = gene_ontology.get_enrichment(
+                    [frozenset(network.nodes())],
+                    enrichment_test=test.ENRICHMENT_TEST[(
+                        configuration["Gene Ontology enrichment"].get(
+                            "test", "hypergeometric"),
+                        configuration["Gene Ontology enrichment"].get(
+                            "increase", True))],
+                    multiple_testing_correction=correction.CORRECTION[
+                        configuration["Gene Ontology enrichment"].get(
+                            "correction", "Benjamini-Yekutieli")],
+                    organism=configuration["Gene Ontology enrichment"].get(
+                        "organism", 9606),
+                    namespaces=[
+                        namespace.replace(" ", "_") for namespace in
+                        configuration["Gene Ontology enrichment"].get(
+                            "namespaces", [
+                                "cellular component", "molecular function",
+                                "biological process"
+                            ])
+                    ])
+
+                for (term,
+                     name), p in sorted(gene_ontology_enrichment[frozenset(
+                         network.nodes())].items(),
+                                        key=lambda item: item[1]):
+                    if p <= configuration["Gene Ontology enrichment"].get(
+                            "p", 1.0):
+                        gene_ontology_writer.writerow(
+                            ["network", term, name, p])
+
+            if "PTMs" in configuration.get("community detection",
+                                           {}).get("Gene Ontology enrichment",
+                                                   {}):
                 if configuration["community detection"][
                         "Gene Ontology enrichment"].get("intersection", False):
                     subset_proteins = {
@@ -1145,10 +1045,11 @@ def process_workflow(identifier: str, configuration: Mapping[str, Any],
                         if p <= configuration["community detection"][
                                 "Gene Ontology enrichment"].get("p", 1.0):
                             export[community] = True
-                            logger.info("Gene Ontology enrichment\tcommunity "
-                                        f"{k}\t{term}\t{name}\t{p:.2e}")
+                            gene_ontology_writer.writerow(
+                                [f"community {k}", term, name, p])
 
-            else:
+            elif "Gene Ontology enrichment" in configuration.get(
+                    "community detection", {}):
                 gene_ontology_enrichment = gene_ontology.get_enrichment(
                     [frozenset(community.nodes()) for community in communities],
                     enrichment_test=test.ENRICHMENT_TEST[(
@@ -1189,12 +1090,138 @@ def process_workflow(identifier: str, configuration: Mapping[str, Any],
                         if p <= configuration["community detection"][
                                 "Gene Ontology enrichment"].get("p", 1.0):
                             export[community] = True
-                            logger.info("Gene Ontology enrichment\tcommunity "
-                                        f"{k}\t{term}\t{name}\t{p:.2e}")
+                            gene_ontology_writer.writerow(
+                                [f"community {k}", term, name, p])
 
-        if "Reactome enrichment" in configuration["community detection"]:
-            if "PTMs" in configuration["community detection"][
-                    "Reactome enrichment"]:
+    if ("Reactome enrichment" in configuration or "Reactome enrichment"
+            in configuration.get("community detection", {})):
+        with open(f"{identifier}_reactome.tsv",
+                  "w",
+                  newline="",
+                  encoding="utf-8") as reactome_table:
+            reactome_writer = csv.writer(reactome_table, dialect="excel-tab")
+            reactome_writer.writerow(["network", "pathway", "name", "p-value"])
+
+            if "PTMs" in configuration.get("Reactome enrichment", {}):
+                if configuration["Reactome enrichment"].get(
+                        "intersection", False):
+                    proteins = set(network.nodes())
+                else:
+                    proteins = set()
+
+                for time in protein_interaction_network.get_times(network):
+                    for m in configuration["Reactome enrichment"].get(
+                            "PTMs", []):
+                        if m in protein_interaction_network.get_modifications(
+                                network, time):
+                            measurement_range = (
+                                conversion.MEASUREMENT_CONVERSION[
+                                    configuration["Reactome enrichment"].get(
+                                        "conversion", {}).get(m)]
+                                (configuration["Reactome enrichment"].get(
+                                    "measurement",
+                                    default.MEASUREMENT_RANGE[configuration[
+                                        "Reactome enrichment"].get(
+                                            "conversion", {}).get(m)])[0],
+                                 protein_interaction_network.get_measurements(
+                                     network, time, m,
+                                     average.SITE_AVERAGE[configuration[
+                                         "Reactome enrichment"].get(
+                                             "site average",
+                                             {}).get(m, "maxabs")],
+                                     average.REPLICATE_AVERAGE[configuration[
+                                         "Reactome enrichment"].get(
+                                             "replicate average",
+                                             {}).get(m, "mean")])),
+                                conversion.MEASUREMENT_CONVERSION[
+                                    configuration["Reactome enrichment"].get(
+                                        "conversion", {}).get(m)]
+                                (configuration["Reactome enrichment"].get(
+                                    "measurement",
+                                    default.MEASUREMENT_RANGE[configuration[
+                                        "Reactome enrichment"].get(
+                                            "conversion", {}).get(m)])[1],
+                                 protein_interaction_network.get_measurements(
+                                     network, time, m,
+                                     average.SITE_AVERAGE[configuration[
+                                         "Reactome enrichment"].get(
+                                             "site average",
+                                             {}).get(m, "maxabs")],
+                                     average.REPLICATE_AVERAGE[configuration[
+                                         "Reactome enrichment"].get(
+                                             "replicate average",
+                                             {}).get(m, "mean")])))
+
+                            if configuration["Reactome enrichment"].get(
+                                    "intersection", False):
+                                proteins.intersection_update(
+                                    protein_interaction_network.get_proteins(
+                                        network, time, m,
+                                        average.SITE_AVERAGE[configuration[
+                                            "Reactome enrichment"].get(
+                                                "site average",
+                                                {}).get(m, "maxabs")],
+                                        average.REPLICATE_AVERAGE[configuration[
+                                            "Reactome enrichment"].get(
+                                                "replicate average",
+                                                {}).get(m, "mean")],
+                                        measurement_range))
+
+                            else:
+                                proteins.update(
+                                    protein_interaction_network.get_proteins(
+                                        network, time, m,
+                                        average.SITE_AVERAGE[configuration[
+                                            "Reactome enrichment"].get(
+                                                "site average",
+                                                {}).get(m, "maxabs")],
+                                        average.REPLICATE_AVERAGE[configuration[
+                                            "Reactome enrichment"].get(
+                                                "replicate average",
+                                                {}).get(m, "mean")],
+                                        measurement_range))
+
+                reactome_enrichment = reactome.get_enrichment(
+                    [frozenset(proteins)],
+                    enrichment_test=test.ENRICHMENT_TEST[(
+                        configuration["Reactome enrichment"].get(
+                            "test", "hypergeometric"),
+                        configuration["Reactome enrichment"].get(
+                            "increase", True))],
+                    multiple_testing_correction=correction.CORRECTION[
+                        configuration["Reactome enrichment"].get(
+                            "correction", "Benjamini-Yekutieli")],
+                    organism=configuration["Reactome enrichment"].get(
+                        "organism", 9606))
+
+                for (pathway, name), p in sorted(
+                        reactome_enrichment[frozenset(proteins)].items(),
+                        key=lambda item: item[1]):
+                    if p <= configuration["Reactome enrichment"].get("p", 1.0):
+                        reactome_writer.writerow(["network", pathway, name, p])
+
+            elif "Reactome enrichment" in configuration:
+                reactome_enrichment = reactome.get_enrichment(
+                    [frozenset(network.nodes())],
+                    enrichment_test=test.ENRICHMENT_TEST[(
+                        configuration["Reactome enrichment"].get(
+                            "test", "hypergeometric"),
+                        configuration["Reactome enrichment"].get(
+                            "increase", True))],
+                    multiple_testing_correction=correction.CORRECTION[
+                        configuration["Reactome enrichment"].get(
+                            "correction", "Benjamini-Yekutieli")],
+                    organism=configuration["Reactome enrichment"].get(
+                        "organism", 9606))
+
+                for (pathway, name), p in sorted(reactome_enrichment[frozenset(
+                        network.nodes())].items(),
+                                                 key=lambda item: item[1]):
+                    if p <= configuration["Reactome enrichment"].get("p", 1.0):
+                        reactome_writer.writerow(["network", pathway, name, p])
+
+            if "PTMs" in configuration.get("community detection",
+                                           {}).get("Reactome enrichment", {}):
                 if configuration["community detection"][
                         "Reactome enrichment"].get("intersection", False):
                     subset_proteins = {
@@ -1340,10 +1367,10 @@ def process_workflow(identifier: str, configuration: Mapping[str, Any],
                         if p <= configuration["community detection"][
                                 "Reactome enrichment"].get("p", 1.0):
                             export[community] = True
-                            logger.info(f"Reactome enrichment\tcommunity {k}\t"
-                                        f"{pathway}\t{name}\t{p:.2e}")
+                            reactome_writer.writerow(
+                                [f"community {k}", pathway, name, p])
 
-            else:
+            elif "Reactome enrichment" in configuration:
                 reactome_enrichment = reactome.get_enrichment(
                     [frozenset(community.nodes()) for community in communities],
                     enrichment_test=test.ENRICHMENT_TEST[(
@@ -1374,146 +1401,167 @@ def process_workflow(identifier: str, configuration: Mapping[str, Any],
                         if p <= configuration["community detection"][
                                 "Reactome enrichment"].get("p", 1.0):
                             export[community] = True
-                            logger.info(f"Reactome enrichment\tcommunity {k}\t"
-                                        f"{pathway}\t{name}\t{p:.2e}")
+                            reactome_writer.writerow(
+                                [f"community {k}", pathway, name, p])
 
-        if "measurement enrichment" in configuration["community detection"]:
-            measurements = {
-                modification:
-                default.MEASUREMENT_RANGE.get(conversion,
-                                              default.MEASUREMENT_RANGE[None])
-                for modification, conversion in
-                configuration["community detection"]
-                ["measurement enrichment"].get("conversion", {}).items()
-            }
+    if ("measurement enrichment" in configuration.get("community detection", {})
+            or "measurement location" in configuration.get(
+                "community detection", {})):
+        with open(f"{identifier}_measurements.tsv",
+                  "w",
+                  newline="",
+                  encoding="utf-8") as measurement_table:
+            measurement_writer = csv.writer(measurement_table,
+                                            dialect="excel-tab")
+            measurement_writer.writerow(
+                ["test", "community", "time", "PTM", "p-value"])
 
-            for modification, measurement_range in configuration[
-                    "community detection"]["measurement enrichment"].get(
-                        "measurement", {}).items():
-                measurements[modification] = measurement_range
+            if "measurement enrichment" in configuration.get(
+                    "community detection", {}):
+                measurements = {
+                    modification: default.MEASUREMENT_RANGE.get(
+                        conversion, default.MEASUREMENT_RANGE[None])
+                    for modification, conversion in
+                    configuration["community detection"]
+                    ["measurement enrichment"].get("conversion", {}).items()
+                }
 
-            enrichment = protein_interaction_network.get_measurement_enrichment(
-                network,
-                communities,
-                measurements=measurements,
-                measurement_conversion={
-                    modification: conversion.MEASUREMENT_CONVERSION.get(
-                        measurement_conversion,
-                        conversion.MEASUREMENT_CONVERSION[None])
-                    for modification, measurement_conversion in
-                    configuration["community detection"]
-                    ["measurement enrichment"].get("conversion", {})
-                },
-                site_average={
-                    modification: average.SITE_AVERAGE.get(
-                        site_average, average.SITE_AVERAGE["maxabs"])
-                    if site_average is not None else None for modification,
-                    site_average in configuration["community detection"]
-                    ["measurement enrichment"].get("site average", {}).items()
-                },
-                replicate_average={
-                    modification: average.REPLICATE_AVERAGE.get(
-                        replicate_average, average.REPLICATE_AVERAGE["mean"])
-                    if replicate_average is not None else None for modification,
-                    replicate_average in configuration["community detection"]
-                    ["measurement enrichment"].get("replicate average",
-                                                   {}).items()
-                },
-                enrichment_test=test.ENRICHMENT_TEST[(
-                    configuration["community detection"]
-                    ["measurement enrichment"].get("test", "hypergeometric"),
-                    configuration["community detection"]
-                    ["measurement enrichment"].get("increase", True))],
-                multiple_testing_correction=correction.CORRECTION[
-                    configuration["community detection"]
-                    ["measurement enrichment"].get("correction",
-                                                   "Benjamini-Yekutieli")])
+                for modification, measurement_range in configuration[
+                        "community detection"]["measurement enrichment"].get(
+                            "measurement", {}).items():
+                    measurements[modification] = measurement_range
+
+                enrichment = protein_interaction_network.get_enrichment(
+                    network,
+                    communities,
+                    measurements=measurements,
+                    measurement_conversion={
+                        modification: conversion.MEASUREMENT_CONVERSION.get(
+                            measurement_conversion,
+                            conversion.MEASUREMENT_CONVERSION[None])
+                        for modification, measurement_conversion in
+                        configuration["community detection"]
+                        ["measurement enrichment"].get("conversion", {})
+                    },
+                    site_average={
+                        modification: average.SITE_AVERAGE.get(
+                            site_average, average.SITE_AVERAGE["maxabs"])
+                        if site_average is not None else None for modification,
+                        site_average in configuration["community detection"]
+                        ["measurement enrichment"].get("site average",
+                                                       {}).items()
+                    },
+                    replicate_average={
+                        modification: average.REPLICATE_AVERAGE.get(
+                            replicate_average,
+                            average.REPLICATE_AVERAGE["mean"])
+                        if replicate_average is not None else None
+                        for modification, replicate_average in
+                        configuration["community detection"]
+                        ["measurement enrichment"].get("replicate average",
+                                                       {}).items()
+                    },
+                    enrichment_test=test.ENRICHMENT_TEST[(
+                        configuration["community detection"]
+                        ["measurement enrichment"].get("test",
+                                                       "hypergeometric"),
+                        configuration["community detection"]
+                        ["measurement enrichment"].get("increase", True))],
+                    multiple_testing_correction=correction.CORRECTION[
+                        configuration["community detection"]
+                        ["measurement enrichment"].get("correction",
+                                                       "Benjamini-Yekutieli")])
+
+                for k, community in enumerate(sorted(
+                        communities,
+                        key=lambda community: community.number_of_nodes(),
+                        reverse=True),
+                                              start=1):
+                    for time in enrichment[community]:
+                        for modification, p in sorted(
+                                enrichment[community][time].items(),
+                                key=lambda item: item[1]):
+                            if p <= configuration["community detection"][
+                                    "measurement enrichment"].get("p", 1.0):
+                                export[community] = True
+                                measurement_writer.writerow([
+                                    "enrichment", f"community {k}", time,
+                                    modification, p
+                                ])
+
+            if "measurement location" in configuration.get(
+                    "community detection", {}):
+                location = protein_interaction_network.get_location(
+                    network,
+                    communities,
+                    site_average={
+                        modification: average.SITE_AVERAGE.get(
+                            site_average, average.SITE_AVERAGE["maxabs"])
+                        if site_average is not None else None for modification,
+                        site_average in configuration["community detection"]
+                        ["measurement location"].get("site average",
+                                                     {}).items()
+                    },
+                    replicate_average={
+                        modification: average.REPLICATE_AVERAGE.get(
+                            replicate_average,
+                            average.REPLICATE_AVERAGE["mean"])
+                        if replicate_average is not None else None
+                        for modification, replicate_average in
+                        configuration["community detection"]
+                        ["measurement location"].get("replicate average",
+                                                     {}).items()
+                    },
+                    location_test=test.LOCATION_TEST[(
+                        configuration["community detection"]
+                        ["measurement location"].get("test",
+                                                     "Mann-Whitney-Wilcoxon"),
+                        configuration["community detection"]
+                        ["measurement location"].get("increase", True),
+                        configuration["community detection"]
+                        ["measurement location"].get("absolute", True))],
+                    multiple_testing_correction=correction.CORRECTION[
+                        configuration["community detection"]
+                        ["measurement location"].get("correction",
+                                                     "Benjamini-Yekutieli")])
+
+                for k, community in enumerate(sorted(
+                        communities,
+                        key=lambda community: community.number_of_nodes(),
+                        reverse=True),
+                                              start=1):
+                    for time in location[community]:
+                        for modification, p in sorted(
+                                location[community][time].items(),
+                                key=lambda item: item[1]):
+                            if p <= configuration["community detection"][
+                                    "measurement location"].get("p", 1.0):
+                                export[community] = True
+                                measurement_writer.writerow([
+                                    "location", f"community {k}", time,
+                                    modification, p
+                                ])
 
             for k, community in enumerate(sorted(
                     communities,
                     key=lambda community: community.number_of_nodes(),
                     reverse=True),
                                           start=1):
-                for time in enrichment[community]:
-                    for modification, p in sorted(
-                            enrichment[community][time].items(),
-                            key=lambda item: item[1]):
-                        if p <= configuration["community detection"][
-                                "measurement enrichment"].get("p", 1.0):
-                            export[community] = True
-                            logger.info("measurement enrichment\tcommunity "
-                                        f"{k}\ttime {time}\tmodification "
-                                        f"{modification}\t{p:.2e}")
-
-        if "measurement location" in configuration["community detection"]:
-            location = protein_interaction_network.get_measurement_location(
-                network,
-                communities,
-                site_average={
-                    modification: average.SITE_AVERAGE.get(
-                        site_average, average.SITE_AVERAGE["maxabs"])
-                    if site_average is not None else None for modification,
-                    site_average in configuration["community detection"]
-                    ["measurement location"].get("site average", {}).items()
-                },
-                replicate_average={
-                    modification: average.REPLICATE_AVERAGE.get(
-                        replicate_average, average.REPLICATE_AVERAGE["mean"])
-                    if replicate_average is not None else None
-                    for modification, replicate_average in
-                    configuration["community detection"]["measurement location"]
-                    .get("replicate average", {}).items()
-                },
-                location_test=test.LOCATION_TEST[(
-                    configuration["community detection"]
-                    ["measurement location"].get("test",
-                                                 "Mann-Whitney-Wilcoxon"),
-                    configuration["community detection"]
-                    ["measurement location"].get("increase", True),
-                    configuration["community detection"]
-                    ["measurement location"].get("absolute", True))],
-                multiple_testing_correction=correction.CORRECTION[
-                    configuration["community detection"]
-                    ["measurement location"].get("correction",
-                                                 "Benjamini-Yekutieli")])
-
-            for k, community in enumerate(sorted(
-                    communities,
-                    key=lambda community: community.number_of_nodes(),
-                    reverse=True),
-                                          start=1):
-                for time in location[community]:
-                    for modification, p in sorted(
-                            location[community][time].items(),
-                            key=lambda item: item[1]):
-                        if p <= configuration["community detection"][
-                                "measurement location"].get("p", 1.0):
-                            export[community] = True
-                            logger.info(f"measurement location\tcommunity {k}\t"
-                                        f"time {time}\tmodification "
-                                        f"{modification}\t{p:.2e}")
-
-        for k, community in enumerate(sorted(
-                communities,
-                key=lambda community: community.number_of_nodes(),
-                reverse=True),
-                                      start=1):
-            if export[community]:
-                protein_interaction_network.export(community,
-                                                   f"{identifier}_{k}")
+                if export[community]:
+                    protein_interaction_network.export(community,
+                                                       f"{identifier}_{k}")
 
 
-def process_configuration(configurations: Mapping[str, Mapping[str, Any]],
-                          logger: logging.Logger) -> None:
+def process_configuration(
+        configurations: Mapping[str, Mapping[str, Any]]) -> None:
     """
     Executes workflows specified in configurations sequentially.
 
     Args:
         configurations: The specification of workflows.
-        logger: A configuration-specific logger.
     """
     for identifier, configuration in configurations.items():
-        process_workflow(identifier, configuration, logger)
+        process_workflow(identifier, configuration)
 
 
 def process_configuration_file(configuration_file: str) -> None:
@@ -1524,28 +1572,20 @@ def process_configuration_file(configuration_file: str) -> None:
         configuration_file: file name of configuration file.
     """
     with open(configuration_file, encoding="utf-8") as configuration:
-        process_configuration(
-            json.load(configuration),
-            logging.getLogger(
-                os.path.splitext(os.path.basename(configuration_file))[0]))
+        process_configuration(json.load(configuration))
 
 
 def main() -> None:
     """Concurrent workflow execution."""
     parser = argparse.ArgumentParser(
         description="DIANA: data integration and network-based analysis for "
-        "PTM mass spectrometry data")
+        "post-translational modification mass spectrometry data")
 
     parser.add_argument("-c",
                         "--configuration",
                         help="configuration files",
                         nargs="+",
                         required=True)
-
-    parser.add_argument("-l",
-                        "--log",
-                        help="file to write log to instead of standard out",
-                        type=str)
 
     parser.add_argument(
         "-p",
@@ -1556,16 +1596,6 @@ def main() -> None:
         default=os.cpu_count())
 
     args = parser.parse_args()
-
-    if args.log:
-        logging.basicConfig(filename=args.log,
-                            filemode="w",
-                            level=logging.INFO,
-                            format="%(name)s\t%(message)s")
-    else:
-        logging.basicConfig(stream=sys.stdout,
-                            level=logging.INFO,
-                            format="%(name)s\t%(message)s")
 
     with concurrent.futures.ProcessPoolExecutor(
             max_workers=args.processes) as executor:

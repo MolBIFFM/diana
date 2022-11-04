@@ -1223,7 +1223,7 @@ def get_measurements(
     return tuple(measurements)
 
 
-def get_measurement_enrichment(
+def get_enrichment(
     network: nx.Graph,
     communities: Iterable[nx.Graph],
     measurements: dict[str, tuple[float, float]],
@@ -1338,7 +1338,7 @@ def get_measurement_enrichment(
     }
 
 
-def get_measurement_location(
+def get_location(
     network: nx.Graph,
     communities: Iterable[nx.Graph],
     site_average: dict[str, Optional[Callable[[Iterable[float]], float]]],
