@@ -1,0 +1,10 @@
+on: 
+  push:
+    branches:
+      - main
+jobs:
+  mypy:
+    name: mypy
+    runs-on: ubuntu-latest
+    steps:
+      - run: mypy --ignore-missing-imports
