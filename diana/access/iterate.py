@@ -16,7 +16,7 @@ from access import decompress, download
 
 
 def txt(url: str,
-        file_from_zip_archive: Optional[re.Pattern] = None,
+        file_from_zip_archive: Optional[re.Pattern[str]] = None,
         buffering: int = 8192,
         pause: float = 60.0) -> Iterator[str]:
     """
@@ -91,7 +91,7 @@ def txt(url: str,
 
 
 def tabular_txt(url: str,
-                file_from_zip_archive: Optional[re.Pattern] = None,
+                file_from_zip_archive: Optional[re.Pattern[str]] = None,
                 delimiter: str = "",
                 header: int = 0,
                 skiprows: int = 0,

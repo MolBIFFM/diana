@@ -130,7 +130,7 @@ def get_enrichment(
     namespaces: Collection[str] = ("cellular_component", "molecular_function",
                                    "biological_process"),
     reference: Optional[Container[str]] = None
-) -> dict[frozenset, dict[tuple[str, str], float]]:
+) -> dict[frozenset[str], dict[tuple[str, str], float]]:
     """
     Test sets of proteins for enrichment of Gene Ontology terms.
 

@@ -33,7 +33,7 @@ def decompress_gzip_file(compressed_file_name: str, size: int = 8192) -> str:
 
 def decompress_zip_file(
         compressed_file_name: str,
-        file_from_zip_archive: Optional[re.Pattern] = None) -> str:
+        file_from_zip_archive: Optional[re.Pattern[str]] = None) -> str:
     """
     Decompresses a zip compressed file and removes the compressed file.
 

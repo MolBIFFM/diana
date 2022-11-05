@@ -184,7 +184,7 @@ def louvain(network: nx.Graph,
 
                 k_in[i][community[i]] -= adj_matrix[i].get(i, 0.0)
 
-                delta_q = {}
+                delta_q: dict[int, float] = {}
                 for j in adj_matrix[i]:
                     if community[i] != community[j]:
                         delta_q[j] = (

@@ -1457,9 +1457,9 @@ of queried databases supporting the protein-protein interaction.
   }
 }
 ```
-An upper bound on the number of proteins per community. Modules are iteratively
-subdivided until this threshold is met. The adaptive default setting is the
-number of proteins in the network, resulting in a single iteration of the
+A static upper bound on the number of proteins per community. Modules are
+iteratively subdivided until this threshold is met. The adaptive default setting
+is the number of proteins in the network, resulting in a single iteration of the
 community detection algorithm.
 
 ```json
@@ -1490,7 +1490,8 @@ Alternatively, the distribution of measurements within separate communities can
 be compared with that of the remaining network.
 
 A community is exported if is significant according to any of the specified
-tests.
+tests. Communities are exported in descending order of the number of proteins
+they contain.
 
 ```json
 {
@@ -2085,8 +2086,9 @@ DIANA utilizes the following external libraries:
 
 ---
 
-Development of DIANA was inspired by previous work combining the following
-applications and aims to extend upon workflows utilizing them:
+Development of DIANA was inspired by previous work utilizing Cytoscape with the
+following plugins applications and aims to extend upon workflows enabled by
+combining them:
 
 - Maere, S. et al. (2005) ***BiNGO*: a Cytoscape plugin to assess**
   **overrepresentation of Gene Ontology categories in Biological Networks**,
@@ -2095,15 +2097,20 @@ applications and aims to extend upon workflows utilizing them:
 - Morris, J. H. et al. (2011) ***clusterMaker*: a multi-algorithm clustering**
   **plugin for Cytoscape**, *BMC Bioinform.*, 12.
 
+- Shannon, P. et al. (2003) **Cytoscape: a software environment for integrated**
+  **models of biomolecular interaction networks**, *Genome Res.*, 13, 2498-2504.
+
 - Su, G. et al. (2010) **GLay: community structure analysis of biological**
   **networks**, *Bioinformatics*, 26, 3135-3137.
 
 ---
 
-DIANA produces Cytoscape style specifications.
+For previous integrative work observing the relating densely interacting
+portions in protein-protein interaction networks and protein function see, for
+example:
 
-- Shannon, P. et al. (2003) **Cytoscape: a software environment for integrated**
-  **models of biomolecular interaction networks**, *Genome Res.*, 13, 2498-2504.
+- Chen, J. and Yuan, B. (2006) **Detecting functional modules in the yeast**
+  **protein–protein interaction network**, *Bioinformatics*, 22, 2283-2290.
 
 ---
 
