@@ -8,5 +8,4 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - run: python3 -m pip install mypy
-      - run: git ls-files
-      - run: mypy --ignore-missing-imports ./diana/diana.py
+      - run: mypy --ignore-missing-imports ${{ github.GITHUB_WORKSPACE }}
