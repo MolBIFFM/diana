@@ -8,4 +8,4 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - run: python3 -m pip install mypy
-      - run: mypy --ignore-missing-imports ${{ github.GITHUB_WORKSPACE }}
+      - run: mypy --ignore-missing-imports .
