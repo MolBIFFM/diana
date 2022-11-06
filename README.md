@@ -14,7 +14,7 @@ distinctive ranges of mass-spectrometry measurements as well as the distribution
 of measurements across these portions of the protein-protein interaction
 network.
 
-The assembled networks are exported along Cytoscape style specifications.
+The assembled networks are exported along style specifications for Cytoscape.
 
 ## Setup
 External dependencies, consisting of NetworkX, pandas, and SciPy, can be
@@ -2086,9 +2086,8 @@ DIANA utilizes the following external libraries:
 
 ---
 
-Development of DIANA was inspired by previous work utilizing Cytoscape with the
-following plugins applications and aims to extend upon workflows enabled by
-combining them:
+Development of DIANA was inspired by previous work utilizing Cytoscape and the
+following plugins and aims to extend upon workflows enabled by combining them:
 
 - Maere, S. et al. (2005) ***BiNGO*: a Cytoscape plugin to assess**
   **overrepresentation of Gene Ontology categories in Biological Networks**,
