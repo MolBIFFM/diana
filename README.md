@@ -2105,9 +2105,8 @@ combining them:
 
 ---
 
-For previous integrative work observing the relating densely interacting
-portions in protein-protein interaction networks and protein function see, for
-example:
+Previous integrative work relating densely interacting portions of
+protein-protein interaction networks and protein function includes:
 
 - Chen, J. and Yuan, B. (2006) **Detecting functional modules in the yeast**
   **protein–protein interaction network**, *Bioinformatics*, 22, 2283-2290.

@@ -1404,152 +1404,146 @@ def process_workflow(identifier: str, configuration: Mapping[str, Any]) -> None:
                             reactome_writer.writerow(
                                 [f"community {k}", pathway, name, p])
 
-    if ("measurement enrichment" in configuration.get("community detection", {})
-            or "measurement location" in configuration.get(
-                "community detection", {})):
-        with open(f"{identifier}_measurements.tsv",
+    if ("measurement enrichment" in configuration.get("community detection",
+                                                      {})):
+        with open(f"{identifier}_measurement_enrichment.tsv",
                   "w",
                   newline="",
-                  encoding="utf-8") as measurement_table:
-            measurement_writer = csv.writer(measurement_table,
-                                            dialect="excel-tab")
-            measurement_writer.writerow(
-                ["test", "community", "time", "PTM", "p-value"])
+                  encoding="utf-8") as measurement_enrichment_table:
+            measurement_enrichment_writer = csv.writer(
+                measurement_enrichment_table, dialect="excel-tab")
+            measurement_enrichment_writer.writerow(
+                ["community", "time", "PTM", "p-value"])
 
-            if "measurement enrichment" in configuration.get(
-                    "community detection", {}):
-                measurements = {
-                    modification: default.MEASUREMENT_RANGE.get(
-                        conversion, default.MEASUREMENT_RANGE[None])
-                    for modification, conversion in
+            measurements = {
+                modification:
+                default.MEASUREMENT_RANGE.get(conversion,
+                                              default.MEASUREMENT_RANGE[None])
+                for modification, conversion in
+                configuration["community detection"]
+                ["measurement enrichment"].get("conversion", {}).items()
+            }
+
+            for modification, measurement_range in configuration[
+                    "community detection"]["measurement enrichment"].get(
+                        "measurement", {}).items():
+                measurements[modification] = measurement_range
+
+            enrichment = protein_interaction_network.get_enrichment(
+                network,
+                communities,
+                measurements=measurements,
+                measurement_conversion={
+                    modification: conversion.MEASUREMENT_CONVERSION.get(
+                        measurement_conversion,
+                        conversion.MEASUREMENT_CONVERSION[None])
+                    for modification, measurement_conversion in
                     configuration["community detection"]
-                    ["measurement enrichment"].get("conversion", {}).items()
-                }
-
-                for modification, measurement_range in configuration[
-                        "community detection"]["measurement enrichment"].get(
-                            "measurement", {}).items():
-                    measurements[modification] = measurement_range
-
-                enrichment = protein_interaction_network.get_enrichment(
-                    network,
-                    communities,
-                    measurements=measurements,
-                    measurement_conversion={
-                        modification: conversion.MEASUREMENT_CONVERSION.get(
-                            measurement_conversion,
-                            conversion.MEASUREMENT_CONVERSION[None])
-                        for modification, measurement_conversion in
-                        configuration["community detection"]
-                        ["measurement enrichment"].get("conversion", {})
-                    },
-                    site_average={
-                        modification: average.SITE_AVERAGE.get(
-                            site_average, average.SITE_AVERAGE["maxabs"])
-                        if site_average is not None else None for modification,
-                        site_average in configuration["community detection"]
-                        ["measurement enrichment"].get("site average",
-                                                       {}).items()
-                    },
-                    replicate_average={
-                        modification: average.REPLICATE_AVERAGE.get(
-                            replicate_average,
-                            average.REPLICATE_AVERAGE["mean"])
-                        if replicate_average is not None else None
-                        for modification, replicate_average in
-                        configuration["community detection"]
-                        ["measurement enrichment"].get("replicate average",
-                                                       {}).items()
-                    },
-                    enrichment_test=test.ENRICHMENT_TEST[(
-                        configuration["community detection"]
-                        ["measurement enrichment"].get("test",
-                                                       "hypergeometric"),
-                        configuration["community detection"]
-                        ["measurement enrichment"].get("increase", True))],
-                    multiple_testing_correction=correction.CORRECTION[
-                        configuration["community detection"]
-                        ["measurement enrichment"].get("correction",
-                                                       "Benjamini-Yekutieli")])
-
-                for k, community in enumerate(sorted(
-                        communities,
-                        key=lambda community: community.number_of_nodes(),
-                        reverse=True),
-                                              start=1):
-                    for time in enrichment[community]:
-                        for modification, p in sorted(
-                                enrichment[community][time].items(),
-                                key=lambda item: item[1]):
-                            if p <= configuration["community detection"][
-                                    "measurement enrichment"].get("p", 1.0):
-                                export[community] = True
-                                measurement_writer.writerow([
-                                    "enrichment", f"community {k}", time,
-                                    modification, p
-                                ])
-
-            if "measurement location" in configuration.get(
-                    "community detection", {}):
-                location = protein_interaction_network.get_location(
-                    network,
-                    communities,
-                    site_average={
-                        modification: average.SITE_AVERAGE.get(
-                            site_average, average.SITE_AVERAGE["maxabs"])
-                        if site_average is not None else None for modification,
-                        site_average in configuration["community detection"]
-                        ["measurement location"].get("site average",
-                                                     {}).items()
-                    },
-                    replicate_average={
-                        modification: average.REPLICATE_AVERAGE.get(
-                            replicate_average,
-                            average.REPLICATE_AVERAGE["mean"])
-                        if replicate_average is not None else None
-                        for modification, replicate_average in
-                        configuration["community detection"]
-                        ["measurement location"].get("replicate average",
-                                                     {}).items()
-                    },
-                    location_test=test.LOCATION_TEST[(
-                        configuration["community detection"]
-                        ["measurement location"].get("test",
-                                                     "Mann-Whitney-Wilcoxon"),
-                        configuration["community detection"]
-                        ["measurement location"].get("increase", True),
-                        configuration["community detection"]
-                        ["measurement location"].get("absolute", True))],
-                    multiple_testing_correction=correction.CORRECTION[
-                        configuration["community detection"]
-                        ["measurement location"].get("correction",
-                                                     "Benjamini-Yekutieli")])
-
-                for k, community in enumerate(sorted(
-                        communities,
-                        key=lambda community: community.number_of_nodes(),
-                        reverse=True),
-                                              start=1):
-                    for time in location[community]:
-                        for modification, p in sorted(
-                                location[community][time].items(),
-                                key=lambda item: item[1]):
-                            if p <= configuration["community detection"][
-                                    "measurement location"].get("p", 1.0):
-                                export[community] = True
-                                measurement_writer.writerow([
-                                    "location", f"community {k}", time,
-                                    modification, p
-                                ])
+                    ["measurement enrichment"].get("conversion", {})
+                },
+                site_average={
+                    modification: average.SITE_AVERAGE.get(
+                        site_average, average.SITE_AVERAGE["maxabs"])
+                    if site_average is not None else None for modification,
+                    site_average in configuration["community detection"]
+                    ["measurement enrichment"].get("site average", {}).items()
+                },
+                replicate_average={
+                    modification: average.REPLICATE_AVERAGE.get(
+                        replicate_average, average.REPLICATE_AVERAGE["mean"])
+                    if replicate_average is not None else None for modification,
+                    replicate_average in configuration["community detection"]
+                    ["measurement enrichment"].get("replicate average",
+                                                   {}).items()
+                },
+                enrichment_test=test.ENRICHMENT_TEST[(
+                    configuration["community detection"]
+                    ["measurement enrichment"].get("test", "hypergeometric"),
+                    configuration["community detection"]
+                    ["measurement enrichment"].get("increase", True))],
+                multiple_testing_correction=correction.CORRECTION[
+                    configuration["community detection"]
+                    ["measurement enrichment"].get("correction",
+                                                   "Benjamini-Yekutieli")])
 
             for k, community in enumerate(sorted(
                     communities,
                     key=lambda community: community.number_of_nodes(),
                     reverse=True),
                                           start=1):
-                if export[community]:
-                    protein_interaction_network.export(community,
-                                                       f"{identifier}_{k}")
+                for time in enrichment[community]:
+                    for modification, p in sorted(
+                            enrichment[community][time].items(),
+                            key=lambda item: item[1]):
+                        if p <= configuration["community detection"][
+                                "measurement enrichment"].get("p", 1.0):
+                            export[community] = True
+                            measurement_enrichment_writer.writerow(
+                                [f"community {k}", time, modification, p])
+
+    if "measurement location" in configuration.get("community detection", {}):
+        with open(f"{identifier}_measurement_location.tsv",
+                  "w",
+                  newline="",
+                  encoding="utf-8") as measurement_location_table:
+            measurement_location_writer = csv.writer(measurement_location_table,
+                                                     dialect="excel-tab")
+            measurement_location_writer.writerow(
+                ["community", "time", "PTM", "p-value"])
+
+            location = protein_interaction_network.get_location(
+                network,
+                communities,
+                site_average={
+                    modification: average.SITE_AVERAGE.get(
+                        site_average, average.SITE_AVERAGE["maxabs"])
+                    if site_average is not None else None for modification,
+                    site_average in configuration["community detection"]
+                    ["measurement location"].get("site average", {}).items()
+                },
+                replicate_average={
+                    modification: average.REPLICATE_AVERAGE.get(
+                        replicate_average, average.REPLICATE_AVERAGE["mean"])
+                    if replicate_average is not None else None
+                    for modification, replicate_average in
+                    configuration["community detection"]["measurement location"]
+                    .get("replicate average", {}).items()
+                },
+                location_test=test.LOCATION_TEST[(
+                    configuration["community detection"]
+                    ["measurement location"].get("test",
+                                                 "Mann-Whitney-Wilcoxon"),
+                    configuration["community detection"]
+                    ["measurement location"].get("increase", True),
+                    configuration["community detection"]
+                    ["measurement location"].get("absolute", True))],
+                multiple_testing_correction=correction.CORRECTION[
+                    configuration["community detection"]
+                    ["measurement location"].get("correction",
+                                                 "Benjamini-Yekutieli")])
+
+            for k, community in enumerate(sorted(
+                    communities,
+                    key=lambda community: community.number_of_nodes(),
+                    reverse=True),
+                                          start=1):
+                for time in location[community]:
+                    for modification, p in sorted(
+                            location[community][time].items(),
+                            key=lambda item: item[1]):
+                        if p <= configuration["community detection"][
+                                "measurement location"].get("p", 1.0):
+                            export[community] = True
+                            measurement_location_writer.writerow(
+                                [f"community {k}", time, modification, p])
+
+    for k, community in enumerate(sorted(
+            communities,
+            key=lambda community: community.number_of_nodes(),
+            reverse=True),
+                                  start=1):
+        if export[community]:
+            protein_interaction_network.export(community, f"{identifier}_{k}")
 
 
 def process_configuration(
