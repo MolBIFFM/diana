@@ -1458,9 +1458,10 @@ of queried databases supporting the protein-protein interaction.
 }
 ```
 A static upper bound on the number of proteins per community. Modules are
-iteratively subdivided until this threshold is met. The adaptive default setting
-is the number of proteins in the network, resulting in a single iteration of the
-community detection algorithm.
+iteratively subdivided until this threshold is met. For a more principled
+approach to obtaining smaller communities, consider increasing `"resolution"`.
+The adaptive default setting is the number of proteins in the network, resulting
+in a single iteration of the community detection algorithm.
 
 ```json
 {
