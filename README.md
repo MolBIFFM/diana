@@ -317,11 +317,11 @@ measurements signifying an increase or decrease, respectively.
   }
 }
 ```
-The function used to combine replicates into a single measurement. The function
-is applied to ratios, not their binary logarithm. Cytoscape styles refer to this
-average. The default setting is `"mean"`. Available settings are `"mean"`,
-`"median"`, `"mid-range"`, `"max"`, `"maxabs"`, `"min"`, `"minabs"`, `"sum"`,
-and `"sumabs"`.
+The average of distinct replicates representing a single protein- or
+modification site-specific measurement. The function is applied to ratios, not
+their binary logarithm. Cytoscape styles refer to this average. The default
+setting is `"mean"`. Available settings are `"mean"`, `"median"`, `"mid-range"`,
+`"max"`, `"maxabs"`, `"min"`, `"minabs"`, `"sum"`, and `"sumabs"`.
 
 ```json
 {
@@ -783,8 +783,8 @@ exported.
   }
 }
 ```
-The modification-specific function used to combine distinct modification sites
-into protein-specific measurements. The function is applied to ratios, not their
+The modification-specific average of distinct modification sites representing
+protein-specific measurements. The function is applied to ratios, not their
 binary logarithm. The default setting is `"maxabs"`, corresponding to the
 largest absolute measurement. Available settings are `"mean"`, `"median"`,
 `"mid-range"`, `"max"`, `"maxabs"`, `"min"`, `"minabs"`, `"sum"` and `"sumabs"`.
@@ -800,7 +800,7 @@ largest absolute measurement. Available settings are `"mean"`, `"median"`,
   }
 }
 ```
-The modification-specific function used to combine distinct replicates into
+The modification-specific average of distinct replicates representing
 modification site-specific measurements. The function is applied to ratios, not
 their binary logarithm. The default setting is `"mean"`, corresponding to the
 mean of replicates. Available settings are `"mean"`, `"median"`, `"mid-range"`,
@@ -889,7 +889,7 @@ specified.
   }
 }
 ```
-The modification-specific range of combined measurements categorizing proteins
+The modification-specific range of averaged measurements categorizing proteins
 by whether the range is exceeded or not. The adaptive default setting is
 `[-1.0, 1.0]` if `"conversion"` is not set, `[-1.0, 1.0]` if `"conversion"` is
 set to `"log10"`, `[25.0, 75.0]` if `"conversion"` is set to `"percentile"`,
@@ -935,13 +935,13 @@ represent by node size. By default, no modification is specified.
   }
 }
 ```
-The function used to combine edge confidence scores from in IntAct, MINT and
-STRING, and, lacking a corresponding score, 1.0 for all interactions from
-BioGRID, CORUM and Reactome. The combined score is reflected by edge
-transparency in Cytoscape. By default, `null`, any edge receives a score of
-1.0 and edges are not transparent. Available settings are `null`, `"mean"`,
-`"median"`, `"mid-range"`, `"max"`, `"min"`, `"sum"`,and `"number"`, the number
-of queried databases supporting the protein-protein interaction.
+The average of edge confidence scores from in IntAct, MINT and STRING, and,
+lacking a comparable score, 1.0 for any interaction from BioGRID, CORUM and
+Reactome. The averaged score is reflected by edge transparency in Cytoscape. By
+default, `null`, any edge receives a score of 1.0 and edges are not transparent.
+Available settings are `null`, `"mean"`, `"median"`, `"mid-range"`, `"max"`,
+`"min"`, `"sum"`,and `"number"`, the number of queried databases supporting the
+protein-protein interaction.
 
 ---
 
@@ -1064,7 +1064,7 @@ range of protein-specific measurements.
   }
 }
 ```
-The function used to combine distinct modification sites into protein-specific
+The average of distinct modification sites representing protein-specific
 measurements. The function is applied to ratios, not their binary logarithm.
 The default setting is `"maxabs"`, corresponding to the largest absolute
 measurement. Available settings are `"mean"`, `"median"`, `"mid-range"`,
@@ -1086,7 +1086,7 @@ measurement. Available settings are `"mean"`, `"median"`, `"mid-range"`,
   }
 }
 ```
-The function used to combine distinct replicates into modification site-specific
+The average of distinct replicates representing modification site-specific
 measurements. The function is applied to ratios, not their binary logarithm.
 The default setting is `"mean"`, corresponding to the mean of replicates.
 Available settings are `"mean"`, `"median"`, `"mid-range"`, `"max"`, `"maxabs"`,
@@ -1130,7 +1130,7 @@ measurement across the protein-protein interaction network, if applicable.
   }
 }
 ```
-The range of combined measurements categorizing proteins by whether the range is
+The range of averaged measurements categorizing proteins by whether the range is
 exceeded or not. The adaptive default setting is `[-1.0, 1.0]` if `"conversion"`
 is not set, `[-1.0, 1.0]` if `"conversion"` is set to `"log10"`, `[25.0, 75.0]`
 if `"conversion"` is set to `"percentile"`, `[0.25, 0.75]` if `"conversion"` is
@@ -1216,7 +1216,7 @@ range of protein-specific measurements.
   }
 }
 ```
-The function used to combine distinct modification sites into protein-specific
+The average of distinct modification sites representing protein-specific
 measurements. The function is applied to ratios, not their binary logarithm. The
 default setting is `"maxabs"`, corresponding to the largest absolute
 measurement. Available settings are `"mean"`, `"median"`, `"mid-range"`,
@@ -1238,7 +1238,7 @@ measurement. Available settings are `"mean"`, `"median"`, `"mid-range"`,
   }
 }
 ```
-The function used to combine distinct replicates into modification site-specific
+The average of distinct replicates representing modification site-specific
 measurements. The function is applied to ratios, not their binary logarithm. The
 default setting is `"mean"`, corresponding to the mean of replicates. Available
 settings are `"mean"`, `"median"`, `"mid-range"`, `"max"`, `"maxabs"`, `"min"`,
@@ -1282,7 +1282,7 @@ measurement across the protein-protein interaction network, if applicable.
   }
 }
 ```
-The range of combined measurements categorizing proteins by whether the range is
+The range of averaged measurements categorizing proteins by whether the range is
 exceeded or not. The adaptive default setting is `[-1.0, 1.0]` if `"conversion"`
 is not set, `[-1.0, 1.0]` if `"conversion"` is set to `"log10"`, `[25.0, 75.0]`
 if `"conversion"` is set to `"percentile"`, `[0.25, 0.75]` if `"conversion"` is
@@ -1440,13 +1440,13 @@ expected number of intra-community edges.
   }
 }
 ```
-The function used to combine edge confidence scores from in IntAct, MINT and
-STRING, and, lacking of corresponding score, 1.0 for all interactions from
-BioGRID, CORUM and Reactome. The combined score is used as edge weight in
-community detection. By default, `null`, any edge receives a score of 1.0,
-corresponding to an unweighted network. Available settings are `null`, `"mean"`,
-`"median"`, `"mid-range"`, `"max"`, `"min"`, `"sum"`, and `"number"`, the number
-of queried databases supporting the protein-protein interaction.
+The function used to average edge confidence scores from in IntAct, MINT and
+STRING, and, lacking of comparable score, 1.0 for any interaction from BioGRID,
+CORUM and Reactome. The combined score represents edge weight in community
+detection. By default, `null`, any edge receives a score of 1.0, corresponding
+to an unweighted network. Available settings are `null`, `"mean"`, `"median"`,
+`"mid-range"`, `"max"`, `"min"`, `"sum"`, and `"number"`, the number of queried
+databases supporting the protein-protein interaction.
 
 ```json
 {
@@ -1457,11 +1457,11 @@ of queried databases supporting the protein-protein interaction.
   }
 }
 ```
-A static upper bound on the number of proteins per community. Modules are
+An upper bound on the number of proteins in any community. Modules are
 iteratively subdivided until this threshold is met. For a more principled
-approach to obtaining smaller communities, consider increasing `"resolution"`.
-The adaptive default setting is the number of proteins in the network, resulting
-in a single iteration of the community detection algorithm.
+alternative approach to obtaining smaller communities, consider increasing
+`"resolution"`. The adaptive default setting is the number of proteins in the
+network, resulting in a single iteration of the community detection algorithm.
 
 ```json
 {
@@ -1472,10 +1472,9 @@ in a single iteration of the community detection algorithm.
   }
 }
 ```
-The function used to combine community sizes in terms of nodes into the value
-decisive to meeting the community size threshold. The default setting is
-`"mean"`. Available settings are `"mean"`, `"median"`, `"mid-range"`, `"max"`,
-and `"min"`.
+The average of community sizes in terms of nodes decisive to meeting the
+community size threshold. The default setting is `"mean"`. Available settings
+are `"mean"`, `"median"`, `"mid-range"`, `"max"`, and `"min"`.
 
 ---
 
@@ -1690,7 +1689,7 @@ proteins exceeding a specified range of protein-specific measurements.
   }
 }
 ```
-The function used to combine distinct modification sites into protein-specific
+The average of distinct modification sites representing protein-specific
 measurements. The function is applied to ratios, not their binary logarithm. The
 default setting is `"maxabs"`, corresponding to the largest absolute
 measurement. Available settings are `"mean"`, `"median"`, `"mid-range"`,
@@ -1714,7 +1713,7 @@ measurement. Available settings are `"mean"`, `"median"`, `"mid-range"`,
   }
 }
 ```
-The function used to combine distinct replicates into modification site-specific
+The average of distinct replicates representing modification site-specific
 measurements. The function is applied to ratios, not their binary logarithm. The
 default setting is `"mean"`, corresponding to the mean of replicates. Available
 settings are `"mean"`, `"median"`, `"mid-range"`, `"max"`, `"maxabs"`, `"min"`,
@@ -1763,7 +1762,7 @@ if applicable.
   }
 }
 ```
-The range of combined measurements categorizing proteins by whether the range is
+The range of averaged measurements categorizing proteins by whether the range is
 exceeded or not. The adaptive default setting is `[-1.0, 1.0]` if `"conversion"`
 is not set, `[-1.0, 1.0]` if `"conversion"` is set to `"log10"`, `[25.0, 75.0]`
 if `"conversion"` is set to `"percentile"`, `[0.25, 0.75]` if `"conversion"` is
@@ -1824,11 +1823,11 @@ The Gene Ontology namespaces to consider. The default setting is
   }
 }
 ```
-The modification-specific function used to combine distinct modification sites
-into protein-specific measurements. The default setting is `"maxabs"`,
-corresponding to the largest absolute value. Available settings are `"mean"`,
-`"median"`, `"mid-range"`, `"max"`, `"maxabs"`, `"min"`, `"minabs"`, `"sum"`,
-`"sumabs"` and `null` to consider modification sites separately.
+The modification-specific average of distinct modification sites representing
+protein-specific measurements. The default setting is `"maxabs"`, corresponding
+to the largest absolute value. Available settings are `"mean"`, `"median"`,
+`"mid-range"`, `"max"`, `"maxabs"`, `"min"`, `"minabs"`, `"sum"`, `"sumabs"` and
+`null` to consider modification sites separately.
 
 ```json
 {
@@ -1848,11 +1847,11 @@ corresponding to the largest absolute value. Available settings are `"mean"`,
   }
 }
 ```
-The modification-specific function used to combine distinct replicates into
-modification site-specific measurements. The default setting is `"mean"`,
-corresponding to the mean of replicates. Available settings are `"mean"`,
-`"median"`, `"mid-range"`, `"max"`, `"maxabs"`, `"min"`, `"minabs"`, `"sum"`,
-`"sumabs"` and `null` to consider replicates separately.
+The modification-specific average of distinct replicates used modification
+site-specific measurements. The default setting is `"mean"`, corresponding to
+the mean of replicates. Available settings are `"mean"`, `"median"`,
+`"mid-range"`, `"max"`, `"maxabs"`, `"min"`, `"minabs"`, `"sum"`, `"sumabs"` and
+`null` to consider replicates separately.
 
 ```json
 {
