@@ -844,26 +844,6 @@ specified.
 {
   "configuration": {
     "Cytoscape": {
-      "bar chart": {
-        "measurement": {
-          "PTM": [-1.0, 1.0]
-        }
-      }
-    }
-  }
-}
-```
-The modification-specific range of the bar charts reporting measurements. The
-adaptive default setting is `[-1.0, 1.0]` if `"conversion"` is not set,
-`[-1.0, 1.0]` if `"conversion"` is set to `"log10"`, `[25.0, 75.0]` if
-`"conversion"` is set to `"percentile"`, `[0.25, 0.75]` if `"conversion"` is set
-to `"quantile"`, `[0.5, 2.0]` if `"conversion"` is set to `"ratio"`, and
-`[-1.0, 1.0]` if `"conversion"` is set to `"standard score"`.
-
-```json
-{
-  "configuration": {
-    "Cytoscape": {
       "node color": {
         "PTMs": [],
       }

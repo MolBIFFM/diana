@@ -4,7 +4,6 @@ network.
 """
 
 import json
-import math
 import statistics
 import xml.etree.ElementTree as ET
 from typing import Callable, Collection, Iterable, Optional
@@ -146,7 +145,7 @@ COMPONENTS: dict[str, dict[str, dict[str, dict[
                         "value": True
                     },
                     "nodeSizeLocked": {
-                        "value": False
+                        "value": True
                     },
                 },
                 "visualProperty": {
@@ -416,9 +415,7 @@ def get_styles(
     network: nx.Graph, node_shape_modifications: Iterable[str],
     node_color_modifications: Iterable[str],
     node_size_modification: Optional[str],
-    bar_chart_modifications: Iterable[str], bar_chart_range: dict[str,
-                                                                  tuple[float,
-                                                                        float]],
+    bar_chart_modifications: Iterable[str],
     measurement_conversion: dict[str, Callable[[float, Collection[float]],
                                                float]],
     site_average: dict[str, Callable[[Iterable[float]], float]],
@@ -438,8 +435,6 @@ def get_styles(
             post-translational modification to represent by node size.
         bar_chart_modifications: The identifiers of site-specific
             post-translational modifications to represent by bar charts.
-        bar_chart_range: Modification-specific range of binary logarithms of
-            measurements represented by the corresponding bar chart.
         measurement_conversion: Modification-specific functions to transform
             binary logarithms of measurements.
         site_average: Modification-specific functions to derive
@@ -513,12 +508,10 @@ def get_styles(
                     f"{time} {node_size_modification}", "float", {
                         min(measurements):
                             (COMPONENTS["node"]["visualProperty"]["NODE_SIZE"]
-                             ["default"] * math.pow(2.0, min(measurements)),) *
-                            3,
+                             ["default"] * min(measurements),) * 3,
                         max(measurements):
                             (COMPONENTS["node"]["visualProperty"]["NODE_SIZE"]
-                             ["default"] * math.pow(2.0, max(measurements)),) *
-                            3
+                             ["default"] * max(measurements),) * 3
                     })
 
         node_shape_modifications = [
@@ -526,6 +519,7 @@ def get_styles(
             if protein_interaction_network.is_modification(
                 network, time, modification)
         ]
+
         if 0 < len(node_shape_modifications) < 3:
             node_shape = {}
             for value in set(
@@ -687,6 +681,13 @@ def get_styles(
                 network, time, modification, proteins=False)
         ]
         for m in range(min(len(bar_chart_modifications), 2)):
+            measurements = protein_interaction_network.get_measurements(
+                network, time, bar_chart_modifications[m],
+                site_average.get(bar_chart_modifications[m],
+                                 lambda sites: max(sites, key=abs)),
+                replicate_average.get(bar_chart_modifications[m],
+                                      statistics.mean))
+
             visual_properties["node"][f"NODE_CUSTOMGRAPHICS_{m+1}"].set(
                 "default",
                 get_bar_chart(
@@ -700,8 +701,7 @@ def get_styles(
                         measurement_conversion.get(
                             bar_chart_modifications[m],
                             lambda measurement, measurements: measurement)(
-                                bar_chart_range.get(bar_chart_modifications[m],
-                                                    (-1.0, 1.0))[0],
+                                min(measurements),
                                 protein_interaction_network.get_measurements(
                                     network, time, bar_chart_modifications[m],
                                     site_average.get(
@@ -713,8 +713,7 @@ def get_styles(
                         measurement_conversion.get(
                             bar_chart_modifications[m],
                             lambda measurement, measurements: measurement)(
-                                bar_chart_range.get(bar_chart_modifications[m],
-                                                    (-1.0, 1.0))[1],
+                                max(measurements),
                                 protein_interaction_network.get_measurements(
                                     network, time, bar_chart_modifications[m],
                                     site_average.get(

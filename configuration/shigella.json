@@ -90,10 +90,7 @@
     },
     "Cytoscape": {
       "bar chart": {
-        "PTMs": ["P"],
-        "measurement": {
-          "P": [-2.0, 2.0]
-        }
+        "PTMs": ["P"]
       },
       "node color": {
         "PTMs": ["P"]

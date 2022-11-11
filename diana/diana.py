@@ -424,18 +424,6 @@ def process_workflow(identifier: str, configuration: Mapping[str, Any]) -> None:
                         configuration["Cytoscape"].get("edge transparency")],
                     attribute="score")
 
-                bar_chart_range = {
-                    modification: default.MEASUREMENT_RANGE.get(
-                        conversion, default.MEASUREMENT_RANGE[None])
-                    for modification, conversion in configuration["Cytoscape"].
-                    get("bar chart", {}).get("conversion", {}).items()
-                }
-
-                for modification, measurement_range in configuration[
-                        "Cytoscape"].get("bar chart",
-                                         {}).get("measurement", {}).items():
-                    bar_chart_range[modification] = measurement_range
-
                 styles = protein_interaction_network_style.get_styles(
                     network,
                     node_shape_modifications=configuration["Cytoscape"].get(
@@ -446,7 +434,6 @@ def process_workflow(identifier: str, configuration: Mapping[str, Any]) -> None:
                         "node size", {}).get("PTM", None),
                     bar_chart_modifications=configuration["Cytoscape"].get(
                         "bar chart", {}).get("PTMs", []),
-                    bar_chart_range=bar_chart_range,
                     measurement_conversion={
                         modification: conversion.MEASUREMENT_CONVERSION.get(
                             measurement_conversion,

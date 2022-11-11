@@ -100,17 +100,16 @@
     },
     "Cytoscape": {
       "bar chart": {
-        "PTMs": ["P", "U"],
-        "measurement": {
-          "P": [-2.0, 2.0],
-          "U": [-2.0, 2.0]
-        }
+        "PTMs": ["P", "U"]
       },
       "node color": {
         "PTMs": ["P", "U"]
       },
       "node shape": {
         "PTMs": ["P", "U"]
+      },
+      "node size": {
+        "PTM": "P"
       }
     },
     "Gene Ontology enrichment": {
