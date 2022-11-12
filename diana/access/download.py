@@ -10,7 +10,7 @@ import urllib.request
 
 def download_file(url: str,
                   local_file_name: str,
-                  size: int = 8192,
+                  size: int = 1048576,
                   pause: float = 60.0) -> None:
     """
     Downloads a file from a URL, reattempting erroneous downloads.
