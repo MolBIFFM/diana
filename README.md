@@ -14,7 +14,8 @@ distinctive ranges of mass-spectrometry measurements as well as the distribution
 of measurements across these portions of the protein-protein interaction
 network.
 
-The assembled networks are exported along style specifications for Cytoscape.
+The networks are exported along specific Cytoscape styles for downstream
+analysis.
 
 ## Setup
 External dependencies, consisting of NetworkX, pandas, and SciPy, can be
@@ -2007,7 +2008,7 @@ with the following publications:
   *Cell*, 62, 967-981.
 
 - Hahn, M. et al. (2021) **SIK2 orchestrates actin-dependent host response**
-  **upon *Salmonella* infection**, *Proc. Natl. Acad. Sci.*, 118.
+  **upon *Salmonella* infection**, *Proc. Natl. Acad. Sci. U.S.A.*, 118.
 
 - Klann K. et al. (2020) **Growth Factor Receptor Signaling Inhibition**
   **Prevents SARS-CoV-2 Replication**, *Mol. Cell*, 80, 164-174.
@@ -2090,6 +2091,8 @@ protein-protein interaction networks and protein function includes:
 - Chen, J. and Yuan, B. (2006) **Detecting functional modules in the yeast**
   **protein–protein interaction network**, *Bioinformatics*, 22, 2283-2290.
 
+- Spirin, V. and Mirny L. A. (2003) **Protein complexes and functional modules**
+  **in molecular networks**, 	*Proc. Natl. Acad. Sci. U.S.A.*, 100, 12123-12128.
 ---
 
 References for implemented algorithms are listed in the corresponding source
