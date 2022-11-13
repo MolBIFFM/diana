@@ -14,8 +14,8 @@ distinctive ranges of mass-spectrometry measurements as well as the distribution
 of measurements across these portions of the protein-protein interaction
 network.
 
-The networks are exported along specific Cytoscape styles for downstream
-analysis.
+Networks of proteins, Gene Ontology terms, and Reactome pathways are exported
+along customizable Cytoscape styles for visualization and downstream analysis.
 
 ## Setup
 External dependencies, consisting of NetworkX, pandas, and SciPy, can be
