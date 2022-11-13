@@ -500,6 +500,7 @@ def get_styles(
                 site_average.get(node_size_modification,
                                  lambda sites: max(sites, key=abs)),
                 replicate_average.get(node_size_modification, statistics.mean))
+
             if isinstance(
                     COMPONENTS["node"]["visualProperty"]["NODE_SIZE"]
                 ["default"], float):

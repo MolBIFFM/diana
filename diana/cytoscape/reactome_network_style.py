@@ -300,7 +300,7 @@ COMPONENTS: dict[str, dict[str, dict[str, dict[
                         "default": 0.0
                     },
                     "NODE_FILL_COLOR": {
-                        "default": f"#{137:02X}{208:02X}{255:02X}",
+                        "default": f"#{255:02X}{255:02X}{255:02X}",
                     },
                     "NODE_HEIGHT": {
                         "default": 35.0
@@ -342,7 +342,7 @@ COMPONENTS: dict[str, dict[str, dict[str, dict[
                         "default": "ROUND_RECTANGLE"
                     },
                     "NODE_SIZE": {
-                        "default": 0.0
+                        "default": 35
                     },
                     "NODE_TOOLTIP": {
                         "default": ""
@@ -415,14 +415,24 @@ def get_styles(network: nx.Graph) -> ET.ElementTree:
                   f"#{255:02X}{255:02X}{255:02X}",
                   f"#{255:02X}{255:02X}{255:02X}")
         })
+
     max_number_proteins = max(
         reactome_network.get_pathway_sizes(network).values())
-    elements.add_continuous_mapping(
-        visual_properties["node"]["NODE_SIZE"], "number of proteins", "integer",
-        {
-            0: (1.0, 1.0, 1.0),
-            max_number_proteins: (1.0 + math.sqrt(max_number_proteins),) * 3
-        })
+
+    if isinstance(COMPONENTS["node"]["visualProperty"]["NODE_SIZE"]["default"],
+                  float):
+        elements.add_continuous_mapping(
+            visual_properties["node"]["NODE_SIZE"], "number of proteins",
+            "integer", {
+                0: (COMPONENTS["node"]["visualProperty"]["NODE_SIZE"]
+                    ["default"], COMPONENTS["node"]["visualProperty"]
+                    ["NODE_SIZE"]["default"],
+                    COMPONENTS["node"]["visualProperty"]["NODE_SIZE"]["default"]
+                   ),
+                max_number_proteins:
+                    (COMPONENTS["node"]["visualProperty"]["NODE_SIZE"]
+                     ["default"] + math.sqrt(max_number_proteins),) * 3
+            })
 
     ET.indent(styles)
     return styles
