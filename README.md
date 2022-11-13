@@ -1941,7 +1941,7 @@ Annotations of protein-protein interactions contain the following information:
 ```
 
 A protein-protein interaction between is associated with database-specific
-confidence scores.
+confidence scores as well as a composite score utilized by Cytoscape styles.
 
 ## Gene Ontology network
 

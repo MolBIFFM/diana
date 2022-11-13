@@ -1,4 +1,4 @@
-"""Community detection algorithms."""
+"""Community detection algorithms for undirected weighted networks."""
 from typing import Hashable
 
 import networkx as nx
