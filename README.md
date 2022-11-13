@@ -2099,7 +2099,7 @@ protein-protein interaction networks and protein function includes:
 
 References for algorithms are listed in the corresponding source code.
 Specifically, this concerns implementations of
-[community detection algorithms](diana/algorithms/modularization.py) and
+[algorithms for community detection](diana/algorithms/modularization.py) and
 [procedures for multiple testing correction](diana/algorithms/correction.py).
 
 ---
