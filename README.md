@@ -2099,8 +2099,9 @@ protein-protein interaction networks and protein function includes:
 
 References for implemented algorithms are listed in the corresponding source
 code. Specifically, this concerns implementations of the
-[Clauset-Newman-Moore-Algorithm and Louvain-Algorithm](diana/algorithms/modularization.py) for community detection in weighted
-undirected networks as well as [procedures for multiple testing correction](diana/algorithms/correction.py).
+[Clauset-Newman-Moore and Louvain-Algorithm](diana/algorithms/modularization.py)
+for community detection in weighted undirected networks as well as
+[procedures for multiple testing correction](diana/algorithms/correction.py).
 
 ---
 
