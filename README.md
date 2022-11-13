@@ -818,9 +818,9 @@ mean of replicates. Available settings are `"mean"`, `"median"`, `"mid-range"`,
   }
 }
 ```
-The modification-specific conversion that a measurement range refers to. It
-defaults to the binary logarithm of a measurement for `null` but can be set to
-`"log10"`, `"percentile"`, `"quantile"` or `"ratio"`, `"standard score"`,
+The modification-specific statistic that a specified measurement range refers
+to. It defaults to the binary logarithm of a measurement for `null` but can be
+set to `"log10"`, `"percentile"`, `"quantile"`, `"ratio"` or `"standard score"`,
 computed with respect to the distribution of a particular modification at a
 particular time of measurement across the protein-protein interaction network,
 if applicable.
@@ -1089,11 +1089,12 @@ Available settings are `"mean"`, `"median"`, `"mid-range"`, `"max"`, `"maxabs"`,
   }
 }
 ```
-The conversion that a measurement range refers to. It defaults to the binary
-logarithm of a measurement for `null` but can be set to `"log10"`,
-`"percentile"`, `"quantile"`, `"ratio"` or `"standard score"`, computed with
-respect to the distribution of a particular modification at a particular time of
-measurement across the protein-protein interaction network, if applicable.
+The modification-specific statistic that a specified measurement range refers
+to. It defaults to the binary logarithm of a measurement for `null` but can be
+set to `"log10"`, `"percentile"`, `"quantile"`, `"ratio"` or `"standard score"`,
+computed with respect to the distribution of a particular modification at a
+particular time of measurement across the protein-protein interaction network,
+if applicable.
 
 ```json
 {
@@ -1241,11 +1242,12 @@ settings are `"mean"`, `"median"`, `"mid-range"`, `"max"`, `"maxabs"`, `"min"`,
   }
 }
 ```
-The conversion that a measurement range refers to. It defaults to the binary
-logarithm of a measurement for `null` but can be set to `"log10"`,
-`"percentile"`, `"quantile"`, `"ratio"` or `"standard score"`, computed with
-respect to the distribution of a particular modification at a particular time of
-measurement across the protein-protein interaction network, if applicable.
+The modification-specific statistic that a specified measurement range refers
+to. It defaults to the binary logarithm of a measurement for `null` but can be
+set to `"log10"`, `"percentile"`, `"quantile"`, `"ratio"` or `"standard score"`,
+computed with respect to the distribution of a particular modification at a
+particular time of measurement across the protein-protein interaction network,
+if applicable.
 
 ```json
 {
@@ -1718,12 +1720,12 @@ settings are `"mean"`, `"median"`, `"mid-range"`, `"max"`, `"maxabs"`, `"min"`,
   }
 }
 ```
-The conversion that a measurement range refers to. It defaults to the binary
-logarithm of a measurement for `null` but can be set to`"log10"`,
-`"percentile"`, `"quantile"`, `"ratio"` or `"standard score"`, computed with
-respect to the distribution of a particular modification at a particular time of
-measurement across each community of the protein-protein interaction network,
-if applicable.
+The modification-specific statistic that a specified measurement range refers
+to. It defaults to the binary logarithm of a measurement for `null` but can be
+set to `"log10"`, `"percentile"`, `"quantile"`, `"ratio"` or `"standard score"`,
+computed with respect to the distribution of a particular modification at a
+particular time of measurement across each community of the protein-protein
+interaction network, if applicable.
 
 ```json
 {
@@ -1847,12 +1849,12 @@ the mean of replicates. Available settings are `"mean"`, `"median"`,
   }
 }
 ```
-The modification-specific conversion that a measurement range refers to. It
-defaults to the binary logarithm of a measurement for `null` but can be set to
-`"log10"`, `"percentile"`, `"quantile"`, `"ratio"` or `"standard score"`,
+The modification-specific statistic that a specified measurement range refers
+to. It defaults to the binary logarithm of a measurement for `null` but can be
+set to `"log10"`, `"percentile"`, `"quantile"`, `"ratio"` or `"standard score"`,
 computed with respect to the distribution of a particular modification at a
 particular time of measurement across each community of the protein-protein
-interaction network if applicable.
+interaction network, if applicable.
 
 ```json
 {
@@ -2096,7 +2098,11 @@ protein-protein interaction networks and protein function includes:
 ---
 
 References for implemented algorithms are listed in the corresponding source
-code.
+code. Specifically, this concerns implementations of the
+[Clauset-Newman-Moore-Algorithm and Louvain-Algorithm]
+(diana/algorithms/modularization.py) for community detection in weighted
+undirected networks as well as [procedures for multiple testing correction]
+(diana/algorithms/correction.py).
 
 ---
 
