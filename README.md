@@ -2097,10 +2097,9 @@ protein-protein interaction networks and protein function includes:
   **in molecular networks**, 	*Proc. Natl. Acad. Sci. U.S.A.*, 100, 12123-12128.
 ---
 
-References for implemented algorithms are listed in the corresponding source
-code. Specifically, this concerns implementations of the
-[Clauset-Newman-Moore and Louvain-Algorithm](diana/algorithms/modularization.py)
-for community detection in weighted undirected networks as well as
+References for algorithms are listed in the corresponding source code.
+Specifically, this concerns implementations of
+[community detection algorithms](diana/algorithms/modularization.py) and
 [procedures for multiple testing correction](diana/algorithms/correction.py).
 
 ---
