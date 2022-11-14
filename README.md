@@ -47,13 +47,13 @@ pathways as well as distribution of mass-spectrometric measurements.
 
 ```mermaid
 flowchart
-  ptm-ms-data[post-translational modification mass spectrometry data] -->
-    proteins[proteins]
-  ptm-ms-data --> ptm[post-translational modifications]
+  ptm-ms-data(post-translational modification mass spectrometry data) -->
+    proteins(proteins)
+  ptm-ms-data --> ptm(post-translational modifications)
 
   proteins --> uniprot[(UniProt)]
   ptm -->
-    protein-protein-interaction-network[protein-protein interaction network]
+    protein-protein-interaction-network(protein-protein interaction network)
 
   uniprot --> biogrid[(BioGRID)]
   uniprot --> corum[(CORUM)]
@@ -69,15 +69,15 @@ flowchart
   mint --> protein-protein-interaction-network
   string --> protein-protein-interaction-network
   reactome --> protein-protein-interaction-network
-  gene-ontology --> gene-ontology-network[Gene Ontology network]
-  reactome --> reactome-network[Reactome network]
+  gene-ontology --> gene-ontology-network(Gene Ontology network)
+  reactome --> reactome-network(Reactome network)
 
   protein-protein-interaction-network -->
-    community-detection[community detection]
-  community-detection --> enrichment-analysis[enrichment analysis]
+    community-detection(community detection)
+  community-detection --> enrichment-analysis(enrichment analysis)
   reactome-network --> enrichment-analysis
   gene-ontology-network --> enrichment-analysis
-  enrichment-analysis --> cytoscape[Cytoscape]
+  enrichment-analysis --> cytoscape(Cytoscape)
 ```
 
 A configuration file specifies an array of workflows executed sequentially.
