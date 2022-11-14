@@ -17,6 +17,38 @@ network.
 Networks of proteins, Gene Ontology terms, and Reactome pathways are exported
 along customizable Cytoscape styles for visualization and downstream analysis.
 
+
+## Setup
+External dependencies, consisting of NetworkX, pandas, and SciPy, can be
+installed using pip by running the following command
+
+```
+pip3 install -r diana/requirements.txt
+```
+
+DIANA is currently developed using Python 3.10.7, Ubuntu 22.10 and Cytoscape
+3.9.1. Source code is formatted automatically using YAPF 0.32.0.
+
+## Command Line Interface
+
+Instructions can be displayed by running the following command:
+
+```
+python3 diana/diana.py --help
+```
+
+Configuration is detailed below. Configuration files referring to published data
+sets referenced below are included in this repository.
+
+## Configuration
+
+A configuration file specifies an array of workflows executed sequentially.
+Multiple configuration files are processed concurrently.
+
+A workflow consists of the assembly of a protein-protein interaction network,
+the identification of its densely interacting communities and their statistical
+analysis.
+
 ```mermaid
 flowchart
   ptm-ms-data[post-translational modification mass spectrometry data] -->
@@ -51,37 +83,6 @@ flowchart
   gene-ontology-network --> enrichment-analysis
   enrichment-analysis --> cytoscape[Cytoscape]
 ```
-
-## Setup
-External dependencies, consisting of NetworkX, pandas, and SciPy, can be
-installed using pip by running the following command
-
-```
-pip3 install -r diana/requirements.txt
-```
-
-DIANA is currently developed using Python 3.10.7, Ubuntu 22.10 and Cytoscape
-3.9.1. Source code is formatted automatically using YAPF 0.32.0.
-
-## Command Line Interface
-
-Instructions can be displayed by running the following command:
-
-```
-python3 diana/diana.py --help
-```
-
-Configuration is detailed below. Configuration files referring to published data
-sets referenced below are included in this repository.
-
-## Configuration
-
-A configuration file specifies an array of workflows executed sequentially.
-Multiple configuration files are processed concurrently.
-
-A workflow consists of the assembly of a protein-protein interaction network,
-the identification of its densely interacting communities and their statistical
-analysis.
 
 ---
 
