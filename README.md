@@ -40,10 +40,6 @@ Configuration is detailed below. Configuration files referring to published data
 sets referenced below are included in this repository.
 
 ## Configuration
-
-A configuration file specifies an array of workflows executed sequentially.
-Multiple configuration files are processed concurrently.
-
 A workflow consists of the assembly of a protein-protein interaction network,
 the identification of its densely interacting communities and their statistical
 analysis with respect to the enrichment of Gene Ontology terms and Reactome
@@ -83,6 +79,9 @@ flowchart
   gene-ontology-network --> enrichment-analysis
   enrichment-analysis --> cytoscape[Cytoscape]
 ```
+
+A configuration file specifies an array of workflows executed sequentially.
+Multiple configuration files are processed concurrently.
 
 ---
 
