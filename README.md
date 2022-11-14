@@ -51,7 +51,7 @@ pathways as well as distribution of mass-spectrometric measurements.
 
 ```mermaid
 flowchart
-  %%{init: { "theme": "neutral"} }%%
+  %%{init: { "theme": "neutral" } }%%
   ptm-ms-data[post-translational modification mass spectrometry data] -->
     proteins[proteins]
   ptm-ms-data --> ptm[post-translational modifications]
