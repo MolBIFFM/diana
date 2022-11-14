@@ -17,6 +17,41 @@ network.
 Networks of proteins, Gene Ontology terms, and Reactome pathways are exported
 along customizable Cytoscape styles for visualization and downstream analysis.
 
+```mermaid
+flowchart
+  ptm-ms-data[post-translational modification mass spectrometry data] -->
+    proteins[proteins]
+  ptm-ms-data --> ptm[post-translational modifications]
+
+  proteins --> uniprot[(UniProt)]
+  ptm -->
+    protein-protein-interaction-network[protein-protein interaction network]
+
+  uniprot --> biogrid[(BioGRID)]
+  uniprot --> corum[(CORUM)]
+  uniprot --> intact[(IntAct)]
+  uniprot --> mint[(MINT)]
+  uniprot --> reactome[(Reactome)]
+  uniprot --> string[(STRING)]
+  uniprot --> gene-ontology[(Gene Ontology)]
+
+  biogrid --> protein-protein-interaction-network
+  corum --> protein-protein-interaction-network
+  intact--> protein-protein-interaction-network
+  mint --> protein-protein-interaction-network
+  string --> protein-protein-interaction-network
+  reactome --> protein-protein-interaction-network
+  gene-ontology --> gene-ontology-network[Gene Ontology network]
+  reactome --> reactome-network[Reactome network]
+
+  protein-protein-interaction-network -->
+    community-detection[community detection]
+  community-detection --> enrichment-analysis[enrichment analysis]
+  reactome-network --> enrichment-analysis
+  gene-ontology-network --> enrichment-analysis
+  enrichment-analysis --> cytoscape[Cytoscape]
+```
+
 ## Setup
 External dependencies, consisting of NetworkX, pandas, and SciPy, can be
 installed using pip by running the following command
