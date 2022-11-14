@@ -586,9 +586,9 @@ def get_styles(
                             node_color_modifications[0]) + 1]
                         if summary == "UP":
                             node_color[value] = f"#{255:02X}{0:02X}{0:02X}"
-                        elif summary == "MID_UP":
+                        elif summary == "MID-UP":
                             node_color[value] = f"#{255:02X}{102:02X}{102:02X}"
-                        elif summary == "MID_DOWN":
+                        elif summary == "MID-DOWN":
                             node_color[value] = f"#{102:02X}{102:02X}{255:02X}"
                         elif summary == "DOWN":
                             node_color[value] = f"#{0:02X}{0:02X}{255:02X}"
@@ -604,24 +604,24 @@ def get_styles(
                             for i in range(2)
                         ]
                         if "UP" in summaries and not ("DOWN" in summaries or
-                                                      "MID_DOWN" in summaries):
+                                                      "MID-DOWN" in summaries):
                             node_color[value] = f"#{255:02X}{0:02X}{0:02X}"
-                        elif "MID_UP" in summaries and not (
-                                "DOWN" in summaries or "MID_DOWN" in summaries):
+                        elif "MID-UP" in summaries and not (
+                                "DOWN" in summaries or "MID-DOWN" in summaries):
                             node_color[value] = f"#{255:02X}{102:02X}{102:02X}"
-                        elif "MID_DOWN" in summaries and not (
-                                "UP" in summaries or "MID_UP" in summaries):
+                        elif "MID-DOWN" in summaries and not (
+                                "UP" in summaries or "MID-UP" in summaries):
                             node_color[value] = f"#{102:02X}{102:02X}{255:02X}"
                         elif "DOWN" in summaries and not (
-                                "UP" in summaries or "MID_UP" in summaries):
+                                "UP" in summaries or "MID-UP" in summaries):
                             node_color[value] = f"#{0:02X}{0:02X}{255:02X}"
                         elif summaries[0] in ("UP",
-                                              "MID_UP") and summaries[1] in (
-                                                  "DOWN", "MID_DOWN"):
+                                              "MID-UP") and summaries[1] in (
+                                                  "DOWN", "MID-DOWN"):
                             node_color[value] = f"#{0:02X}{255:02X}{0:02X}"
-                        elif summaries[0] in ("MID_DOWN",
+                        elif summaries[0] in ("MID-DOWN",
                                               "DOWN") and summaries[1] in (
-                                                  "UP", "MID_UP"):
+                                                  "UP", "MID-UP"):
                             node_color[value] = f"#{255:02X}{255:02X}{0:02X}"
                         else:
                             node_color[value] = f"#{128:02X}{128:02X}{128:02X}"
@@ -631,10 +631,10 @@ def get_styles(
                                 node_color_modifications[0]) + 1]
                             if summary == "UP":
                                 node_color[value] = f"#{255:02X}{0:02X}{0:02X}"
-                            elif summary == "MID_UP":
+                            elif summary == "MID-UP":
                                 node_color[
                                     value] = f"#{255:02X}{102:02X}{102:02X}"
-                            elif summary == "MID_DOWN":
+                            elif summary == "MID-DOWN":
                                 node_color[
                                     value] = f"#{102:02X}{102:02X}{255:02X}"
                             elif summary == "DOWN":
@@ -648,10 +648,10 @@ def get_styles(
                                 node_color_modifications[1]) + 1]
                             if summary == "UP":
                                 node_color[value] = f"#{255:02X}{0:02X}{0:02X}"
-                            elif summary == "MID_UP":
+                            elif summary == "MID-UP":
                                 node_color[
                                     value] = f"#{255:02X}{102:02X}{102:02X}"
-                            elif summary == "MID_DOWN":
+                            elif summary == "MID-DOWN":
                                 node_color[
                                     value] = f"#{102:02X}{102:02X}{255:02X}"
                             elif summary == "DOWN":

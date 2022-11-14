@@ -561,28 +561,28 @@ def set_measurements(
                                     for site in sites
                                 ]))
 
-                    if network.nodes[protein][f"{time} {modification}"] >= max(
-                            0.0, measurement_range[time][modification][1]):
+                    if (network.nodes[protein][f"{time} {modification}"] >= max(
+                            0.0, measurement_range[time][modification][1])):
                         summary[modification] = "UP"
-                    elif max(
-                            0.0, measurement_range[time][modification][1]
-                    ) > network.nodes[protein][f"{time} {modification}"] >= max(
-                            0.0, 0.5 *
-                        (measurement_range[time][modification][1] + 0.5 *
-                         (measurement_range[time][modification][0] +
-                          measurement_range[time][modification][1]))):
-                        summary[modification] = "MID_UP"
-                    elif min(
-                            0.0, measurement_range[time][modification][0]
-                    ) >= network.nodes[protein][f"{time} {modification}"] > min(
-                            0.0, 0.5 *
-                        (measurement_range[time][modification][0] + 0.5 *
-                         (measurement_range[time][modification][0] +
-                          measurement_range[time][modification][1]))):
-                        summary[modification] = "MID_DOWN"
-                    elif min(
-                            0.0, measurement_range[time][modification][0] >=
-                            network.nodes[protein][f"{time} {modification}"]):
+                    elif (max(0.0, measurement_range[time][modification][1]) >
+                          network.nodes[protein][f"{time} {modification}"] >=
+                          max(
+                              0.0, 0.5 *
+                              (0.5 *
+                               (measurement_range[time][modification][0] +
+                                measurement_range[time][modification][1]) +
+                               measurement_range[time][modification][1]))):
+                        summary[modification] = "MID-UP"
+                    elif (min(0.0, measurement_range[time][modification][0]) <
+                          network.nodes[protein][f"{time} {modification}"] <=
+                          min(
+                              0.0, 0.5 *
+                              (measurement_range[time][modification][0] + 0.5 *
+                               (measurement_range[time][modification][0] +
+                                measurement_range[time][modification][1])))):
+                        summary[modification] = "MID-DOWN"
+                    elif (network.nodes[protein][f"{time} {modification}"] <=
+                          min(0.0, measurement_range[time][modification][0])):
                         summary[modification] = "DOWN"
                     else:
                         summary[modification] = "MID"
