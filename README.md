@@ -3,10 +3,10 @@ DIANA is a command line application facilitating **D**ata **I**ntegration
 **A**nd **N**etwork-based **A**nalysis for post-translational modification mass
 spectrometry data.
 
-Provided mass-spectrometry data capturing differential post-translational
-modification of proteins, DIANA automates its customizable analysis of in the
-context of protein-protein interaction networks incorporating interactions from
-BioGRID, CORUM, IntAct, MINT, Reactome, and STRING.
+Provided longitudinal mass-spectrometry data capturing differential
+post-translational modification of proteins, DIANA automates its customizable
+analysis of in the context of protein-protein interaction networks incorporating
+interactions from BioGRID, CORUM, IntAct, MINT, Reactome, and STRING.
 
 Network analysis assesses the local enrichment of Gene Ontology terms and
 Reactome pathways by individual densely interacting sets of proteins associated
@@ -2042,7 +2042,10 @@ related pathways, for example:
 ## References
 
 The configuration files in this repository refer to data sets as supplemented
-with the following publications:
+with the following publications which concern host response to infection by
+[*Salmonella Typhimurium*](configuration/salmonella.json),
+[SARS-CoV-2](configuration/sars-cov-2.json), and
+[*Shigella flexneri*](configuration/shigella.json):
 
 - Fiskin, E. et al. (2016) **Global Analysis of Host and Bacterial**
   **Ubiquitinome in Response to *Salmonella* Typhimurium Infection**, *Mol.*
