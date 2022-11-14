@@ -108,8 +108,8 @@ def tabular_txt(url: str,
         header: The line number of the table header.
         skiprows: Number of initial rows of the file to skip before header.
         usecols: The table columns to consider.
-        chunksize: The buffer size to process download, decompression and
-            iterate the file at.
+        chunksize: The buffer size to process download and decompression of the
+            file with.
         pause: The number of seconds to wait after a failed or download.
 
     Yields:
@@ -162,7 +162,7 @@ def tabular_txt(url: str,
             header=header,
             skiprows=skiprows,
             usecols=usecols,
-            chunksize=chunksize,
+            chunksize=1024,
     ):
         for _, row in chunk.iterrows():
             yield row

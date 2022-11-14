@@ -44,6 +44,10 @@ sets referenced below are included in this repository.
 A configuration file specifies an array of workflows executed sequentially.
 Multiple configuration files are processed concurrently.
 
+A workflow consists of the assembly of a protein-protein interaction network,
+the identification of its densely interacting communities and their statistical
+analysis.
+
 ---
 
 Input proteins are read from tabular input files.
