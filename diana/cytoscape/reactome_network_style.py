@@ -342,7 +342,7 @@ COMPONENTS: dict[str, dict[str, dict[str, dict[
                         "default": "ROUND_RECTANGLE"
                     },
                     "NODE_SIZE": {
-                        "default": 35
+                        "default": 35.0
                     },
                     "NODE_TOOLTIP": {
                         "default": ""
@@ -385,7 +385,7 @@ def get_styles(network: nx.Graph) -> ET.ElementTree:
 
     visual_style_sub_element = ET.SubElement(styles.getroot(),
                                              "visualStyle",
-                                             attrib={"name": "Gene Ontology"})
+                                             attrib={"name": "Reactome"})
     visual_properties: dict[str, dict[str, ET.Element]] = {}
     for component, properties in COMPONENTS.items():
         visual_properties[component] = {}
@@ -431,7 +431,7 @@ def get_styles(network: nx.Graph) -> ET.ElementTree:
                    ),
                 max_number_proteins:
                     (COMPONENTS["node"]["visualProperty"]["NODE_SIZE"]
-                     ["default"] + math.sqrt(max_number_proteins),) * 3
+                     ["default"] + 10.0 * math.sqrt(max_number_proteins),) * 3
             })
 
     ET.indent(styles)

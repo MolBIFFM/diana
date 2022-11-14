@@ -439,7 +439,7 @@ def get_styles(network: nx.Graph) -> ET.ElementTree:
                    ),
                 max_number_proteins:
                     (COMPONENTS["node"]["visualProperty"]["NODE_SIZE"]
-                     ["default"] + math.sqrt(max_number_proteins),) * 3
+                     ["default"] + 10.0 * math.sqrt(max_number_proteins),) * 3
             })
 
     ET.indent(styles)
