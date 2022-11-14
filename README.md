@@ -80,8 +80,9 @@ flowchart
   enrichment-analysis --> cytoscape(Cytoscape)
 ```
 
-A configuration file specifies an array of workflows executed sequentially.
-Multiple configuration files are processed concurrently.
+A configuration file contains pairs of identifier and workflow specification
+executed sequentially. Multiple configuration files are processed concurrently.
+The identifier determines output file names.
 
 ---
 
