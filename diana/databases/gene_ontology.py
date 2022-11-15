@@ -1,11 +1,10 @@
 """The interface for the Gene Ontology database."""
 from typing import (Callable, Collection, Container, Hashable, Iterable,
-                    Iterator, Mapping, Optional)
+                    Iterator, Mapping, Sequence)
 
 import scipy.stats
 from access import iterate
 from algorithms import correction
-
 from databases import uniprot
 
 ORGANISM: dict[str, dict[int, str]] = {"files": {9606: "human"}}
@@ -121,6 +120,7 @@ def convert_namespaces(namespaces: Iterable[str]) -> tuple[str, ...]:
 
 def get_enrichment(
     proteins: Iterable[frozenset[str]],
+    reference: Sequence[Iterable[str]],
     enrichment_test: Callable[
         [int, int, int, int],
         float] = lambda k, M, n, N: scipy.stats.hypergeom.sf(k - 1, M, n, N),
@@ -128,23 +128,22 @@ def get_enrichment(
         Hashable, float]] = correction.benjamini_yekutieli,
     organism: int = 9606,
     namespaces: Collection[str] = ("cellular_component", "molecular_function",
-                                   "biological_process"),
-    reference: Optional[Container[str]] = None
+                                   "biological_process")
 ) -> dict[frozenset[str], dict[tuple[str, str], float]]:
     """
     Test sets of proteins for enrichment of Gene Ontology terms.
 
     Args:
         proteins: The sets of proteins test.
+        reference: Optional reference sets of proteins with respect to which
+            enrichment is computed. If not provided, the entire Gene Ontology
+            annotation specific to the organism of interest is used.
         enrichment_test: The statistical test used to assess enrichment of Gene
             Ontology terms.
         multiple_testing_correction: The procedure to correct for multiple
             testing of multiple terms and sets of proteins.
         organism: The NCBI taxonomy identifier for the organism of interest.
         namespaces: The Gene Ontology namespaces.
-        reference: Optional reference set of proteins with respect to which
-            enrichment is computed. If not provided, the entire Gene Ontology
-            annotation specific to the organism of interest is used.
 
     Returns:
         Corrected p-value for the enrichment of each Gene Ontology term by each
@@ -163,7 +162,8 @@ def get_enrichment(
     annotation: dict[str, set[str]] = {}
     for protein, annotated_term in get_annotation(
             organism, convert_namespaces(namespaces)):
-        if reference is None or protein in reference:
+        if any(not reference[i] or protein in reference[i]
+               for i in range(len(reference))):
             for primary_term in go_id.get(annotated_term, {annotated_term}):
                 if primary_term not in annotation:
                     annotation[primary_term] = set()
@@ -176,22 +176,30 @@ def get_enrichment(
     annotated_proteins = set.union(*annotation.values())
 
     annotated_network_proteins = {
-        prt: len(annotated_proteins.intersection(prt)) for prt in proteins
+        prt: len(
+            annotated_proteins.intersection(reference[p]).intersection(prt)
+            if not reference[p] else annotated_proteins.intersection(prt))
+        for p, prt in enumerate(proteins)
     }
 
     network_intersection = {
-        prt:
-        {term: len(annotation[term].intersection(prt)) for term in annotation}
-        for prt in proteins
+        prt: {
+            term:
+            len(annotation[term].intersection(reference[p]).intersection(prt)
+                if not reference[p] else annotation[term].intersection(prt))
+            for term in annotation
+        } for p, prt in enumerate(proteins)
     }
 
-    p_value = multiple_testing_correction({
-        (prt, term): enrichment_test(network_intersection[prt][term],
-                                     len(annotated_proteins),
-                                     len(annotation[term]),
-                                     annotated_network_proteins[prt])
-        for term in annotation for prt in proteins
-    })
+    p_value = multiple_testing_correction({(prt, term): enrichment_test(
+        network_intersection[prt][term],
+        len(
+            annotated_proteins.intersection(reference[p])
+            if not reference[p] else annotated_proteins),
+        len(annotation[term].intersection(reference[p]) if not reference[p] else
+            annotation[term]), annotated_network_proteins[prt])
+                                           for term in annotation
+                                           for p, prt in enumerate(proteins)})
 
     return {
         prt: {(term, name[term]): p_value[(prt, term)] for term in annotation

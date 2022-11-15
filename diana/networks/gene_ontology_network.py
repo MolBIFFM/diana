@@ -15,6 +15,7 @@ from databases import gene_ontology
 
 
 def get_network(proteins: Iterable[str],
+                reference: Optional[Container[str]] = None,
                 namespaces: Collection[str] = ("cellular_component",
                                                "molecular_function",
                                                "biological_process"),
@@ -23,22 +24,21 @@ def get_network(proteins: Iterable[str],
                 multiple_testing_correction: Callable[
                     [dict[Hashable, float]],
                     Mapping[Hashable, float]] = correction.benjamini_yekutieli,
-                organism: int = 9606,
-                reference: Optional[Container[str]] = None) -> nx.DiGraph:
+                organism: int = 9606) -> nx.DiGraph:
     """
     Assemble a Gene Ontology network from proteins.
 
     Args:
         proteins: The proteins to assemble the Gene Ontology network from.
+        reference: Optional reference set of proteins with respect to which
+            enrichment is computed. If not provided, the entire Gene Ontology
+            annotation specific to the organism of interest is used.
         namespaces: The Gene Ontology namespaces.
         enrichment_test: The statistical test used to assess enrichment of a
             term by the protein-protein interaction network.
         multiple_testing_correction: The procedure to correct for testing of
             multiple terms.
         organism: The NCBI taxonomy identifier for the organism of interest.
-        reference: Optional reference set of proteins with respect to which
-            enrichment is computed. If not provided, the entire Gene Ontology
-            annotation specific to the organism of interest is used.
 
     Returns:
         The Gene Ontology network.

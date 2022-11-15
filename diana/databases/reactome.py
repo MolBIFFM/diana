@@ -1,11 +1,10 @@
 """The interface for the Reactome database."""
 from typing import (Callable, Container, Hashable, Iterable, Iterator, Mapping,
-                    Optional)
+                    Optional, Sequence)
 
 import scipy.stats
 from access import iterate
 from algorithms import correction
-
 from databases import uniprot
 
 ORGANISM: dict[str, dict[int, str]] = {
@@ -133,27 +132,27 @@ def get_pathway_annotation(organism: int = 9606) -> Iterator[tuple[str, str]]:
 
 def get_enrichment(
     proteins: Iterable[frozenset[str]],
+    reference: Sequence[Iterable[str]],
     enrichment_test: Callable[
         [int, int, int, int],
         float] = lambda k, M, n, N: scipy.stats.hypergeom.sf(k - 1, M, n, N),
     multiple_testing_correction: Callable[[dict[Hashable, float]], Mapping[
         Hashable, float]] = correction.benjamini_yekutieli,
     organism: int = 9606,
-    reference: Optional[Container[str]] = None
 ) -> dict[frozenset[str], dict[tuple[str, str], float]]:
     """
     Test sets of proteins for enrichment of Reactome pathways.
 
     Args:
-        networks: The sets of proteins to test.
+        proteins: The sets of proteins to test.
+        reference: Optional reference sets of proteins with respect to which
+            enrichment is computed. If not provided, the entire Reactome pathway
+            annotation specific to the organism of interest is used.
         enrichment_test: The statistical test used to assess enrichment of
             Reactome pathways.
         multiple_testing_correction: The procedure to correct for multiple
             testing of multiple pathways and sets of proteins.
         organism: The NCBI taxonomy identifier for the organism of interest.
-        reference: Optional reference set of proteins with respect to which
-            enrichment is computed. If not provided, the entire Reactome pathway
-            annotation specific to the organism of interest is used.
 
     Returns:
         Corrected p-value for the enrichment of each Reactome pathway by
@@ -165,7 +164,8 @@ def get_enrichment(
 
     annotation: dict[str, set[str]] = {}
     for protein, pathway in get_pathway_annotation(organism):
-        if reference is None or protein in reference:
+        if any(not reference[i] or protein in reference[i]
+               for i in range(len(reference))):
             if pathway not in annotation:
                 annotation[pathway] = set()
             annotation[pathway].add(protein)
@@ -179,23 +179,30 @@ def get_enrichment(
     annotated_proteins = set.union(*annotation.values())
 
     annotated_network_proteins = {
-        prt: len(annotated_proteins.intersection(prt)) for prt in proteins
+        prt: len(
+            annotated_proteins.intersection(reference[p]).intersection(prt)
+            if not reference[p] else annotated_proteins.intersection(prt))
+        for p, prt in enumerate(proteins)
     }
 
     network_intersection = {
         prt: {
-            pathway: len(annotation[pathway].intersection(prt))
+            pathway:
+            len(annotation[pathway].intersection(reference[p]).intersection(prt)
+                if not reference[p] else annotation[pathway].intersection(prt))
             for pathway in annotation
-        } for prt in proteins
+        } for p, prt in enumerate(proteins)
     }
 
-    p_value = multiple_testing_correction({
-        (prt, pathway): enrichment_test(network_intersection[prt][pathway],
-                                        len(annotated_proteins),
-                                        len(annotation[pathway]),
-                                        annotated_network_proteins[prt])
-        for pathway in annotation for prt in proteins
-    })
+    p_value = multiple_testing_correction({(prt, pathway): enrichment_test(
+        network_intersection[prt][pathway],
+        len(
+            annotated_proteins.intersection(reference[p])
+            if not reference[p] else annotated_proteins),
+        len(annotation[pathway].intersection(reference[p]) if not reference[p]
+            else annotation[pathway]), annotated_network_proteins[prt])
+                                           for pathway in annotation
+                                           for p, prt in enumerate(proteins)})
 
     return {
         prt: {(pathway, name[pathway]): p_value[(prt, pathway)]

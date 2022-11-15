@@ -8,7 +8,7 @@ post-translational modification of proteins, DIANA automates its customizable
 analysis of in the context of protein-protein interaction networks incorporating
 interactions from BioGRID, CORUM, IntAct, MINT, Reactome, and STRING.
 
-Network analysis assesses the local enrichment of Gene Ontology terms and
+Network analysis assesses the localized enrichment of Gene Ontology terms and
 Reactome pathways by individual densely interacting sets of proteins associated
 with distinctive mass-spectrometry measurements as well as the distribution
 of measurements across the protein-protein interaction network.
@@ -1065,9 +1065,10 @@ completely supported setting is `9606`, corresponding to Homo sapiens.
 The post-translational modifications considered to determine subsets of proteins
 to the combination of which enrichment analysis is restricted. If restricted,
 enrichment by these proteins is computed with respect to proteins represented in
-the protein-protein interaction network, instead of the entire species-specific
-Gene Ontology annotation. Subsets consist of proteins exceeding a specified
-range of protein-specific measurements.
+the protein-protein interaction network by default, instead of the entire
+species-specific Gene Ontology annotation, depending on "`annotation"`. Subsets
+consist of proteins exceeding a specified range of protein-specific
+measurements.
 
 ```json
 {
@@ -1174,6 +1175,23 @@ set to `"quantile"`, `[0.5, 2.0]` if `"conversion"` is set to `"ratio"`, and
 If `true`, compute enrichment with respect to the intersection of specified
 subsets of proteins from the protein-protein interaction network instead of
 their union. The default setting is `false`.
+
+```json
+{
+  "configuration": {
+    "Gene Ontology enrichment": {
+      "annotation": false
+    },
+    "Reactome enrichment": {
+      "annotation": false
+    }
+  }
+}
+```
+If `true` and the set of proteins considered is restricted, compute enrichment
+with respect to the entire annotation, specific to the organism of interest,
+otherwise with respect to proteins represented in the protein-protein
+interaction network. The default setting is `false`.
 
 ```json
 {
@@ -1670,8 +1688,29 @@ completely supported setting is `9606`, corresponding to Homo sapiens.
 }
 ```
 If `true`, compute enrichment with respect to the entire annotation, specific to
-the organism of interest, otherwise with respect to proteins represented in the
-protein-protein interaction network. The default setting is `false`.
+the organism of interest, otherwise either with respect to the corresponding
+community or proteins represented in the protein-protein interaction network,
+depending on `"network"`. The default setting is `false`.
+
+```json
+{
+  "configuration": {
+    "community detection": {
+      "Gene Ontology enrichment": {
+        "network": false
+      },
+      "Reactome enrichment": {
+        "network": false
+      }
+    }
+  }
+}
+```
+If `true`, and the set of proteins considered is restricted compute enrichment
+with respect to the proteins represented in the protein-protein interaction,
+otherwise either with respect to the corresponding community or the entire
+annotation, specific to the organism of interest, depending on `"annotation"`.
+The default setting is `false`. Takes precedence over `"annotation"`.
 
 ```json
 {
@@ -1690,9 +1729,10 @@ protein-protein interaction network. The default setting is `false`.
 The post-translational modifications considered to determine subsets of proteins
 to the combinations of which enrichment analysis for each module is restricted.
 If restricted, enrichment by these proteins is computed with respect to the
-union of the subsets across the protein-protein interaction network, instead of
-the entire species-specific Gene Ontology annotation. Subsets consist of
-proteins exceeding a specified range of protein-specific measurements.
+corresponding module by default, instead of the protein-protein interaction
+network or the entire annotation, specific to the organism of interest,
+depending on `"network"` and `"annotation"`. Subsets consist of proteins
+exceeding a specified range of protein-specific measurements.
 
 ```json
 {

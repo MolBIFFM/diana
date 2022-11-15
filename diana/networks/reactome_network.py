@@ -14,26 +14,26 @@ from databases import reactome
 
 
 def get_network(proteins: Iterable[str],
+                reference: Optional[Container[str]] = None,
                 enrichment_test: Callable[[int, int, int, int], float] = lambda
                 k, M, n, N: scipy.stats.hypergeom.sf(k - 1, M, n, N),
                 multiple_testing_correction: Callable[
                     [dict[Hashable, float]],
                     Mapping[Hashable, float]] = correction.benjamini_yekutieli,
-                organism: int = 9606,
-                reference: Optional[Container[str]] = None) -> nx.DiGraph:
+                organism: int = 9606) -> nx.DiGraph:
     """
     Assemble a Reactome network from proteins.
 
     Args:
         proteins: The proteins to assemble the Reactome network from.
+        reference: Optional reference set of proteins with respect to which
+            enrichment is computed. If not provided, the entire Reactome pathway
+            annotation specific to the organism of interest is used.
         enrichment_test: The statistical test used to assess enrichment of a
             pathway by the protein-protein interaction network.
         multiple_testing_correction: The procedure to correct for testing of
             multiple pathways.
         organism: The NCBI taxonomy identifier for the organism of interest.
-        reference: Optional reference set of proteins with respect to which
-            enrichment is computed. If not provided, the entire Reactome pathway
-            annotation specific to the organism of interest is used.
 
     Returns:
         The Reactome network.

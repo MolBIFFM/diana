@@ -538,6 +538,9 @@ def process_workflow(identifier: str, configuration: Mapping[str, Any]) -> None:
 
             ontology_network = gene_ontology_network.get_network(
                 proteins,
+                reference=network.nodes()
+                if not configuration["Gene Ontology network"].get(
+                    "annotation", False) else [],
                 namespaces=[
                     namespace.replace(" ", "_")
                     for namespace in configuration["Gene Ontology network"].get(
@@ -555,10 +558,7 @@ def process_workflow(identifier: str, configuration: Mapping[str, Any]) -> None:
                     configuration["Gene Ontology network"].get(
                         "correction", "Benjamini-Yekutieli")],
                 organism=configuration["Gene Ontology network"].get(
-                    "organism", 9606),
-                reference=network.nodes()
-                if not configuration["Gene Ontology network"].get(
-                    "annotation", False) else None)
+                    "organism", 9606))
 
         else:
             ontology_network = gene_ontology_network.get_network(
@@ -664,6 +664,9 @@ def process_workflow(identifier: str, configuration: Mapping[str, Any]) -> None:
 
             pathway_network = reactome_network.get_network(
                 proteins,
+                reference=network.nodes() if
+                not configuration["Reactome network"].get("annotation", False)
+                else [],
                 enrichment_test=test.ENRICHMENT_TEST[(
                     configuration["Reactome network"].get(
                         "test", "hypergeometric"),
@@ -672,10 +675,7 @@ def process_workflow(identifier: str, configuration: Mapping[str, Any]) -> None:
                     configuration["Reactome network"].get(
                         "correction", "Benjamini-Yekutieli")],
                 organism=configuration["Reactome network"].get(
-                    "organism", 9606),
-                reference=network.nodes() if
-                not configuration["Reactome network"].get("annotation", False)
-                else None)
+                    "organism", 9606))
 
         else:
             pathway_network = reactome_network.get_network(
@@ -814,6 +814,10 @@ def process_workflow(identifier: str, configuration: Mapping[str, Any]) -> None:
 
                 gene_ontology_enrichment = gene_ontology.get_enrichment(
                     [frozenset(proteins)],
+                    reference=[
+                        [] if configuration["Gene Ontology enrichment"].get(
+                            "annotation", False) else network.nodes()
+                    ],
                     enrichment_test=test.ENRICHMENT_TEST[(
                         configuration["Gene Ontology enrichment"].get(
                             "test", "hypergeometric"),
@@ -844,6 +848,7 @@ def process_workflow(identifier: str, configuration: Mapping[str, Any]) -> None:
             elif "Gene Ontology enrichment" in configuration:
                 gene_ontology_enrichment = gene_ontology.get_enrichment(
                     [frozenset(network.nodes())],
+                    reference=[[]],
                     enrichment_test=test.ENRICHMENT_TEST[(
                         configuration["Gene Ontology enrichment"].get(
                             "test", "hypergeometric"),
@@ -993,6 +998,14 @@ def process_workflow(identifier: str, configuration: Mapping[str, Any]) -> None:
                         frozenset(subset_proteins[community])
                         for community in communities
                     ],
+                    reference=[
+                        network.nodes() if configuration["community detection"]
+                        ["Gene Ontology enrichment"].get("network", False) else
+                        ([] if configuration["community detection"]
+                         ["Gene Ontology enrichment"].get(
+                             "annotation", False) else community.nodes())
+                        for community in communities
+                    ],
                     enrichment_test=test.ENRICHMENT_TEST[(
                         configuration["community detection"]
                         ["Gene Ontology enrichment"].get(
@@ -1013,12 +1026,7 @@ def process_workflow(identifier: str, configuration: Mapping[str, Any]) -> None:
                                 "cellular component", "molecular function",
                                 "biological process"
                             ])
-                    ],
-                    reference=set.union(*(subset_proteins[community]
-                                          for community in communities))
-                    if configuration["community detection"]
-                    ["Gene Ontology enrichment"].get("annotation",
-                                                     False) else None)
+                    ])
 
                 for k, community in enumerate(sorted(
                         communities,
@@ -1039,6 +1047,10 @@ def process_workflow(identifier: str, configuration: Mapping[str, Any]) -> None:
                     "community detection", {}):
                 gene_ontology_enrichment = gene_ontology.get_enrichment(
                     [frozenset(community.nodes()) for community in communities],
+                    reference=[[] if configuration["community detection"]
+                               ["Gene Ontology enrichment"].get(
+                                   "annotation", False) else network.nodes()
+                               for _ in communities],
                     enrichment_test=test.ENRICHMENT_TEST[(
                         configuration["community detection"]
                         ["Gene Ontology enrichment"].get(
@@ -1059,11 +1071,7 @@ def process_workflow(identifier: str, configuration: Mapping[str, Any]) -> None:
                                 "cellular component", "molecular function",
                                 "biological process"
                             ])
-                    ],
-                    reference=network.nodes()
-                    if configuration["community detection"]
-                    ["Gene Ontology enrichment"].get("annotation",
-                                                     False) else None)
+                    ])
 
                 for k, community in enumerate(sorted(
                         communities,
@@ -1170,6 +1178,8 @@ def process_workflow(identifier: str, configuration: Mapping[str, Any]) -> None:
 
                 reactome_enrichment = reactome.get_enrichment(
                     [frozenset(proteins)],
+                    reference=[[] if configuration["Reactome enrichment"].get(
+                        "annotation", False) else network.nodes()],
                     enrichment_test=test.ENRICHMENT_TEST[(
                         configuration["Reactome enrichment"].get(
                             "test", "hypergeometric"),
@@ -1190,6 +1200,7 @@ def process_workflow(identifier: str, configuration: Mapping[str, Any]) -> None:
             elif "Reactome enrichment" in configuration:
                 reactome_enrichment = reactome.get_enrichment(
                     [frozenset(network.nodes())],
+                    reference=[[]],
                     enrichment_test=test.ENRICHMENT_TEST[(
                         configuration["Reactome enrichment"].get(
                             "test", "hypergeometric"),
@@ -1325,6 +1336,14 @@ def process_workflow(identifier: str, configuration: Mapping[str, Any]) -> None:
                         frozenset(subset_proteins[community])
                         for community in communities
                     ],
+                    reference=[
+                        network.nodes() if configuration["community detection"]
+                        ["Reactome enrichment"].get("network", False) else
+                        ([] if configuration["community detection"]
+                         ["Reactome enrichment"].get(
+                             "annotation", False) else community.nodes())
+                        for community in communities
+                    ],
                     enrichment_test=test.ENRICHMENT_TEST[(
                         configuration["community detection"]
                         ["Reactome enrichment"].get("test", "hypergeometric"),
@@ -1335,12 +1354,7 @@ def process_workflow(identifier: str, configuration: Mapping[str, Any]) -> None:
                         ["Reactome enrichment"].get("correction",
                                                     "Benjamini-Yekutieli")],
                     organism=configuration["community detection"]
-                    ["Reactome enrichment"].get("organism", 9606),
-                    reference=set.union(*(subset_proteins[community]
-                                          for community in communities))
-                    if configuration["community detection"]
-                    ["Gene Ontology enrichment"].get("annotation",
-                                                     False) else None)
+                    ["Reactome enrichment"].get("organism", 9606))
 
                 for k, community in enumerate(sorted(
                         communities,
@@ -1360,6 +1374,10 @@ def process_workflow(identifier: str, configuration: Mapping[str, Any]) -> None:
             elif "Reactome enrichment" in configuration:
                 reactome_enrichment = reactome.get_enrichment(
                     [frozenset(community.nodes()) for community in communities],
+                    reference=[[] if configuration["community detection"]
+                               ["Reactome enrichment"].get(
+                                   "annotation", False) else network.nodes()
+                               for _ in communities],
                     enrichment_test=test.ENRICHMENT_TEST[(
                         configuration["community detection"]
                         ["Reactome enrichment"].get("test", "hypergeometric"),
@@ -1370,11 +1388,7 @@ def process_workflow(identifier: str, configuration: Mapping[str, Any]) -> None:
                         ["Reactome enrichment"].get("correction",
                                                     "Benjamini-Yekutieli")],
                     organism=configuration["community detection"]
-                    ["Reactome enrichment"].get("organism", 9606),
-                    reference=network.nodes()
-                    if configuration["community detection"]
-                    ["Gene Ontology enrichment"].get("annotation",
-                                                     False) else None)
+                    ["Reactome enrichment"].get("organism", 9606))
 
                 for k, community in enumerate(sorted(
                         communities,

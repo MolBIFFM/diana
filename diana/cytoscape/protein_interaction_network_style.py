@@ -6,7 +6,7 @@ network.
 import json
 import statistics
 import xml.etree.ElementTree as ET
-from typing import Callable, Collection, Iterable, Optional
+from typing import Callable, Collection, Iterable, Optional, Sequence
 
 import networkx as nx
 from cytoscape import elements
@@ -412,10 +412,10 @@ def get_bar_chart(
 
 
 def get_styles(
-    network: nx.Graph, node_shape_modifications: Iterable[str],
-    node_color_modifications: Iterable[str],
+    network: nx.Graph, node_shape_modifications: Sequence[str],
+    node_color_modifications: Sequence[str],
     node_size_modification: Optional[str],
-    bar_chart_modifications: Iterable[str],
+    bar_chart_modifications: Sequence[str],
     measurement_conversion: dict[str, Callable[[float, Collection[float]],
                                                float]],
     site_average: dict[str, Callable[[Iterable[float]], float]],
@@ -516,9 +516,11 @@ def get_styles(
                     })
 
         node_shape_modifications = [
-            modification for modification in node_shape_modifications
-            if protein_interaction_network.is_modification(
-                network, time, modification)
+            modification
+            for m, modification in enumerate(node_shape_modifications)
+            if modification not in node_shape_modifications[:m] and
+            protein_interaction_network.is_modification(network, time,
+                                                        modification)
         ]
 
         if 0 < len(node_shape_modifications) < 3:
@@ -569,9 +571,11 @@ def get_styles(
                                       str(time), "string", node_shape)
 
         node_color_modifications = [
-            modification for modification in node_color_modifications
-            if protein_interaction_network.is_modification(
-                network, time, modification)
+            modification
+            for m, modification in enumerate(node_color_modifications)
+            if modification not in node_color_modifications[:m] and
+            protein_interaction_network.is_modification(network, time,
+                                                        modification)
         ]
         if 0 < len(node_color_modifications) < 3:
             node_color = {}
@@ -677,8 +681,10 @@ def get_styles(
             node_color)
 
         bar_chart_modifications = [
-            modification for modification in bar_chart_modifications
-            if protein_interaction_network.is_modification(
+            modification
+            for m, modification in enumerate(bar_chart_modifications)
+            if not modification in bar_chart_modifications[:m] and
+            protein_interaction_network.is_modification(
                 network, time, modification, proteins=False)
         ]
         for m in range(min(len(bar_chart_modifications), 2)):
