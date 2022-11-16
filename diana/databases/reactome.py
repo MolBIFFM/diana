@@ -131,7 +131,7 @@ def get_pathway_annotation(organism: int = 9606) -> Iterator[tuple[str, str]]:
 
 
 def get_enrichment(
-    proteins: Iterable[frozenset[str]],
+    proteins: Sequence[frozenset[str]],
     reference: Sequence[Iterable[str]],
     enrichment_test: Callable[
         [int, int, int, int],
@@ -164,7 +164,8 @@ def get_enrichment(
 
     annotation: dict[str, set[str]] = {}
     for protein, pathway in get_pathway_annotation(organism):
-        if any(not reference[i] or protein in reference[i]
+        if any(not reference[i if len(reference) == len(proteins) else 0] or
+               protein in reference[i if len(reference) == len(proteins) else 0]
                for i in range(len(reference))):
             if pathway not in annotation:
                 annotation[pathway] = set()
@@ -180,29 +181,39 @@ def get_enrichment(
 
     annotated_network_proteins = {
         prt: len(
-            annotated_proteins.intersection(reference[p]).intersection(prt)
-            if not reference[p] else annotated_proteins.intersection(prt))
-        for p, prt in enumerate(proteins)
+            annotated_proteins.intersection(reference[i if len(reference) ==
+                                                      len(proteins) else 0]
+                                           ).intersection(prt)
+            if not reference[i if len(reference) == len(proteins) else 0] else
+            annotated_proteins.intersection(prt))
+        for i, prt in enumerate(proteins)
     }
 
     network_intersection = {
         prt: {
             pathway:
-            len(annotation[pathway].intersection(reference[p]).intersection(prt)
-                if not reference[p] else annotation[pathway].intersection(prt))
+            len(annotation[pathway].
+                intersection(reference[i if len(reference) ==
+                                       len(proteins) else 0]).intersection(prt)
+                if not reference[i if len(reference) == len(proteins) else 0]
+                else annotation[pathway].intersection(prt))
             for pathway in annotation
-        } for p, prt in enumerate(proteins)
+        } for i, prt in enumerate(proteins)
     }
 
     p_value = multiple_testing_correction({(prt, pathway): enrichment_test(
         network_intersection[prt][pathway],
         len(
-            annotated_proteins.intersection(reference[p])
-            if not reference[p] else annotated_proteins),
-        len(annotation[pathway].intersection(reference[p]) if not reference[p]
-            else annotation[pathway]), annotated_network_proteins[prt])
+            annotated_proteins.intersection(reference[i if len(reference) ==
+                                                      len(proteins) else 0])
+            if not reference[i if len(reference) == len(proteins) else 0] else
+            annotated_proteins),
+        len(annotation[pathway].intersection(reference[i if len(reference) ==
+                                                       len(proteins) else 0])
+            if not reference[i if len(reference) == len(proteins) else 0] else
+            annotation[pathway]), annotated_network_proteins[prt])
                                            for pathway in annotation
-                                           for p, prt in enumerate(proteins)})
+                                           for i, prt in enumerate(proteins)})
 
     return {
         prt: {(pathway, name[pathway]): p_value[(prt, pathway)]

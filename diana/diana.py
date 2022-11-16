@@ -814,10 +814,9 @@ def process_workflow(identifier: str, configuration: Mapping[str, Any]) -> None:
 
                 gene_ontology_enrichment = gene_ontology.get_enrichment(
                     [frozenset(proteins)],
-                    reference=[
-                        [] if configuration["Gene Ontology enrichment"].get(
-                            "annotation", False) else network.nodes()
-                    ],
+                    reference=[set()]
+                    if configuration["Gene Ontology enrichment"].get(
+                        "annotation", False) else [network.nodes()],
                     enrichment_test=test.ENRICHMENT_TEST[(
                         configuration["Gene Ontology enrichment"].get(
                             "test", "hypergeometric"),
@@ -848,7 +847,7 @@ def process_workflow(identifier: str, configuration: Mapping[str, Any]) -> None:
             elif "Gene Ontology enrichment" in configuration:
                 gene_ontology_enrichment = gene_ontology.get_enrichment(
                     [frozenset(network.nodes())],
-                    reference=[[]],
+                    reference=[set()],
                     enrichment_test=test.ENRICHMENT_TEST[(
                         configuration["Gene Ontology enrichment"].get(
                             "test", "hypergeometric"),
@@ -998,14 +997,12 @@ def process_workflow(identifier: str, configuration: Mapping[str, Any]) -> None:
                         frozenset(subset_proteins[community])
                         for community in communities
                     ],
-                    reference=[
-                        network.nodes() if configuration["community detection"]
-                        ["Gene Ontology enrichment"].get("network", False) else
-                        ([] if configuration["community detection"]
-                         ["Gene Ontology enrichment"].get(
-                             "annotation", False) else community.nodes())
-                        for community in communities
-                    ],
+                    reference=[network.nodes()]
+                    if configuration["community detection"]
+                    ["Gene Ontology enrichment"].get("network", False) else
+                    ([set()] if configuration["community detection"]
+                     ["Gene Ontology enrichment"].get("annotation", False) else
+                     [community.nodes() for community in communities]),
                     enrichment_test=test.ENRICHMENT_TEST[(
                         configuration["community detection"]
                         ["Gene Ontology enrichment"].get(
@@ -1047,10 +1044,9 @@ def process_workflow(identifier: str, configuration: Mapping[str, Any]) -> None:
                     "community detection", {}):
                 gene_ontology_enrichment = gene_ontology.get_enrichment(
                     [frozenset(community.nodes()) for community in communities],
-                    reference=[[] if configuration["community detection"]
-                               ["Gene Ontology enrichment"].get(
-                                   "annotation", False) else network.nodes()
-                               for _ in communities],
+                    reference=[set()] if configuration["community detection"]
+                    ["Gene Ontology enrichment"].get(
+                        "annotation", False) else [network.nodes()],
                     enrichment_test=test.ENRICHMENT_TEST[(
                         configuration["community detection"]
                         ["Gene Ontology enrichment"].get(
@@ -1178,8 +1174,9 @@ def process_workflow(identifier: str, configuration: Mapping[str, Any]) -> None:
 
                 reactome_enrichment = reactome.get_enrichment(
                     [frozenset(proteins)],
-                    reference=[[] if configuration["Reactome enrichment"].get(
-                        "annotation", False) else network.nodes()],
+                    reference=[set()]
+                    if configuration["Reactome enrichment"].get(
+                        "annotation", False) else [network.nodes()],
                     enrichment_test=test.ENRICHMENT_TEST[(
                         configuration["Reactome enrichment"].get(
                             "test", "hypergeometric"),
@@ -1200,7 +1197,7 @@ def process_workflow(identifier: str, configuration: Mapping[str, Any]) -> None:
             elif "Reactome enrichment" in configuration:
                 reactome_enrichment = reactome.get_enrichment(
                     [frozenset(network.nodes())],
-                    reference=[[]],
+                    reference=[set()],
                     enrichment_test=test.ENRICHMENT_TEST[(
                         configuration["Reactome enrichment"].get(
                             "test", "hypergeometric"),
@@ -1336,14 +1333,12 @@ def process_workflow(identifier: str, configuration: Mapping[str, Any]) -> None:
                         frozenset(subset_proteins[community])
                         for community in communities
                     ],
-                    reference=[
-                        network.nodes() if configuration["community detection"]
-                        ["Reactome enrichment"].get("network", False) else
-                        ([] if configuration["community detection"]
-                         ["Reactome enrichment"].get(
-                             "annotation", False) else community.nodes())
-                        for community in communities
-                    ],
+                    reference=[network.nodes()]
+                    if configuration["community detection"]
+                    ["Reactome enrichment"].get("network", False) else
+                    ([set()] if configuration["community detection"]
+                     ["Reactome enrichment"].get("annotation", False) else
+                     [community.nodes() for community in communities]),
                     enrichment_test=test.ENRICHMENT_TEST[(
                         configuration["community detection"]
                         ["Reactome enrichment"].get("test", "hypergeometric"),
@@ -1374,10 +1369,9 @@ def process_workflow(identifier: str, configuration: Mapping[str, Any]) -> None:
             elif "Reactome enrichment" in configuration:
                 reactome_enrichment = reactome.get_enrichment(
                     [frozenset(community.nodes()) for community in communities],
-                    reference=[[] if configuration["community detection"]
-                               ["Reactome enrichment"].get(
-                                   "annotation", False) else network.nodes()
-                               for _ in communities],
+                    reference=[set()] if configuration["community detection"]
+                    ["Reactome enrichment"].get("annotation",
+                                                False) else [network.nodes()],
                     enrichment_test=test.ENRICHMENT_TEST[(
                         configuration["community detection"]
                         ["Reactome enrichment"].get("test", "hypergeometric"),
