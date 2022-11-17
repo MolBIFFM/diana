@@ -5,17 +5,15 @@ spectrometry data.
 
 Provided longitudinal mass-spectrometry data capturing differential
 post-translational modification of proteins, DIANA automates its customizable
-analysis of in the context of protein-protein interaction networks incorporating
-interactions from BioGRID, CORUM, IntAct, MINT, Reactome, and STRING.
+analysis in the context of the protein-protein interaction network induced by
+those proteins, incorporating interactions from BioGRID, CORUM, IntAct, MINT,
+Reactome, and STRING.
 
-Network analysis assesses the localized enrichment of Gene Ontology terms and
-Reactome pathways by individual densely interacting sets of proteins associated
-with distinctive mass-spectrometry measurements as well as the distribution
-of measurements across the protein-protein interaction network.
-
-Networks of proteins, Gene Ontology terms, and Reactome pathways are exported
-along customizable Cytoscape styles for visualization and downstream analysis.
-
+DIANA assesses the distribution of proteins associated with distinctive
+mass-spectrometry measurements and the localized enrichment of Gene Ontology
+terms and Reactome pathways across densely interacting portions of the
+protein-protein interaction network, identifying sets of proteins of potential
+interest to downstream analysis.
 
 ## Setup
 External dependencies, consisting of NetworkX, pandas, and SciPy, can be
@@ -2083,7 +2081,7 @@ related pathways, for example:
 ## References
 
 The configuration files in this repository refer to data sets as supplemented
-with the following publications which concern host response to infection by
+with the following publications which examine host response to infection by
 [*Salmonella Typhimurium*](configuration/salmonella.json),
 [SARS-CoV-2](configuration/sars-cov-2.json), and
 [*Shigella flexneri*](configuration/shigella.json):
@@ -2115,7 +2113,7 @@ DIANA accesses the following resources:
 - Gillespie, M. et al. (2022) **The reactome pathway knowledgebase 2022**,
   *Nucleic Acids Res.*, 50, D687-D692.
 
-- Giurgiu, M et al. (2019) **CORUM: the comprehensive resource of mammalian**
+- Giurgiu, M. et al. (2019) **CORUM: the comprehensive resource of mammalian**
   **protein complexes-2019**, *Nucleic Acids Res.*, 47, D559-D563
 
 - Licata, L. et al. (2012) **MINT, the molecular interaction database: 2012**
@@ -2153,7 +2151,7 @@ DIANA utilizes the following external libraries:
 ---
 
 Development of DIANA was inspired by previous work utilizing Cytoscape and the
-following plugins and aims to extend upon workflows enabled by combining them:
+following plugins and aims to generalize analyses enabled by combining them:
 
 - Maere, S. et al. (2005) ***BiNGO*: a Cytoscape plugin to assess**
   **overrepresentation of Gene Ontology categories in Biological Networks**,
@@ -2170,14 +2168,27 @@ following plugins and aims to extend upon workflows enabled by combining them:
 
 ---
 
-Previous integrative work relating densely interacting portions of
-protein-protein interaction networks and protein function includes:
+Research observing relations of communities of protein-protein interaction
+networks and protein function includes:
 
 - Chen, J. and Yuan, B. (2006) **Detecting functional modules in the yeast**
   **protein–protein interaction network**, *Bioinformatics*, 22, 2283-2290.
 
 - Spirin, V. and Mirny L. A. (2003) **Protein complexes and functional modules**
   **in molecular networks**, 	*Proc. Natl. Acad. Sci. U.S.A.*, 100, 12123-12128.
+
+---
+
+Reviews of measuring post-translational modification by mass spectrometry
+include:
+
+- Olsen, J. V. and Mann, M. (2013) **Status of Large-scale Analysis of**
+  **Post-translational Modifications by Mass Spectrometry**,
+  *Mol. Cell. Proteom.*, 12, 3444-3452.
+
+- Witze, E. S. et al. (2007) **Mapping protein post-translational**
+  **modifications with mass spectrometry**, *Nat. Methods*, 4, 798-806.
+
 ---
 
 References for algorithms are listed in the corresponding source code.
