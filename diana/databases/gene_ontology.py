@@ -170,7 +170,7 @@ def get_enrichment(
                     annotation[primary_term] = set()
                 annotation[primary_term].add(protein)
 
-    annotation = {term: prts for term, prts in annotation.items() if prts}
+    annotation = {term: annot for term, annot in annotation.items() if annot}
 
     annotated_proteins = set.union(*annotation.values())
 
@@ -187,12 +187,12 @@ def get_enrichment(
     network_intersection = {
         prt: {
             term: len(
-                prts.intersection(reference[i if len(reference) ==
-                                            len(proteins) else 0]
-                                 ).intersection(prt)
+                annot.intersection(reference[i if len(reference) ==
+                                             len(proteins) else 0]
+                                  ).intersection(prt)
                 if not reference[i if len(reference) == len(proteins) else 0]
-                else prts.intersection(prt))
-            for term, prts in annotation.items()
+                else annot.intersection(prt))
+            for term, annot in annotation.items()
         } for i, prt in enumerate(proteins)
     }
 
@@ -204,11 +204,11 @@ def get_enrichment(
             if not reference[i if len(reference) == len(proteins) else 0] else
             annotated_proteins),
         len(
-            prts.intersection(reference[i if len(reference) ==
-                                        len(proteins) else 0]) if
-            not reference[i if len(reference) == len(proteins) else 0] else prts
-        ), annotated_network_proteins[prt])
-                                           for term, prts in annotation.items()
+            annot.intersection(reference[i if len(reference) ==
+                                         len(proteins) else 0])
+            if not reference[i if len(reference) == len(proteins) else 0] else
+            annot),
+        annotated_network_proteins[prt]) for term, annot in annotation.items()
                                            for i, prt in enumerate(proteins)})
 
     return {

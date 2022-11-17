@@ -75,12 +75,13 @@ def get_network(proteins: Iterable[str],
         if term not in annotation or not annotation[term]
     ])
 
-    annotation = {term: prt for term, prt in annotation.items() if prt}
+    annotation = {term: annot for term, annot in annotation.items() if annot}
 
     annotated_proteins = set.union(*annotation.values())
 
     network_intersection = {
-        term: prt.intersection(proteins) for term, prt in annotation.items()
+        term: annot.intersection(proteins)
+        for term, annot in annotation.items()
     }
 
     p_value = multiple_testing_correction({

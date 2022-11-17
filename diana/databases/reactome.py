@@ -171,7 +171,9 @@ def get_enrichment(
                 annotation[pathway] = set()
             annotation[pathway].add(protein)
 
-    annotation = {pathway: prts for pathway, prts in annotation.items() if prts}
+    annotation = {
+        pathway: annot for pathway, annot in annotation.items() if annot
+    }
 
     annotated_proteins = set.union(*annotation.values())
 
@@ -188,12 +190,12 @@ def get_enrichment(
     network_intersection = {
         prt: {
             pathway: len(
-                prts.intersection(reference[i if len(reference) ==
-                                            len(proteins) else 0]
-                                 ).intersection(prt)
+                annot.intersection(reference[i if len(reference) ==
+                                             len(proteins) else 0]
+                                  ).intersection(prt)
                 if not reference[i if len(reference) == len(proteins) else 0]
-                else prts.intersection(prt))
-            for pathway, prts in annotation.items()
+                else annot.intersection(prt))
+            for pathway, annot in annotation.items()
         } for i, prt in enumerate(proteins)
     }
 
@@ -206,11 +208,11 @@ def get_enrichment(
                 if not reference[i if len(reference) == len(proteins) else 0]
                 else annotated_proteins),
             len(
-                prts.intersection(reference[i if len(reference) ==
-                                            len(proteins) else 0])
+                annot.intersection(reference[i if len(reference) ==
+                                             len(proteins) else 0])
                 if not reference[i if len(reference) == len(proteins) else 0]
-                else prts), annotated_network_proteins[prt])
-        for pathway, prts in annotation.items()
+                else annot), annotated_network_proteins[prt])
+        for pathway, annot in annotation.items()
         for i, prt in enumerate(proteins)
     })
 
