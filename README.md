@@ -1064,9 +1064,9 @@ The post-translational modifications considered to determine subsets of proteins
 to the combination of which enrichment analysis is restricted. If restricted,
 enrichment by these proteins is computed with respect to proteins represented in
 the protein-protein interaction network by default, instead of the entire
-species-specific Gene Ontology annotation, depending on "`annotation"`. Subsets
-consist of proteins exceeding a specified range of protein-specific
-measurements.
+species-specific annotation associated with any proteins from the reference set,
+depending on "`annotation"`. Subsets consist of proteins exceeding a specified
+range of protein-specific measurements.
 
 ```json
 {
@@ -1235,8 +1235,8 @@ The post-translational modifications considered to determine subsets of proteins
 to the combination of which enrichment analysis is restricted. If restricted,
 enrichment by these proteins is computed with respect to proteins represented in
 the protein-protein interaction network, instead of the entire species-specific
-Gene Ontology annotation. Subsets consist of proteins exceeding a specified
-range of protein-specific measurements.
+annotation associated with any proteins from the reference set. Subsets consist
+of proteins exceeding a specified range of protein-specific measurements.
 
 ```json
 {

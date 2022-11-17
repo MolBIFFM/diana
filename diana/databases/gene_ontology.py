@@ -170,6 +170,8 @@ def get_enrichment(
                     annotation[primary_term] = set()
                 annotation[primary_term].add(protein)
 
+    annotation = {term: prts for term, prts in annotation.items() if prts}
+
     annotated_proteins = set.union(*annotation.values())
 
     annotated_network_proteins = {
@@ -185,31 +187,29 @@ def get_enrichment(
     network_intersection = {
         prt: {
             term: len(
-                term_proteins.intersection(reference[i if len(reference) ==
-                                                     len(proteins) else 0]
-                                          ).intersection(prt)
+                prts.intersection(reference[i if len(reference) ==
+                                            len(proteins) else 0]
+                                 ).intersection(prt)
                 if not reference[i if len(reference) == len(proteins) else 0]
-                else term_proteins.intersection(prt))
-            for term, term_proteins in annotation.items()
+                else prts.intersection(prt))
+            for term, prts in annotation.items()
         } for i, prt in enumerate(proteins)
     }
 
-    p_value = multiple_testing_correction({
-        (prt, term): enrichment_test(
-            network_intersection[prt][term],
-            len(
-                annotated_proteins.intersection(reference[i if len(reference) ==
-                                                          len(proteins) else 0])
-                if not reference[i if len(reference) == len(proteins) else 0]
-                else annotated_proteins),
-            len(
-                term_proteins.intersection(reference[i if len(reference) ==
-                                                     len(proteins) else 0])
-                if not reference[i if len(reference) == len(proteins) else 0]
-                else term_proteins), annotated_network_proteins[prt])
-        for term, term_proteins in annotation.items()
-        for i, prt in enumerate(proteins)
-    })
+    p_value = multiple_testing_correction({(prt, term): enrichment_test(
+        network_intersection[prt][term],
+        len(
+            annotated_proteins.intersection(reference[i if len(reference) ==
+                                                      len(proteins) else 0])
+            if not reference[i if len(reference) == len(proteins) else 0] else
+            annotated_proteins),
+        len(
+            prts.intersection(reference[i if len(reference) ==
+                                        len(proteins) else 0]) if
+            not reference[i if len(reference) == len(proteins) else 0] else prts
+        ), annotated_network_proteins[prt])
+                                           for term, prts in annotation.items()
+                                           for i, prt in enumerate(proteins)})
 
     return {
         prt: {(term, name[term]): p_value[(prt, term)] for term in annotation

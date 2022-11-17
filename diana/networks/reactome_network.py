@@ -55,14 +55,18 @@ def get_network(proteins: Iterable[str],
         if not reference or protein in reference:
             annotation[pathway].add(protein)
 
-    network.remove_nodes_from(
-        [pathway for pathway in network if pathway not in annotation])
+    network.remove_nodes_from([
+        pathway for pathway in network
+        if pathway not in annotation or not annotation[pathway]
+    ])
+
+    annotation = {pathway: prt for pathway, prt in annotation.items() if prt}
 
     annotated_proteins = set.union(*annotation.values())
 
     network_intersection = {
-        pathway: pathway_proteins.intersection(proteins)
-        for pathway, pathway_proteins in annotation.items()
+        pathway: prt.intersection(proteins)
+        for pathway, prt in annotation.items()
     }
 
     p_value = multiple_testing_correction({
