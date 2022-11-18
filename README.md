@@ -10,10 +10,10 @@ those proteins, incorporating interactions from BioGRID, CORUM, IntAct, MINT,
 Reactome, and STRING.
 
 DIANA assesses the distribution of proteins associated with distinctive
-mass-spectrometry measurements and the localized enrichment of Gene Ontology
-terms and Reactome pathways across densely interacting portions of the
-protein-protein interaction network, identifying sets of proteins of potential
-interest to downstream analysis.
+mass-spectrometry measurements as well as the localized enrichment of Gene
+Ontology terms and Reactome pathways across densely interacting portions of the
+protein-protein interaction network, identifying subsets of proteins of
+potential interest to downstream analysis.
 
 ## Setup
 External dependencies, consisting of NetworkX, pandas, and SciPy, can be
@@ -1066,7 +1066,7 @@ enrichment by these proteins is computed with respect to proteins represented in
 the protein-protein interaction network by default, instead of the entire
 species-specific annotation associated with any proteins from the reference set,
 depending on "`annotation"`. Subsets consist of proteins exceeding a specified
-range of protein-specific measurements.
+absolute or relative range of protein-specific measurements.
 
 ```json
 {
@@ -1236,7 +1236,8 @@ to the combination of which enrichment analysis is restricted. If restricted,
 enrichment by these proteins is computed with respect to proteins represented in
 the protein-protein interaction network, instead of the entire species-specific
 annotation associated with any proteins from the reference set. Subsets consist
-of proteins exceeding a specified range of protein-specific measurements.
+of proteins exceeding a specified absolute or relative range of protein-specific
+measurements.
 
 ```json
 {
@@ -1730,7 +1731,8 @@ If restricted, enrichment by these proteins is computed with respect to the
 corresponding module by default, instead of the protein-protein interaction
 network or the entire annotation, specific to the organism of interest,
 depending on `"network"` and `"annotation"`. Subsets consist of proteins
-exceeding a specified range of protein-specific measurements.
+exceeding a specified absolute or relative range of protein-specific
+measurements.
 
 ```json
 {
@@ -2114,7 +2116,7 @@ DIANA accesses the following resources:
   *Nucleic Acids Res.*, 50, D687-D692.
 
 - Giurgiu, M. et al. (2019) **CORUM: the comprehensive resource of mammalian**
-  **protein complexes-2019**, *Nucleic Acids Res.*, 47, D559-D563
+  **protein complexes-2019**, *Nucleic Acids Res.*, 47, D559-D563.
 
 - Licata, L. et al. (2012) **MINT, the molecular interaction database: 2012**
   **update**, *Nucleic Acids Res.*, 40, D857-D861.
@@ -2174,8 +2176,9 @@ networks and protein function includes:
 - Chen, J. and Yuan, B. (2006) **Detecting functional modules in the yeast**
   **protein–protein interaction network**, *Bioinformatics*, 22, 2283-2290.
 
-- Spirin, V. and Mirny L. A. (2003) **Protein complexes and functional modules**
-  **in molecular networks**, 	*Proc. Natl. Acad. Sci. U.S.A.*, 100, 12123-12128.
+- Zhang, S. et al. (2010) **Determining modular organization of protein**
+  **interaction networks by maximizing modularity density**, *BMC Syst. Biol.*,
+  4, S10.
 
 ---
 
@@ -2183,8 +2186,8 @@ Reviews of measuring post-translational modification by mass spectrometry
 include:
 
 - Olsen, J. V. and Mann, M. (2013) **Status of Large-scale Analysis of**
-  **Post-translational Modifications by Mass Spectrometry**,
-  *Mol. Cell. Proteom.*, 12, 3444-3452.
+  **Post-translational Modifications by Mass Spectrometry**, *Mol. Cell.*
+  *Proteom.*, 12, 3444-3452.
 
 - Witze, E. S. et al. (2007) **Mapping protein post-translational**
   **modifications with mass spectrometry**, *Nat. Methods*, 4, 798-806.
