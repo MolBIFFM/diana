@@ -341,9 +341,10 @@ largest absolute measurement. The default setting is `5`.
 }
 ```
 A function of a site-specific measurement to prioritize it over others. The
-default setting is `"absolute"` corresponding to the absolute change. Available
-settings are `"absolute"` as well as `"increase"`, and `"decrease"` to
-prioritize measurements constituting either increase or decrease, respectively.
+default setting is `"absolute"` corresponding to the absolute binary logarithm
+which weights relative change in either direction equally. Available settings
+are `"absolute"` as well as `"increase"`, and `"decrease"` to prioritize
+measurements constituting either increase or decrease, respectively.
 
 ```json
 {
