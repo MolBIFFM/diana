@@ -250,13 +250,10 @@ def add_sites_from_table(
         for s, (_, replicates) in enumerate(sorted(
                 sorted(
                     sites.items(),
-                    key=lambda site: math.log2(
-                        site_prioritization(
-                            replicate_average([
-                                math.pow(2.0, replicate)
-                                for replicate in site[1]
-                            ]))),
-                )[-number_sites:]),
+                    key=lambda site: site_prioritization(
+                        replicate_average(
+                            [math.pow(2.0, replicate)
+                             for replicate in site[1]])))[-number_sites:]),
                                             start=1):
             for m, measurement in enumerate(replicates, start=1):
                 network.nodes[protein][
