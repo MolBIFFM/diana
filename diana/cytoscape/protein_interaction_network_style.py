@@ -4,6 +4,7 @@ network.
 """
 
 import json
+import math
 import statistics
 import xml.etree.ElementTree as ET
 from typing import Callable, Collection, Iterable, Optional, Sequence
@@ -497,8 +498,10 @@ def get_styles(
                     network, time, node_size_modification)):
             measurements = protein_interaction_network.get_measurements(
                 network, time, node_size_modification,
-                site_average.get(node_size_modification,
-                                 lambda sites: max(sites, key=abs)),
+                site_average.get(
+                    node_size_modification,
+                    lambda sites: max(sites,
+                                      key=lambda site: abs(math.log2(site)))),
                 replicate_average.get(node_size_modification, statistics.mean))
 
             if isinstance(
@@ -690,8 +693,10 @@ def get_styles(
         for m in range(min(len(bar_chart_modifications), 2)):
             measurements = protein_interaction_network.get_measurements(
                 network, time, bar_chart_modifications[m],
-                site_average.get(bar_chart_modifications[m],
-                                 lambda sites: max(sites, key=abs)),
+                site_average.get(
+                    bar_chart_modifications[m],
+                    lambda sites: max(sites,
+                                      key=lambda site: abs(math.log2(site)))),
                 replicate_average.get(bar_chart_modifications[m],
                                       statistics.mean))
 
@@ -704,31 +709,34 @@ def get_styles(
                         protein_interaction_network.get_sites(
                             network, time, bar_chart_modifications[m], protein)
                         for protein in network),
-                    cy_range=(
-                        measurement_conversion.get(
-                            bar_chart_modifications[m],
-                            lambda measurement, measurements: measurement)(
-                                min(measurements),
-                                protein_interaction_network.get_measurements(
-                                    network, time, bar_chart_modifications[m],
-                                    site_average.get(
-                                        bar_chart_modifications[m],
-                                        lambda sites: max(sites, key=abs)),
-                                    replicate_average.get(
-                                        bar_chart_modifications[m],
-                                        statistics.mean))),
-                        measurement_conversion.get(
-                            bar_chart_modifications[m],
-                            lambda measurement, measurements: measurement)(
-                                max(measurements),
-                                protein_interaction_network.get_measurements(
-                                    network, time, bar_chart_modifications[m],
-                                    site_average.get(
-                                        bar_chart_modifications[m],
-                                        lambda sites: max(sites, key=abs)),
-                                    replicate_average.get(
-                                        bar_chart_modifications[m],
-                                        statistics.mean))))))
+                    cy_range=(measurement_conversion.get(
+                        bar_chart_modifications[m],
+                        lambda measurement, measurements: measurement)(
+                            min(measurements),
+                            protein_interaction_network.get_measurements(
+                                network, time, bar_chart_modifications[m],
+                                site_average.get(
+                                    bar_chart_modifications[m],
+                                    lambda sites: max(sites,
+                                                      key=lambda site: abs(
+                                                          math.log2(site)))),
+                                replicate_average.get(
+                                    bar_chart_modifications[m],
+                                    statistics.mean))),
+                              measurement_conversion.get(
+                                  bar_chart_modifications[m],
+                                  lambda measurement, measurements: measurement)
+                              (max(measurements),
+                               protein_interaction_network.get_measurements(
+                                   network, time, bar_chart_modifications[m],
+                                   site_average.get(
+                                       bar_chart_modifications[m],
+                                       lambda sites: max(sites,
+                                                         key=lambda site: abs(
+                                                             math.log2(site)))),
+                                   replicate_average.get(
+                                       bar_chart_modifications[m],
+                                       statistics.mean))))))
 
             visual_properties["node"][
                 f"NODE_CUSTOMGRAPHICS_POSITION_{m + 1}"].set(

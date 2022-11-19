@@ -4,8 +4,6 @@ from typing import Optional
 
 MEASUREMENT_RANGE: dict[Optional[str], tuple[float, float]] = {
     None: (-1.0, 1.0),
-    "log10": (-1.0, 1.0),
-    "percentile": (25.0, 75.0),
     "quantile": (0.25, 0.75),
     "ratio": (0.5, 2.0),
     "standard score": (-1.0, 1.0),

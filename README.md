@@ -334,16 +334,16 @@ largest absolute measurement. The default setting is `5`.
   "configuration": {
     "proteins": [
       {
-        "site prioritization": "abs"
+        "site prioritization": "absolute"
       }
     ]
   }
 }
 ```
 A function of a site-specific measurement to prioritize it over others. The
-default setting is `"abs"` corresponding to the absolute value. Available
-settings are `"abs"` as well as `"increase"`, and `"decrease"`to prioritize
-measurements signifying an increase or decrease, respectively.
+default setting is `"absolute"` corresponding to the absolute change. Available
+settings are `"absolute"` as well as `"increase"`, and `"decrease"` to
+prioritize measurements constituting either increase or decrease, respectively.
 
 ```json
 {
@@ -359,8 +359,8 @@ measurements signifying an increase or decrease, respectively.
 The average of distinct replicates representing a single protein- or
 modification site-specific measurement. The function is applied to ratios, not
 their binary logarithm. Cytoscape styles refer to this average. The default
-setting is `"mean"`. Available settings are `"mean"`, `"median"`, `"mid-range"`,
-`"max"`, `"maxabs"`, `"min"`, `"minabs"`, `"sum"`, and `"sumabs"`.
+setting is `"mean"`. Available settings are `"mean"`, `"median"`, `"max"`,
+`"maxabslog2"`, `"min"`, `"minabslog2"`, `"sum"`, and `"sumabslog2"`.
 
 ```json
 {
@@ -816,7 +816,7 @@ exported.
   "configuration": {
     "Cytoscape": {
       "site average": {
-        "PTM": "maxabs"
+        "PTM": "maxabslog2"
       }
     }
   }
@@ -824,9 +824,9 @@ exported.
 ```
 The modification-specific average of distinct modification sites representing
 protein-specific measurements. The function is applied to ratios, not their
-binary logarithm. The default setting is `"maxabs"`, corresponding to the
+binary logarithm. The default setting is `"maxabslog2"`, corresponding to the
 largest absolute measurement. Available settings are `"mean"`, `"median"`,
-`"mid-range"`, `"max"`, `"maxabs"`, `"min"`, `"minabs"`, `"sum"` and `"sumabs"`.
+`"max"`, `"maxabslog2"`, `"min"`, `"minabslog2"`, `"sum"` and `"sumabslog2"`.
 
 ```json
 {
@@ -842,8 +842,8 @@ largest absolute measurement. Available settings are `"mean"`, `"median"`,
 The modification-specific average of distinct replicates representing
 modification site-specific measurements. The function is applied to ratios, not
 their binary logarithm. The default setting is `"mean"`, corresponding to the
-mean of replicates. Available settings are `"mean"`, `"median"`, `"mid-range"`,
-`"max"`, `"maxabs"`, `"min"`, `"minabs"`, `"sum"` and `"sumabs"`.
+mean of replicates. Available settings are `"mean"`, `"median"`, `"max"`,
+`"maxabslog2"`, `"min"`, `"minabslog2"`, `"sum"` and `"sumabslog2"`.
 
 ```json
 {
@@ -858,10 +858,9 @@ mean of replicates. Available settings are `"mean"`, `"median"`, `"mid-range"`,
 ```
 The modification-specific statistic that a specified measurement range refers
 to. It defaults to the binary logarithm of a measurement for `null` but can be
-set to `"log10"`, `"percentile"`, `"quantile"`, `"ratio"` or `"standard score"`,
-computed with respect to the distribution of a particular modification at a
-particular time of measurement across the protein-protein interaction network,
-if applicable.
+set to `"quantile"`, `"ratio"` or `"standard score"`, computed with respect to
+the distribution of a particular modification at a particular time of
+measurement across the protein-protein interaction network, if applicable.
 
 ```json
 {
@@ -910,11 +909,9 @@ specified.
 ```
 The modification-specific range of averaged measurements categorizing proteins
 by whether the range is exceeded or not. The adaptive default setting is
-`[-1.0, 1.0]` if `"conversion"` is not set, `[-1.0, 1.0]` if `"conversion"` is
-set to `"log10"`, `[25.0, 75.0]` if `"conversion"` is set to `"percentile"`,
-`[0.25, 0.75]` if `"conversion"` is set to `"quantile"`, `[0.5, 2.0]` if
-`"conversion"` is set to `"ratio"`, and `[-1.0, 1.0]` if `"conversion"` is set
-to `"standard score"`.
+`[-1.0, 1.0]` if `"conversion"` is set to `null`, if `"conversion"` is set to
+`"quantile"`, `[0.5, 2.0]` if `"conversion"` is set to `"ratio"`, and
+`[-1.0, 1.0]` if `"conversion"` is set to `"standard score"`.
 
 ```json
 {
@@ -958,9 +955,9 @@ The average of edge confidence scores from in IntAct, MINT and STRING, and,
 lacking a comparable score, 1.0 for any interaction from BioGRID, CORUM and
 Reactome. The averaged score is reflected by edge transparency in Cytoscape. By
 default, `null`, any edge receives a score of 1.0 and edges are not transparent.
-Available settings are `null`, `"mean"`, `"median"`, `"mid-range"`, `"max"`,
-`"min"`, `"sum"`,and `"number"`, the number of queried databases supporting the
-protein-protein interaction.
+Available settings are `null`, `"mean"`, `"median"`, `"max"`, `"min"`, `"sum"`,
+and `"number"`, the number of queried databases supporting the protein-protein
+interaction.
 
 ---
 
@@ -1073,12 +1070,12 @@ absolute or relative range of protein-specific measurements.
   "configuration": {
     "Gene Ontology enrichment": {
       "site average": {
-        "PTM": "maxabs"
+        "PTM": "maxabslog2"
       }
     },
     "Reactome enrichment": {
       "site average": {
-        "PTM": "maxabs"
+        "PTM": "maxabslog2"
       }
     }
   }
@@ -1086,9 +1083,9 @@ absolute or relative range of protein-specific measurements.
 ```
 The average of distinct modification sites representing protein-specific
 measurements. The function is applied to ratios, not their binary logarithm.
-The default setting is `"maxabs"`, corresponding to the largest absolute
-measurement. Available settings are `"mean"`, `"median"`, `"mid-range"`,
-`"max"`, `"maxabs"`, `"min"`, `"minabs"`, `"sum"` and `"sumabs"`.
+The default setting is `"maxabslog2"`, corresponding to the largest absolute
+measurement. Available settings are `"mean"`, `"median"`, `"max"`,
+`"maxabslog2"`, `"min"`, `"minabslog2"`, `"sum"` and `"sumabslog2"`.
 
 ```json
 {
@@ -1109,8 +1106,8 @@ measurement. Available settings are `"mean"`, `"median"`, `"mid-range"`,
 The average of distinct replicates representing modification site-specific
 measurements. The function is applied to ratios, not their binary logarithm.
 The default setting is `"mean"`, corresponding to the mean of replicates.
-Available settings are `"mean"`, `"median"`, `"mid-range"`, `"max"`, `"maxabs"`,
-`"min"`, `"minabs"`, `"sum"` and `"sumabs"`.
+Available settings are `"mean"`, `"median"`, `"max"`, `"maxabslog2"`, `"min"`,
+`"minabslog2"`, `"sum"` and `"sumabslog2"`.
 
 ```json
 {
@@ -1130,10 +1127,9 @@ Available settings are `"mean"`, `"median"`, `"mid-range"`, `"max"`, `"maxabs"`,
 ```
 The modification-specific statistic that a specified measurement range refers
 to. It defaults to the binary logarithm of a measurement for `null` but can be
-set to `"log10"`, `"percentile"`, `"quantile"`, `"ratio"` or `"standard score"`,
-computed with respect to the distribution of a particular modification at a
-particular time of measurement across the protein-protein interaction network,
-if applicable.
+set to `"quantile"`, `"ratio"` or `"standard score"`, computed with respect to
+the distribution of a particular modification at a particular time of
+measurement across the protein-protein interaction network, if applicable.
 
 ```json
 {
@@ -1153,10 +1149,9 @@ if applicable.
 ```
 The range of averaged measurements categorizing proteins by whether the range is
 exceeded or not. The adaptive default setting is `[-1.0, 1.0]` if `"conversion"`
-is not set, `[-1.0, 1.0]` if `"conversion"` is set to `"log10"`, `[25.0, 75.0]`
-if `"conversion"` is set to `"percentile"`, `[0.25, 0.75]` if `"conversion"` is
-set to `"quantile"`, `[0.5, 2.0]` if `"conversion"` is set to `"ratio"`, and
-`[-1.0, 1.0]` if `"conversion"` is set to `"standard score"`.
+is set to `null`, `[0.25, 0.75]` if `"conversion"` is set to `"quantile"`,
+`[0.5, 2.0]` if `"conversion"` is set to `"ratio"`, and `[-1.0, 1.0]` if
+`"conversion"` is set to `"standard score"`.
 
 ```json
 {
@@ -1244,12 +1239,12 @@ measurements.
   "configuration": {
     "Gene Ontology network": {
       "site average": {
-        "PTM": "maxabs"
+        "PTM": "maxabslog2"
       }
     },
     "Reactome network": {
       "site average": {
-        "PTM": "maxabs"
+        "PTM": "maxabslog2"
       }
     }
   }
@@ -1257,9 +1252,9 @@ measurements.
 ```
 The average of distinct modification sites representing protein-specific
 measurements. The function is applied to ratios, not their binary logarithm. The
-default setting is `"maxabs"`, corresponding to the largest absolute
-measurement. Available settings are `"mean"`, `"median"`, `"mid-range"`,
-`"max"`, `"maxabs"`, `"min"`, `"minabs"`, `"sum"` and `"sumabs"`.
+default setting is `"maxabslog2"`, corresponding to the largest absolute
+measurement. Available settings are `"mean"`, `"median"`, `"max"`,
+`"maxabslog2"`, `"min"`, `"minabslog2"`, `"sum"` and `"sumabslog2"`.
 
 ```json
 {
@@ -1280,8 +1275,8 @@ measurement. Available settings are `"mean"`, `"median"`, `"mid-range"`,
 The average of distinct replicates representing modification site-specific
 measurements. The function is applied to ratios, not their binary logarithm. The
 default setting is `"mean"`, corresponding to the mean of replicates. Available
-settings are `"mean"`, `"median"`, `"mid-range"`, `"max"`, `"maxabs"`, `"min"`,
-`"minabs"`, `"sum"` and `"sumabs"`.
+settings are `"mean"`, `"median"`, `"max"`, `"maxabslog2"`, `"min"`,
+`"minabslog2"`, `"sum"` and `"sumabslog2"`.
 
 ```json
 {
@@ -1301,10 +1296,9 @@ settings are `"mean"`, `"median"`, `"mid-range"`, `"max"`, `"maxabs"`, `"min"`,
 ```
 The modification-specific statistic that a specified measurement range refers
 to. It defaults to the binary logarithm of a measurement for `null` but can be
-set to `"log10"`, `"percentile"`, `"quantile"`, `"ratio"` or `"standard score"`,
-computed with respect to the distribution of a particular modification at a
-particular time of measurement across the protein-protein interaction network,
-if applicable.
+set to `"quantile"`, `"ratio"` or `"standard score"`, computed with respect to
+the distribution of a particular modification at a particular time of
+measurement across the protein-protein interaction network, if applicable.
 
 ```json
 {
@@ -1324,10 +1318,9 @@ if applicable.
 ```
 The range of averaged measurements categorizing proteins by whether the range is
 exceeded or not. The adaptive default setting is `[-1.0, 1.0]` if `"conversion"`
-is not set, `[-1.0, 1.0]` if `"conversion"` is set to `"log10"`, `[25.0, 75.0]`
-if `"conversion"` is set to `"percentile"`, `[0.25, 0.75]` if `"conversion"` is
-set to `"quantile"`, `[0.5, 2.0]` if `"conversion"` is set to `"ratio"`, and
-`[-1.0, 1.0]` if `"conversion"` is set to `"standard score"`.
+is set to `null`, `[0.25, 0.75]` if `"conversion"` is set to `"quantile"`,
+`[0.5, 2.0]` if `"conversion"` is set to `"ratio"`, and `[-1.0, 1.0]` if
+`"conversion"` is set to `"standard score"`.
 
 ```json
 {
@@ -1485,8 +1478,8 @@ STRING, and, lacking of comparable score, 1.0 for any interaction from BioGRID,
 CORUM and Reactome. The combined score represents edge weight in community
 detection. By default, `null`, any edge receives a score of 1.0, corresponding
 to an unweighted network. Available settings are `null`, `"mean"`, `"median"`,
-`"mid-range"`, `"max"`, `"min"`, `"sum"`, and `"number"`, the number of queried
-databases supporting the protein-protein interaction.
+`"max"`, `"min"`, `"sum"`, and `"number"`, the number of queried databases
+supporting the protein-protein interaction.
 
 ```json
 {
@@ -1514,7 +1507,7 @@ network, resulting in a single iteration of the community detection algorithm.
 ```
 The average of community sizes in terms of nodes decisive to meeting the
 community size threshold. The default setting is `"mean"`. Available settings
-are `"mean"`, `"median"`, `"mid-range"`, `"max"`, and `"min"`.
+are `"mean"`, `"median"`, `"max"`, and `"min"`.
 
 ---
 
@@ -1740,12 +1733,12 @@ measurements.
     "community detection": {
       "Gene Ontology enrichment": {
         "site average": {
-          "PTM": "maxabs"
+          "PTM": "maxabslog2"
         }
       },
       "Reactome enrichment": {
         "site average": {
-          "PTM": "maxabs"
+          "PTM": "maxabslog2"
         }
       }
     }
@@ -1754,9 +1747,9 @@ measurements.
 ```
 The average of distinct modification sites representing protein-specific
 measurements. The function is applied to ratios, not their binary logarithm. The
-default setting is `"maxabs"`, corresponding to the largest absolute
-measurement. Available settings are `"mean"`, `"median"`, `"mid-range"`,
-`"max"`, `"maxabs"`, `"min"`, `"minabs"`, `"sum"` and `"sumabs"`.
+default setting is `"maxabslog2"`, corresponding to the largest absolute
+measurement. Available settings are `"mean"`, `"median"`, `"max"`,
+`"maxabslog2"`, `"min"`, `"minabslog2"`, `"sum"` and `"sumabslog2"`.
 
 ```json
 {
@@ -1779,8 +1772,8 @@ measurement. Available settings are `"mean"`, `"median"`, `"mid-range"`,
 The average of distinct replicates representing modification site-specific
 measurements. The function is applied to ratios, not their binary logarithm. The
 default setting is `"mean"`, corresponding to the mean of replicates. Available
-settings are `"mean"`, `"median"`, `"mid-range"`, `"max"`, `"maxabs"`, `"min"`,
-`"minabs"`, `"sum"` and `"sumabs"`.
+settings are `"mean"`, `"median"`, `"max"`, `"maxabslog2"`, `"min"`,
+`"minabslog2"`, `"sum"` and `"sumabslog2"`.
 
 ```json
 {
@@ -1802,10 +1795,10 @@ settings are `"mean"`, `"median"`, `"mid-range"`, `"max"`, `"maxabs"`, `"min"`,
 ```
 The modification-specific statistic that a specified measurement range refers
 to. It defaults to the binary logarithm of a measurement for `null` but can be
-set to `"log10"`, `"percentile"`, `"quantile"`, `"ratio"` or `"standard score"`,
-computed with respect to the distribution of a particular modification at a
-particular time of measurement across each community of the protein-protein
-interaction network, if applicable.
+set to `"quantile"`, `"ratio"` or `"standard score"`, computed with respect to
+the distribution of a particular modification at a particular time of
+measurement across each community of the protein-protein interaction network, if
+applicable.
 
 ```json
 {
@@ -1827,10 +1820,9 @@ interaction network, if applicable.
 ```
 The range of averaged measurements categorizing proteins by whether the range is
 exceeded or not. The adaptive default setting is `[-1.0, 1.0]` if `"conversion"`
-is not set, `[-1.0, 1.0]` if `"conversion"` is set to `"log10"`, `[25.0, 75.0]`
-if `"conversion"` is set to `"percentile"`, `[0.25, 0.75]` if `"conversion"` is
-set to `"quantile"`, `[0.5, 2.0]` if `"conversion"` is set to `"ratio"`, and
-`[-1.0, 1.0]` if `"conversion"` is set to `"standard score"`.
+is set to `null`, `[0.25, 0.75]` if `"conversion"` is set to `"quantile"`,
+`[0.5, 2.0]` if `"conversion"` is set to `"ratio"`, and `[-1.0, 1.0]` if
+`"conversion"` is set to `"standard score"`.
 
 ```json
 {
@@ -1874,12 +1866,12 @@ The Gene Ontology namespaces to consider. The default setting is
     "community detection": {
       "measurement enrichment": {
         "site average": {
-          "PTM": "maxabs"
+          "PTM": "maxabslog2"
         }
       },
       "measurement location": {
         "site average": {
-          "PTM": "maxabs"
+          "PTM": "maxabslog2"
         }
       }
     }
@@ -1887,10 +1879,10 @@ The Gene Ontology namespaces to consider. The default setting is
 }
 ```
 The modification-specific average of distinct modification sites representing
-protein-specific measurements. The default setting is `"maxabs"`, corresponding
-to the largest absolute value. Available settings are `"mean"`, `"median"`,
-`"mid-range"`, `"max"`, `"maxabs"`, `"min"`, `"minabs"`, `"sum"`, `"sumabs"` and
-`null` to consider modification sites separately.
+protein-specific measurements. The default setting is `"maxabslog2"`,
+corresponding to the largest absolute change. Available settings are `"mean"`,
+`"median"`, `"max"`, `"maxabslog2"`, `"min"`, `"minabslog2"`, `"sum"`,
+`"sumabslog2"` and `null` to consider modification sites separately.
 
 ```json
 {
@@ -1912,9 +1904,9 @@ to the largest absolute value. Available settings are `"mean"`, `"median"`,
 ```
 The modification-specific average of distinct replicates used modification
 site-specific measurements. The default setting is `"mean"`, corresponding to
-the mean of replicates. Available settings are `"mean"`, `"median"`,
-`"mid-range"`, `"max"`, `"maxabs"`, `"min"`, `"minabs"`, `"sum"`, `"sumabs"` and
-`null` to consider replicates separately.
+the mean of replicates. Available settings are `"mean"`, `"median"`, `"max"`,
+`"maxabslog2"`, `"min"`, `"minabslog2"`, `"sum"`, `"sumabslog2"` and `null` to
+consider replicates separately.
 
 ```json
 {
@@ -1931,10 +1923,10 @@ the mean of replicates. Available settings are `"mean"`, `"median"`,
 ```
 The modification-specific statistic that a specified measurement range refers
 to. It defaults to the binary logarithm of a measurement for `null` but can be
-set to `"log10"`, `"percentile"`, `"quantile"`, `"ratio"` or `"standard score"`,
-computed with respect to the distribution of a particular modification at a
-particular time of measurement across each community of the protein-protein
-interaction network, if applicable.
+set to `"quantile"`, `"ratio"` or `"standard score"`, computed with respect to
+the distribution of a particular modification at a particular time of
+measurement across each community of the protein-protein interaction network, if
+applicable.
 
 ```json
 {
@@ -1951,114 +1943,64 @@ interaction network, if applicable.
 ```
 The modification-specific range of measurements to categorize proteins by
 whether the range is exceeded or not. The adaptive default setting is
-`[-1.0, 1.0]` if `"conversion"` is not set, `[-1.0, 1.0]` if `"conversion"` is
-set to `"log10"`, `[25.0, 75.0]` if `"conversion"` is set to `"percentile"`,
-`[0.25, 0.75]` if `"conversion"` is set to `"quantile"`, `[0.5, 2.0]` if
-`"conversion"` is set to `"ratio"`, and `[-1.0, 1.0]` if `"conversion"` is set
-to `"standard score"`.
+`[-1.0, 1.0]` if `"conversion"` is set to `null`, `[0.25, 0.75]` if
+`"conversion"` is set to `"quantile"`, `[0.5, 2.0]` if `"conversion"` is set to
+`"ratio"`, and `[-1.0, 1.0]` if `"conversion"` is set to `"standard score"`.
 
 ## Protein-protein interaction network
 
 Annotations of proteins contain the following information:
 
 ```xml
-<node id="P08238">
-  <data key="30 P S1 R1">0.54220851432284</data>
-  <data key="30 P S1 R2">-0.477401835185115</data>
-  <data key="30 P S1 R3">0.244521773632056</data>
-  <data key="30 P S1 R4">0.306262239727851</data>
-  <data key="30 P S2 R1">0.228603231948469</data>
-  <data key="30 P S2 R2">0.275245489784668</data>
-  <data key="30 P S2 R3">0.896310604365822</data>
-  <data key="30 P S3 R1">0.0877343818197254</data>
-  <data key="30 P S3 R2">0.146394549060505</data>
-  <data key="30 P S3 R3">0.473215434070397</data>
-  <data key="30 P S3 R4">0.0579700686373299</data>
-  <data key="30 P S4 R1">-1.50581995088001</data>
-  <data key="30 P S4 R2">-1.09246322174727</data>
-  <data key="30 P S4 R3">-0.226695659491105</data>
-  <data key="30 P S5 R1">-1.56823799204402</data>
-  <data key="30 P S5 R2">-0.860661486398571</data>
-  <data key="30 P S5 R3">-0.710732103006451</data>
-  <data key="30 P S5 R4">-0.761310953561901</data>
-  <data key="120 P S1 R1">1.09247808720038</data>
-  <data key="120 P S1 R2">-1.06349962411138</data>
-  <data key="120 P S1 R3">-0.208227595722634</data>
-  <data key="120 P S1 R4">0.158724796297479</data>
-  <data key="120 P S2 R1">-0.118351040955053</data>
-  <data key="120 P S2 R2">0.113967146433002</data>
-  <data key="120 P S2 R3">0.26327483497207</data>
-  <data key="120 P S2 R4">0.0705267208766824</data>
-  <data key="120 P S3 R1">-1.48628692975065</data>
-  <data key="120 P S3 R2">0.420509350488903</data>
-  <data key="120 P S3 R3">0.153935010704163</data>
-  <data key="120 P S3 R4">0.0294175468350917</data>
-  <data key="120 P S4 R1">-2.20270473823453</data>
-  <data key="120 P S4 R2">-1.74637372157862</data>
-  <data key="120 P S4 R3">-0.964235346399025</data>
-  <data key="120 P S5 R1">-1.62433217718096</data>
-  <data key="120 P S5 R2">-1.19918912293282</data>
-  <data key="120 P S5 R3">-0.941974497459726</data>
-  <data key="120 P S5 R4">-0.947166800237055</data>
-  <data key="30 U S1 R1">0.8818995</data>
-  <data key="30 U S1 R2">0.8537561</data>
-  <data key="30 U S1 R3">0.8220367</data>
-  <data key="30 U S1 R4">0.8059527</data>
-  <data key="30 U S2 R1">0.9287304</data>
-  <data key="30 U S2 R2">0.9743825</data>
-  <data key="30 U S3 R1">1.055682</data>
-  <data key="30 U S3 R2">0.8066952</data>
-  <data key="30 U S3 R3">0.7320521</data>
-  <data key="30 U S3 R4">0.774165</data>
-  <data key="30 U S4 R1">1.27733</data>
-  <data key="30 U S4 R2">1.636079</data>
-  <data key="30 U S4 R3">1.453122</data>
-  <data key="30 U S4 R4">1.360982</data>
-  <data key="30 U S5 R1">0.9531535</data>
-  <data key="30 U S5 R2">0.8778228</data>
-  <data key="120 U S1 R1">0.5636463</data>
-  <data key="120 U S1 R2">0.4232016</data>
-  <data key="120 U S1 R3">0.4141355</data>
-  <data key="120 U S2 R1">0.3475523</data>
-  <data key="120 U S2 R2">0.5725987</data>
-  <data key="120 U S3 R1">0.5365503</data>
-  <data key="120 U S3 R2">0.4477378</data>
-  <data key="120 U S3 R3">0.628447</data>
-  <data key="120 U S3 R4">0.6983073</data>
-  <data key="120 U S4 R1">0.7317045</data>
-  <data key="120 U S4 R2">0.6809544</data>
-  <data key="120 U S5 R1">0.6275134</data>
-  <data key="120 U S5 R2">0.9948694</data>
-  <data key="120 U S5 R3">1.105745</data>
-  <data key="120 U S5 R4">0.3946239</data>
-  <data key="protein">Heat shock protein HSP 90-beta</data>
-  <data key="gene">HSP90AB1</data>
-  <data key="30 P S1">0.2002752065009339</data>
-  <data key="30 P S2">0.5001901798419818</data>
-  <data key="30 P S3">0.20122608538271503</data>
-  <data key="30 P S4">-0.8402158328840578</data>
-  <data key="30 P S5">-0.9372634772612621</data>
-  <data key="30 P">0.5001901798419818</data>
-  <data key="30 U S1">0.8412082789463589</data>
-  <data key="30 U S2">0.9517370172048248</data>
-  <data key="30 U S3">0.8478166657697783</data>
-  <data key="30 U S4">1.4381195168895862</data>
-  <data key="30 U S5">0.9159797706876127</data>
-  <data key="30 U">1.4381195168895862</data>
-  <data key="30">P MID-UP U UP</data>
-  <data key="120 P S1">0.19936453706030882</data>
-  <data key="120 P S2">0.08873185460230436</data>
-  <data key="120 P S3">-0.06320943782396687</data>
-  <data key="120 P S4">-1.5453608338920048</data>
-  <data key="120 P S5">-1.1527647168293742</data>
-  <data key="120 P">0.19936453706030882</data>
-  <data key="120 U S1">0.4686354301886615</data>
-  <data key="120 U S2">0.464459189495995</data>
-  <data key="120 U S3">0.5808449095087295</data>
-  <data key="120 U S4">0.7065525948600769</data>
-  <data key="120 U S5">0.8082820472391457</data>
-  <data key="120 U">0.8082820472391457</data>
-  <data key="120">P MID U MID-UP</data>
+<node id="Q12774">
+  <data key="30 P S1 R1">-0.685779134631136</data>
+  <data key="30 P S1 R2">0.769771739249448</data>
+  <data key="30 P S1 R3">-0.324997083806073</data>
+  <data key="30 P S1 R4">1.09065021965553</data>
+  <data key="30 P S2 R1">0.240985904024739</data>
+  <data key="30 P S2 R2">0.224657734120738</data>
+  <data key="30 P S2 R3">0.390337511615924</data>
+  <data key="30 P S2 R4">0.532865503106325</data>
+  <data key="30 P S3 R1">3.56450011565451</data>
+  <data key="30 P S3 R2">2.17542879082226</data>
+  <data key="30 P S4 R1">-0.707712973886411</data>
+  <data key="30 P S4 R2">-0.38364230300331</data>
+  <data key="30 P S5 R1">-0.74400385038066</data>
+  <data key="30 P S5 R2">-1.12007470987049</data>
+  <data key="30 P S5 R3">-0.689985686021797</data>
+  <data key="30 P S5 R4">-0.51253423132666</data>
+  <data key="120 P S1 R1">-0.475194099097262</data>
+  <data key="120 P S1 R2">-1.3371200328603</data>
+  <data key="120 P S1 R3">-0.405203060766931</data>
+  <data key="120 P S1 R4">-0.120231509209935</data>
+  <data key="120 P S2 R1">-0.0460568815397254</data>
+  <data key="120 P S2 R2">0.159112461230858</data>
+  <data key="120 P S2 R3">0.0408223101073411</data>
+  <data key="120 P S2 R4">0.74122966377296</data>
+  <data key="120 P S3 R1">3.82578562746479</data>
+  <data key="120 P S3 R2">1.6476829081679</data>
+  <data key="120 P S4 R1">1.46868757304394</data>
+  <data key="120 P S4 R2">-0.511012053801143</data>
+  <data key="120 P S5 R1">-0.307037247227081</data>
+  <data key="120 P S5 R2">-0.63227110089248</data>
+  <data key="120 P S5 R3">-0.299009943193547</data>
+  <data key="120 P S5 R4">-0.0842420157671971</data>
+  <data key="protein">Rho guanine nucleotide exchange factor 5</data>
+  <data key="gene">ARHGEF5</data>
+  <data key="30 P S1">0.3936001639376572</data>
+  <data key="30 P S2">0.3527020362667344</data>
+  <data key="30 P S3">3.0310598930553647</data>
+  <data key="30 P S4">-0.5365972596306324</data>
+  <data key="30 P S5">-0.7502512849164314</data>
+  <data key="30 P">3.0310598930553647</data>
+  <data key="30">P UP</data>
+  <data key="120 P S1">-0.5195539060477273</data>
+  <data key="120 P S2">0.25866363921260216</data>
+  <data key="120 P S3">3.113808830561368</data>
+  <data key="120 P S4">0.7946986588492786</data>
+  <data key="120 P S5">-0.3176289637982848</data>
+  <data key="120 P">3.113808830561368</data>
+  <data key="120">P UP</data>
 </node>
 ```
 
@@ -2083,12 +2025,10 @@ attributes.
 Annotations of protein-protein interactions contain the following information:
 
 ```xml
-<edge source="P08238" target="P07900">
+<edge source="Q12774" target="P31947">
   <data key="BioGRID">1.0</data>
-  <data key="CORUM">1.0</data>
-  <data key="IntAct">0.64</data>
-  <data key="Reactome">1.0</data>
-  <data key="STRING">0.994</data>
+  <data key="IntAct">0.4</data>
+  <data key="MINT">0.4</data>
   <data key="score">1.0</data>
 </edge>
 ```
@@ -2101,20 +2041,16 @@ confidence scores as well as a composite score utilized by Cytoscape.
 Annotations of Gene Ontology terms contain the following information:
 
 ```xml
-  <node id="GO:0045296">
-    <data key="term">cadherin binding</data>
-    <data key="namespace">molecular function</data>
-    <data key="p-value">0.041227820154925175</data>
-    <data key="number of proteins">72</data>
-    <data key="proteins">A0MZ66 O60749 O60763 O76021 O95067 O95292 P00533
-      P05556 P08238 P11142 P12931 P18031 P18206 P22681 P26641 P29317 P35613
-      P42166 P42566 P46940 P47914 P48730 P49207 P49327 P51610 P55010 P61313
-      P61978 P62258 P62750 P63104 P83731 Q01813 Q02878 Q07960 Q08378 Q09666
-      Q13177 Q13596 Q14160 Q14258 Q14677 Q15149 Q15691 Q16643 Q5T2T1 Q5VV41
-      Q6PKG0 Q6WCQ1 Q6Y7W6 Q86UP2 Q8N3F8 Q8NC51 Q8WUF5 Q92522 Q92597 Q96C19
-      Q9BXI6 Q9C0C2 Q9H223 Q9H444 Q9H6S3 Q9NQC3 Q9P0L0 Q9UBC2 Q9UGI8 Q9UHD8
-      Q9ULH1 Q9Y266 Q9Y446 Q9Y5K6 Q9Y6W5</data>
-    </node>
+<node id="GO:0051056">
+  <data key="term">regulation of small GTPase mediated signal
+    transduction</data>
+  <data key="namespace">biological process</data>
+  <data key="p-value">0.015326500062106879</data>
+  <data key="number of proteins">21</data>
+  <data key="proteins">O15085 O60292 P98174 Q07960 Q12774 Q13009 Q13459 Q14344
+    Q15311 Q52LW3 Q5T5U3 Q6XZF7 Q92619 Q96PE2 Q9C0H5 Q9H0H5 Q9NRY4 Q9P107 Q9P227
+    Q9ULL1 Q9Y3L3</data>
+</node>
 ```
 
 Terms are represented by their Gene Ontology ID. `"term"` refers to the term and
@@ -2128,7 +2064,7 @@ Relationships of Gene Ontology terms contain no additional information besides
 the related terms:
 
 ```xml
-<edge source="GO:0045296" target="GO:0050839" />
+<edge source="GO:0051056" target="GO:1902531" />
 ```
 
 ## Reactome network
@@ -2136,21 +2072,14 @@ the related terms:
 Annotations of Reactome pathways contain the following information:
 
 ```xml
-<node id="R-HSA-194315">
-  <data key="pathway">Signaling by Rho GTPases</data>
-  <data key="p-value">0.0007507758412627219</data>
-  <data key="number of proteins">96</data>
-  <data key="proteins">A6NGB9 O00161 O00401 O14974 O14980 O15085 O15143 O15173
-    O43396 O60566 O75886 O94804 O95292 P02786 P05556 P08238 P12931 P15924 P23528
-    P27105 P29317 P40227 P46940 P49454 P49792 P51648 P52565 P53350 P57740 P60953
-    P61981 P62258 P62995 P63104 P68371 P84095 P98174 Q00610 Q02952 Q05655 Q07960
-    Q08378 Q12774 Q13009 Q13177 Q13459 Q13838 Q13885 Q14160 Q15172 Q15311 Q15691
-    Q16512 Q16537 Q16643 Q2NKX8 Q52LW3 Q5T0W9 Q5T2T1 Q5VV41 Q6NZI2 Q6XZF7 Q71U36
-    Q7Z6J0 Q86UP2 Q86YV5 Q8IW35 Q8IWB9 Q8N6H7 Q8NI77 Q8WU20 Q8WUM0 Q8WWQ0 Q92619
-    Q92783 Q96C19 Q96Q42 Q96RT1 Q96T58 Q9BSJ8 Q9BST9 Q9BTT6 Q9BXB4 Q9H0H5 Q9H3Q1
-    Q9NRY4 Q9NYL9 Q9P107 Q9P227 Q9UEY8 Q9ULL1 Q9UNZ2 Q9Y266 Q9Y5S2 Q9Y6G9 Q9Y6W5
-  </data>
-  </node>
+<node id="R-HSA-73887">
+  <data key="pathway">Death Receptor Signalling</data>
+  <data key="p-value">0.013079279836317752</data>
+  <data key="number of proteins">28</data>
+  <data key="proteins">A5YM69 O15085 P19838 P25445 P41743 P52565 P62258 P62979
+    P63244 P98170 P98174 Q12774 Q12933 Q13009 Q13501 Q13547 Q14344 Q5VV41 Q92934
+    Q96BN8 Q96PE2 Q9BYM8 Q9H0F6 Q9NQC3 Q9NY61 Q9NYJ8 Q9UBN6 Q9Y4K3</data>
+</node>
 ```
 
 Pathways are represented by their Reactome pathway stable identifier.
@@ -2164,7 +2093,7 @@ Relationships of Reactome pathways contain no additional information besides the
 related pathways:
 
 ```xml
-<edge source="R-HSA-194315" target="R-HSA-195258" />
+<edge source="R-HSA-73887" target="R-HSA-75158" />
 ```
 
 ## References

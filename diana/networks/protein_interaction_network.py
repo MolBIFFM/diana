@@ -250,8 +250,8 @@ def add_sites_from_table(
         for s, (_, replicates) in enumerate(sorted(
                 sorted(
                     sites.items(),
-                    key=lambda site: site_prioritization(
-                        math.log2(
+                    key=lambda site: math.log2(
+                        site_prioritization(
                             replicate_average([
                                 math.pow(2.0, replicate)
                                 for replicate in site[1]
@@ -306,8 +306,8 @@ def get_proteins(
     network: nx.Graph,
     time: int,
     modification: str,
-    site_average: Callable[[Iterable[float]],
-                           float] = lambda sites: max(sites, key=abs),
+    site_average: Callable[[Iterable[float]], float] = lambda sites: max(
+        sites, key=lambda site: abs(math.log2(site))),
     replicate_average: Callable[[Iterable[float]], float] = statistics.mean,
     combined_measurement_range: tuple[float, float] = (0.0, 0.0)
 ) -> frozenset[str]:
@@ -501,38 +501,46 @@ def set_measurements(
         time: {
             modification:
             (measurement_conversion.get(
-                modification, lambda measurement, measurements: measurement)(
-                    measurements.get(modification, (-1.0, 1.0))[0],
-                    get_measurements(
-                        network, time, modification,
-                        site_average.get(modification,
-                                         lambda sites: max(sites, key=abs)),
-                        replicate_average.get(modification, statistics.mean)),
-                ),
+                modification, lambda measurement, measurements: measurement)
+             (
+                 measurements.get(modification, (-1.0, 1.0))[0],
+                 get_measurements(
+                     network, time, modification,
+                     site_average.get(
+                         modification, lambda sites: max(
+                             sites, key=lambda site: abs(math.log2(site)))),
+                     replicate_average.get(modification, statistics.mean)),
+             ),
              measurement_conversion.get(
-                 modification, lambda measurement, measurements: measurement)(
-                     measurements.get(modification, (-1.0, 1.0))[1],
+                 modification,
+                 lambda measurement, measurements: measurement)(
+                     measurements.get(
+                         modification,
+                         (-1.0, 1.0))[1],
                      get_measurements(
                          network, time, modification,
-                         site_average.get(modification,
-                                          lambda sites: max(sites, key=abs)),
+                         site_average.get(
+                             modification,
+                             lambda sites: max(
+                                 sites, key=lambda site: abs(math.log2(site)))),
                          replicate_average.get(modification, statistics.mean))))
             for modification in modifications[time]
         } for time in times
     }
 
     for time in times:
-        for protein in network:
+        for prt in network:
             summary = {}
             for modification in modifications[time]:
-                sites = [[
-                    network.nodes[protein][attribute]
-                    for attribute in network.nodes[protein]
-                    if re.fullmatch(fr"{time} {modification} (S{s+1} )?R\d+",
-                                    attribute)
+                sites = [
+                    [
+                        network.nodes[prt][attribute]
+                        for attribute in network.nodes[prt]
+                        if re.fullmatch(
+                            fr"{time} {modification} (S{s+1} )?R\d+", attribute)
+                    ]
+                    for s in range(get_sites(network, time, modification, prt))
                 ]
-                         for s in range(
-                             get_sites(network, time, modification, protein))]
 
                 if sites:
                     if is_modification(network,
@@ -540,7 +548,7 @@ def set_measurements(
                                        modification,
                                        proteins=False):
                         for s, site in enumerate(sites, start=1):
-                            network.nodes[protein][
+                            network.nodes[prt][
                                 f"{time} {modification} S{s}"] = math.log2(
                                     replicate_average.get(
                                         modification, statistics.mean)([
@@ -548,11 +556,10 @@ def set_measurements(
                                             for replicate in site
                                         ]))
 
-                    network.nodes[protein][
-                        f"{time} {modification}"] = math.log2(
-                            site_average.get(
-                                modification,
-                                lambda sites: max(sites, key=abs))([
+                    network.nodes[prt][f"{time} {modification}"] = math.log2(
+                        site_average.get(
+                            modification, lambda sites: max(
+                                sites, key=lambda site: abs(math.log2(site))))([
                                     replicate_average.get(
                                         modification, statistics.mean)([
                                             math.pow(2.0, replicate)
@@ -561,12 +568,11 @@ def set_measurements(
                                     for site in sites
                                 ]))
 
-                    if (network.nodes[protein][f"{time} {modification}"] >= max(
+                    if (network.nodes[prt][f"{time} {modification}"] >= max(
                             0.0, measurement_range[time][modification][1])):
                         summary[modification] = "UP"
                     elif (max(0.0, measurement_range[time][modification][1]) >
-                          network.nodes[protein][f"{time} {modification}"] >=
-                          max(
+                          network.nodes[prt][f"{time} {modification}"] >= max(
                               0.0, 0.5 *
                               (0.5 *
                                (measurement_range[time][modification][0] +
@@ -574,25 +580,24 @@ def set_measurements(
                                measurement_range[time][modification][1]))):
                         summary[modification] = "MID-UP"
                     elif (min(0.0, measurement_range[time][modification][0]) <
-                          network.nodes[protein][f"{time} {modification}"] <=
-                          min(
+                          network.nodes[prt][f"{time} {modification}"] <= min(
                               0.0, 0.5 *
                               (measurement_range[time][modification][0] + 0.5 *
                                (measurement_range[time][modification][0] +
                                 measurement_range[time][modification][1])))):
                         summary[modification] = "MID-DOWN"
-                    elif (network.nodes[protein][f"{time} {modification}"] <=
-                          min(0.0, measurement_range[time][modification][0])):
+                    elif (network.nodes[prt][f"{time} {modification}"] <= min(
+                            0.0, measurement_range[time][modification][0])):
                         summary[modification] = "DOWN"
                     else:
                         summary[modification] = "MID"
 
             if summary:
-                network.nodes[protein][str(time)] = " ".join(
+                network.nodes[prt][str(time)] = " ".join(
                     f"{modification} {category}"
                     for modification, category in summary.items())
             else:
-                network.nodes[protein][str(time)] = ""
+                network.nodes[prt][str(time)] = ""
 
 
 def get_neighbors_from_biogrid(
