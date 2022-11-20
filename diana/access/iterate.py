@@ -97,6 +97,7 @@ def tabular_txt(url: str,
                 skiprows: int = 0,
                 usecols: Optional[Collection[int] | Collection[str]] = None,
                 chunksize: int = 1048576,
+                rows: int = 1024,
                 pause: float = 60.0) -> Iterator[pd.Series]:
     """
     Downloads, iterates and subsequently removes the tabular file at a URL.
@@ -108,8 +109,9 @@ def tabular_txt(url: str,
         header: The line number of the table header.
         skiprows: Number of initial rows of the file to skip before header.
         usecols: The table columns to consider.
-        chunksize: The buffer size to process download and decompression of the
-            file with.
+        chunksize: The buffer size to process download and gzip decompression of
+            the file with.
+        rows: The number of rows to read at once from the table.
         pause: The number of seconds to wait after a failed or download.
 
     Yields:
@@ -156,14 +158,12 @@ def tabular_txt(url: str,
         elif os.path.splitext(local_file_name)[1] == ".tsv":
             delimiter = "\t"
 
-    for chunk in pd.read_csv(
-            local_file_name,
-            delimiter=delimiter,
-            header=header,
-            skiprows=skiprows,
-            usecols=usecols,
-            chunksize=8192,
-    ):
+    for chunk in pd.read_csv(local_file_name,
+                             delimiter=delimiter,
+                             header=header,
+                             skiprows=skiprows,
+                             usecols=usecols,
+                             chunksize=rows):
         for _, row in chunk.iterrows():
             yield row
 
