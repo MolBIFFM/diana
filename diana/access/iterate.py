@@ -97,7 +97,7 @@ def tabular_txt(url: str,
                 skiprows: int = 0,
                 usecols: Optional[Collection[int] | Collection[str]] = None,
                 chunksize: int = 1048576,
-                rows: int = 1024,
+                rows: int = 8192,
                 pause: float = 60.0) -> Iterator[pd.Series]:
     """
     Downloads, iterates and subsequently removes the tabular file at a URL.
