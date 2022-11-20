@@ -396,7 +396,8 @@ def process_workflow(identifier: str, configuration: Mapping[str, Any]) -> None:
                     network,
                     site_average={
                         modification: average.SITE_AVERAGE.get(
-                            site_average, average.SITE_AVERAGE["maxabslog"])
+                            site_average,
+                            average.SITE_AVERAGE["maximum absolute logarithm"])
                         for modification,
                         site_average in configuration["Cytoscape"].get(
                             "site average", {}).items()
@@ -442,7 +443,8 @@ def process_workflow(identifier: str, configuration: Mapping[str, Any]) -> None:
                     },
                     site_average={
                         modification: average.SITE_AVERAGE.get(
-                            site_average, average.SITE_AVERAGE["maxabslog"])
+                            site_average,
+                            average.SITE_AVERAGE["maximum absolute logarithm"])
                         for modification,
                         site_average in configuration["Cytoscape"].get(
                             "site average", {}).items()
@@ -485,7 +487,8 @@ def process_workflow(identifier: str, configuration: Mapping[str, Any]) -> None:
                                  network, time, m, average.SITE_AVERAGE[
                                      configuration["Gene Ontology network"].get(
                                          "site average",
-                                         {}).get(m, "maxabslog")],
+                                         {}).get(m,
+                                                 "maximum absolute logarithm")],
                                  average.REPLICATE_AVERAGE[
                                      configuration["Gene Ontology network"].get(
                                          "replicate average",
@@ -501,7 +504,8 @@ def process_workflow(identifier: str, configuration: Mapping[str, Any]) -> None:
                                  network, time, m, average.SITE_AVERAGE[
                                      configuration["Gene Ontology network"].get(
                                          "site average",
-                                         {}).get(m, "maxabslog")],
+                                         {}).get(m,
+                                                 "maximum absolute logarithm")],
                                  average.REPLICATE_AVERAGE[
                                      configuration["Gene Ontology network"].get(
                                          "replicate average",
@@ -514,8 +518,9 @@ def process_workflow(identifier: str, configuration: Mapping[str, Any]) -> None:
                                     network, time, m,
                                     average.SITE_AVERAGE[configuration[
                                         "Gene Ontology network"].get(
-                                            "site average",
-                                            {}).get(m, "maxabslog")],
+                                            "site average", {}).get(
+                                                m,
+                                                "maximum absolute logarithm")],
                                     average.REPLICATE_AVERAGE[configuration[
                                         "Gene Ontology network"].get(
                                             "replicate average",
@@ -528,8 +533,9 @@ def process_workflow(identifier: str, configuration: Mapping[str, Any]) -> None:
                                     network, time, m,
                                     average.SITE_AVERAGE[configuration[
                                         "Gene Ontology network"].get(
-                                            "site average",
-                                            {}).get(m, "maxabslog")],
+                                            "site average", {}).get(
+                                                m,
+                                                "maximum absolute logarithm")],
                                     average.REPLICATE_AVERAGE[configuration[
                                         "Gene Ontology network"].get(
                                             "replicate average",
@@ -615,7 +621,7 @@ def process_workflow(identifier: str, configuration: Mapping[str, Any]) -> None:
                                      configuration["Reactome network"].get(
                                          "site average",
                                          {}).get(m,
-                                                 "maxabslog")],
+                                                 "maximum absolute logarithm")],
                                  average.REPLICATE_AVERAGE[
                                      configuration["Reactome network"].get(
                                          "replicate average",
@@ -632,7 +638,8 @@ def process_workflow(identifier: str, configuration: Mapping[str, Any]) -> None:
                                  network, time, m, average.SITE_AVERAGE[
                                      configuration["Reactome network"].get(
                                          "site average",
-                                         {}).get(m, "maxabslog")],
+                                         {}).get(m,
+                                                 "maximum absolute logarithm")],
                                  average.REPLICATE_AVERAGE[
                                      configuration["Reactome network"].get(
                                          "replicate average",
@@ -644,8 +651,9 @@ def process_workflow(identifier: str, configuration: Mapping[str, Any]) -> None:
                                 protein_interaction_network.get_proteins(
                                     network, time, m, average.SITE_AVERAGE[
                                         configuration["Reactome network"].get(
-                                            "site average",
-                                            {}).get(m, "maxabslog")],
+                                            "site average", {}).get(
+                                                m,
+                                                "maximum absolute logarithm")],
                                     average.REPLICATE_AVERAGE[
                                         configuration["Reactome network"].get(
                                             "replicate average",
@@ -657,8 +665,9 @@ def process_workflow(identifier: str, configuration: Mapping[str, Any]) -> None:
                                 protein_interaction_network.get_proteins(
                                     network, time, m, average.SITE_AVERAGE[
                                         configuration["Reactome network"].get(
-                                            "site average",
-                                            {}).get(m, "maxabslog")],
+                                            "site average", {}).get(
+                                                m,
+                                                "maximum absolute logarithm")],
                                     average.REPLICATE_AVERAGE[
                                         configuration["Reactome network"].get(
                                             "replicate average",
@@ -761,8 +770,9 @@ def process_workflow(identifier: str, configuration: Mapping[str, Any]) -> None:
                                      network, time, m,
                                      average.SITE_AVERAGE[configuration[
                                          "Gene Ontology enrichment"].get(
-                                             "site average",
-                                             {}).get(m, "maxabslog")],
+                                             "site average", {}).get(
+                                                 m,
+                                                 "maximum absolute logarithm")],
                                      average.REPLICATE_AVERAGE[configuration[
                                          "Gene Ontology enrichment"].get(
                                              "replicate average",
@@ -779,8 +789,9 @@ def process_workflow(identifier: str, configuration: Mapping[str, Any]) -> None:
                                      network, time, m,
                                      average.SITE_AVERAGE[configuration[
                                          "Gene Ontology enrichment"].get(
-                                             "site average",
-                                             {}).get(m, "maxabslog")],
+                                             "site average", {}).get(
+                                                 m,
+                                                 "maximum absolute logarithm")],
                                      average.REPLICATE_AVERAGE[configuration[
                                          "Gene Ontology enrichment"].get(
                                              "replicate average",
@@ -793,8 +804,10 @@ def process_workflow(identifier: str, configuration: Mapping[str, Any]) -> None:
                                         network, time, m,
                                         average.SITE_AVERAGE[configuration[
                                             "Gene Ontology enrichment"].get(
-                                                "site average",
-                                                {}).get(m, "maxabslog")],
+                                                "site average", {}).get(
+                                                    m,
+                                                    "maximum absolute logarithm"
+                                                )],
                                         average.REPLICATE_AVERAGE[configuration[
                                             "Gene Ontology enrichment"].get(
                                                 "replicate average",
@@ -807,8 +820,10 @@ def process_workflow(identifier: str, configuration: Mapping[str, Any]) -> None:
                                         network, time, m,
                                         average.SITE_AVERAGE[configuration[
                                             "Gene Ontology enrichment"].get(
-                                                "site average",
-                                                {}).get(m, "maxabslog")],
+                                                "site average", {}).get(
+                                                    m,
+                                                    "maximum absolute logarithm"
+                                                )],
                                         average.REPLICATE_AVERAGE[configuration[
                                             "Gene Ontology enrichment"].get(
                                                 "replicate average",
@@ -884,21 +899,19 @@ def process_workflow(identifier: str, configuration: Mapping[str, Any]) -> None:
                                                    {}):
                 if configuration["community detection"][
                         "Gene Ontology enrichment"].get("intersection", False):
-                    subset_proteins = {
+                    subsets = {
                         community: set(community.nodes())
                         for community in communities
                     }
                 else:
-                    subset_proteins = {
-                        community: set() for community in communities
-                    }
+                    subsets = {community: set() for community in communities}
 
                 for time in protein_interaction_network.get_times(network):
                     for m in configuration["community detection"][
                             "Gene Ontology enrichment"].get("PTMs", []):
                         if m in protein_interaction_network.get_modifications(
                                 network, time):
-                            for community in subset_proteins:
+                            for community in subsets:
                                 measurement_range = (
                                     conversion.MEASUREMENT_CONVERSION[
                                         configuration["community detection"]
@@ -918,8 +931,9 @@ def process_workflow(identifier: str, configuration: Mapping[str, Any]) -> None:
                                              configuration[
                                                  "community detection"]
                                              ["Gene Ontology enrichment"].get(
-                                                 "site average",
-                                                 {}).get(m, "maxabslog")],
+                                                 "site average", {}).
+                                             get(m,
+                                                 "maximum absolute logarithm")],
                                          average.REPLICATE_AVERAGE[
                                              configuration[
                                                  "community detection"]
@@ -944,8 +958,9 @@ def process_workflow(identifier: str, configuration: Mapping[str, Any]) -> None:
                                              configuration[
                                                  "community detection"]
                                              ["Gene Ontology enrichment"].get(
-                                                 "site average",
-                                                 {}).get(m, "maxabslog")],
+                                                 "site average", {}).
+                                             get(m,
+                                                 "maximum absolute logarithm")],
                                          average.REPLICATE_AVERAGE[
                                              configuration[
                                                  "community detection"]
@@ -956,29 +971,7 @@ def process_workflow(identifier: str, configuration: Mapping[str, Any]) -> None:
                                 if configuration["community detection"][
                                         "Gene Ontology enrichment"].get(
                                             "intersection", False):
-                                    subset_proteins[
-                                        community].intersection_update(
-                                            protein_interaction_network.
-                                            get_proteins(
-                                                community, time, m,
-                                                average.SITE_AVERAGE[
-                                                    configuration[
-                                                        "community detection"]
-                                                    ["Gene Ontology enrichment"]
-                                                    .get("site average",
-                                                         {}).get(
-                                                             m, "maxabslog")],
-                                                average.REPLICATE_AVERAGE[
-                                                    configuration[
-                                                        "community detection"]
-                                                    ["Gene Ontology enrichment"]
-                                                    .get(
-                                                        "replicate average",
-                                                        {}).get(m, "mean")],
-                                                measurement_range))
-
-                                else:
-                                    subset_proteins[community].update(
+                                    subsets[community].intersection_update(
                                         protein_interaction_network.
                                         get_proteins(
                                             community, time, m,
@@ -986,8 +979,31 @@ def process_workflow(identifier: str, configuration: Mapping[str, Any]) -> None:
                                                 configuration[
                                                     "community detection"]
                                                 ["Gene Ontology enrichment"].
-                                                get("site average",
-                                                    {}).get(m, "maxabslog")],
+                                                get("site average", {}).get(
+                                                    m,
+                                                    "maximum absolute logarithm"
+                                                )],
+                                            average.REPLICATE_AVERAGE[
+                                                configuration[
+                                                    "community detection"]
+                                                ["Gene Ontology enrichment"].
+                                                get("replicate average",
+                                                    {}).get(m, "mean")],
+                                            measurement_range))
+
+                                else:
+                                    subsets[community].update(
+                                        protein_interaction_network.
+                                        get_proteins(
+                                            community, time, m,
+                                            average.SITE_AVERAGE[
+                                                configuration[
+                                                    "community detection"]
+                                                ["Gene Ontology enrichment"].
+                                                get("site average", {}).get(
+                                                    m,
+                                                    "maximum absolute logarithm"
+                                                )],
                                             average.REPLICATE_AVERAGE[
                                                 configuration[
                                                     "community detection"]
@@ -998,7 +1014,7 @@ def process_workflow(identifier: str, configuration: Mapping[str, Any]) -> None:
 
                 gene_ontology_enrichment = gene_ontology.get_enrichment(
                     [
-                        frozenset(subset_proteins[community])
+                        frozenset(subsets[community])
                         for community in communities
                     ],
                     reference=[network.nodes()]
@@ -1036,7 +1052,7 @@ def process_workflow(identifier: str, configuration: Mapping[str, Any]) -> None:
                                               start=1):
                     for (term,
                          name), p in sorted(gene_ontology_enrichment[frozenset(
-                             subset_proteins[community])].items(),
+                             subsets[community])].items(),
                                             key=lambda item: item[1]):
                         if p <= configuration["community detection"][
                                 "Gene Ontology enrichment"].get("p", 1.0):
@@ -1122,8 +1138,9 @@ def process_workflow(identifier: str, configuration: Mapping[str, Any]) -> None:
                                      network, time, m,
                                      average.SITE_AVERAGE[configuration[
                                          "Reactome enrichment"].get(
-                                             "site average",
-                                             {}).get(m, "maxabslog")],
+                                             "site average", {}).get(
+                                                 m,
+                                                 "maximum absolute logarithm")],
                                      average.REPLICATE_AVERAGE[configuration[
                                          "Reactome enrichment"].get(
                                              "replicate average",
@@ -1140,8 +1157,9 @@ def process_workflow(identifier: str, configuration: Mapping[str, Any]) -> None:
                                      network, time, m,
                                      average.SITE_AVERAGE[configuration[
                                          "Reactome enrichment"].get(
-                                             "site average",
-                                             {}).get(m, "maxabslog")],
+                                             "site average", {}).get(
+                                                 m,
+                                                 "maximum absolute logarithm")],
                                      average.REPLICATE_AVERAGE[configuration[
                                          "Reactome enrichment"].get(
                                              "replicate average",
@@ -1151,11 +1169,11 @@ def process_workflow(identifier: str, configuration: Mapping[str, Any]) -> None:
                                     "intersection", False):
                                 proteins.intersection_update(
                                     protein_interaction_network.get_proteins(
-                                        network, time, m,
-                                        average.SITE_AVERAGE[configuration[
-                                            "Reactome enrichment"].get(
-                                                "site average",
-                                                {}).get(m, "maxabslog")],
+                                        network, time, m, average.SITE_AVERAGE[
+                                            configuration["Reactome enrichment"]
+                                            .get("site average", {}).get(
+                                                m,
+                                                "maximum absolute logarithm")],
                                         average.REPLICATE_AVERAGE[configuration[
                                             "Reactome enrichment"].get(
                                                 "replicate average",
@@ -1165,11 +1183,11 @@ def process_workflow(identifier: str, configuration: Mapping[str, Any]) -> None:
                             else:
                                 proteins.update(
                                     protein_interaction_network.get_proteins(
-                                        network, time, m,
-                                        average.SITE_AVERAGE[configuration[
-                                            "Reactome enrichment"].get(
-                                                "site average",
-                                                {}).get(m, "maxabslog")],
+                                        network, time, m, average.SITE_AVERAGE[
+                                            configuration["Reactome enrichment"]
+                                            .get("site average", {}).get(
+                                                m,
+                                                "maximum absolute logarithm")],
                                         average.REPLICATE_AVERAGE[configuration[
                                             "Reactome enrichment"].get(
                                                 "replicate average",
@@ -1223,21 +1241,19 @@ def process_workflow(identifier: str, configuration: Mapping[str, Any]) -> None:
                                            {}).get("Reactome enrichment", {}):
                 if configuration["community detection"][
                         "Reactome enrichment"].get("intersection", False):
-                    subset_proteins = {
+                    subsets = {
                         community: set(community.nodes())
                         for community in communities
                     }
                 else:
-                    subset_proteins = {
-                        community: set() for community in communities
-                    }
+                    subsets = {community: set() for community in communities}
 
                 for time in protein_interaction_network.get_times(network):
                     for m in configuration["community detection"][
                             "Reactome enrichment"].get("PTMs", []):
                         if m in protein_interaction_network.get_modifications(
                                 network, time):
-                            for community in subset_proteins:
+                            for community in subsets:
                                 measurement_range = (
                                     conversion.MEASUREMENT_CONVERSION[
                                         configuration["community detection"]
@@ -1253,12 +1269,13 @@ def process_workflow(identifier: str, configuration: Mapping[str, Any]) -> None:
                                                  "conversion", {}).get(m)])[0],
                                      protein_interaction_network.
                                      get_measurements(
-                                         network, time, m,
-                                         average.SITE_AVERAGE[configuration[
-                                             "community detection"][
-                                                 "Reactome enrichment"].get(
-                                                     "site average",
-                                                     {}).get(m, "maxabslog")],
+                                         network, time, m, average.SITE_AVERAGE[
+                                             configuration[
+                                                 "community detection"]
+                                             ["Reactome enrichment"].get(
+                                                 "site average", {}).
+                                             get(m,
+                                                 "maximum absolute logarithm")],
                                          average.REPLICATE_AVERAGE[
                                              configuration[
                                                  "community detection"]
@@ -1279,12 +1296,13 @@ def process_workflow(identifier: str, configuration: Mapping[str, Any]) -> None:
                                                  "conversion", {}).get(m)])[1],
                                      protein_interaction_network.
                                      get_measurements(
-                                         network, time, m,
-                                         average.SITE_AVERAGE[configuration[
-                                             "community detection"][
-                                                 "Reactome enrichment"].get(
-                                                     "site average",
-                                                     {}).get(m, "maxabslog")],
+                                         network, time, m, average.SITE_AVERAGE[
+                                             configuration[
+                                                 "community detection"]
+                                             ["Reactome enrichment"].get(
+                                                 "site average", {}).
+                                             get(m,
+                                                 "maximum absolute logarithm")],
                                          average.REPLICATE_AVERAGE[
                                              configuration[
                                                  "community detection"]
@@ -1295,48 +1313,48 @@ def process_workflow(identifier: str, configuration: Mapping[str, Any]) -> None:
                                 if configuration["community detection"][
                                         "Reactome enrichment"].get(
                                             "intersection", False):
-                                    subset_proteins[
-                                        community].intersection_update(
-                                            protein_interaction_network.
-                                            get_proteins(
-                                                community, time, m,
-                                                average.SITE_AVERAGE[
-                                                    configuration[
-                                                        "community detection"]
-                                                    ["Reactome enrichment"].get(
-                                                        "site average",
-                                                        {}).get(m,
-                                                                "maxabslog")],
-                                                average.REPLICATE_AVERAGE[
+                                    subsets[community].intersection_update(
+                                        protein_interaction_network.
+                                        get_proteins(
+                                            community, time, m,
+                                            average.SITE_AVERAGE[
+                                                configuration[
+                                                    "community detection"]
+                                                ["Reactome enrichment"].
+                                                get("site average", {}).get(
+                                                    m,
+                                                    "maximum absolute logarithm"
+                                                )], average.REPLICATE_AVERAGE[
                                                     configuration[
                                                         "community detection"]
                                                     ["Reactome enrichment"].get(
                                                         "replicate average",
                                                         {}).get(m, "mean")],
-                                                measurement_range))
+                                            measurement_range))
 
                                 else:
-                                    subset_proteins[community].update(
+                                    subsets[community].update(
                                         protein_interaction_network.
                                         get_proteins(
                                             community, time, m,
-                                            average.SITE_AVERAGE[configuration[
-                                                "community detection"][
-                                                    "Reactome enrichment"].get(
-                                                        "site average",
-                                                        {}).get(m,
-                                                                "maxabslog")],
-                                            average.REPLICATE_AVERAGE[
+                                            average.SITE_AVERAGE[
                                                 configuration[
                                                     "community detection"]
-                                                ["Reactome enrichment"].get(
-                                                    "replicate average",
-                                                    {}).get(m, "mean")],
+                                                ["Reactome enrichment"].
+                                                get("site average", {}).get(
+                                                    m,
+                                                    "maximum absolute logarithm"
+                                                )], average.REPLICATE_AVERAGE[
+                                                    configuration[
+                                                        "community detection"]
+                                                    ["Reactome enrichment"].get(
+                                                        "replicate average",
+                                                        {}).get(m, "mean")],
                                             measurement_range))
 
                 reactome_enrichment = reactome.get_enrichment(
                     [
-                        frozenset(subset_proteins[community])
+                        frozenset(subsets[community])
                         for community in communities
                     ],
                     reference=[network.nodes()]
@@ -1364,7 +1382,7 @@ def process_workflow(identifier: str, configuration: Mapping[str, Any]) -> None:
                                               start=1):
                     for (pathway,
                          name), p in sorted(reactome_enrichment[frozenset(
-                             subset_proteins[community])].items(),
+                             subsets[community])].items(),
                                             key=lambda item: item[1]):
                         if p <= configuration["community detection"][
                                 "Reactome enrichment"].get("p", 1.0):
@@ -1444,7 +1462,8 @@ def process_workflow(identifier: str, configuration: Mapping[str, Any]) -> None:
                 },
                 site_average={
                     modification: average.SITE_AVERAGE.get(
-                        site_average, average.SITE_AVERAGE["maxabslog"])
+                        site_average,
+                        average.SITE_AVERAGE["maximum absolute logarithm"])
                     if site_average is not None else None for modification,
                     site_average in configuration["community detection"]
                     ["measurement enrichment"].get("site average", {}).items()
@@ -1497,7 +1516,8 @@ def process_workflow(identifier: str, configuration: Mapping[str, Any]) -> None:
                 communities,
                 site_average={
                     modification: average.SITE_AVERAGE.get(
-                        site_average, average.SITE_AVERAGE["maxabslog"])
+                        site_average,
+                        average.SITE_AVERAGE["maximum absolute logarithm"])
                     if site_average is not None else None for modification,
                     site_average in configuration["community detection"]
                     ["measurement location"].get("site average", {}).items()

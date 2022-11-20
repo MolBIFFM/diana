@@ -360,8 +360,9 @@ measurements constituting either increase or decrease, respectively.
 The average of distinct replicates representing a single protein- or
 modification site-specific measurement. The function is applied to ratios, not
 their binary logarithm. Cytoscape styles refer to this average. The default
-setting is `"mean"`. Available settings are `"mean"`, `"median"`, `"max"`,
-`"maxabslog2"`, `"min"`, `"minabslog2"`, `"sum"`, and `"sumabslog2"`.
+setting is `"mean"`. Available settings are `"mean"`, `"median"`, `"maximum"`,
+`"maximum absolute logarithm"`, `"minimum"`, `"minimum absolute logarithm"`,
+`"sum"`, and `"sum absolute logarithm"`.
 
 ```json
 {
@@ -413,8 +414,8 @@ each must be satisfied for an interaction to be incorporated.
 ```
 An integer specifying the extension of the network using species-specific
 proteins which are separated by up to `"neighbors"` protein-protein interactions
-from the input proteins in the corresponding database. The default setting is 0,
-corresponding to no extension.
+from the input proteins in the corresponding database. The default setting is
+`0`, corresponding to no extension.
 
 ```json
 {
@@ -817,7 +818,7 @@ exported.
   "configuration": {
     "Cytoscape": {
       "site average": {
-        "PTM": "maxabslog2"
+        "PTM": "maximum absolute logarithm"
       }
     }
   }
@@ -825,9 +826,10 @@ exported.
 ```
 The modification-specific average of distinct modification sites representing
 protein-specific measurements. The function is applied to ratios, not their
-binary logarithm. The default setting is `"maxabslog2"`, corresponding to the
-largest absolute measurement. Available settings are `"mean"`, `"median"`,
-`"max"`, `"maxabslog2"`, `"min"`, `"minabslog2"`, `"sum"` and `"sumabslog2"`.
+binary logarithm. The default setting is `"maximum absolute logarithm"`,
+corresponding to the largest absolute measurement. Available settings are
+`"mean"`, `"median"`, `"maximum"`, `"maximum absolute logarithm"`, `"minimum"`,
+`"minimum absolute logarithm"`, `"sum"` and `"sum absolute logarithm"`.
 
 ```json
 {
@@ -843,8 +845,9 @@ largest absolute measurement. Available settings are `"mean"`, `"median"`,
 The modification-specific average of distinct replicates representing
 modification site-specific measurements. The function is applied to ratios, not
 their binary logarithm. The default setting is `"mean"`, corresponding to the
-mean of replicates. Available settings are `"mean"`, `"median"`, `"max"`,
-`"maxabslog2"`, `"min"`, `"minabslog2"`, `"sum"` and `"sumabslog2"`.
+mean of replicates. Available settings are `"mean"`, `"median"`, `"maximum"`,
+`"maximum absolute logarithm"`, `"minimum"`, `"minimum absolute logarithm"`,
+`"sum"` and `"sum absolute logarithm"`.
 
 ```json
 {
@@ -956,9 +959,9 @@ The average of edge confidence scores from in IntAct, MINT and STRING, and,
 lacking a comparable score, 1.0 for any interaction from BioGRID, CORUM and
 Reactome. The averaged score is reflected by edge transparency in Cytoscape. By
 default, `null`, any edge receives a score of 1.0 and edges are not transparent.
-Available settings are `null`, `"mean"`, `"median"`, `"max"`, `"min"`, `"sum"`,
-and `"number"`, the number of queried databases supporting the protein-protein
-interaction.
+Available settings are `null`, `"mean"`, `"median"`, `"maximum"`, `"minimum"`,
+`"sum"`, and `"number"`, the number of queried databases supporting the
+protein-protein interaction.
 
 ---
 
@@ -1071,12 +1074,12 @@ absolute or relative range of protein-specific measurements.
   "configuration": {
     "Gene Ontology enrichment": {
       "site average": {
-        "PTM": "maxabslog2"
+        "PTM": "maximum absolute logarithm"
       }
     },
     "Reactome enrichment": {
       "site average": {
-        "PTM": "maxabslog2"
+        "PTM": "maximum absolute logarithm"
       }
     }
   }
@@ -1084,9 +1087,10 @@ absolute or relative range of protein-specific measurements.
 ```
 The average of distinct modification sites representing protein-specific
 measurements. The function is applied to ratios, not their binary logarithm.
-The default setting is `"maxabslog2"`, corresponding to the largest absolute
-measurement. Available settings are `"mean"`, `"median"`, `"max"`,
-`"maxabslog2"`, `"min"`, `"minabslog2"`, `"sum"` and `"sumabslog2"`.
+The default setting is `"maximum absolute logarithm"`, corresponding to the
+largest absolute measurement. Available settings are `"mean"`, `"median"`,
+`"maximum"`, `"maximum absolute logarithm"`, `"minimum"`,
+`"minimum absolute logarithm"`, `"sum"` and `"sum absolute logarithm"`.
 
 ```json
 {
@@ -1107,8 +1111,9 @@ measurement. Available settings are `"mean"`, `"median"`, `"max"`,
 The average of distinct replicates representing modification site-specific
 measurements. The function is applied to ratios, not their binary logarithm.
 The default setting is `"mean"`, corresponding to the mean of replicates.
-Available settings are `"mean"`, `"median"`, `"max"`, `"maxabslog2"`, `"min"`,
-`"minabslog2"`, `"sum"` and `"sumabslog2"`.
+Available settings are `"mean"`, `"median"`, `"maximum"`,
+`"maximum absolute logarithm"`, `"minimum"`, `"minimum absolute logarithm"`,
+`"sum"` and `"sum absolute logarithm"`.
 
 ```json
 {
@@ -1240,12 +1245,12 @@ measurements.
   "configuration": {
     "Gene Ontology network": {
       "site average": {
-        "PTM": "maxabslog2"
+        "PTM": "maximum absolute logarithm"
       }
     },
     "Reactome network": {
       "site average": {
-        "PTM": "maxabslog2"
+        "PTM": "maximum absolute logarithm"
       }
     }
   }
@@ -1253,9 +1258,10 @@ measurements.
 ```
 The average of distinct modification sites representing protein-specific
 measurements. The function is applied to ratios, not their binary logarithm. The
-default setting is `"maxabslog2"`, corresponding to the largest absolute
-measurement. Available settings are `"mean"`, `"median"`, `"max"`,
-`"maxabslog2"`, `"min"`, `"minabslog2"`, `"sum"` and `"sumabslog2"`.
+default setting is `"maximum absolute logarithm"`, corresponding to the largest
+absolute measurement. Available settings are `"mean"`, `"median"`, `"maximum"`,
+`"maximum absolute logarithm"`, `"minimum"`, `"minimum absolute logarithm"`,
+`"sum"` and `"sum absolute logarithm"`.
 
 ```json
 {
@@ -1276,8 +1282,9 @@ measurement. Available settings are `"mean"`, `"median"`, `"max"`,
 The average of distinct replicates representing modification site-specific
 measurements. The function is applied to ratios, not their binary logarithm. The
 default setting is `"mean"`, corresponding to the mean of replicates. Available
-settings are `"mean"`, `"median"`, `"max"`, `"maxabslog2"`, `"min"`,
-`"minabslog2"`, `"sum"` and `"sumabslog2"`.
+settings are `"mean"`, `"median"`, `"maximum"`, `"maximum absolute logarithm"`,
+`"minimum"`, `"minimum absolute logarithm"`, `"sum"` and
+`"sum absolute logarithm"`.
 
 ```json
 {
@@ -1479,8 +1486,8 @@ STRING, and, lacking of comparable score, 1.0 for any interaction from BioGRID,
 CORUM and Reactome. The combined score represents edge weight in community
 detection. By default, `null`, any edge receives a score of 1.0, corresponding
 to an unweighted network. Available settings are `null`, `"mean"`, `"median"`,
-`"max"`, `"min"`, `"sum"`, and `"number"`, the number of queried databases
-supporting the protein-protein interaction.
+`"maximum"`, `"minimum"`, `"sum"`, and `"number"`, the number of queried
+databases supporting the protein-protein interaction.
 
 ```json
 {
@@ -1508,7 +1515,7 @@ network, resulting in a single iteration of the community detection algorithm.
 ```
 The average of community sizes in terms of nodes decisive to meeting the
 community size threshold. The default setting is `"mean"`. Available settings
-are `"mean"`, `"median"`, `"max"`, and `"min"`.
+are `"mean"`, `"median"`, `"maximum"`, and `"minimum"`.
 
 ---
 
@@ -1734,12 +1741,12 @@ measurements.
     "community detection": {
       "Gene Ontology enrichment": {
         "site average": {
-          "PTM": "maxabslog2"
+          "PTM": "maximum absolute logarithm"
         }
       },
       "Reactome enrichment": {
         "site average": {
-          "PTM": "maxabslog2"
+          "PTM": "maximum absolute logarithm"
         }
       }
     }
@@ -1748,9 +1755,10 @@ measurements.
 ```
 The average of distinct modification sites representing protein-specific
 measurements. The function is applied to ratios, not their binary logarithm. The
-default setting is `"maxabslog2"`, corresponding to the largest absolute
-measurement. Available settings are `"mean"`, `"median"`, `"max"`,
-`"maxabslog2"`, `"min"`, `"minabslog2"`, `"sum"` and `"sumabslog2"`.
+default setting is `"maximum absolute logarithm"`, corresponding to the largest
+absolute measurement. Available settings are `"mean"`, `"median"`, `"maximum"`,
+`"maximum absolute logarithm"`, `"minimum"`, `"minimum absolute logarithm"`,
+`"sum"` and `"sum absolute logarithm"`.
 
 ```json
 {
@@ -1773,8 +1781,9 @@ measurement. Available settings are `"mean"`, `"median"`, `"max"`,
 The average of distinct replicates representing modification site-specific
 measurements. The function is applied to ratios, not their binary logarithm. The
 default setting is `"mean"`, corresponding to the mean of replicates. Available
-settings are `"mean"`, `"median"`, `"max"`, `"maxabslog2"`, `"min"`,
-`"minabslog2"`, `"sum"` and `"sumabslog2"`.
+settings are `"mean"`, `"median"`, `"maximum"`, `"maximum absolute logarithm"`,
+`"minimum"`, `"minimum absolute logarithm"`, `"sum"` and
+`"sum absolute logarithm"`.
 
 ```json
 {
@@ -1867,12 +1876,12 @@ The Gene Ontology namespaces to consider. The default setting is
     "community detection": {
       "measurement enrichment": {
         "site average": {
-          "PTM": "maxabslog2"
+          "PTM": "maximum absolute logarithm"
         }
       },
       "measurement location": {
         "site average": {
-          "PTM": "maxabslog2"
+          "PTM": "maximum absolute logarithm"
         }
       }
     }
@@ -1880,10 +1889,12 @@ The Gene Ontology namespaces to consider. The default setting is
 }
 ```
 The modification-specific average of distinct modification sites representing
-protein-specific measurements. The default setting is `"maxabslog2"`,
-corresponding to the largest absolute change. Available settings are `"mean"`,
-`"median"`, `"max"`, `"maxabslog2"`, `"min"`, `"minabslog2"`, `"sum"`,
-`"sumabslog2"` and `null` to consider modification sites separately.
+protein-specific measurements. The default setting is
+`"maximum absolute logarithm"`, corresponding to the largest absolute change.
+Available settings are `"mean"`, `"median"`, `"maximum"`,
+`"maximum absolute logarithm"`, `"minimum"`, `"minimum absolute logarithm"`,
+`"sum"`, `"sum absolute logarithm"` and `null` to consider modification sites
+separately.
 
 ```json
 {
@@ -1905,9 +1916,10 @@ corresponding to the largest absolute change. Available settings are `"mean"`,
 ```
 The modification-specific average of distinct replicates used modification
 site-specific measurements. The default setting is `"mean"`, corresponding to
-the mean of replicates. Available settings are `"mean"`, `"median"`, `"max"`,
-`"maxabslog2"`, `"min"`, `"minabslog2"`, `"sum"`, `"sumabslog2"` and `null` to
-consider replicates separately.
+the mean of replicates. Available settings are `"mean"`, `"median"`,
+`"maximum"`, `"maximum absolute logarithm"`, `"minimum"`,
+`"minimum absolute logarithm"`, `"sum"`, `"sum absolute logarithm"` and `null`
+to consider replicates separately.
 
 ```json
 {
@@ -2187,8 +2199,8 @@ following plugins and aims to generalize analyses enabled by combining them:
 
 ---
 
-Research observing relations of communities of protein-protein interaction
-networks and protein function includes:
+Integrative research observing relations of communities of protein-protein
+interaction networks and protein function includes:
 
 - Chen, J. and Yuan, B. (2006) **Detecting functional modules in the yeast**
   **protein–protein interaction network**, *Bioinformatics*, 22, 2283-2290.
