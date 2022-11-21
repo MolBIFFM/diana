@@ -121,9 +121,9 @@ def convert_namespaces(namespaces: Iterable[str]) -> tuple[str, ...]:
 def get_enrichment(
     proteins: Sequence[frozenset[str]],
     reference: Sequence[Iterable[str]],
-    enrichment_test: Callable[
-        [int, int, int, int],
-        float] = lambda k, M, n, N: scipy.stats.hypergeom.sf(k - 1, M, n, N),
+    enrichment_test: Callable[[int, int, int, int],
+                              float] = lambda k, M, n, N: float(
+                                  scipy.stats.hypergeom.sf(k - 1, M, n, N)),
     multiple_testing_correction: Callable[[dict[Hashable, float]], Mapping[
         Hashable, float]] = correction.benjamini_yekutieli,
     organism: int = 9606,

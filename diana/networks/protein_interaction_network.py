@@ -1232,9 +1232,9 @@ def get_enrichment(
                                                float]],
     site_average: dict[str, Optional[Callable[[Iterable[float]], float]]],
     replicate_average: dict[str, Optional[Callable[[Iterable[float]], float]]],
-    enrichment_test: Callable[
-        [int, int, int, int],
-        float] = lambda k, M, n, N: scipy.stats.hypergeom.sf(k - 1, M, n, N),
+    enrichment_test: Callable[[int, int, int, int],
+                              float] = lambda k, M, n, N: float(
+                                  scipy.stats.hypergeom.sf(k - 1, M, n, N)),
     multiple_testing_correction: Callable[[dict[Hashable, float]], dict[
         Hashable, float]] = correction.benjamini_yekutieli,
 ) -> dict[nx.Graph, dict[int, dict[str, float]]]:
@@ -1346,7 +1346,7 @@ def get_location(
     replicate_average: dict[str, Optional[Callable[[Iterable[float]], float]]],
     location_test: Callable[
         [Collection[float], Collection[float]],
-        float] = lambda x, y: scipy.stats.ranksums(x, y).pvalue,
+        float] = lambda x, y: float(scipy.stats.ranksums(x, y).pvalue),
     multiple_testing_correction: Callable[[dict[Hashable, float]], dict[
         Hashable, float]] = correction.benjamini_yekutieli,
 ) -> dict[nx.Graph, dict[int, dict[str, float]]]:

@@ -1,6 +1,6 @@
 """
-DIANA: data integration and network-based analysis for post-translational
-modification mass spectrometry data
+DIANA: data integration and network analysis for post-translational modification
+mass spectrometry data
 """
 import argparse
 import concurrent.futures
@@ -1047,7 +1047,7 @@ def process_workflow(identifier: str, configuration: Mapping[str, Any]) -> None:
 
                 for k, community in enumerate(sorted(
                         communities,
-                        key=lambda community: community.number_of_nodes(),
+                        key=lambda community: int(community.number_of_nodes()),
                         reverse=True),
                                               start=1):
                     for (term,
@@ -1091,7 +1091,7 @@ def process_workflow(identifier: str, configuration: Mapping[str, Any]) -> None:
 
                 for k, community in enumerate(sorted(
                         communities,
-                        key=lambda community: community.number_of_nodes(),
+                        key=lambda community: int(community.number_of_nodes()),
                         reverse=True),
                                               start=1):
                     for (term,
@@ -1377,7 +1377,7 @@ def process_workflow(identifier: str, configuration: Mapping[str, Any]) -> None:
 
                 for k, community in enumerate(sorted(
                         communities,
-                        key=lambda community: community.number_of_nodes(),
+                        key=lambda community: int(community.number_of_nodes()),
                         reverse=True),
                                               start=1):
                     for (pathway,
@@ -1410,7 +1410,7 @@ def process_workflow(identifier: str, configuration: Mapping[str, Any]) -> None:
 
                 for k, community in enumerate(sorted(
                         communities,
-                        key=lambda community: community.number_of_nodes(),
+                        key=lambda community: int(community.number_of_nodes()),
                         reverse=True),
                                               start=1):
                     for (pathway,
@@ -1488,7 +1488,7 @@ def process_workflow(identifier: str, configuration: Mapping[str, Any]) -> None:
 
             for k, community in enumerate(sorted(
                     communities,
-                    key=lambda community: community.number_of_nodes(),
+                    key=lambda community: int(community.number_of_nodes()),
                     reverse=True),
                                           start=1):
                 for time in enrichment[community]:
@@ -1545,7 +1545,7 @@ def process_workflow(identifier: str, configuration: Mapping[str, Any]) -> None:
 
             for k, community in enumerate(sorted(
                     communities,
-                    key=lambda community: community.number_of_nodes(),
+                    key=lambda community: int(community.number_of_nodes()),
                     reverse=True),
                                           start=1):
                 for time in location[community]:
@@ -1560,7 +1560,7 @@ def process_workflow(identifier: str, configuration: Mapping[str, Any]) -> None:
 
     for k, community in enumerate(sorted(
             communities,
-            key=lambda community: community.number_of_nodes(),
+            key=lambda community: int(community.number_of_nodes()),
             reverse=True),
                                   start=1):
         if export[community]:
@@ -1593,7 +1593,7 @@ def process_configuration_file(configuration_file: str) -> None:
 def main() -> None:
     """Concurrent workflow execution."""
     parser = argparse.ArgumentParser(
-        description="DIANA: data integration and network-based analysis for "
+        description="DIANA: data integration and network analysis for "
         "post-translational modification mass spectrometry data")
 
     parser.add_argument("-c",

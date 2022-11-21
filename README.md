@@ -1,6 +1,6 @@
 # DIANA
 DIANA is a command line application facilitating **D**ata **I**ntegration
-**A**nd **N**etwork-based **A**nalysis for post-translational modification mass
+**A**nd **N**etwork **A**nalysis for post-translational modification mass
 spectrometry data.
 
 Provided longitudinal mass-spectrometry data capturing differential
@@ -1531,8 +1531,8 @@ Alternatively, the distribution of measurements within separate communities can
 be compared with that of the remaining network.
 
 A community is exported if is significant according to any of the specified
-tests. Communities are exported in descending order of the number of proteins
-they contain.
+tests subject to correction for multiple testing. Communities are exported in
+descending order of the number of proteins they consist of.
 
 ```json
 {
