@@ -2036,7 +2036,7 @@ Averages determining statistical analysis are customizable independent of these
 attributes.
 
 Protein-protein interactions are associated with database-specific confidence
-scores as well as a customizable composite score utilized by Cytoscape.
+scores as well as a customizable composite score utilized by Cytoscape:
 
 ```xml
 <edge source="Q12774" target="P31947">
@@ -2180,7 +2180,7 @@ DIANA utilizes the following external libraries:
 ---
 
 Development of DIANA was inspired by previous work utilizing Cytoscape and the
-following plugins and aims to generalize analyses enabled by combining them:
+following plugins and aims to extend upon analyses enabled by combining them:
 
 - Maere, S. et al. (2005) ***BiNGO*: a Cytoscape plugin to assess**
   **overrepresentation of Gene Ontology categories in Biological Networks**,
@@ -2209,8 +2209,8 @@ interaction networks and protein function includes:
 
 ---
 
-Reviews of measuring post-translational modification by mass spectrometry
-include:
+Reviews of measuring differential post-translational modification by mass
+spectrometry include:
 
 - Olsen, J. V. and Mann, M. (2013) **Status of Large-scale Analysis of**
   **Post-translational Modifications by Mass Spectrometry**, *Mol. Cell.*
