@@ -2027,7 +2027,7 @@ protein- or site-specific. The first number refers to the specified time of
 measurement, the following identifier to the specified type of
 post-translational modification. The number following `"S"` refers to the
 relative position of the corresponding modification site and the number
-following `"R"` to the replicate.
+following `"R"` to the respective replicate measurement.
 
 Further entries refer to the respective averages of sites and replicates,
 respectively. Along with a categorization of measurements, identified by time of
@@ -2035,7 +2035,8 @@ measurement, these inform the visual representation of the protein in Cytoscape.
 Averages determining statistical analysis are customizable independent of these
 attributes.
 
-Annotations of protein-protein interactions contain the following information:
+Protein-protein interactions are associated with database-specific confidence
+scores as well as a customizable composite score utilized by Cytoscape.
 
 ```xml
 <edge source="Q12774" target="P31947">
@@ -2045,9 +2046,6 @@ Annotations of protein-protein interactions contain the following information:
   <data key="score">1.0</data>
 </edge>
 ```
-
-A protein-protein interaction between is associated with database-specific
-confidence scores as well as a composite score utilized by Cytoscape.
 
 ## Gene Ontology network
 
