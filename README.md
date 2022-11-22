@@ -2036,8 +2036,9 @@ measurement, these inform the visual representation of the protein in Cytoscape.
 Averages determining statistical analysis are customizable independent of these
 attributes.
 
-Protein-protein interactions are associated with database-specific confidence
-scores as well as a customizable composite score utilized by Cytoscape:
+Undirected protein-protein interactions are associated with database-specific
+confidence scores as well as a customizable composite score utilized by
+Cytoscape:
 
 ```xml
 <edge source="Q12774" target="P31947">
@@ -2065,15 +2066,15 @@ Annotations of Gene Ontology terms contain the following information:
 </node>
 ```
 
-Terms are represented by their Gene Ontology ID. `"term"` refers to the term and
-`"namespace"` to its namespace. `"p-value"` refers to the corrected p-value of
-the test for enrichment of the term by the submitted proteins.
+Terms are represented by their primary Gene Ontology ID. `"term"` refers to the
+term and `"namespace"` to its namespace. `"p-value"` refers to the corrected
+p-value of the test for enrichment of the term by the submitted proteins.
 `"number of proteins"` refers to the number of submitted proteins annotated with
 the term and `"proteins"` refers to the space-separated accessions of these
 proteins.
 
-Relationships of Gene Ontology terms contain no additional information besides
-the related terms:
+Directed hierarchical relationships of Gene Ontology terms contain no additional
+information:
 
 ```xml
 <edge source="GO:0051056" target="GO:1902531" />
@@ -2094,15 +2095,15 @@ Annotations of Reactome pathways contain the following information:
 </node>
 ```
 
-Pathways are represented by their Reactome pathway stable identifier.
+Pathways are represented by their stable Reactome pathway identifier.
 `"pathway"` refers to the pathway name. `"p-value"` refers to the corrected
 p-value of the test for enrichment of the pathway by the submitted proteins.
 `"number of proteins"` refers to the number of submitted proteins annotated with
 the pathway and `"proteins"` refers to the space-separated accessions of these
 proteins.
 
-Relationships of Reactome pathways contain no additional information besides the
-related pathways:
+Directed hierarchical relationships of Reactome pathways contain no additional
+information:
 
 ```xml
 <edge source="R-HSA-73887" target="R-HSA-75158" />
