@@ -27,15 +27,15 @@ DIANA is currently developed using Python 3.10.7, Ubuntu 22.10 and Cytoscape
 3.9.1. Source code is formatted automatically using YAPF 0.32.0.
 
 ## Command Line Interface
-
 Instructions can be displayed by running the following command:
 
 ```
 python3 diana/diana.py --help
 ```
 
-Configuration is detailed below. Configuration files referring to published data
-sets referenced below are included in this repository.
+Configuration of workflows is detailed below. Examples of configuration files
+referring to published data sets referenced below are included in this
+repository.
 
 ## Configuration
 A workflow consists of the assembly of a protein-protein interaction network,
@@ -1532,8 +1532,8 @@ Alternatively, the distribution of measurements within separate communities can
 be compared with that of the remaining network.
 
 A community is exported if is significant according to any of the specified
-tests subject to correction for multiple testing. Communities are exported in
-descending order of the number of proteins they consist of.
+tests subject to correction for multiple testing. Communities are exported
+indexed in descending order of the number of proteins they consist of.
 
 ```json
 {

@@ -1605,8 +1605,8 @@ def main() -> None:
     parser.add_argument(
         "-p",
         "--processes",
-        help=
-        f"maximum number of concurrent processes (default: {os.cpu_count()})",
+        help="maximum number of concurrently processed configuration files "
+        f"(default: {os.cpu_count()})",
         type=int,
         default=os.cpu_count())
 
