@@ -186,8 +186,9 @@ tabular file.
   }
 }
 ```
-A list of protein-protein interaction networks as exported by workflows. The
-union of input protein-protein interaction networks and input proteins is used.
+A list of protein-protein interaction networks as exported, allowing to resume,
+modify or narrow analyses from previous workflows. The union of nodes in input
+protein-protein interaction networks and input proteins is used.
 
 ```json
 {
