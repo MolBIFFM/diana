@@ -417,8 +417,7 @@ def get_styles(
     node_color_modifications: Sequence[str],
     node_size_modification: Optional[str],
     bar_chart_modifications: Sequence[str],
-    measurement_conversion: dict[str, Callable[[float, Collection[float]],
-                                               float]],
+    measurement_score: dict[str, Callable[[float, Collection[float]], float]],
     site_average: dict[str, Callable[[Iterable[float]], float]],
     replicate_average: dict[str, Callable[[Iterable[float]], float]],
     confidence_score_average: Callable[[dict[str, float]], float]
@@ -436,7 +435,7 @@ def get_styles(
             post-translational modification to represent by node size.
         bar_chart_modifications: The identifiers of site-specific
             post-translational modifications to represent by bar charts.
-        measurement_conversion: Modification-specific functions to transform
+        measurement_score: Modification-specific functions to transform
             binary logarithms of measurements.
         site_average: Modification-specific functions to derive
             protein-specific measurements from their site-specific measurements.
@@ -709,7 +708,7 @@ def get_styles(
                         protein_interaction_network.get_sites(
                             network, time, bar_chart_modifications[m], protein)
                         for protein in network),
-                    cy_range=(measurement_conversion.get(
+                    cy_range=(measurement_score.get(
                         bar_chart_modifications[m],
                         lambda measurement, measurements: measurement)(
                             min(measurements),
@@ -723,7 +722,7 @@ def get_styles(
                                 replicate_average.get(
                                     bar_chart_modifications[m],
                                     statistics.mean))),
-                              measurement_conversion.get(
+                              measurement_score.get(
                                   bar_chart_modifications[m],
                                   lambda measurement, measurements: measurement)
                               (max(measurements),

@@ -36,7 +36,7 @@ def add_proteins_from_table(
         time: int = 0,
         modification: str = "PTM",
         number_replicates: int = 1,
-        measurement_conversion: Callable[[float], float] = math.log2) -> None:
+        measurement_score: Callable[[float], float] = math.log2) -> None:
     """
     Parse UniProt protein accessions and protein-specific measurements from a
     tabular file and add proteins to a protein-protein interaction network.
@@ -58,7 +58,7 @@ def add_proteins_from_table(
             modification to associate with measurements.
         number_replicates: The minimum number of replicates to accept a
             measurement.
-        measurement_conversion: The function to convert the measurements
+        measurement_score: The function to convert the measurements
             reported to their binary logarithm.
     """
     if os.path.splitext(file_name)[1].lstrip(".") in (
@@ -110,7 +110,7 @@ def add_proteins_from_table(
         if len(measurements) >= min(number_replicates, len(replicate_columns)):
             for protein_accession in protein_accessions:
                 proteins[protein_accession] = tuple(
-                    measurement_conversion(measurement)
+                    measurement_score(measurement)
                     for measurement in measurements)
 
     network.add_nodes_from(proteins)
@@ -135,7 +135,7 @@ def add_sites_from_table(
         number_sites: int = 100,
         number_replicates: int = 1,
         replicate_average: Callable[[Iterable[float]], float] = statistics.mean,
-        measurement_conversion: Callable[[float], float] = math.log2,
+        measurement_score: Callable[[float], float] = math.log2,
         site_prioritization: Callable[[float], float] = abs) -> None:
     """
     Parse UniProt protein accessions and site-specific measurements from a
@@ -166,7 +166,7 @@ def add_sites_from_table(
             measurement.
         replicate_average: A function to derive site-specific measurements from
             replicates for site prioritization.
-        measurement_conversion: The function to convert the measurements
+        measurement_score: The function to convert the measurements
             reported to their binary logarithm.
         site_prioritization: A function of a measurement to derive a
         representative value for site prioritization.
@@ -242,7 +242,7 @@ def add_sites_from_table(
                     proteins[protein_accession] = {}
 
                 proteins[protein_accession][position] = tuple(
-                    measurement_conversion(measurement)
+                    measurement_score(measurement)
                     for measurement in measurements)
 
     network.add_nodes_from(proteins)
@@ -473,8 +473,7 @@ def set_measurements(
                                                         float]],
     replicate_average: dict[str, Callable[[Iterable[float]], float]],
     measurements: dict[str, tuple[float, float]],
-    measurement_conversion: dict[str, Callable[[float, Collection[float]],
-                                               float]]
+    measurement_score: dict[str, Callable[[float, Collection[float]], float]]
 ) -> None:
     """
     Annotate proteins in a protein-protein interaction network with aggregates
@@ -488,7 +487,7 @@ def set_measurements(
             site-specific measurements from replicate measurements.
         measurements: Modification-specific range of averaged measurements by
             which proteins are categorized.
-        measurement_conversion: Modification-specific functions used convert the
+        measurement_score: Modification-specific functions used convert the
             measurement range bounds to their binary logarithm.
     """
     times = get_times(network)
@@ -497,7 +496,7 @@ def set_measurements(
     measurement_range = {
         time: {
             modification:
-            (measurement_conversion.get(
+            (measurement_score.get(
                 modification, lambda measurement, measurements: measurement)
              (
                  measurements.get(modification, (-1.0, 1.0))[0],
@@ -508,7 +507,7 @@ def set_measurements(
                              sites, key=lambda site: abs(math.log2(site)))),
                      replicate_average.get(modification, statistics.mean)),
              ),
-             measurement_conversion.get(
+             measurement_score.get(
                  modification,
                  lambda measurement, measurements: measurement)(
                      measurements.get(
@@ -1228,8 +1227,7 @@ def get_enrichment(
     network: nx.Graph,
     communities: Iterable[nx.Graph],
     measurements: dict[str, tuple[float, float]],
-    measurement_conversion: dict[str, Callable[[float, Collection[float]],
-                                               float]],
+    measurement_score: dict[str, Callable[[float, Collection[float]], float]],
     site_average: dict[str, Optional[Callable[[Iterable[float]], float]]],
     replicate_average: dict[str, Optional[Callable[[Iterable[float]], float]]],
     enrichment_test: Callable[[int, int, int, int],
@@ -1248,7 +1246,7 @@ def get_enrichment(
         communities: The communities of the protein-protein interaction network.
         measurements: Modification-specific range of averaged measurements by
             which proteins are categorized.
-        measurement_conversion: Modification-specific functions used convert the
+        measurement_score: Modification-specific functions used convert the
             measurement range bounds to their binary logarithm.
         site_average: Optional modification-specific functions to derive
             protein-specific measurements from site-specific measurements.
@@ -1270,14 +1268,14 @@ def get_enrichment(
     for time in get_times(network):
         for modification in get_modifications(network, time):
             measurement_range = (
-                measurement_conversion.get(
+                measurement_score.get(
                     modification,
                     lambda measurement, measurements: measurement)(
                         measurements.get(modification, (-1.0, 1.0))[0],
                         get_measurements(network, time, modification,
                                          site_average.get(modification),
                                          replicate_average.get(modification))),
-                measurement_conversion.get(
+                measurement_score.get(
                     modification,
                     lambda measurement, measurements: measurement)(
                         measurements.get(modification, (-1.0, 1.0))[1],

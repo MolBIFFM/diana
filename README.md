@@ -377,7 +377,7 @@ setting is `"mean"`. Available settings are `"mean"`, `"median"`, `"maximum"`,
 }
 ```
 The base of the logarithm that measurements are reported as. By default, ratios
-are assumed and no conversion is performed, corresponding to `null`. Available
+are assumed and no score is performed, corresponding to `null`. Available
 settings are `null`, `2` and `10`.
 
 ---
@@ -854,18 +854,18 @@ mean of replicates. Available settings are `"mean"`, `"median"`, `"maximum"`,
 {
   "configuration": {
     "Cytoscape": {
-      "conversion": {
+      "score": {
         "PTM": null
       }
     }
   }
 }
 ```
-The modification-specific statistic that a specified measurement range refers
-to. It defaults to the binary logarithm of a measurement for `null` but can be
-set to `"quantile"`, `"ratio"` or `"standard score"`, computed with respect to
-the distribution of a particular modification at a particular time of
-measurement across the protein-protein interaction network, if applicable.
+The modification-specific score that a specified measurement range refers to. It
+defaults to the binary logarithm of a measurement for `null` but can be set to
+`"quantile"`, `"ratio"` or `"standard score"`, computed with respect to the
+distribution of a particular modification at a particular time of measurement
+across the protein-protein interaction network, if applicable.
 
 ```json
 {
@@ -914,9 +914,9 @@ specified.
 ```
 The modification-specific range of averaged measurements categorizing proteins
 by whether the range is exceeded or not. The adaptive default setting is
-`[-1.0, 1.0]` if `"conversion"` is set to `null`, if `"conversion"` is set to
-`"quantile"`, `[0.5, 2.0]` if `"conversion"` is set to `"ratio"`, and
-`[-1.0, 1.0]` if `"conversion"` is set to `"standard score"`.
+`[-1.0, 1.0]` if `"score"` is set to `null`, if `"score"` is set to
+`"quantile"`, `[0.5, 2.0]` if `"score"` is set to `"ratio"`, and
+`[-1.0, 1.0]` if `"score"` is set to `"standard score"`.
 
 ```json
 {
@@ -1120,23 +1120,23 @@ Available settings are `"mean"`, `"median"`, `"maximum"`,
 {
   "configuration": {
     "Gene Ontology enrichment": {
-      "conversion": {
+      "score": {
         "PTM": null
       }
     },
     "Reactome enrichment": {
-      "conversion": {
+      "score": {
         "PTM": null
       }
     }
   }
 }
 ```
-The modification-specific statistic that a specified measurement range refers
-to. It defaults to the binary logarithm of a measurement for `null` but can be
-set to `"quantile"`, `"ratio"` or `"standard score"`, computed with respect to
-the distribution of a particular modification at a particular time of
-measurement across the protein-protein interaction network, if applicable.
+The modification-specific score that a specified measurement range refers to. It
+defaults to the binary logarithm of a measurement for `null` but can be set to
+`"quantile"`, `"ratio"` or `"standard score"`, computed with respect to the
+distribution of a particular modification at a particular time of measurement
+across the protein-protein interaction network, if applicable.
 
 ```json
 {
@@ -1155,10 +1155,10 @@ measurement across the protein-protein interaction network, if applicable.
 }
 ```
 The range of averaged measurements categorizing proteins by whether the range is
-exceeded or not. The adaptive default setting is `[-1.0, 1.0]` if `"conversion"`
-is set to `null`, `[0.25, 0.75]` if `"conversion"` is set to `"quantile"`,
-`[0.5, 2.0]` if `"conversion"` is set to `"ratio"`, and `[-1.0, 1.0]` if
-`"conversion"` is set to `"standard score"`.
+exceeded or not. The adaptive default setting is `[-1.0, 1.0]` if `"score"`
+is set to `null`, `[0.25, 0.75]` if `"score"` is set to `"quantile"`,
+`[0.5, 2.0]` if `"score"` is set to `"ratio"`, and `[-1.0, 1.0]` if
+`"score"` is set to `"standard score"`.
 
 ```json
 {
@@ -1291,23 +1291,23 @@ settings are `"mean"`, `"median"`, `"maximum"`, `"maximum absolute logarithm"`,
 {
   "configuration": {
     "Gene Ontology network": {
-      "conversion": {
+      "score": {
         "PTM": null
       }
     },
     "Reactome network": {
-      "conversion": {
+      "score": {
         "PTM": null
       }
     }
   }
 }
 ```
-The modification-specific statistic that a specified measurement range refers
-to. It defaults to the binary logarithm of a measurement for `null` but can be
-set to `"quantile"`, `"ratio"` or `"standard score"`, computed with respect to
-the distribution of a particular modification at a particular time of
-measurement across the protein-protein interaction network, if applicable.
+The modification-specific score that a specified measurement range refers to. It
+defaults to the binary logarithm of a measurement for `null` but can be set to
+`"quantile"`, `"ratio"` or `"standard score"`, computed with respect to the
+distribution of a particular modification at a particular time of measurement
+across the protein-protein interaction network, if applicable.
 
 ```json
 {
@@ -1326,10 +1326,10 @@ measurement across the protein-protein interaction network, if applicable.
 }
 ```
 The range of averaged measurements categorizing proteins by whether the range is
-exceeded or not. The adaptive default setting is `[-1.0, 1.0]` if `"conversion"`
-is set to `null`, `[0.25, 0.75]` if `"conversion"` is set to `"quantile"`,
-`[0.5, 2.0]` if `"conversion"` is set to `"ratio"`, and `[-1.0, 1.0]` if
-`"conversion"` is set to `"standard score"`.
+exceeded or not. The adaptive default setting is `[-1.0, 1.0]` if `"score"`
+is set to `null`, `[0.25, 0.75]` if `"score"` is set to `"quantile"`,
+`[0.5, 2.0]` if `"score"` is set to `"ratio"`, and `[-1.0, 1.0]` if
+`"score"` is set to `"standard score"`.
 
 ```json
 {
@@ -1791,12 +1791,12 @@ settings are `"mean"`, `"median"`, `"maximum"`, `"maximum absolute logarithm"`,
   "configuration": {
     "community detection": {
       "Gene Ontology enrichment": {
-        "conversion": {
+        "score": {
           "PTM": null
         }
       },
       "Reactome enrichment": {
-        "conversion": {
+        "score": {
           "PTM": null
         }
       }
@@ -1804,12 +1804,11 @@ settings are `"mean"`, `"median"`, `"maximum"`, `"maximum absolute logarithm"`,
   }
 }
 ```
-The modification-specific statistic that a specified measurement range refers
-to. It defaults to the binary logarithm of a measurement for `null` but can be
-set to `"quantile"`, `"ratio"` or `"standard score"`, computed with respect to
-the distribution of a particular modification at a particular time of
-measurement across each community of the protein-protein interaction network, if
-applicable.
+The modification-specific score that a specified measurement range refers to. It
+defaults to the binary logarithm of a measurement for `null` but can be set to
+`"quantile"`, `"ratio"` or `"standard score"`, computed with respect to the
+distribution of a particular modification at a particular time of measurement
+across each community of the protein-protein interaction network, if applicable.
 
 ```json
 {
@@ -1830,10 +1829,10 @@ applicable.
 }
 ```
 The range of averaged measurements categorizing proteins by whether the range is
-exceeded or not. The adaptive default setting is `[-1.0, 1.0]` if `"conversion"`
-is set to `null`, `[0.25, 0.75]` if `"conversion"` is set to `"quantile"`,
-`[0.5, 2.0]` if `"conversion"` is set to `"ratio"`, and `[-1.0, 1.0]` if
-`"conversion"` is set to `"standard score"`.
+exceeded or not. The adaptive default setting is `[-1.0, 1.0]` if `"score"`
+is set to `null`, `[0.25, 0.75]` if `"score"` is set to `"quantile"`,
+`[0.5, 2.0]` if `"score"` is set to `"ratio"`, and `[-1.0, 1.0]` if
+`"score"` is set to `"standard score"`.
 
 ```json
 {
@@ -1927,7 +1926,7 @@ to consider replicates separately.
   "configuration": {
     "community detection": {
       "measurement enrichment": {
-        "conversion": {
+        "score": {
           "PTM": null
         }
       }
@@ -1935,12 +1934,11 @@ to consider replicates separately.
   }
 }
 ```
-The modification-specific statistic that a specified measurement range refers
-to. It defaults to the binary logarithm of a measurement for `null` but can be
-set to `"quantile"`, `"ratio"` or `"standard score"`, computed with respect to
-the distribution of a particular modification at a particular time of
-measurement across each community of the protein-protein interaction network, if
-applicable.
+The modification-specific score that a specified measurement range refers to. It
+defaults to the binary logarithm of a measurement for `null` but can be set to
+`"quantile"`, `"ratio"` or `"standard score"`, computed with respect to the
+distribution of a particular modification at a particular time of measurement
+across each community of the protein-protein interaction network, if applicable.
 
 ```json
 {
@@ -1957,9 +1955,9 @@ applicable.
 ```
 The modification-specific range of measurements to categorize proteins by
 whether the range is exceeded or not. The adaptive default setting is
-`[-1.0, 1.0]` if `"conversion"` is set to `null`, `[0.25, 0.75]` if
-`"conversion"` is set to `"quantile"`, `[0.5, 2.0]` if `"conversion"` is set to
-`"ratio"`, and `[-1.0, 1.0]` if `"conversion"` is set to `"standard score"`.
+`[-1.0, 1.0]` if `"score"` is set to `null`, `[0.25, 0.75]` if
+`"score"` is set to `"quantile"`, `[0.5, 2.0]` if `"score"` is set to
+`"ratio"`, and `[-1.0, 1.0]` if `"score"` is set to `"standard score"`.
 
 ## Protein-protein interaction network
 

@@ -1,4 +1,4 @@
-"""Mappings of configuration file entries to conversions."""
+"""Mappings of configuration file entries to scores."""
 
 import math
 import statistics
@@ -10,7 +10,7 @@ LOGARITHM: dict[Optional[int], Callable[[float], float]] = {
     10: lambda measurement: math.log10(measurement) / math.log10(2.0)
 }
 
-MEASUREMENT_CONVERSION: dict[Optional[str], Callable[
+MEASUREMENT_SCORE: dict[Optional[str], Callable[
     [float, Collection[float]], float]] = {
         None:
             lambda measurement, _: measurement,
