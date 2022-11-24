@@ -1986,7 +1986,7 @@ whether the range is exceeded or not. The adaptive default setting is
 `"score"` is set to `"quantile"`, `[0.5, 2.0]` if `"score"` is set to
 `"ratio"`, and `[-1.0, 1.0]` if `"score"` is set to `"standard score"`.
 
-## Protein-protein interaction network
+## Protein-Protein Interaction Network
 
 Annotations of proteins contain the following information:
 
@@ -2074,7 +2074,7 @@ Cytoscape:
 </edge>
 ```
 
-## Gene Ontology network
+## Gene Ontology Network
 
 Annotations of Gene Ontology terms contain the following information:
 
@@ -2105,7 +2105,7 @@ information:
 <edge source="GO:0051056" target="GO:1902531" />
 ```
 
-## Reactome network
+## Reactome Network
 
 Annotations of Reactome pathways contain the following information:
 
