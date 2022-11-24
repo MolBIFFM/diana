@@ -83,23 +83,31 @@ The identifier determines output file names.
 
 ---
 
+Proteins may be associated with multiple types of post-translational
+modification each captured at multiple different relative times of measurement.
+Analyses enable consideration of multiple different types of post-translational
+modification measured at the same time while separating different times.
+
+For example, enrichment analysis may consider a subset of proteins determined on
+the basis of measurements concerning two different types of post-translational
+modification but treat each time of measurement separately. Analogously,
+different averages may be specified for different types of post-translational
+modification but not different times of measurement.
+
 Several options for workflow customization invoke the nested representation of
-post-translational modification mass spectrometry data organized by DIANA and
+post-translational modification mass spectrometry data imposed by DIANA and
 support or require merging measurements.
 
-Naturally, mass spectrometry measurements for a particular type of
-post-translational modification are associated with a modification site for each
-of which there are typically multiple replicates. Therefore, a site-specific
+Naturally, mass spectrometry measurements are associated with a specific
+modification site along the protein sequence and for each site there are
+typically multiple replicate measurements. Therefore, a site-specific
 representation requires averaging the corresponding replicates and a
-protein-specific representation requires averaging the corresponding sites.
+protein-specific measurement representation requires averaging the corresponding
+sites.
 
-Proteins may be associated with multiple types of post-translational
-modification each captured at different times of measurement which are
-analyzed separately.
-
-In the interest of potentially supporting analogous network analysis of similar
-quantitative proteomics data, the specification of individual modification sites
-is optional. If omitted, specified modification site averages are ignored.
+In the interest of supporting similar network analysis of quantitative
+proteomics data without site-specificity, the association of input measurements
+with modification sites is optional.
 
 ---
 
