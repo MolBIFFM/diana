@@ -3,17 +3,16 @@ DIANA is a command line application facilitating **D**ata **I**ntegration
 **A**nd **N**etwork **A**nalysis for post-translational modification mass
 spectrometry data.
 
-Provided longitudinal mass-spectrometry data capturing differential
-post-translational modification of proteins, DIANA automates its customizable
-analysis in the context of the protein-protein interaction network induced by
-those proteins, incorporating interactions from BioGRID, CORUM, IntAct, MINT,
-Reactome, and STRING.
+DIANA automates customizable analysis of mass-spectrometry data capturing
+differential post-translational modification of proteins in the context of the
+protein-protein interaction network comprised of these proteins, incorporating
+interactions from BioGRID, CORUM, IntAct, MINT, Reactome, and STRING.
 
 DIANA assesses the distribution of proteins associated with distinctive
-mass-spectrometry measurements as well as the localized enrichment of Gene
-Ontology terms and Reactome pathways across densely interacting portions of the
-protein-protein interaction network, identifying subsets of proteins of
-potential interest to downstream analysis.
+mass-spectrometry measurements along with the localized enrichment of Gene
+Ontology terms and Reactome pathways by proteins across densely interacting
+portions of the protein-protein interaction network, relating mass-spectrometry
+data with annotation of protein function.
 
 ## Setup
 External dependencies, consisting of NetworkX, pandas, and SciPy, can be
@@ -2129,8 +2128,9 @@ information:
 
 ## References
 
-The configuration files in this repository refer to data sets as supplemented
-with the following publications which examine host response to infection by
+The configuration files in this repository specify workflows for data sets as
+supplemented with the following publications which examine differential
+phosphorylation or ubiquitination of host proteins in response to infection by
 [*Salmonella Typhimurium*](configuration/salmonella.json),
 [SARS-CoV-2](configuration/sars-cov-2.json), and
 [*Shigella flexneri*](configuration/shigella.json):
