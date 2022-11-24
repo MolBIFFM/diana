@@ -84,6 +84,26 @@ The identifier determines output file names.
 
 ---
 
+Several options for workflow customization invoke the nested representation of
+post-translational modification mass spectrometry data organized by DIANA and
+support or require merging measurements.
+
+Naturally, mass spectrometry measurements for a particular type of
+post-translational modification are associated with a modification site for each
+of which there are typically multiple replicates. Therefore, a site-specific
+representation requires averaging the corresponding replicates and a
+protein-specific representation requires averaging the corresponding sites.
+
+Proteins may be associated with multiple types of post-translational
+modification each captured at different times of measurement which are
+analyzed separately.
+
+In the interest of potentially supporting analogous network analysis of similar
+quantitative proteomics data, the specification of individual modification sites
+is optional. If omitted, specified modification site averages are ignored.
+
+---
+
 Input proteins are read from tabular input files.
 
 ```json
