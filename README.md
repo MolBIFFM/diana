@@ -33,14 +33,14 @@ python3 diana/diana.py --help
 ```
 
 Configuration of workflows is detailed below. Examples of configuration files
-referring to published data sets referenced below are included in this
+for the analysis of published data sets referenced below are included in this
 repository.
 
 ## Configuration
 A workflow consists of the assembly of a protein-protein interaction network,
-the identification of its densely interacting communities and their statistical
-analysis with respect to the enrichment of Gene Ontology terms and Reactome
-pathways as well as distribution of mass-spectrometric measurements.
+the detection of its densely interacting protein subsets and their statistical
+analysis with respect to the distribution of mass-spectrometric measurements and
+enrichment of Gene Ontology terms and Reactome pathways.
 
 ```mermaid
 flowchart
