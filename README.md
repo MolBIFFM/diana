@@ -89,25 +89,44 @@ Analyses enable consideration of multiple different types of post-translational
 modification measured at the same time while separating different times.
 
 For example, enrichment analysis may consider a subset of proteins determined on
-the basis of measurements concerning two different types of post-translational
+the basis of measurements for two different types of post-translational
 modification but treat each time of measurement separately. Analogously,
-different averages may be specified for different types of post-translational
+different options may be specified for different types of post-translational
 modification but not different times of measurement.
 
 Several options for workflow customization invoke the nested representation of
-post-translational modification mass spectrometry data imposed by DIANA and
+post-translational modification mass spectrometry data implemented by DIANA and
 support or require merging measurements.
 
-Naturally, mass spectrometry measurements are associated with a specific
-modification site along the protein sequence and for each site there are
-typically multiple replicate measurements. Therefore, a site-specific
-representation requires averaging the corresponding replicates and a
-protein-specific measurement representation requires averaging the corresponding
-sites.
+Naturally, measurements are associated with specific modification sites along
+the protein sequence for each of which there are typically multiple replicates.
+Therefore, a site-specific representation requires averaging the corresponding
+replicates and a protein-specific measurement representation requires averaging
+the corresponding sites.
 
-In the interest of supporting similar network analysis of quantitative
-proteomics data without site-specificity, the association of input measurements
-with modification sites is optional.
+```mermaid
+flowchart
+  p30s1r1(30 P S1 R1) --> p30s1(30 P S1)
+  p30s1r2(30 P S1 R2) --> p30s1
+
+  p30s2r1(30 P S2 R1) --> p30s2(30 P S2)
+  p30s2r2(30 P S2 R2) --> p30s2
+
+  p30s1 --> p30(30 P)
+  p30s2 --> p30
+```
+
+In the interest of supporting different averages and network analysis of
+comparable quantitative proteomics data without site-specificity, the
+organization of measurements by modification site is optional.
+
+```mermaid
+flowchart
+  p30r1(30 P R1) --> p30(30 P)
+  p30r2(30 P R2) --> p30
+  p30r3(30 P R3) --> p30
+  p30r4(30 P R4) --> p30
+```
 
 ---
 
