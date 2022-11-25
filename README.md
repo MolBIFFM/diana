@@ -1,5 +1,5 @@
 # DIANA
-![mypy](https://github.com/lucasfein/diana/actions/workflows/mypy.yml/badge.svg)
+![mypy](https://github.com/lucasfein/diana/actions/workflows/myp/badge.svg?branch=main)
 
 DIANA is a command line application facilitating **D**ata **I**ntegration
 **A**nd **N**etwork **A**nalysis for post-translational modification mass
