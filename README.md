@@ -1,4 +1,5 @@
 # DIANA
+
 ![mypy](https://github.com/lucasfein/diana/actions/workflows/mypy.yml/badge.svg)
 
 DIANA is a command line application facilitating **D**ata **I**ntegration
