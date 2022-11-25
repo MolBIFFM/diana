@@ -1,20 +1,20 @@
 {
   "sars-cov-2": {
-      "proteins": [
-        {
-          "time": 60,
-          "PTM": "P",
-          "file": "data/sars-cov-2/phosphorylation/1-s2.0-S1097276520305499-mmc2.xlsx",
-          "sheet": "Supplemental_01",
-          "accession column": "T: Master Protein Accessions",
-          "position column": "T: Modifications in Master Proteins",
-          "position format": "(?=(?:\\[|;)[STY](\\d+)\\((?:[0-9]\\.[0-9]|[0-9][0-9]\\.[0-9]|100.0)\\)(?:;|\\]))",
-          "replicate columns": [
-            "Ratio Virus/Mock (log2)"
-          ],
-          "logarithm": 2
+      "PTM-MS": {
+        "60": {
+          "P": {
+            "file": "data/sars-cov-2/phosphorylation/1-s2.0-S1097276520305499-mmc2.xlsx",
+            "sheet": "Supplemental_01",
+            "accession column": "T: Master Protein Accessions",
+            "position column": "T: Modifications in Master Proteins",
+            "position format": "(?=(?:\\[|;)[STY](\\d+)\\((?:[0-9]\\.[0-9]|[0-9][0-9]\\.[0-9]|100.0)\\)(?:;|\\]))",
+            "replicate columns": [
+              "Ratio Virus/Mock (log2)"
+            ],
+            "logarithm": 2
+          }
         }
-      ],
+      },
       "protein-protein interactions": {
         "BioGRID": {
           "experimental system": [

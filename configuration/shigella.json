@@ -1,63 +1,63 @@
 {
   "shigella": {
-    "proteins": [
-      {
-        "time": 15,
-        "PTM": "P",
-        "file": "data/shigella/phosphorylation/mcp.M113.029918-2.xls",
-        "sheet": "Raw Data",
-        "header": 2,
-        "accession column": "protein",
-        "accession format": "sp\\|(.+?)\\|[A-Z0-9]+_HUMAN",
-        "position column": "phosphosites",
-        "position format": "(?:^|,)(\\d+)_[STY]",
-        "replicate columns": [
-          "wt15minvscontrolratio"
-        ]
+    "PTM-MS": {
+      "15": {
+        "P": {
+          "file": "data/shigella/phosphorylation/mcp.M113.029918-2.xls",
+          "sheet": "Raw Data",
+          "header": 2,
+          "accession column": "protein",
+          "accession format": "sp\\|(.+?)\\|[A-Z0-9]+_HUMAN",
+          "position column": "phosphosites",
+          "position format": "(?:^|,)(\\d+)_[STY]",
+          "replicate columns": [
+            "wt15minvscontrolratio"
+          ]
+        }
       },
-      {
-        "time": 30,
-        "PTM": "P",
-        "file": "data/shigella/phosphorylation/mcp.M113.029918-2.xls",
-        "sheet": "Raw Data",
-        "header": 2,
-        "accession column": "protein",
-        "accession format": "sp\\|(.+?)\\|[A-Z0-9]+_HUMAN",
-        "position column": "phosphosites",
-        "position format": "(?:^|,)(\\d+)_[STY]",
-        "replicate columns": [
-          "wt30minvscontrolratio"
-        ]
+      "30": {
+        "P": {
+          "file": "data/shigella/phosphorylation/mcp.M113.029918-2.xls",
+          "sheet": "Raw Data",
+          "header": 2,
+          "accession column": "protein",
+          "accession format": "sp\\|(.+?)\\|[A-Z0-9]+_HUMAN",
+          "position column": "phosphosites",
+          "position format": "(?:^|,)(\\d+)_[STY]",
+          "replicate columns": [
+            "wt30minvscontrolratio"
+          ]
+        }
       },
-      {
-        "time": 60,
-        "PTM": "P",
-        "file": "data/shigella/phosphorylation/mcp.M113.029918-2.xls",
-        "sheet": "Raw Data",
-        "header": 2,
-        "accession column": "protein",
-        "accession format": "sp\\|(.+?)\\|[A-Z0-9]+_HUMAN",
-        "position column": "phosphosites",
-        "position format": "(?:^|,)(\\d+)_[STY]",
-        "replicate columns": [
-          "wt60minvscontrolratio"
-        ]
+      "60": {
+        "P": {
+          "file": "data/shigella/phosphorylation/mcp.M113.029918-2.xls",
+          "sheet": "Raw Data",
+          "header": 2,
+          "accession column": "protein",
+          "accession format": "sp\\|(.+?)\\|[A-Z0-9]+_HUMAN",
+          "position column": "phosphosites",
+          "position format": "(?:^|,)(\\d+)_[STY]",
+          "replicate columns": [
+            "wt60minvscontrolratio"
+          ]
+        }
       },
-      {
-        "time": 120,
-        "PTM": "P",
-        "file": "data/shigella/phosphorylation/mcp.M113.029918-2.xls",
-        "sheet": "Raw Data",
-        "header": 2,
-        "accession column": "protein",
-        "accession format": "sp\\|(.+?)\\|[A-Z0-9]+_HUMAN",
-        "position column": "phosphosites",
-        "position format": "(?:^|,)(\\d+)_[STY]",
-        "replicate columns": [
-          "wt120minvscontrolratio"
-        ]
+      "120": {
+        "P": {
+          "file": "data/shigella/phosphorylation/mcp.M113.029918-2.xls",
+          "sheet": "Raw Data",
+          "header": 2,
+          "accession column": "protein",
+          "accession format": "sp\\|(.+?)\\|[A-Z0-9]+_HUMAN",
+          "position column": "phosphosites",
+          "position format": "(?:^|,)(\\d+)_[STY]",
+          "replicate columns": [
+            "wt120minvscontrolratio"
+          ]
+        }
       }
-    ],
+    },
     "protein-protein interactions": {
       "BioGRID": {
         "experimental system": [

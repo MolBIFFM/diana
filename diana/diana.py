@@ -32,71 +32,109 @@ def process_workflow(identifier: str, configuration: Mapping[str, Any]) -> None:
     """
     network = protein_interaction_network.get_network()
 
-    for entry in configuration.get("proteins", {}):
-        if ("file" in entry and "accession column" in entry and
-                "replicate columns" in entry):
-            if "position column" in entry:
+    for time in configuration.get("PTM-MS", {}):
+        for modification in configuration["PTM-MS"][time]:
+            if not (configuration["PTM-MS"][time][modification].get("file") and
+                    configuration["PTM-MS"][time][modification].get(
+                        "accession column")):
+                continue
+
+            if configuration["PTM-MS"][time][modification].get(
+                    "position column"):
                 protein_interaction_network.add_sites_from_table(
                     network,
-                    file_name=entry["file"],
-                    protein_accession_column=entry["accession column"],
+                    file_name=configuration["PTM-MS"][time][modification]
+                    ["file"],
+                    protein_accession_column=configuration["PTM-MS"][time]
+                    [modification]["accession column"],
                     protein_accession_format=re.compile(
-                        entry.get("accession format", "^(.+?)$")),
-                    position_column=entry["position column"],
+                        configuration["PTM-MS"][time][modification].get(
+                            "accession format", "^(.+?)$")),
+                    position_column=configuration["PTM-MS"][time][modification]
+                    ["position column"],
                     position_format=re.compile(
-                        entry.get("position format", "^(.+?)$")),
-                    replicate_columns=entry["replicate columns"],
+                        configuration["PTM-MS"][time][modification].get(
+                            "position format", "^(.+?)$")),
+                    replicate_columns=configuration["PTM-MS"][time]
+                    [modification]["replicate columns"],
                     replicate_format=re.compile(
-                        entry.get("replicate format", "^(.+?)$")),
-                    sheet_name=entry.get("sheet", 1) - 1 if isinstance(
-                        entry.get("sheet", 1), int) else entry["sheet"],
-                    header=entry.get("header", 1) - 1,
-                    time=entry["time"] if entry.get("time") and
-                    isinstance(entry["time"], int) else 0,
-                    modification=entry["PTM"].replace(" ", "")
-                    if entry.get("PTM") else "PTM",
-                    number_sites=entry.get("sites", 5),
-                    number_replicates=entry.get("replicates", 1),
-                    replicate_average=average.REPLICATE_AVERAGE[entry.get(
-                        "replicate average", "mean")],
-                    measurement_score=score.LOGARITHM[entry.get("logarithm")],
+                        configuration["PTM-MS"][time][modification].get(
+                            "replicate format", "^(.+?)$")),
+                    sheet_name=configuration["PTM-MS"][time][modification].get(
+                        "sheet", 1) - 1 if isinstance(
+                            configuration["PTM-MS"][time][modification].get(
+                                "sheet", 1), int) else
+                    configuration["PTM-MS"][time][modification]["sheet"],
+                    header=configuration["PTM-MS"][time][modification].get(
+                        "header", 1) - 1,
+                    time=int(time) if time.isnumeric() else 0,
+                    modification=modification,
+                    number_sites=configuration["PTM-MS"][time]
+                    [modification].get("sites", 5),
+                    number_replicates=configuration["PTM-MS"][time]
+                    [modification].get("replicates", 1),
+                    replicate_average=average.REPLICATE_AVERAGE[
+                        configuration["PTM-MS"][time][modification].get(
+                            "replicate average", "mean")],
+                    measurement_score=score.LOGARITHM[configuration["PTM-MS"][
+                        time][modification].get("logarithm")],
                     site_prioritization=prioritization.SITE_PRIORITIZATION[
-                        entry.get("site prioritization", "absolute")])
+                        configuration["PTM-MS"][time][modification].get(
+                            "site prioritization", "absolute")])
             else:
                 protein_interaction_network.add_proteins_from_table(
                     network,
-                    file_name=entry["file"],
-                    protein_accession_column=entry["accession column"],
+                    file_name=configuration["PTM-MS"][time][modification]
+                    ["file"],
+                    protein_accession_column=configuration["PTM-MS"][time]
+                    [modification]["accession column"],
                     protein_accession_format=re.compile(
-                        entry.get("accession format", "^(.+?)$")),
-                    replicate_columns=entry["replicate columns"],
+                        configuration["PTM-MS"][time][modification].get(
+                            "accession format", "^(.+?)$")),
+                    replicate_columns=configuration["PTM-MS"][time]
+                    [modification]["replicate columns"],
                     replicate_format=re.compile(
-                        entry.get("replicate format", "^(.+?)$")),
-                    sheet_name=entry.get("sheet", 1) - 1 if isinstance(
-                        entry.get("sheet", 1), int) else entry["sheet"],
-                    header=entry.get("header", 1) - 1,
-                    time=entry["time"] if entry.get("time") and
-                    isinstance(entry["time"], int) else 0,
-                    modification=entry["PTM"].replace(" ", "")
-                    if entry.get("PTM") else "PTM",
-                    number_replicates=entry.get("replicates", 1),
-                    measurement_score=score.LOGARITHM[entry.get("logarithm")])
+                        configuration["PTM-MS"][time][modification].get(
+                            "replicate format", "^(.+?)$")),
+                    sheet_name=configuration["PTM-MS"][time][modification].get(
+                        "sheet", 1) - 1 if isinstance(
+                            configuration["PTM-MS"][time][modification].get(
+                                "sheet", 1), int) else
+                    configuration["PTM-MS"][time][modification]["sheet"],
+                    header=configuration["PTM-MS"][time][modification].get(
+                        "header", 1) - 1,
+                    time=int(time) if time.isnumeric() else 0,
+                    modification=modification,
+                    number_replicates=configuration["PTM-MS"][time]
+                    [modification].get("replicates", 1),
+                    measurement_score=score.LOGARITHM[configuration["PTM-MS"][
+                        time][modification].get("logarithm")])
 
-        elif "accessions" in entry:
-            network.add_nodes_from(entry["accessions"])
+    for item in configuration.get("networks", {}):
+        if item.get("network"):
+            network = nx.compose(
+                network, nx.readwrite.graphml.read_graphml(item["network"]))
 
-    for entry in configuration.get("networks", {}):
-        network = nx.compose(
-            network,
-            nx.readwrite.graphml.read_graphml(entry["network"]) if
-            entry.get("network") else protein_interaction_network.get_network())
+    for item in configuration.get("proteins", {}):
+        if item.get("accessions"):
+            network.add_nodes_from(
+                protein_accession for protein_accession in item["accessions"]
+                if re.fullmatch(
+                    r"([OPQ][0-9][A-Z0-9]{3}[0-9]|[A-NR-Z][0-9]"
+                    r"([A-Z][A-Z0-9]{2}[0-9]){1,2})(-[0-9]+)?",
+                    protein_accession))
 
     nodes_to_remove = set(network.nodes())
     for organism in set(
-            entry.get("organism", 9606)
-            for entry in configuration.get("proteins", {})) | set(
-                entry.get("organism", 9606)
-                for entry in configuration.get("networks", {})):
+            configuration.get("PTM-MS", {}).get(time, {}).get(
+                modification, {}).get("organism", 9606)
+            for time in configuration.get("PTM-MS", {})
+            for modification in configuration.get("PTM-MS", {}).get(
+                time, {})) | set(
+                    item.get("organism", 9606)
+                    for item in configuration.get("networks", {})) | set(
+                        item.get("organism", 9606)
+                        for item in configuration.get("proteins", {})):
         nodes_to_remove.intersection_update(
             protein_interaction_network.map_proteins(network, organism))
     network.remove_nodes_from(nodes_to_remove)

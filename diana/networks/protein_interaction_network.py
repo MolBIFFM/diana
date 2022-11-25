@@ -109,9 +109,13 @@ def add_proteins_from_table(
 
         if len(measurements) >= min(number_replicates, len(replicate_columns)):
             for protein_accession in protein_accessions:
-                proteins[protein_accession] = tuple(
-                    measurement_score(measurement)
-                    for measurement in measurements)
+                if re.fullmatch(
+                        r"([OPQ][0-9][A-Z0-9]{3}[0-9]|[A-NR-Z][0-9]"
+                        r"([A-Z][A-Z0-9]{2}[0-9]){1,2})(-[0-9]+)?",
+                        protein_accession):
+                    proteins[protein_accession] = tuple(
+                        measurement_score(measurement)
+                        for measurement in measurements)
 
     network.add_nodes_from(proteins)
     for protein, replicates in proteins.items():
@@ -238,12 +242,16 @@ def add_sites_from_table(
         if len(measurements) >= min(number_replicates, len(replicate_columns)):
             for protein_accession, position in zip(protein_accessions,
                                                    positions):
-                if protein_accession not in proteins:
-                    proteins[protein_accession] = {}
+                if re.fullmatch(
+                        r"([OPQ][0-9][A-Z0-9]{3}[0-9]|[A-NR-Z][0-9]"
+                        r"([A-Z][A-Z0-9]{2}[0-9]){1,2})(-[0-9]+)?",
+                        protein_accession):
+                    if protein_accession not in proteins:
+                        proteins[protein_accession] = {}
 
-                proteins[protein_accession][position] = tuple(
-                    measurement_score(measurement)
-                    for measurement in measurements)
+                    proteins[protein_accession][position] = tuple(
+                        measurement_score(measurement)
+                        for measurement in measurements)
 
     network.add_nodes_from(proteins)
     for protein, sites in proteins.items():
@@ -333,7 +341,8 @@ def get_proteins(
         sites = [[
             network.nodes[protein][attribute]
             for attribute in network.nodes[protein]
-            if re.fullmatch(fr"{time} {modification} (S{s+1} )?R\d+", attribute)
+            if re.fullmatch(fr"{time} {modification} (S{s+1} )?R[0-9]+",
+                            attribute)
         ]
                  for s in range(get_sites(network, time, modification, protein))
                 ]
@@ -368,7 +377,8 @@ def get_times(network: nx.Graph) -> tuple[int, ...]:
                 int(attribute.split(" ")[0])
                 for protein in network
                 for attribute in network.nodes[protein]
-                if re.fullmatch(r"\d+ \S+ (S\d+ )?R\d+", attribute))))
+                if re.fullmatch(r"[0-9]+ [A-Za-z]+ (S[0-9]+ )?R[0-9]+",
+                                attribute))))
 
 
 def get_modifications(network: nx.Graph,
@@ -402,9 +412,10 @@ def get_modifications(network: nx.Graph,
                 for protein in network
                 for attribute in network.nodes[protein]
                 if re.fullmatch(
-                    fr"{time} \S+ (S\d+ )?R\d+" if proteins and sites else (
-                        fr"{time} \S+ R\d+" if proteins else
-                        fr"{time} \S+ S\d+ R\d+"), attribute))))
+                    fr"{time} [A-Za-z]+ (S[0-9]+ )?R[0-9]+"
+                    if proteins and sites else (
+                        fr"{time} [A-Za-z]+ R[0-9]+" if proteins else
+                        fr"{time} [A-Za-z]+ S[0-9]+ R[0-9]+"), attribute))))
 
 
 def is_modification(network: nx.Graph,
@@ -435,9 +446,9 @@ def is_modification(network: nx.Graph,
 
     return any(
         re.fullmatch(
-            fr"{time} {modification} (S\d+ )?R\d+" if proteins and sites else (
-                fr"{time} {modification} R\d+"
-                if proteins else fr"{time} \S+ S\d+ R\d+"), attribute)
+            fr"{time} {modification} (S[0-9]+ )?R[0-9]+" if proteins and sites
+            else (fr"{time} {modification} R[0-9]+" if proteins else
+                  fr"{time} [A-Za-z]+ S[0-9]+ R[0-9]+"), attribute)
         for protein in network
         for attribute in network.nodes[protein])
 
@@ -463,8 +474,8 @@ def get_sites(network: nx.Graph, time: int, modification: str,
     """
     return max(
         int(attribute.split(" ")[2].replace("S", "")) if re.
-        fullmatch(fr"{time} {modification} S\d+ R\d+", attribute) else (
-            1 if re.fullmatch(fr"{time} {modification} R\d+", attribute) else 0)
+        fullmatch(fr"{time} {modification} S[0-9]+ R[0-9]+", attribute) else
+        (1 if re.fullmatch(fr"{time} {modification} R[0-9]+", attribute) else 0)
         for attribute in network.nodes[protein])
 
 
@@ -528,15 +539,11 @@ def set_measurements(
         for prt in network:
             summary = {}
             for modification in modifications[time]:
-                sites = [
-                    [
-                        network.nodes[prt][attribute]
-                        for attribute in network.nodes[prt]
-                        if re.fullmatch(
-                            fr"{time} {modification} (S{s+1} )?R\d+", attribute)
-                    ]
-                    for s in range(get_sites(network, time, modification, prt))
-                ]
+                sites = [[
+                    network.nodes[prt][attribute] for attribute in
+                    network.nodes[prt] if re.fullmatch(
+                        fr"{time} {modification} (S{s+1} )?R[0-9]+", attribute)
+                ] for s in range(get_sites(network, time, modification, prt))]
 
                 if sites:
                     if is_modification(network,
@@ -1194,7 +1201,8 @@ def get_measurements(
         sites = [[
             network.nodes[protein][attribute]
             for attribute in network.nodes[protein]
-            if re.fullmatch(fr"{time} {modification} (S{s+1} )?R\d+", attribute)
+            if re.fullmatch(fr"{time} {modification} (S{s+1} )?R[0-9]+",
+                            attribute)
         ]
                  for s in range(get_sites(network, time, modification, protein))
                 ]

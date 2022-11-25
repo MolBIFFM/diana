@@ -111,46 +111,77 @@ with modification sites is optional.
 
 ---
 
-Input proteins are read from tabular input files.
+Input proteins are read from tabular input files. Networks output by previous
+analysis can be used as input.
 
 ```json
 {
   "configuration": {
+    "PTM-MS" [
+      {
+        "organism": 9606
+      }
+    ],
+    "networks": [
+      {
+        "organism": 9606
+      }
+    ],
     "proteins": [
       {
-        "file": null
+        "organism": 9606
       }
     ]
   }
 }
 ```
-The tabular input file with UniProt protein accessions and, optionally,
-additional mass spectrometry data.
+The NCBI taxonomy ID of the organism of interest. The default and currently only
+completely supported setting is `9606`, corresponding to Homo sapiens.
 
 ```json
 {
   "configuration": {
-    "proteins": [
-      {
-        "accession column": null
+    "PTM-MS" {
+      "0": {
+        "PTM": {
+          "file": null
+        }
       }
-    ]
+    }
   }
 }
 ```
-The table column to extract UniProt protein accessions from. These are mapped to
-primary UniProt accessions or discarded if not present in Swiss-Prot. Isoform
-identifiers are maintained on primary, but not transferred from secondary
-accessions.
+The tabular input file with UniProt protein accessions and mass spectrometry
+data.
 
 ```json
 {
   "configuration": {
-    "proteins": [
-      {
-        "accession format": "^(.+?)$"
+    "PTM-MS" {
+      "0": {
+        "PTM": {
+          "accession column": null
+        }
       }
-    ]
+    }
+  }
+}
+```
+The table column to extract UniProt protein accessions from. Accessions are
+mapped to primary UniProt accessions or discarded if not present in Swiss-Prot.
+Isoform identifiers are maintained on primary, but not transferred from
+secondary accessions.
+
+```json
+{
+  "configuration": {
+    "PTM-MS" {
+      "0": {
+        "PTM": {
+          "accession format": "^(.+?)$"
+        }
+      }
+    }
   }
 }
 ```
@@ -162,25 +193,29 @@ entry.
 ```json
 {
   "configuration": {
-    "proteins": [
-      {
-        "sheet": 1
+    "PTM-MS" {
+      "0": {
+        "PTM": {
+          "sheet": 1
+        }
       }
-    ]
+    }
   }
 }
 ```
 The spreadsheet from a file to extract input from. The default setting is `1`
-corresponding to the first spreadsheet of the file.
+corresponding to the first spreadsheet in the file.
 
 ```json
 {
   "configuration": {
-    "proteins": [
-      {
-        "header": 1
+    "PTM-MS" {
+      "0": {
+        "PTM": {
+          "header": 1
+        }
       }
-    ]
+    }
   }
 }
 ```
@@ -190,17 +225,160 @@ setting is `1`, corresponding to the first line of the sheet.
 ```json
 {
   "configuration": {
-    "proteins": [
-      {
-        "accessions": []
+    "PTM-MS" {
+      "0": {
+        "PTM": {
+          "position column": null
+        }
       }
-    ]
+    }
   }
 }
 ```
+The optional table column reporting modification sites of measurements,
+according to which they are ordered. If an entry contains fewer positions than
+measurements, missing modification sites are substituted by 0. If an entry
+contains more positions than measurements, only as many leading entries as there
+are measurements are used. If the column is not specified, measurements are
+associated with the corresponding protein.
 
-A list of input UniProt protein accessions, alternative to extraction from a
-tabular file.
+```json
+{
+  "configuration": {
+    "PTM-MS" {
+      "0": {
+        "PTM": {
+          "position format": "^(.+?)$"
+        }
+      }
+    }
+  }
+}
+```
+A regular expression used to extract matching modification sites from an
+entry in the table, allowing to remove additions to the site number. The default
+setting is `"^(.+?)$"`, corresponding to the entire entry.
+
+```json
+{
+  "configuration": {
+    "PTM-MS" {
+      "0": {
+        "PTM": {
+          "replicate columns": []
+        }
+      }
+    }
+  }
+}
+```
+A list of columns to extract replicate measurements from. The default setting is
+`[]`, resulting in no incorporation of proteins.
+
+```json
+{
+  "configuration": {
+    "PTM-MS" {
+      "0": {
+        "PTM": {
+          "replicate format": "^(.+?)$"
+        }
+      }
+    }
+  }
+}
+```
+A regular expression used to extract matching replicate measurements from an
+entry in the table, allowing to remove additions to the measurement. The default
+setting is `"^(.+?)$"`, corresponding to the entire entry.
+
+```json
+{
+  "configuration": {
+    "PTM-MS" {
+      "0": {
+        "PTM": {
+          "replicates": 1
+        }
+      }
+    }
+  }
+}
+```
+An inclusive threshold on the number of replicates required to consider a
+measurement. The default setting is `1`.
+
+```json
+{
+  "configuration": {
+    "PTM-MS" {
+      "0": {
+        "PTM": {
+          "sites": 5
+        }
+      }
+    }
+  }
+}
+```
+The maximum number of measurements to associate with each protein prioritized by
+largest absolute measurement. The default setting is `5`.
+
+```json
+{
+  "configuration": {
+    "PTM-MS" {
+      "0": {
+        "PTM": {
+          "site prioritization": "absolute"
+        }
+      }
+    }
+  }
+}
+```
+A function of a site-specific measurement to prioritize it over others. The
+default setting is `"absolute"` corresponding to the absolute binary logarithm
+which weights relative change in either direction equally. Available settings
+are `"absolute"` as well as `"increase"`, and `"decrease"` to prioritize
+measurements constituting either increase or decrease, respectively.
+
+```json
+{
+  "configuration": {
+    "PTM-MS" {
+      "0": {
+        "PTM": {
+          "replicate average": "mean"
+        }
+      }
+    }
+  }
+}
+```
+The average of distinct replicates representing a single protein- or
+modification site-specific measurement. The function is applied to ratios, not
+their binary logarithm. Cytoscape styles refer to this average. The default
+setting is `"mean"`. Available settings are `"mean"`, `"median"`, `"maximum"`,
+`"maximum absolute logarithm"`, `"minimum"`, `"minimum absolute logarithm"`,
+`"sum"`, and `"sum absolute logarithm"`.
+
+```json
+{
+  "configuration": {
+    "PTM-MS" {
+      "0": {
+        "PTM": {
+          "logarithm": null
+        }
+      }
+    }
+  }
+}
+```
+The base of the logarithm that measurements are reported as. By default, ratios
+are assumed and no score is performed, corresponding to `null`. Available
+settings are `null`, `2` and `10`.
 
 ```json
 {
@@ -222,190 +400,16 @@ protein-protein interaction networks and input proteins is used.
   "configuration": {
     "proteins": [
       {
-        "organism": 9606
-      }
-    ],
-    "networks": [
-      {
-        "organism": 9606
+        "accessions": []
       }
     ]
   }
 }
 ```
-The NCBI taxonomy ID of the organism of interest. The default and currently only
-completely supported setting is `9606`, corresponding to Homo sapiens.
-
-```json
-{
-  "configuration": {
-    "proteins": [
-      {
-        "time": 0
-      }
-    ]
-  }
-}
-```
-The time of measurement to be associated with the measurements from the input
-file for reference in the specification of further analyses. The default setting
-is `0`.
-
-```json
-{
-  "configuration": {
-    "proteins": [
-      {
-        "PTM": "PTM"
-      }
-    ]
-  }
-}
-```
-The identifier for the type of post-translational modification associate with
-measurements from the input file for reference in the specification of further
-analyses. The default setting is `"PTM"`. Currently, up to two types of
-post-translational modification per time of measurement are supported by
-Cytoscape styles.
-
-```json
-{
-  "configuration": {
-    "proteins": [
-      {
-        "position column": null
-      }
-    ]
-  }
-}
-```
-The table column reporting modification sites of measurements, according to
-which they are ordered. If an entry contains fewer positions than measurements,
-missing modification sites are substituted by 0. If an entry contains more
-positions than measurements, only as many leading entries as there are
-measurements are used.
-
-```json
-{
-  "configuration": {
-    "proteins": [
-      {
-        "position format": "^(.+?)$"
-      }
-    ]
-  }
-}
-```
-A regular expression used to extract matching modification sites from an
-entry in the table, allowing to remove additions to the site number. The default
-setting is `"^(.+?)$"`, corresponding to the entire entry.
-
-```json
-{
-  "configuration": {
-    "proteins": [
-      {
-        "replicate columns": []
-      }
-    ]
-  }
-}
-```
-A list of columns to extract replicate measurements from. The default setting is
-`[]`, corresponding to no association with mass spectrometry data.
-
-```json
-{
-  "configuration": {
-    "proteins": [
-      {
-        "replicate format": "^(.+?)$"
-      }
-    ]
-  }
-}
-```
-A regular expression used to extract matching replicate measurements from an
-entry in the table, allowing to remove additions to the measurement. The default
-setting is `"^(.+?)$"`, corresponding to the entire entry.
-
-```json
-{
-  "configuration": {
-    "proteins": [
-      {
-        "replicates": 1
-      }
-    ]
-  }
-}
-```
-An inclusive threshold on the number of replicates required to consider a
-measurement. The default setting is `1`.
-
-```json
-{
-  "configuration": {
-    "proteins": [
-      {
-        "sites": 5
-      }
-    ]
-  }
-}
-```
-The maximum number of measurements to associate with each protein prioritized by
-largest absolute measurement. The default setting is `5`.
-
-```json
-{
-  "configuration": {
-    "proteins": [
-      {
-        "site prioritization": "absolute"
-      }
-    ]
-  }
-}
-```
-A function of a site-specific measurement to prioritize it over others. The
-default setting is `"absolute"` corresponding to the absolute binary logarithm
-which weights relative change in either direction equally. Available settings
-are `"absolute"` as well as `"increase"`, and `"decrease"` to prioritize
-measurements constituting either increase or decrease, respectively.
-
-```json
-{
-  "configuration": {
-    "proteins": [
-      {
-        "replicate average": "mean"
-      }
-    ]
-  }
-}
-```
-The average of distinct replicates representing a single protein- or
-modification site-specific measurement. The function is applied to ratios, not
-their binary logarithm. Cytoscape styles refer to this average. The default
-setting is `"mean"`. Available settings are `"mean"`, `"median"`, `"maximum"`,
-`"maximum absolute logarithm"`, `"minimum"`, `"minimum absolute logarithm"`,
-`"sum"`, and `"sum absolute logarithm"`.
-
-```json
-{
-  "configuration": {
-    "proteins": [
-      {
-        "logarithm": null
-      }
-    ]
-  }
-}
-```
-The base of the logarithm that measurements are reported as. By default, ratios
-are assumed and no score is performed, corresponding to `null`. Available
-settings are `null`, `2` and `10`.
+A list of UniProt protein accessions to add to the protein-protein interaction
+network. Accessions are mapped to primary UniProt accessions or discarded if not
+present in Swiss-Prot. Isoform identifiers are maintained on primary, but not
+transferred from secondary accessions.
 
 ---
 
@@ -426,7 +430,8 @@ each must be satisfied for an interaction to be incorporated.
       },
       "IntAct": {
         "neighbors": 0
-      },
+
+   },
       "MINT": {
         "neighbors": 0
       },
