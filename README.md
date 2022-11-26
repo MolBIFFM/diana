@@ -2254,8 +2254,8 @@ following plugins and aims to extend upon analyses enabled by combining them:
 
 ---
 
-Integrative research observing relations of communities of protein-protein
-interaction networks and protein function includes:
+Integrative research observing communities of protein-protein interaction
+networks relevant to protein function includes:
 
 - Chen, J. and Yuan, B. (2006) **Detecting functional modules in the yeast**
   **protein–protein interaction network**, *Bioinformatics*, 22, 2283-2290.
@@ -2266,8 +2266,8 @@ interaction networks and protein function includes:
 
 ---
 
-Reviews of measuring differential post-translational modification by mass
-spectrometry include:
+Reviews concerning measurement of differential post-translational modification
+by mass spectrometry include:
 
 - Olsen, J. V. and Mann, M. (2013) **Status of Large-scale Analysis of**
   **Post-translational Modifications by Mass Spectrometry**, *Mol. Cell.*
