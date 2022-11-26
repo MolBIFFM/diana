@@ -121,7 +121,7 @@ def process_workflow(identifier: str, configuration: Mapping[str, Any]) -> None:
                 protein_accession for protein_accession in item["accessions"]
                 if re.fullmatch(
                     r"([OPQ][0-9][A-Z0-9]{3}[0-9]|[A-NR-Z][0-9]"
-                    r"([A-Z][A-Z0-9]{2}[0-9]){1,2})(-[0-9]+)?",
+                    r"([A-Z][A-Z0-9]{2}[0-9]){1,2})(-[1-9][0-9]+)?",
                     protein_accession))
 
     nodes_to_remove = set(network.nodes())

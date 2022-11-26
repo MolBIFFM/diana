@@ -111,7 +111,7 @@ def add_proteins_from_table(
             for protein_accession in protein_accessions:
                 if re.fullmatch(
                         r"([OPQ][0-9][A-Z0-9]{3}[0-9]|[A-NR-Z][0-9]"
-                        r"([A-Z][A-Z0-9]{2}[0-9]){1,2})(-[0-9]+)?",
+                        r"([A-Z][A-Z0-9]{2}[0-9]){1,2})(-[1-9][0-9]+)?",
                         protein_accession):
                     proteins[protein_accession] = tuple(
                         measurement_score(measurement)
@@ -244,7 +244,7 @@ def add_sites_from_table(
                                                    positions):
                 if re.fullmatch(
                         r"([OPQ][0-9][A-Z0-9]{3}[0-9]|[A-NR-Z][0-9]"
-                        r"([A-Z][A-Z0-9]{2}[0-9]){1,2})(-[0-9]+)?",
+                        r"([A-Z][A-Z0-9]{2}[0-9]){1,2})(-[1-9][0-9]+)?",
                         protein_accession):
                     if protein_accession not in proteins:
                         proteins[protein_accession] = {}
@@ -287,8 +287,7 @@ def map_proteins(network: nx.Graph, organism: int = 9606) -> frozenset[str]:
     for accessions, gene, protein in uniprot.get_swiss_prot_entries(organism):
         for node in network:
             if node.split("-")[0] in accessions:
-                if "-" in node and node.split("-")[1].isnumeric(
-                ) and accessions.index(node.split("-")[0]) == 0:
+                if "-" in node and accessions.index(node.split("-")[0]) == 0:
                     mapping[node] = node
                     gene_name[node] = gene
                     protein_name[node] = protein
@@ -637,12 +636,19 @@ def get_neighbors_from_biogrid(
             experimental_system, experimental_system_type,
             interaction_throughput, multi_validated_physical, organism,
             version):
-        if (interactor_a in network and interactor_b not in network):
+        if (interactor_a in network and interactor_b not in network and
+                re.fullmatch(
+                    r"([OPQ][0-9][A-Z0-9]{3}[0-9]|[A-NR-Z][0-9]"
+                    r"([A-Z][A-Z0-9]{2}[0-9]){1,2})(-[1-9][0-9]+)?",
+                    interactor_b)):
             neighbors.add(interactor_b)
 
-        elif (interactor_a not in network and interactor_b in network):
+        elif (interactor_a not in network and interactor_b in network and
+              re.fullmatch(
+                  r"([OPQ][0-9][A-Z0-9]{3}[0-9]|[A-NR-Z][0-9]"
+                  r"([A-Z][A-Z0-9]{2}[0-9]){1,2})(-[1-9][0-9]+)?",
+                  interactor_a)):
             neighbors.add(interactor_a)
-
     return neighbors
 
 
@@ -703,10 +709,18 @@ def get_neighbors_from_corum(network: nx.Graph,
     neighbors = set()
     for interactor_a, interactor_b in corum.get_protein_interactions(
             purification_methods, organism):
-        if (interactor_a in network and interactor_b not in network):
+        if (interactor_a in network and interactor_b not in network and
+                re.fullmatch(
+                    r"([OPQ][0-9][A-Z0-9]{3}[0-9]|[A-NR-Z][0-9]"
+                    r"([A-Z][A-Z0-9]{2}[0-9]){1,2})(-[1-9][0-9]+)?",
+                    interactor_b)):
             neighbors.add(interactor_b)
 
-        elif (interactor_a not in network and interactor_b in network):
+        elif (interactor_a not in network and interactor_b in network and
+              re.fullmatch(
+                  r"([OPQ][0-9][A-Z0-9]{3}[0-9]|[A-NR-Z][0-9]"
+                  r"([A-Z][A-Z0-9]{2}[0-9]){1,2})(-[1-9][0-9]+)?",
+                  interactor_a)):
             neighbors.add(interactor_a)
 
     return neighbors
@@ -762,10 +776,18 @@ def get_neighbors_from_intact(
     for interactor_a, interactor_b, _ in intact.get_protein_interactions(
             interaction_detection_methods, interaction_types, psi_mi_score,
             organism):
-        if (interactor_a in network and interactor_b not in network):
+        if (interactor_a in network and interactor_b not in network and
+                re.fullmatch(
+                    r"([OPQ][0-9][A-Z0-9]{3}[0-9]|[A-NR-Z][0-9]"
+                    r"([A-Z][A-Z0-9]{2}[0-9]){1,2})(-[1-9][0-9]+)?",
+                    interactor_b)):
             neighbors.add(interactor_b)
 
-        elif (interactor_a not in network and interactor_b in network):
+        elif (interactor_a not in network and interactor_b in network and
+              re.fullmatch(
+                  r"([OPQ][0-9][A-Z0-9]{3}[0-9]|[A-NR-Z][0-9]"
+                  r"([A-Z][A-Z0-9]{2}[0-9]){1,2})(-[1-9][0-9]+)?",
+                  interactor_a)):
             neighbors.add(interactor_a)
 
     return neighbors
@@ -832,10 +854,18 @@ def get_neighbors_from_mint(network: nx.Graph,
     for interactor_a, interactor_b, _ in mint.get_protein_interactions(
             interaction_detection_methods, interaction_types, psi_mi_score,
             organism):
-        if (interactor_a in network and interactor_b not in network):
+        if (interactor_a in network and interactor_b not in network and
+                re.fullmatch(
+                    r"([OPQ][0-9][A-Z0-9]{3}[0-9]|[A-NR-Z][0-9]"
+                    r"([A-Z][A-Z0-9]{2}[0-9]){1,2})(-[1-9][0-9]+)?",
+                    interactor_b)):
             neighbors.add(interactor_b)
 
-        elif (interactor_a not in network and interactor_b in network):
+        elif (interactor_a not in network and interactor_b in network and
+              re.fullmatch(
+                  r"([OPQ][0-9][A-Z0-9]{3}[0-9]|[A-NR-Z][0-9]"
+                  r"([A-Z][A-Z0-9]{2}[0-9]){1,2})(-[1-9][0-9]+)?",
+                  interactor_a)):
             neighbors.add(interactor_a)
 
     return neighbors
@@ -899,10 +929,18 @@ def get_neighbors_from_reactome(
 
     for interactor_a, interactor_b in reactome.get_protein_interactions(
             interaction_type, interaction_context, organism):
-        if (interactor_a in network and interactor_b not in network):
+        if (interactor_a in network and interactor_b not in network and
+                re.fullmatch(
+                    r"([OPQ][0-9][A-Z0-9]{3}[0-9]|[A-NR-Z][0-9]"
+                    r"([A-Z][A-Z0-9]{2}[0-9]){1,2})(-[1-9][0-9]+)?",
+                    interactor_b)):
             neighbors.add(interactor_b)
 
-        elif (interactor_a not in network and interactor_b in network):
+        elif (interactor_a not in network and interactor_b in network and
+              re.fullmatch(
+                  r"([OPQ][0-9][A-Z0-9]{3}[0-9]|[A-NR-Z][0-9]"
+                  r"([A-Z][A-Z0-9]{2}[0-9]){1,2})(-[1-9][0-9]+)?",
+                  interactor_a)):
             neighbors.add(interactor_a)
 
     return neighbors
@@ -988,10 +1026,18 @@ def get_neighbors_from_string(network: nx.Graph,
             experiments_transferred, database, database_transferred, textmining,
             textmining_transferred, combined_score, physical, organism,
             version):
-        if (interactor_a in network and interactor_b not in network):
+        if (interactor_a in network and interactor_b not in network and
+                re.fullmatch(
+                    r"([OPQ][0-9][A-Z0-9]{3}[0-9]|[A-NR-Z][0-9]"
+                    r"([A-Z][A-Z0-9]{2}[0-9]){1,2})(-[1-9][0-9]+)?",
+                    interactor_b)):
             neighbors.add(interactor_b)
 
-        elif (interactor_a not in network and interactor_b in network):
+        elif (interactor_a not in network and interactor_b in network and
+              re.fullmatch(
+                  r"([OPQ][0-9][A-Z0-9]{3}[0-9]|[A-NR-Z][0-9]"
+                  r"([A-Z][A-Z0-9]{2}[0-9]){1,2})(-[1-9][0-9]+)?",
+                  interactor_a)):
             neighbors.add(interactor_a)
 
     return neighbors
