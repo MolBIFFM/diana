@@ -1587,9 +1587,13 @@ measure the enrichment of proteins exceeding a specified range of measurements.
 Alternatively, the distribution of measurements within separate communities can
 be compared with that of the remaining network.
 
-A community is exported if is significant according to any of the specified
-tests subject to correction for multiple testing. Communities are exported
-indexed in descending order of the number of proteins they consist of.
+Results of statistical tests for enrichment or location are exported in tabular
+form. A community is exported if it is significant according to any of the
+conducted tests subject to correction for multiple testing. Communities are
+exported in descending order of the number of proteins they consist of and
+enumerated accordingly.
+
+
 
 ```json
 {
