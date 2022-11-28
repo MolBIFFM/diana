@@ -202,7 +202,7 @@ secondary accessions.
     "PTM-MS": {
       "0": {
         "PTM": {
-          "accession format": "^(.+?)$"
+          "accession format": "^(.+)$"
         }
       }
     }
@@ -211,8 +211,7 @@ secondary accessions.
 ```
 A regular expression used to extract all matching protein accessions from a
 spreadsheet cell entry in the table, possibly removing additional components of
-the entry. The default setting is `"^(.+?)$"`, corresponding to the entire
-entry.
+the entry. The default setting is `"^(.+)$"`, corresponding to the entire entry.
 
 ```json
 {
@@ -272,16 +271,16 @@ associated with the corresponding protein.
     "PTM-MS": {
       "0": {
         "PTM": {
-          "position format": "^(.+?)$"
+          "position format": "^(.+)$"
         }
       }
     }
   }
 }
 ```
-A regular expression used to extract matching modification sites from an
-entry in the table, allowing to remove additions to the site number. The default
-setting is `"^(.+?)$"`, corresponding to the entire entry.
+A regular expression used to extract matching modification sites from an entry
+in the table, allowing to remove additions to the site number. The default
+setting is `"^(.+)$"`, corresponding to the entire entry.
 
 ```json
 {
@@ -305,7 +304,7 @@ A list of columns to extract replicate measurements from. The default setting is
     "PTM-MS": {
       "0": {
         "PTM": {
-          "replicate format": "^(.+?)$"
+          "replicate format": "^(.+)$"
         }
       }
     }
@@ -314,7 +313,7 @@ A list of columns to extract replicate measurements from. The default setting is
 ```
 A regular expression used to extract matching replicate measurements from an
 entry in the table, allowing to remove additions to the measurement. The default
-setting is `"^(.+?)$"`, corresponding to the entire entry.
+setting is `"^(.+)$"`, corresponding to the entire entry.
 
 ```json
 {

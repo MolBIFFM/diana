@@ -49,17 +49,17 @@ def process_workflow(identifier: str, configuration: Mapping[str, Any]) -> None:
                     [modification]["accession column"],
                     protein_accession_format=re.compile(
                         configuration["PTM-MS"][time][modification].get(
-                            "accession format", "^(.+?)$")),
+                            "accession format", "^(.+)$")),
                     position_column=configuration["PTM-MS"][time][modification]
                     ["position column"],
                     position_format=re.compile(
                         configuration["PTM-MS"][time][modification].get(
-                            "position format", "^(.+?)$")),
+                            "position format", "^(.+)$")),
                     replicate_columns=configuration["PTM-MS"][time]
                     [modification]["replicate columns"],
                     replicate_format=re.compile(
                         configuration["PTM-MS"][time][modification].get(
-                            "replicate format", "^(.+?)$")),
+                            "replicate format", "^(.+)$")),
                     sheet_name=configuration["PTM-MS"][time][modification].get(
                         "sheet", 1) - 1 if isinstance(
                             configuration["PTM-MS"][time][modification].get(
@@ -90,12 +90,12 @@ def process_workflow(identifier: str, configuration: Mapping[str, Any]) -> None:
                     [modification]["accession column"],
                     protein_accession_format=re.compile(
                         configuration["PTM-MS"][time][modification].get(
-                            "accession format", "^(.+?)$")),
+                            "accession format", "^(.+)$")),
                     replicate_columns=configuration["PTM-MS"][time]
                     [modification]["replicate columns"],
                     replicate_format=re.compile(
                         configuration["PTM-MS"][time][modification].get(
-                            "replicate format", "^(.+?)$")),
+                            "replicate format", "^(.+)$")),
                     sheet_name=configuration["PTM-MS"][time][modification].get(
                         "sheet", 1) - 1 if isinstance(
                             configuration["PTM-MS"][time][modification].get(

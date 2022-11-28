@@ -21,7 +21,7 @@
           "sheet": "20151119_HeLa_HCT116_05h_2h_all",
           "accession column": "Protein",
           "position column": "Positions within proteins",
-          "position format": "(?=(?:^|;)(\\d+)(?:;|$))",
+          "position format": "(?=(?:^|;)([0-9]+)(?:;|$))",
           "replicate columns": [
             "Ratio H/L normalized HCT116_05_R1",
             "Ratio H/L normalized HCT116_05_R2",
@@ -52,7 +52,7 @@
           "sheet": "20151119_HeLa_HCT116_05h_2h_all",
           "accession column": "Protein",
           "position column": "Positions within proteins",
-          "position format": "(?=(?:^|;)(\\d+)(?:;|$))",
+          "position format": "(?=(?:^|;)([0-9]+)(?:;|$))",
           "replicate columns": [
             "Ratio H/L normalized HCT116_2_R1",
             "Ratio H/L normalized HCT116_2_R2",

@@ -7,9 +7,9 @@
           "sheet": "Raw Data",
           "header": 2,
           "accession column": "protein",
-          "accession format": "sp\\|(\\S+)\\|[A-Z0-9]+_HUMAN",
+          "accession format": "sp\\|([A-Z0-9]+)\\|[A-Z0-9]+_HUMAN",
           "position column": "phosphosites",
-          "position format": "(?:^|,)(\\d+)_[STY]",
+          "position format": "(?:^|,)([0-9]+)_[STY]",
           "replicate columns": [
             "wt15minvscontrolratio"
           ]
@@ -21,9 +21,9 @@
           "sheet": "Raw Data",
           "header": 2,
           "accession column": "protein",
-          "accession format": "sp\\|(\\S+)\\|[A-Z0-9]+_HUMAN",
+          "accession format": "sp\\|([A-Z0-9]+)\\|[A-Z0-9]+_HUMAN",
           "position column": "phosphosites",
-          "position format": "(?:^|,)(\\d+)_[STY]",
+          "position format": "(?:^|,)([0-9]+)_[STY]",
           "replicate columns": [
             "wt30minvscontrolratio"
           ]
@@ -35,9 +35,9 @@
           "sheet": "Raw Data",
           "header": 2,
           "accession column": "protein",
-          "accession format": "sp\\|(\\S+)\\|[A-Z0-9]+_HUMAN",
+          "accession format": "sp\\|([A-Z0-9]+)\\|[A-Z0-9]+_HUMAN",
           "position column": "phosphosites",
-          "position format": "(?:^|,)(\\d+)_[STY]",
+          "position format": "(?:^|,)([0-9]+)_[STY]",
           "replicate columns": [
             "wt60minvscontrolratio"
           ]
@@ -49,9 +49,9 @@
           "sheet": "Raw Data",
           "header": 2,
           "accession column": "protein",
-          "accession format": "sp\\|(\\S+)\\|[A-Z0-9]+_HUMAN",
+          "accession format": "sp\\|([A-Z0-9]+)\\|[A-Z0-9]+_HUMAN",
           "position column": "phosphosites",
-          "position format": "(?:^|,)(\\d+)_[STY]",
+          "position format": "(?:^|,)([0-9]+)_[STY]",
           "replicate columns": [
             "wt120minvscontrolratio"
           ]
