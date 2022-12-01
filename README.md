@@ -102,11 +102,11 @@ Several options for workflow customization invoke the nested representation of
 post-translational modification mass spectrometry data implemented by DIANA and
 support or require merging measurements.
 
-Naturally, measurements are associated with specific modification sites along
-the protein sequence for each of which there are typically multiple replicates.
-Therefore, a site-specific representation requires averaging the corresponding
-replicates and a protein-specific measurement representation requires averaging
-the corresponding sites.
+Measurements are associated with specific modification sites along the protein
+sequence for each of which there are typically multiple replicates. Therefore, a
+site-specific representation requires averaging the corresponding replicates and
+a protein-specific measurement representation requires averaging the
+corresponding sites.
 
 ```mermaid
 flowchart
