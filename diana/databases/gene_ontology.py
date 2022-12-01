@@ -1,6 +1,6 @@
 """The interface for the Gene Ontology database."""
 from typing import (Callable, Collection, Container, Hashable, Iterable,
-                    Iterator, Mapping, Sequence)
+                    Iterator, Literal, Mapping, Sequence)
 
 import scipy.stats
 from access import iterate
@@ -10,14 +10,15 @@ from databases import uniprot
 ORGANISM: dict[str, dict[int, str]] = {"files": {9606: "human"}}
 
 
-def get_ontology(namespaces: Container[str] = (
+def get_ontology(namespaces: Container[Literal[
     "cellular_component", "molecular_function",
-    "biological_process")) -> Iterator[dict[str, str | tuple[str, ...]]]:
+    "biological_process"]] = ()) -> Iterator[dict[str, str | tuple[str, ...]]]:
     """
     Yields Gene Ontology terms from the given namespaces.
 
     Args:
-        namespaces: The Gene Ontology namespaces to consider terms from.
+        namespaces: The Gene Ontology namespaces to consider terms from. If
+            empty, any namespace is considered.
 
     Yields:
         Mappings containing a Gene Ontology terms' GO ID, name, namespace,
@@ -34,7 +35,8 @@ def get_ontology(namespaces: Container[str] = (
 
     for line in iterate.txt("http://purl.obolibrary.org/obo/go.obo"):
         if line in ("[Term]", "[Typedef]"):
-            if term.get("id") and term.get("namespace") in namespaces:
+            if (not namespaces or
+                    term.get("id") and term.get("namespace") in namespaces):
                 yield {
                     **term,
                     **{
@@ -65,14 +67,15 @@ def get_ontology(namespaces: Container[str] = (
 
 def get_annotation(
     organism: int = 9606,
-    namespaces: Container[str] = ("C", "F", "P")
+    namespaces: Container[Literal["C", "F", "P"]] = ()
 ) -> Iterator[tuple[str, str]]:
     """
     Yields Gene Ontology annotations within specified namespaces.
 
     Args:
         organism: The NCBI taxonomy identifier for the organism of interest.
-        namespace: The Gene Ontology namespace identifiers.
+        namespace: The Gene Ontology namespace identifiers. If empty, any
+            namespace is considered.
 
     Yields:
         Pairs of protein accessions and Gene Ontology term identifiers.
@@ -85,8 +88,9 @@ def get_annotation(
             skiprows=41,
             delimiter="\t",
             usecols=[0, 1, 4, 8, 12]):
-        if row[0] == "UniProtKB" and row[3] in namespaces and row[4].split(
-                ":")[-1] == str(organism):
+        if (row[0] == "UniProtKB" and
+            (not namespaces or row[3] in namespaces) and
+                row[4].split(":")[-1] == str(organism)):
             for protein in primary_accession.get(row[1], {row[1]}):
                 yield (protein, row[2])
 
@@ -96,12 +100,17 @@ def get_annotation(
             skiprows=41,
             delimiter="\t",
             usecols=[0, 4, 8, 12, 16]):
-        if row[0] == "UniProtKB" and row[2] in namespaces and row[3].split(
-                ":")[-1] == str(organism) and row[4].startswith("UniProtKB:"):
+        if (row[0] == "UniProtKB" and
+            (not namespaces or row[2] in namespaces) and
+                row[3].split(":")[-1] == str(organism) and
+                row[4].startswith("UniProtKB:")):
             yield (row[4].split(":")[1], row[1])
 
 
-def convert_namespaces(namespaces: Iterable[str]) -> tuple[str, ...]:
+def convert_namespaces(
+    namespaces: Iterable[Literal["cellular_component", "molecular_function",
+                                 "biological_process"]]
+) -> tuple[Literal["C", "F", "P"], ...]:
     """
     Converts Gene Ontology namespace identifiers.
 
@@ -111,11 +120,15 @@ def convert_namespaces(namespaces: Iterable[str]) -> tuple[str, ...]:
     Returns:
         The corresponding identifiers used in annotation files.
     """
-    return tuple({
-        "cellular_component": "C",
-        "molecular_function": "F",
-        "biological_process": "P"
-    }[ns] for ns in namespaces)
+
+    conversion: dict[Literal["cellular_component", "molecular_function",
+                             "biological_process"], Literal["C", "F", "P"]] = {
+                                 "cellular_component": "C",
+                                 "molecular_function": "F",
+                                 "biological_process": "P"
+                             }
+    return tuple(conversion[ns] for ns in set(namespaces).intersection(
+        {"cellular_component", "molecular_function", "biological_process"}))
 
 
 def get_enrichment(
@@ -127,8 +140,8 @@ def get_enrichment(
     multiple_testing_correction: Callable[[dict[Hashable, float]], Mapping[
         Hashable, float]] = correction.benjamini_yekutieli,
     organism: int = 9606,
-    namespaces: Collection[str] = ("cellular_component", "molecular_function",
-                                   "biological_process")
+    namespaces: Collection[Literal["cellular_component", "molecular_function",
+                                   "biological_process"]] = frozenset()
 ) -> dict[frozenset[str], dict[tuple[str, str], float]]:
     """
     Test sets of proteins for enrichment of Gene Ontology terms.
@@ -143,7 +156,8 @@ def get_enrichment(
         multiple_testing_correction: The procedure to correct for multiple
             testing of multiple terms and sets of proteins.
         organism: The NCBI taxonomy identifier for the organism of interest.
-        namespaces: The Gene Ontology namespaces.
+        namespaces: The Gene Ontology namespaces to consider. If empty, any
+            namespace is considered.
 
     Returns:
         Corrected p-value for the enrichment of each Gene Ontology term by each

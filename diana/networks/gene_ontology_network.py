@@ -6,7 +6,7 @@ interest. Edges are directed term relationships within the Gene Ontology.
 """
 
 from typing import (Callable, Collection, Container, Hashable, Iterable,
-                    Mapping, Optional)
+                    Literal, Mapping, Optional)
 
 import networkx as nx
 import scipy.stats
@@ -16,9 +16,9 @@ from databases import gene_ontology
 
 def get_network(proteins: Iterable[str],
                 reference: Optional[Container[str]] = None,
-                namespaces: Collection[str] = ("cellular_component",
-                                               "molecular_function",
-                                               "biological_process"),
+                namespaces: Collection[
+                    Literal["cellular_component", "molecular_function",
+                            "biological_process"]] = frozenset(),
                 enrichment_test: Callable[[int, int, int, int], float] = lambda
                 k, M, n, N: float(scipy.stats.hypergeom.sf(k - 1, M, n, N)),
                 multiple_testing_correction: Callable[
@@ -33,7 +33,8 @@ def get_network(proteins: Iterable[str],
         reference: Optional reference set of proteins with respect to which
             enrichment is computed. If not provided, the entire Gene Ontology
             annotation specific to the organism of interest is used.
-        namespaces: The Gene Ontology namespaces.
+        namespaces: The Gene Ontology namespaces to consider. If empty, any
+            namespace is considered.
         enrichment_test: The statistical test used to assess enrichment of a
             term by the protein-protein interaction network.
         multiple_testing_correction: The procedure to correct for testing of

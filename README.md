@@ -1253,17 +1253,14 @@ interaction network. The default setting is `false`.
 {
   "configuration": {
     "Gene Ontology enrichment": {
-      "namespaces": [
-        "cellular component",
-        "molecular function",
-        "biological process"
-      ]
+      "namespaces": []
     }
   }
 }
 ```
-The Gene Ontology namespaces to consider. The default setting is
-`["cellular component", "molecular function" "biological process"]`.
+The Gene Ontology namespaces to consider referred to as `"cellular component"`,
+`"molecular function"`, and `"biological process"`. The default setting is `[]`
+corresponding to any namespace.
 
 ---
 
@@ -1487,17 +1484,14 @@ completely supported setting is `9606`, corresponding to Homo sapiens.
 {
   "configuration": {
     "Gene Ontology network": {
-      "namespaces": [
-        "cellular component",
-        "molecular function",
-        "biological process"
-      ]
+      "namespaces": []
     }
   }
 }
 ```
-The Gene Ontology namespaces to consider. The default setting is
-`["cellular component", "molecular function" "biological process"]`.
+The Gene Ontology namespaces to consider referred to as `"cellular component"`,
+`"molecular function"`, and `"biological process"`. The default setting is `[]`
+corresponding to any namespace.
 
 ---
 
@@ -1917,18 +1911,15 @@ their union. The default setting is `false`.
   "configuration": {
     "community detection": {
       "Gene Ontology enrichment": {
-        "namespaces": [
-            "cellular component",
-            "molecular function",
-            "biological process"
-          ]
+        "namespaces": []
       }
     }
   }
 }
 ```
-The Gene Ontology namespaces to consider. The default setting is
-`["cellular component", "molecular function" "biological process"]`.
+The Gene Ontology namespaces to consider referred to as `"cellular component"`,
+`"molecular function"`, and `"biological process"`. The default setting is `[]`
+corresponding to any namespace.
 
 ```json
 {

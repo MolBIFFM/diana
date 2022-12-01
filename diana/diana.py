@@ -584,10 +584,7 @@ def process_workflow(identifier: str, configuration: Mapping[str, Any]) -> None:
                 namespaces=[
                     namespace.replace(" ", "_")
                     for namespace in configuration["Gene Ontology network"].get(
-                        "namespaces", [
-                            "cellular component", "molecular function",
-                            "biological process"
-                        ])
+                        "namespaces", [])
                 ],
                 enrichment_test=test.ENRICHMENT_TEST[(
                     configuration["Gene Ontology network"].get(
@@ -606,10 +603,7 @@ def process_workflow(identifier: str, configuration: Mapping[str, Any]) -> None:
                 namespaces=[
                     namespace.replace(" ", "_")
                     for namespace in configuration["Gene Ontology network"].get(
-                        "namespaces", [
-                            "cellular component", "molecular function",
-                            "biological process"
-                        ])
+                        "namespaces", [])
                 ],
                 enrichment_test=test.ENRICHMENT_TEST[(
                     configuration["Gene Ontology network"].get(
@@ -882,10 +876,7 @@ def process_workflow(identifier: str, configuration: Mapping[str, Any]) -> None:
                     namespaces=[
                         namespace.replace(" ", "_") for namespace in
                         configuration["Gene Ontology enrichment"].get(
-                            "namespaces", [
-                                "cellular component", "molecular function",
-                                "biological process"
-                            ])
+                            "namespaces", [])
                     ])
 
                 for (term, name), p in sorted(
@@ -913,10 +904,7 @@ def process_workflow(identifier: str, configuration: Mapping[str, Any]) -> None:
                     namespaces=[
                         namespace.replace(" ", "_") for namespace in
                         configuration["Gene Ontology enrichment"].get(
-                            "namespaces", [
-                                "cellular component", "molecular function",
-                                "biological process"
-                            ])
+                            "namespaces", [])
                     ])
 
                 for (term,
@@ -1072,11 +1060,7 @@ def process_workflow(identifier: str, configuration: Mapping[str, Any]) -> None:
                     namespaces=[
                         namespace.replace(" ", "_")
                         for namespace in configuration["community detection"]
-                        ["Gene Ontology enrichment"].get(
-                            "namespaces", [
-                                "cellular component", "molecular function",
-                                "biological process"
-                            ])
+                        ["Gene Ontology enrichment"].get("namespaces", [])
                     ])
 
                 for k, community in enumerate(sorted(
@@ -1116,11 +1100,7 @@ def process_workflow(identifier: str, configuration: Mapping[str, Any]) -> None:
                     namespaces=[
                         namespace.replace(" ", "_")
                         for namespace in configuration["community detection"]
-                        ["Gene Ontology enrichment"].get(
-                            "namespaces", [
-                                "cellular component", "molecular function",
-                                "biological process"
-                            ])
+                        ["Gene Ontology enrichment"].get("namespaces", [])
                     ])
 
                 for k, community in enumerate(sorted(
