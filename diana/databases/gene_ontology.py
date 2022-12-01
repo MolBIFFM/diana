@@ -127,8 +127,8 @@ def convert_namespaces(
                                  "molecular_function": "F",
                                  "biological_process": "P"
                              }
-    return tuple(conversion[ns] for ns in set(namespaces).intersection(
-        {"cellular_component", "molecular_function", "biological_process"}))
+
+    return tuple(conversion[ns] for ns in namespaces)
 
 
 def get_enrichment(
