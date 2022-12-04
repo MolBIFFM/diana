@@ -9,14 +9,19 @@ spectrometry data.
 The pipeline automates customizable analysis of mass-spectrometry data capturing
 differential post-translational modification in the context of protein-protein
 interaction networks assembled from these proteins, incorporating interactions
-from BioGRID, CORUM, IntAct, MINT, Reactome, and STRING.
+from [BioGRID](https://thebiogrid.org/),
+[CORUM](http://mips.helmholtz-muenchen.de/corum/),
+[IntAct](https://www.ebi.ac.uk/intact/home),
+[MINT](https://mint.bio.uniroma2.it/), [Reactome](https://reactome.org/), and
+[STRING](https://string-db.org/).
 
 Network analysis assesses the distribution of proteins associated with
 distinctive mass-spectrometry measurements across densely interacting portions
-of protein-protein interaction networks along with local enrichment of Gene
-Ontology terms and Reactome pathways, relating mass-spectrometry data with
+of protein-protein interaction networks along with local enrichment of
+[Gene Ontology](http://geneontology.org/) terms and
+[Reactome](https://reactome.org/) pathways, relating mass-spectrometry data with
 annotation of protein function to identify relevant subsets of proteins for
-downstream analysis.
+downstream analysis in [Cytoscape](https://cytoscape.org/).
 
 ## Setup
 External dependencies, consisting of NetworkX, pandas, and SciPy, can be
