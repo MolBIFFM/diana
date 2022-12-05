@@ -99,7 +99,7 @@ Analyses enable consideration of multiple different types of post-translational
 modification measured at the same time while separating different times. For
 example, enrichment analysis may consider a subset of proteins determined on the
 basis of measurements for two different types of post-translational modification
-but treat each time of measurement separately where relative thresholds for
+but treat each time of measurement separately. Relative thresholds for
 measurements refer to distributions for a particular type of post-translational
 modification and time of measurement.
 
