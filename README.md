@@ -94,14 +94,14 @@ The identifier determines output file names.
 
 Proteins may be associated with multiple types of post-translational
 modification each captured at multiple different relative times of measurement.
-Analyses enable consideration of multiple different types of post-translational
-modification measured at the same time while separating different times.
 
-For example, enrichment analysis may consider a subset of proteins determined on
-the basis of measurements for two different types of post-translational
-modification but treat each time of measurement separately. Analogously,
-different options may be specified for different types of post-translational
-modification but not different times of measurement.
+Analyses enable consideration of multiple different types of post-translational
+modification measured at the same time while separating different times. For
+example, enrichment analysis may consider a subset of proteins determined on the
+basis of measurements for two different types of post-translational modification
+but treat each time of measurement separately where relative thresholds for
+measurements refer to distributions for a particular type of post-translational
+modification and time of measurement.
 
 Several options for workflow customization invoke the nested representation of
 post-translational modification mass spectrometry data implemented by DIANA and
@@ -975,9 +975,14 @@ specified.
 ```
 The modification-specific range of averaged measurements categorizing proteins
 by whether the range is exceeded or not. The adaptive default setting is
-`[-1.0, 1.0]` if `"score"` is set to `null`, if `"score"` is set to
-`"quantile"`, `[0.5, 2.0]` if `"score"` is set to `"ratio"`, and
-`[-1.0, 1.0]` if `"score"` is set to `"standard score"`.
+`[-1.0, 1.0]` if `"score"` is set to `null`, `[0.25, 0.75]` if `"score"` is set
+to `"quantile"`, `[0.5, 2.0]` if `"score"` is set to `"ratio"`, and
+`[-1.0, 1.0]` if `"score"` is set to `"standard score"`. The setting for `null`
+corresponds to the respective binary logarithms of the setting for `"ratio"`,
+a two-fold decrease or increase. The remaining relative quantities are derived
+from the corresponding distribution represented in the protein-protein
+interaction network, specific to the time of measurement and type of
+post-translational modification.
 
 ```json
 {
@@ -1218,8 +1223,13 @@ across the protein-protein interaction network, if applicable.
 The range of averaged measurements categorizing proteins by whether the range is
 exceeded or not. The adaptive default setting is `[-1.0, 1.0]` if `"score"`
 is set to `null`, `[0.25, 0.75]` if `"score"` is set to `"quantile"`,
-`[0.5, 2.0]` if `"score"` is set to `"ratio"`, and `[-1.0, 1.0]` if
-`"score"` is set to `"standard score"`.
+`[0.5, 2.0]` if `"score"` is set to `"ratio"`, and `[-1.0, 1.0]` if `"score"` is
+set to `"standard score"`. The setting for `null` corresponds to the respective
+binary logarithms of the setting for `"ratio"`, a two-fold decrease or increase.
+The remaining relative quantities are derived from the corresponding
+distribution represented in the protein-protein interaction network, specific to
+the time of measurement and type of post-translational modification.
+
 
 ```json
 {
@@ -1387,7 +1397,12 @@ The range of averaged measurements categorizing proteins by whether the range is
 exceeded or not. The adaptive default setting is `[-1.0, 1.0]` if `"score"`
 is set to `null`, `[0.25, 0.75]` if `"score"` is set to `"quantile"`,
 `[0.5, 2.0]` if `"score"` is set to `"ratio"`, and `[-1.0, 1.0]` if
-`"score"` is set to `"standard score"`.
+`"score"` is set to `"standard score"`. The setting for `null` corresponds to
+the respective binary logarithms of the setting for `"ratio"`, a two-fold
+decrease or increase. The remaining relative quantities are derived from the
+corresponding distribution represented in the protein-protein interaction
+network, specific to the time of measurement and type of post-translational
+modification.
 
 ```json
 {
@@ -1891,7 +1906,12 @@ The range of averaged measurements categorizing proteins by whether the range is
 exceeded or not. The adaptive default setting is `[-1.0, 1.0]` if `"score"`
 is set to `null`, `[0.25, 0.75]` if `"score"` is set to `"quantile"`,
 `[0.5, 2.0]` if `"score"` is set to `"ratio"`, and `[-1.0, 1.0]` if
-`"score"` is set to `"standard score"`.
+`"score"` is set to `"standard score"`. The setting for `null` corresponds to
+the respective binary logarithms of the setting for `"ratio"`, a two-fold
+decrease or increase. The remaining relative quantities are derived from the
+corresponding distribution represented in the protein-protein interaction
+network, specific to the time of measurement and type of post-translational
+modification.
 
 ```json
 {
@@ -2013,7 +2033,12 @@ The modification-specific range of measurements to categorize proteins by
 whether the range is exceeded or not. The adaptive default setting is
 `[-1.0, 1.0]` if `"score"` is set to `null`, `[0.25, 0.75]` if
 `"score"` is set to `"quantile"`, `[0.5, 2.0]` if `"score"` is set to
-`"ratio"`, and `[-1.0, 1.0]` if `"score"` is set to `"standard score"`.
+`"ratio"`, and `[-1.0, 1.0]` if `"score"` is set to `"standard score"`. The
+setting for `null` corresponds to the respective  binary logarithms of the
+setting for `"ratio"`, a two-fold decrease or increase. The remaining relative
+quantities are derived from the corresponding distribution represented in the
+protein-protein interaction network, specific to the time of measurement and
+type of post-translational modification.
 
 ## Protein-Protein Interaction Network
 
