@@ -101,7 +101,9 @@ example, enrichment analysis may consider a subset of proteins determined on the
 basis of measurements for two different types of post-translational modification
 but treat each time of measurement separately. Relative thresholds for
 measurements refer to distributions for a particular type of post-translational
-modification and time of measurement.
+modification and time of measurement. Several options may be specified
+separately for different types of post-translational modification but not
+different times of measurement.
 
 Several options for workflow customization invoke the nested representation of
 post-translational modification mass spectrometry data implemented by DIANA and
