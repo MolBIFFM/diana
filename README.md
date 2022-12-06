@@ -24,7 +24,8 @@ annotation of protein function to identify relevant subsets of proteins for
 downstream analysis in [Cytoscape](https://cytoscape.org/).
 
 ## Setup
-External dependencies, consisting of NetworkX, pandas, and SciPy, can be
+External dependencies, consisting of [NetworkX](https://networkx.org/),
+[pandas](https://pandas.pydata.org/), and [SciPy](https://scipy.org/), can be
 installed using pip by running the following command
 
 ```

@@ -109,6 +109,8 @@ def add_proteins_from_table(
 
         if len(measurements) >= min(number_replicates, len(replicate_columns)):
             for protein_accession in protein_accessions:
+                # https://www.uniprot.org/help/accession_numbers
+                # https://www.uniprot.org/help/alternative_products
                 if re.fullmatch(
                         r"([OPQ][0-9][A-Z0-9]{3}[0-9]|[A-NR-Z][0-9]"
                         r"([A-Z][A-Z0-9]{2}[0-9]){1,2})(-[1-9][0-9]+)?",
@@ -242,6 +244,8 @@ def add_sites_from_table(
         if len(measurements) >= min(number_replicates, len(replicate_columns)):
             for protein_accession, position in zip(protein_accessions,
                                                    positions):
+                # https://www.uniprot.org/help/accession_numbers
+                # https://www.uniprot.org/help/alternative_products
                 if re.fullmatch(
                         r"([OPQ][0-9][A-Z0-9]{3}[0-9]|[A-NR-Z][0-9]"
                         r"([A-Z][A-Z0-9]{2}[0-9]){1,2})(-[1-9][0-9]+)?",
@@ -636,6 +640,8 @@ def get_neighbors_from_biogrid(
             experimental_system, experimental_system_type,
             interaction_throughput, multi_validated_physical, organism,
             version):
+        # https://www.uniprot.org/help/accession_numbers
+        # https://www.uniprot.org/help/alternative_products
         if (interactor_a in network and interactor_b not in network and
                 re.fullmatch(
                     r"([OPQ][0-9][A-Z0-9]{3}[0-9]|[A-NR-Z][0-9]"
@@ -709,6 +715,8 @@ def get_neighbors_from_corum(network: nx.Graph,
     neighbors = set()
     for interactor_a, interactor_b in corum.get_protein_interactions(
             purification_methods, organism):
+        # https://www.uniprot.org/help/accession_numbers
+        # https://www.uniprot.org/help/alternative_products
         if (interactor_a in network and interactor_b not in network and
                 re.fullmatch(
                     r"([OPQ][0-9][A-Z0-9]{3}[0-9]|[A-NR-Z][0-9]"
@@ -776,6 +784,8 @@ def get_neighbors_from_intact(
     for interactor_a, interactor_b, _ in intact.get_protein_interactions(
             interaction_detection_methods, interaction_types, psi_mi_score,
             organism):
+        # https://www.uniprot.org/help/accession_numbers
+        # https://www.uniprot.org/help/alternative_products
         if (interactor_a in network and interactor_b not in network and
                 re.fullmatch(
                     r"([OPQ][0-9][A-Z0-9]{3}[0-9]|[A-NR-Z][0-9]"
@@ -854,6 +864,8 @@ def get_neighbors_from_mint(network: nx.Graph,
     for interactor_a, interactor_b, _ in mint.get_protein_interactions(
             interaction_detection_methods, interaction_types, psi_mi_score,
             organism):
+        # https://www.uniprot.org/help/accession_numbers
+        # https://www.uniprot.org/help/alternative_products
         if (interactor_a in network and interactor_b not in network and
                 re.fullmatch(
                     r"([OPQ][0-9][A-Z0-9]{3}[0-9]|[A-NR-Z][0-9]"
@@ -929,6 +941,8 @@ def get_neighbors_from_reactome(
 
     for interactor_a, interactor_b in reactome.get_protein_interactions(
             interaction_type, interaction_context, organism):
+        # https://www.uniprot.org/help/accession_numbers
+        # https://www.uniprot.org/help/alternative_products
         if (interactor_a in network and interactor_b not in network and
                 re.fullmatch(
                     r"([OPQ][0-9][A-Z0-9]{3}[0-9]|[A-NR-Z][0-9]"
@@ -1026,6 +1040,8 @@ def get_neighbors_from_string(network: nx.Graph,
             experiments_transferred, database, database_transferred, textmining,
             textmining_transferred, combined_score, physical, organism,
             version):
+        # https://www.uniprot.org/help/accession_numbers
+        # https://www.uniprot.org/help/alternative_products
         if (interactor_a in network and interactor_b not in network and
                 re.fullmatch(
                     r"([OPQ][0-9][A-Z0-9]{3}[0-9]|[A-NR-Z][0-9]"

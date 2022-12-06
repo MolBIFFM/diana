@@ -119,6 +119,8 @@ def process_workflow(identifier: str, configuration: Mapping[str, Any]) -> None:
         if item.get("accessions"):
             network.add_nodes_from(
                 protein_accession for protein_accession in item["accessions"]
+                # https://www.uniprot.org/help/accession_numbers
+                # https://www.uniprot.org/help/alternative_products
                 if re.fullmatch(
                     r"([OPQ][0-9][A-Z0-9]{3}[0-9]|[A-NR-Z][0-9]"
                     r"([A-Z][A-Z0-9]{2}[0-9]){1,2})(-[1-9][0-9]+)?",
