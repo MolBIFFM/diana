@@ -17,7 +17,7 @@ from cytoscape import (gene_ontology_network_style,
                        reactome_network_style)
 from databases import gene_ontology, reactome
 from interface import (average, score, correction, default, modularization,
-                       prioritization, test)
+                       order, prioritization, test)
 from networks import (gene_ontology_network, protein_interaction_network,
                       reactome_network)
 
@@ -80,7 +80,10 @@ def process_workflow(identifier: str, configuration: Mapping[str, Any]) -> None:
                         time][modification].get("logarithm")],
                     site_prioritization=prioritization.SITE_PRIORITIZATION[
                         configuration["PTM-MS"][time][modification].get(
-                            "site prioritization", "absolute")])
+                            "site prioritization", "absolute")],
+                    site_order=order.SITE_ORDER[
+                        configuration["PTM-MS"][time][modification].get(
+                            "site order", "measurement")])
             else:
                 protein_interaction_network.add_proteins_from_table(
                     network,

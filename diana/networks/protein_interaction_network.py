@@ -4,7 +4,7 @@ import os
 import re
 import statistics
 from typing import (Callable, Collection, Container, Hashable, Iterable,
-                    MutableSequence, Optional)
+                    MutableSequence, Optional, Union)
 
 import networkx as nx
 import pandas as pd
@@ -126,23 +126,27 @@ def add_proteins_from_table(
 
 
 def add_sites_from_table(
-        network: nx.Graph,
-        file_name: str,
-        protein_accession_column: int | str,
-        position_column: int | str,
-        replicate_columns: Collection[int] | Collection[str],
-        protein_accession_format: re.Pattern[str] = re.compile("^(.+)$"),
-        position_format: re.Pattern[str] = re.compile("^(.+)$"),
-        replicate_format: re.Pattern[str] = re.compile("^(.+)$"),
-        sheet_name: int | str = 0,
-        header: int = 0,
-        time: int = 0,
-        modification: str = "PTM",
-        number_sites: int = 100,
-        number_replicates: int = 1,
-        replicate_average: Callable[[Iterable[float]], float] = statistics.mean,
-        measurement_score: Callable[[float], float] = math.log2,
-        site_prioritization: Callable[[float], float] = abs) -> None:
+    network: nx.Graph,
+    file_name: str,
+    protein_accession_column: int | str,
+    position_column: int | str,
+    replicate_columns: Collection[int] | Collection[str],
+    protein_accession_format: re.Pattern[str] = re.compile("^(.+)$"),
+    position_format: re.Pattern[str] = re.compile("^(.+)$"),
+    replicate_format: re.Pattern[str] = re.compile("^(.+)$"),
+    sheet_name: int | str = 0,
+    header: int = 0,
+    time: int = 0,
+    modification: str = "PTM",
+    number_sites: int = 100,
+    number_replicates: int = 1,
+    replicate_average: Callable[[Iterable[float]], float] = statistics.mean,
+    measurement_score: Callable[[float], float] = math.log2,
+    site_prioritization: Callable[[float],
+                                  float] = lambda site: abs(math.log2(site)),
+    site_order: Callable[[tuple[int, float]],
+                         Union[int, float]] = lambda site: site[0]
+) -> None:
     """
     Parse UniProt protein accessions and site-specific measurements from a
     tabular file and add proteins to a protein-protein interaction network.
@@ -175,7 +179,9 @@ def add_sites_from_table(
         measurement_score: The function to convert the measurements
             reported to their binary logarithm.
         site_prioritization: A function of a measurement to derive a
-        representative value for site prioritization.
+            representative value for site prioritization.
+        site_order: A function of a measurement to derive a
+            representative value for site order.
     """
     if os.path.splitext(file_name)[1].lstrip(".") in (
             "xls",
@@ -265,7 +271,14 @@ def add_sites_from_table(
                     key=lambda site: site_prioritization(
                         replicate_average(
                             [math.pow(2.0, replicate)
-                             for replicate in site[1]])))[-number_sites:]),
+                             for replicate in site[1]])))[-number_sites:],
+                key=lambda site: site_order(
+                    (site[0],
+                     math.pow(
+                         2.0,
+                         replicate_average([
+                             math.pow(2.0, replicate) for replicate in site[1]
+                         ]))))),
                                             start=1):
             for m, measurement in enumerate(replicates, start=1):
                 network.nodes[protein][

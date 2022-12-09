@@ -32,6 +32,9 @@ installed using pip by running the following command
 pip3 install -r diana/requirements.txt
 ```
 
+For input of data by spreadsheet, pandas dependencies may need to be installed
+additionally.
+
 DIANA is currently developed using Python 3.10.7, Ubuntu 22.10 and Cytoscape
 3.9.1. Source code is formatted automatically using YAPF 0.32.0.
 
@@ -371,9 +374,27 @@ largest absolute measurement. The default setting is `5`.
 ```
 A function of a site-specific measurement to prioritize it over others. The
 default setting is `"absolute"` corresponding to the absolute binary logarithm
-which weights relative change in either direction equally. Available settings
-are `"absolute"` as well as `"increase"`, and `"decrease"` to prioritize
+weighting relative change in either direction equally. Available settings are
+`"absolute"` as well as `"increase"`, and `"decrease"` to prioritize
 measurements constituting either increase or decrease, respectively.
+
+```json
+{
+  "configuration": {
+    "PTM-MS": {
+      "0": {
+        "PTM": {
+          "site order": "measurement"
+        }
+      }
+    }
+  }
+}
+```
+A function of a site-specific measurement and its position to define the order
+of sites. The default setting is `"measurement"` corresponding to the binary
+logarithm ordering sites in ascending order. Available settings are
+`"absolute measurement"`, `"measurement"`, and `"position"`.
 
 ```json
 {
@@ -1085,7 +1106,8 @@ If `true`, assess enrichment, otherwise depletion. The default setting is
   }
 }
 ```
-The procedure to correct p-values for multiple testing. The default setting is
+The procedure to correct p-values for multiple testing with respect to the false
+discovery rate or family-wise error rate. The default setting is
 `"Benjamini-Yekutieli"`. Available settings are `"Benjamini-Hochberg"`,
 `"Benjamini-Yekutieli"`, `"Holm"` and `"Hommel"`.
 
@@ -1466,7 +1488,8 @@ If `true`, assess enrichment, otherwise depletion. The default setting is
   }
 }
 ```
-The procedure to correct p-values for multiple testing. The default setting is
+The procedure to correct p-values for multiple testing with respect to the false
+discovery rate or family-wise error rate. The default setting is
 `"Benjamini-Yekutieli"`. Available settings are `"Benjamini-Hochberg"`,
 `"Benjamini-Yekutieli"`, `"Holm"` and `"Hommel"`.
 
@@ -1530,8 +1553,9 @@ parameterized modularity maximization and iterative subdivision.
   }
 }
 ```
-The community detection algorithm. The default setting is `"Louvain"`. Available
-settings are `"Clauset-Newman-Moore"` and `"Louvain"`.
+The agglomerative algorithm for community detection by greedy modularity
+maximization. The default setting is `"Louvain"`. Available settings are
+`"Clauset-Newman-Moore"` and `"Louvain"`.
 
 ```json
 {
@@ -1656,7 +1680,8 @@ The default setting is `true`.
   }
 }
 ```
-The procedure to correct p-values for multiple testing. The default setting is
+The procedure to correct p-values for multiple testing with respect to the false
+discovery rate or family-wise error rate. The default setting is
 `"Benjamini-Yekutieli"`. Available settings are `"Benjamini-Hochberg"`,
 `"Benjamini-Yekutieli"`, `"Holm"` and `"Hommel"`.
 
@@ -2314,4 +2339,5 @@ Specifically, this concerns implementations of
 ---
 
 DIANA is developed by Jens Rieser and Lucas Fein in the Molecular Bioinformatics
-group of Ina Koch at Goethe-University Frankfurt.
+group at Goethe-University Frankfurt under supervision of Dr. Jörg Ackermann and
+Prof. Dr. Ina Koch.
