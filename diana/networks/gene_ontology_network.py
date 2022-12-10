@@ -4,7 +4,7 @@ Gene Ontology network
 Nodes are Gene Ontology terms associated with proteins from a species of
 interest. Edges are directed term relationships within the Gene Ontology.
 """
-
+import os
 from typing import (Callable, Collection, Container, Hashable, Iterable,
                     Literal, Mapping, Optional)
 
@@ -117,15 +117,26 @@ def get_term_sizes(network: nx.Graph) -> dict[str, int]:
     return {term: network.nodes[term]["number of proteins"] for term in network}
 
 
-def export(network: nx.Graph, basename: str) -> None:
+def export(network: nx.Graph, basename: str) -> Optional[str]:
     """
-    Exports the Gene Ontology network.
+    Exports the Gene Ontology network if possible without overwriting an
+    existing file.
+
 
     Args:
         network: The Gene Ontology network.
         basename: The base file name.
+
+    Returns:
+        The file the Gene Ontology network was exported to if there is no naming
+        conflict.
     """
+    if os.path.isfile(f"{basename}.graphml"):
+        return None
+
     nx.write_graphml_xml(network,
                          f"{basename}.graphml",
                          named_key_ids=True,
                          infer_numeric_types=True)
+
+    return f"{basename}.graphml"

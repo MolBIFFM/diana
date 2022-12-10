@@ -1,9 +1,12 @@
 """The Cytoscape style configuration for a Reactome network."""
 import math
+import os
 import xml.etree.ElementTree as ET
+from typing import Optional
 
 import networkx as nx
 from cytoscape import elements
+
 from networks import reactome_network
 
 COMPONENTS: dict[str, dict[str, dict[str, dict[
@@ -438,16 +441,26 @@ def get_styles(network: nx.Graph) -> ET.ElementTree:
     return styles
 
 
-def export(styles: ET.ElementTree, basename: str) -> None:
+def export(styles: ET.ElementTree, basename: str) -> Optional[str]:
     """
-    Exports the Cytoscape style.
+    Exports the Cytoscape style for a Reactome network if possible without
+    overwriting an existing file.
 
     Args:
-        styles: The Cytoscape style.
+        styles: The Cytoscape styles.
         basename: The base file name.
+
+    Returns:
+        The file name the Cytoscape style were exported to if there is no
+        naming conflict.
     """
+    if os.path.isfile(f"{basename}.xml"):
+        return None
+
     styles.write(
         f"{basename}.xml",
         encoding="utf-8",
         xml_declaration=True,
     )
+
+    return f"{basename}.xml"

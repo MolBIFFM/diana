@@ -6,8 +6,10 @@ import argparse
 import concurrent.futures
 import csv
 import json
+import logging
 import os
 import re
+import sys
 from typing import Any, Mapping
 
 import networkx as nx
@@ -30,14 +32,39 @@ def process_workflow(identifier: str, configuration: Mapping[str, Any]) -> None:
         identifier: An identifier for the workflow.
         configuration: The specification of a workflow.
     """
+    logger = logging.getLogger(identifier)
     network = protein_interaction_network.get_network()
 
     for time in configuration.get("PTM-MS", {}):
         for modification in configuration["PTM-MS"][time]:
             if not (configuration["PTM-MS"][time][modification].get("file") and
+                    os.path.isfile(
+                        configuration["PTM-MS"][time][modification]["file"]) and
                     configuration["PTM-MS"][time][modification].get(
                         "accession column")):
+                if not configuration["PTM-MS"][time][modification].get("file"):
+                    logger.warning(
+                        "File for modification %s at time %s is not specified.",
+                        modification, time)
+
+                elif not os.path.isfile(
+                        configuration["PTM-MS"][time][modification]["file"]):
+                    logger.warning(
+                        "File specified for modification %s at time %s does "
+                        "not exist.", modification, time)
+
+                elif not configuration["PTM-MS"][time][modification].get(
+                        "accession column"):
+                    logger.warning(
+                        "Accession column for modification %s at time %s is "
+                        "not specified.", modification, time)
+
                 continue
+
+            logger.info(
+                "Adding proteins for modification %s at time %s from %s.",
+                modification, time,
+                configuration["PTM-MS"][time][modification]["file"])
 
             if configuration["PTM-MS"][time][modification].get(
                     "position column"):
@@ -113,13 +140,26 @@ def process_workflow(identifier: str, configuration: Mapping[str, Any]) -> None:
                     measurement_score=score.LOGARITHM[configuration["PTM-MS"][
                         time][modification].get("logarithm")])
 
-    for item in configuration.get("networks", {}):
-        if item.get("network"):
-            network = nx.compose(
-                network, nx.readwrite.graphml.read_graphml(item["network"]))
+    for i, item in enumerate(configuration.get("networks", {})):
+
+        if not (item.get("network") and os.path.isfile(item["network"])):
+            if not item.get("network"):
+                logger.warning("File for network %d is not specified.", i)
+
+            elif not os.path.isfile(item["network"]):
+                logger.warning("File for network %d does not exist.", i)
+
+            continue
+
+        logger.info("Adding proteins from %s.", item["network"])
+
+        network = nx.compose(network,
+                             nx.readwrite.graphml.read_graphml(item["network"]))
 
     for item in configuration.get("proteins", {}):
         if item.get("accessions"):
+            logger.info("Adding proteins from accessions.")
+
             network.add_nodes_from(
                 protein_accession for protein_accession in item["accessions"]
                 # https://www.uniprot.org/help/accession_numbers
@@ -155,6 +195,9 @@ def process_workflow(identifier: str, configuration: Mapping[str, Any]) -> None:
                     "protein-protein interactions"] and configuration[
                         "protein-protein interactions"]["BioGRID"].get(
                             "neighbors", 0) > neighbors:
+                logger.info("Adding neighbors of order %d from BioGRID.",
+                            neighbors)
+
                 interacting_proteins.update(
                     protein_interaction_network.get_neighbors_from_biogrid(
                         network,
@@ -179,6 +222,9 @@ def process_workflow(identifier: str, configuration: Mapping[str, Any]) -> None:
                     "protein-protein interactions"] and configuration[
                         "protein-protein interactions"]["CORUM"].get(
                             "neighbors", 0) > neighbors:
+                logger.info("Adding neighbors of order %d from CORUM.",
+                            neighbors)
+
                 interacting_proteins.update(
                     protein_interaction_network.get_neighbors_from_corum(
                         network,
@@ -190,6 +236,9 @@ def process_workflow(identifier: str, configuration: Mapping[str, Any]) -> None:
                     "protein-protein interactions"] and configuration[
                         "protein-protein interactions"]["IntAct"].get(
                             "neighbors", 0) > neighbors:
+                logger.info("Adding neighbors of order %d from IntAct.",
+                            neighbors)
+
                 interacting_proteins.update(
                     protein_interaction_network.get_neighbors_from_intact(
                         network,
@@ -210,6 +259,9 @@ def process_workflow(identifier: str, configuration: Mapping[str, Any]) -> None:
                     "protein-protein interactions"] and configuration[
                         "protein-protein interactions"]["MINT"].get(
                             "neighbors", 0) > neighbors:
+                logger.info("Adding neighbors of order %d from MINT.",
+                            neighbors)
+
                 interacting_proteins.update(
                     protein_interaction_network.get_neighbors_from_mint(
                         network,
@@ -230,6 +282,9 @@ def process_workflow(identifier: str, configuration: Mapping[str, Any]) -> None:
                     "protein-protein interactions"] and configuration[
                         "protein-protein interactions"]["Reactome"].get(
                             "neighbors", 0) > neighbors:
+                logger.info("Adding neighbors of order %d from Reactome.",
+                            neighbors)
+
                 interacting_proteins.update(
                     protein_interaction_network.get_neighbors_from_reactome(
                         network,
@@ -247,6 +302,9 @@ def process_workflow(identifier: str, configuration: Mapping[str, Any]) -> None:
                     "protein-protein interactions"] and configuration[
                         "protein-protein interactions"]["STRING"].get(
                             "neighbors", 0) > neighbors:
+                logger.info("Adding neighbors of order %d from STRING.",
+                            neighbors)
+
                 interacting_proteins.update(
                     protein_interaction_network.get_neighbors_from_string(
                         network,
@@ -306,6 +364,8 @@ def process_workflow(identifier: str, configuration: Mapping[str, Any]) -> None:
             network.remove_nodes_from(nodes_to_remove)
 
         if "BioGRID" in configuration["protein-protein interactions"]:
+            logger.info("Adding protein-protein interactions from BioGRID.")
+
             protein_interaction_network.add_protein_interactions_from_biogrid(
                 network,
                 interaction_throughput=configuration[
@@ -326,6 +386,8 @@ def process_workflow(identifier: str, configuration: Mapping[str, Any]) -> None:
                 ["BioGRID"].get("version"))
 
         if "CORUM" in configuration["protein-protein interactions"]:
+            logger.info("Adding protein-protein interactions from CORUM.")
+
             protein_interaction_network.add_protein_interactions_from_corum(
                 network,
                 purification_methods=configuration[
@@ -333,6 +395,8 @@ def process_workflow(identifier: str, configuration: Mapping[str, Any]) -> None:
                         "purification methods", []))
 
         if "IntAct" in configuration["protein-protein interactions"]:
+            logger.info("Adding protein-protein interactions from IntAct.")
+
             protein_interaction_network.add_protein_interactions_from_intact(
                 network,
                 interaction_detection_methods=configuration[
@@ -347,6 +411,8 @@ def process_workflow(identifier: str, configuration: Mapping[str, Any]) -> None:
             )
 
         if "MINT" in configuration["protein-protein interactions"]:
+            logger.info("Adding protein-protein interactions from MINT.")
+
             protein_interaction_network.add_protein_interactions_from_mint(
                 network,
                 interaction_detection_methods=configuration[
@@ -361,6 +427,8 @@ def process_workflow(identifier: str, configuration: Mapping[str, Any]) -> None:
             )
 
         if "Reactome" in configuration["protein-protein interactions"]:
+            logger.info("Adding protein-protein interactions from Reactome.")
+
             protein_interaction_network.add_protein_interactions_from_reactome(
                 network,
                 interaction_context=configuration[
@@ -373,6 +441,8 @@ def process_workflow(identifier: str, configuration: Mapping[str, Any]) -> None:
             )
 
         if "STRING" in configuration["protein-protein interactions"]:
+            logger.info("Adding protein-protein interactions from STRING.")
+
             protein_interaction_network.add_protein_interactions_from_string(
                 network,
                 neighborhood=configuration["protein-protein interactions"]
@@ -498,11 +568,33 @@ def process_workflow(identifier: str, configuration: Mapping[str, Any]) -> None:
                     confidence_score_average=average.CONFIDENCE_SCORE_AVERAGE[
                         configuration["Cytoscape"].get("edge transparency")])
 
-                protein_interaction_network_style.export(styles, identifier)
+                file_name = protein_interaction_network_style.export(
+                    styles, identifier)
 
-        protein_interaction_network.export(network, identifier)
+                if file_name is None:
+                    logger.warning(
+                        "The Cytoscape styles for the protein-protein "
+                        "interaction network were not exported due to naming "
+                        "conflict.")
+                else:
+                    logger.info(
+                        "The Cytoscape styles for the protein-protein "
+                        "interaction network were exported to %s.", file_name)
+
+        file_name = protein_interaction_network.export(network, identifier)
+
+        if file_name is None:
+            logger.warning(
+                "The protein-protein interaction network was not exported due "
+                "to naming conflict.")
+        else:
+            logger.info(
+                "The protein-protein interaction network was exported to %s.",
+                file_name)
 
     if "Gene Ontology network" in configuration:
+        logger.info("Assembling the Gene Ontology network.")
+
         if "PTMs" in configuration["Gene Ontology network"]:
             if configuration["Gene Ontology network"].get(
                     "intersection", False):
@@ -621,16 +713,35 @@ def process_workflow(identifier: str, configuration: Mapping[str, Any]) -> None:
                 organism=configuration["Gene Ontology network"].get(
                     "organism", 9606))
 
-        gene_ontology_network.export(ontology_network,
-                                     f"{identifier}_gene_ontology")
+        file_name = gene_ontology_network.export(ontology_network,
+                                                 f"{identifier}_gene_ontology")
+
+        if file_name is None:
+            logger.warning(
+                "The Gene Ontology network was not exported due to naming "
+                "conflict.")
+        else:
+            logger.info("The Gene Ontology network was exported to %s.",
+                        file_name)
 
         if "Cytoscape" in configuration:
             ontology_network_styles = gene_ontology_network_style.get_styles(
                 ontology_network)
-            gene_ontology_network_style.export(ontology_network_styles,
-                                               f"{identifier}_gene_ontology")
+            file_name = gene_ontology_network_style.export(
+                ontology_network_styles, f"{identifier}_gene_ontology")
+
+            if file_name is None:
+                logger.warning(
+                    "The Cytoscape style for the Gene Ontology network was not "
+                    "exported due to naming conflict.")
+            else:
+                logger.info(
+                    "The Cytoscape style for the Gene Ontology network was "
+                    "exported to %s.", file_name)
 
     if "Reactome network" in configuration:
+        logger.info("Assembling the Reactome network.")
+
         if "PTMs" in configuration["Reactome network"]:
             if configuration["Reactome network"].get("intersection", False):
                 proteins = set(network.nodes())
@@ -735,15 +846,33 @@ def process_workflow(identifier: str, configuration: Mapping[str, Any]) -> None:
                 organism=configuration["Reactome network"].get(
                     "organism", 9606))
 
-        reactome_network.export(pathway_network, f"{identifier}_reactome")
+        file_name = reactome_network.export(pathway_network,
+                                            f"{identifier}_reactome")
+
+        if file_name is None:
+            logger.warning(
+                "The Reactome network was not exported due to naming conflict.")
+        else:
+            logger.info("The Reactome network was exported to %s.", file_name)
 
         if "Cytoscape" in configuration:
             pathway_network_styles = reactome_network_style.get_styles(
                 pathway_network)
-            reactome_network_style.export(pathway_network_styles,
-                                          f"{identifier}_reactome")
+            file_name = reactome_network_style.export(pathway_network_styles,
+                                                      f"{identifier}_reactome")
+
+            if file_name is None:
+                logger.warning(
+                    "The Cytoscape style for the Gene Ontology network was not "
+                    "exported due to naming conflict.")
+            else:
+                logger.info(
+                    "The Cytoscape style for the Gene Ontology network was "
+                    "exported to %s.", file_name)
 
     if "community detection" in configuration:
+        logger.info("Identifying communities.")
+
         protein_interaction_network.set_edge_weights(
             network,
             weight=average.CONFIDENCE_SCORE_AVERAGE[
@@ -769,6 +898,8 @@ def process_workflow(identifier: str, configuration: Mapping[str, Any]) -> None:
     if ("Gene Ontology enrichment" in configuration or
             "Gene Ontology enrichment" in configuration.get(
                 "community detection", {})):
+        logger.info("Assessing Gene Ontology enrichment.")
+
         with open(f"{identifier}_gene_ontology.tsv",
                   "w",
                   newline="",
@@ -1125,6 +1256,8 @@ def process_workflow(identifier: str, configuration: Mapping[str, Any]) -> None:
 
     if ("Reactome enrichment" in configuration or "Reactome enrichment"
             in configuration.get("community detection", {})):
+        logger.info("Assessing Reactome enrichment.")
+
         with open(f"{identifier}_reactome.tsv",
                   "w",
                   newline="",
@@ -1444,6 +1577,8 @@ def process_workflow(identifier: str, configuration: Mapping[str, Any]) -> None:
 
     if ("measurement enrichment" in configuration.get("community detection",
                                                       {})):
+        logger.info("Assessing measurement enrichment across communities.")
+
         with open(f"{identifier}_measurement_enrichment.tsv",
                   "w",
                   newline="",
@@ -1520,6 +1655,8 @@ def process_workflow(identifier: str, configuration: Mapping[str, Any]) -> None:
                                 [f"community {k}", time, modification, p])
 
     if "measurement location" in configuration.get("community detection", {}):
+        logger.info("Assessing measurement location across communities.")
+
         with open(f"{identifier}_measurement_location.tsv",
                   "w",
                   newline="",
@@ -1576,13 +1713,26 @@ def process_workflow(identifier: str, configuration: Mapping[str, Any]) -> None:
                             measurement_location_writer.writerow(
                                 [f"community {k}", time, modification, p])
 
+    file_names = []
     for k, community in enumerate(sorted(
             communities,
             key=lambda community: int(community.number_of_nodes()),
             reverse=True),
                                   start=1):
         if export[community]:
-            protein_interaction_network.export(community, f"{identifier}_{k}")
+            file_names.append(
+                protein_interaction_network.export(community,
+                                                   f"{identifier}_{k}"))
+
+    if any(export):
+        if any(file_name is None for file_name in file_names):
+            logger.warning(
+                "Communities of the protein-protein interaction network were "
+                "not exported due to naming conflicts.")
+        else:
+            logger.info(
+                "Communities of the protein-protein interaction network were "
+                "exported.")
 
 
 def process_configuration(
@@ -1628,7 +1778,23 @@ def main() -> None:
         type=int,
         default=os.cpu_count())
 
+    parser.add_argument(
+        "-l",
+        "--logging",
+        help="logging level (default: INFO)",
+        default=logging.INFO,
+        choices=["DEBUG", "INFO", "WARNING", "ERROR", "CRITICAL"])
+
     args = parser.parse_args()
+
+    logging.basicConfig(
+        filename=f"{os.path.splitext(os.path.basename(sys.argv[0]))[0]}.log",
+        filemode="w",
+        format="%(asctime)s %(levelname)s PID %(process)d %(name)s: "
+        "%(message)s",
+        datefmt="%H:%M:%S",
+        level=args.logging,
+        encoding="utf-8")
 
     with concurrent.futures.ProcessPoolExecutor(
             max_workers=args.processes) as executor:

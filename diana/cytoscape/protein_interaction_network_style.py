@@ -4,6 +4,7 @@ network.
 """
 
 import json
+import os
 import math
 import statistics
 import xml.etree.ElementTree as ET
@@ -747,16 +748,26 @@ def get_styles(
     return styles
 
 
-def export(styles: ET.ElementTree, basename: str) -> None:
+def export(styles: ET.ElementTree, basename: str) -> Optional[str]:
     """
-    Exports the Cytoscape styles.
+    Exports Cytoscape styles for a protein-protein interaction network if
+    possible without overwriting an existing file.
 
     Args:
         styles: The Cytoscape styles.
         basename: The base file name.
+
+    Returns:
+        The file name the Cytoscape styles were exported to if there is no
+        naming conflict.
     """
+    if os.path.isfile(f"{basename}.xml"):
+        return None
+
     styles.write(
         f"{basename}.xml",
         encoding="utf-8",
         xml_declaration=True,
     )
+
+    return f"{basename}.xml"

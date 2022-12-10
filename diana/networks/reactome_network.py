@@ -4,7 +4,7 @@ Reactome network
 Nodes are Reactome pathways associated with proteins from a species of interest.
 Edges are directed pathway relationships within Reactome.
 """
-
+import os
 from typing import Callable, Container, Hashable, Iterable, Mapping, Optional
 
 import networkx as nx
@@ -106,15 +106,26 @@ def get_pathway_sizes(network: nx.Graph) -> dict[str, int]:
     }
 
 
-def export(network: nx.Graph, basename: str) -> None:
+def export(network: nx.Graph, basename: str) -> Optional[str]:
     """
-    Exports the Reactome network.
+    Exports the Reactome network if possible without overwriting an existing
+    file.
+
 
     Args:
         network: The Reactome network.
         basename: The base file name.
+
+    Returns:
+        The file the Reactome network was exported to if there is no naming
+        conflict.
     """
+    if os.path.isfile(f"{basename}.graphml"):
+        return None
+
     nx.write_graphml_xml(network,
                          f"{basename}.graphml",
                          named_key_ids=True,
                          infer_numeric_types=True)
+
+    return f"{basename}.graphml"
