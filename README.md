@@ -9,8 +9,8 @@ spectrometry data.
 
 The pipeline automates customizable analysis of mass-spectrometry data capturing
 differential post-translational modification in the context of protein-protein
-interaction networks assembled from these proteins, incorporating interactions
-from [BioGRID](https://thebiogrid.org/),
+interaction networks assembled from thousands of input proteins, incorporating
+interactions from [BioGRID](https://thebiogrid.org/),
 [CORUM](http://mips.helmholtz-muenchen.de/corum/),
 [IntAct](https://www.ebi.ac.uk/intact/home),
 [MINT](https://mint.bio.uniroma2.it/), [Reactome](https://reactome.org/), and
