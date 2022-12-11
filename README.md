@@ -1,8 +1,6 @@
 # DIANA
 
 ![mypy]([1]) ![pytype]([2])
-[1]: https://github.com/lucasfein/diana/actions/workflows/mypy.yml/badge.svg
-[2]: https://github.com/lucasfein/diana/actions/workflows/pytype.yml/badge.svg
 
 DIANA is a command line application facilitating **D**ata **I**ntegration
 **A**nd **N**etwork **A**nalysis for post-translational modification mass
@@ -2343,3 +2341,6 @@ Specifically, this concerns implementations of
 DIANA is developed by Jens Rieser and Lucas Fein in the Molecular Bioinformatics
 group at Goethe-University Frankfurt under supervision of Dr. Jörg Ackermann and
 Prof. Dr. Ina Koch.
+
+[1]: https://github.com/lucasfein/diana/actions/workflows/mypy.yml/badge.svg
+[2]: https://github.com/lucasfein/diana/actions/workflows/pytype.yml/badge.svg
