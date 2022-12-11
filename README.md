@@ -93,7 +93,11 @@ flowchart
 
 A configuration file contains pairs of identifier and workflow specification
 executed sequentially. Multiple configuration files are processed concurrently.
-The identifier determines output file names.
+The identifier determines output file names. Therefore, identifiers should be
+unique across configuration files.
+
+DIANA avoids overwriting existing files but does not resolve naming conflicts by
+appending to export file names. Naming conflicts are logged upon occurrence.
 
 ---
 

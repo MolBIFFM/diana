@@ -4,7 +4,7 @@ import os
 import re
 import statistics
 from typing import (Callable, Collection, Container, Hashable, Iterable,
-                    MutableSequence, Optional, Union)
+                    Literal, MutableSequence, Optional, Union)
 
 import networkx as nx
 import pandas as pd
@@ -1134,7 +1134,10 @@ def add_protein_interactions_from_string(network: nx.Graph,
                 network.edges[interactor_a, interactor_b]["STRING"] = score
 
 
-def get_databases(network: nx.Graph) -> tuple[str, ...]:
+def get_databases(
+    network: nx.Graph
+) -> tuple[Literal["BioGRID", "CORUM", "IntAct", "MINT", "Reactome", "STRING"],
+           ...]:
     """
     Returns the protein-protein interaction databases represented in a
     protein-protein interaction network.
@@ -1161,8 +1164,10 @@ def get_databases(network: nx.Graph) -> tuple[str, ...]:
 
 def set_edge_weights(
     network: nx.Graph,
-    weight: Callable[[dict[str, float]], float] = lambda confidence_scores: int(
-        bool(confidence_scores.values())),
+    weight: Callable[[
+        dict[Literal["BioGRID", "CORUM", "IntAct", "MINT", "Reactome",
+                     "STRING"], float]
+    ], float] = lambda confidence_scores: int(bool(confidence_scores.values())),
     attribute: str = "weight",
 ) -> None:
     """

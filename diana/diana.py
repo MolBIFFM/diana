@@ -895,10 +895,12 @@ def process_workflow(identifier: str, configuration: Mapping[str, Any]) -> None:
 
         export = {community: False for community in communities}
 
-    if ("Gene Ontology enrichment" in configuration or
-            "Gene Ontology enrichment" in configuration.get(
-                "community detection", {})):
-        logger.info("Assessing Gene Ontology enrichment.")
+    if (("Gene Ontology enrichment" in configuration or
+         "Gene Ontology enrichment" in configuration.get(
+             "community detection", {})) and
+            not os.path.isfile(f"{identifier}_gene_ontology.tsv")):
+        logger.info("Gene Ontology enrichment test results are exported to %s.",
+                    f"{identifier}_gene_ontology.tsv")
 
         with open(f"{identifier}_gene_ontology.tsv",
                   "w",
@@ -1253,10 +1255,16 @@ def process_workflow(identifier: str, configuration: Mapping[str, Any]) -> None:
                             export[community] = True
                             gene_ontology_writer.writerow(
                                 [f"community {k}", term, name, p])
+    else:
+        logger.warning(
+            "Gene Ontology enrichment test results are not exported due to "
+            "naming conflict.")
 
-    if ("Reactome enrichment" in configuration or "Reactome enrichment"
-            in configuration.get("community detection", {})):
-        logger.info("Assessing Reactome enrichment.")
+    if (("Reactome enrichment" in configuration or "Reactome enrichment"
+         in configuration.get("community detection", {})) and
+            not os.path.isfile(f"{identifier}_reactome.tsv")):
+        logger.info("Reactome enrichment test results are exported to %s.",
+                    f"{identifier}_reactome.tsv")
 
         with open(f"{identifier}_reactome.tsv",
                   "w",
@@ -1575,9 +1583,15 @@ def process_workflow(identifier: str, configuration: Mapping[str, Any]) -> None:
                             reactome_writer.writerow(
                                 [f"community {k}", pathway, name, p])
 
-    if ("measurement enrichment" in configuration.get("community detection",
-                                                      {})):
-        logger.info("Assessing measurement enrichment across communities.")
+    else:
+        logger.warning(
+            "Reactome enrichment test results are not exported due to naming "
+            "conflict.")
+
+    if ("measurement enrichment" in configuration.get("community detection", {})
+            and not os.path.isfile(f"{identifier}_measurement_enrichment.tsv")):
+        logger.info("Measurement enrichment test results are exported to %s.",
+                    f"{identifier}_measurement_enrichment.tsv")
 
         with open(f"{identifier}_measurement_enrichment.tsv",
                   "w",
@@ -1653,9 +1667,15 @@ def process_workflow(identifier: str, configuration: Mapping[str, Any]) -> None:
                             export[community] = True
                             measurement_enrichment_writer.writerow(
                                 [f"community {k}", time, modification, p])
+    else:
+        logger.warning(
+            "Measurement enrichment test results are not exported due to "
+            "naming conflict.")
 
-    if "measurement location" in configuration.get("community detection", {}):
-        logger.info("Assessing measurement location across communities.")
+    if ("measurement location" in configuration.get("community detection", {})
+            and not os.path.isfile(f"{identifier}_measurement_location.tsv")):
+        logger.info("Measurement location test results are exported to %s.",
+                    f"{identifier}_measurement_location.tsv")
 
         with open(f"{identifier}_measurement_location.tsv",
                   "w",
@@ -1712,6 +1732,11 @@ def process_workflow(identifier: str, configuration: Mapping[str, Any]) -> None:
                             export[community] = True
                             measurement_location_writer.writerow(
                                 [f"community {k}", time, modification, p])
+
+    else:
+        logger.warning(
+            "Measurement location test results are not exported due to naming "
+            "conflict.")
 
     file_names = []
     for k, community in enumerate(sorted(

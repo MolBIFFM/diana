@@ -8,7 +8,7 @@ import os
 import math
 import statistics
 import xml.etree.ElementTree as ET
-from typing import Callable, Collection, Iterable, Optional, Sequence
+from typing import Callable, Collection, Iterable, Literal, Optional, Sequence
 
 import networkx as nx
 from cytoscape import elements
@@ -421,7 +421,10 @@ def get_styles(
     measurement_score: dict[str, Callable[[float, Collection[float]], float]],
     site_average: dict[str, Callable[[Iterable[float]], float]],
     replicate_average: dict[str, Callable[[Iterable[float]], float]],
-    confidence_score_average: Callable[[dict[str, float]], float]
+    confidence_score_average: Callable[[
+        dict[Literal["BioGRID", "CORUM", "IntAct", "MINT", "Reactome",
+                     "STRING"], float]
+    ], float]
 ) -> ET.ElementTree:
     """
     Returns the Cytoscape styles for a protein-protein interaction network.
