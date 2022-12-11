@@ -1,0 +1,16 @@
+name: pytype
+on:
+  push:
+    branches:
+    - main
+jobs:
+  pytype:
+    name: pytype
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/setup-python@v4
+        with:
+          python-version: '3.10'
+      - run: pip3 install --upgrade pytype
+      - run: pytype diana/diana.py
