@@ -126,13 +126,13 @@ corresponding sites.
 
 ```mermaid
 flowchart
-  p30s1r1(30 P S1 R1) --> p30s1(30 P S1)
-  p30s1r2(30 P S1 R2) --> p30s1
+  p30s1r1(0 PTM S1 R1) --> p30s1(0 PTM S1)
+  p30s1r2(0 PTM S1 R2) --> p30s1
 
-  p30s2r1(30 P S2 R1) --> p30s2(30 P S2)
-  p30s2r2(30 P S2 R2) --> p30s2
+  p30s2r1(0 PTM S2 R1) --> p30s2(0 PTM S2)
+  p30s2r2(0 PTM S2 R2) --> p30s2
 
-  p30s1 --> p30(30 P)
+  p30s1 --> p30(0 PTM)
   p30s2 --> p30
 ```
 
@@ -142,10 +142,10 @@ organization of measurements by modification site is optional.
 
 ```mermaid
 flowchart
-  p30r1(30 P R1) --> p30(30 P)
-  p30r2(30 P R2) --> p30
-  p30r3(30 P R3) --> p30
-  p30r4(30 P R4) --> p30
+  p30r1(0 PTM R1) --> p30(0 PTM)
+  p30r2(0 PTM R2) --> p30
+  p30r3(0 PTM R3) --> p30
+  p30r4(0 PTM R4) --> p30
 ```
 
 ---
