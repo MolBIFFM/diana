@@ -91,14 +91,30 @@ flowchart
   enrichment-analysis --> cytoscape(Cytoscape)
 ```
 
-A configuration file contains pairs of identifier and workflow specification
+A configuration file contains pairs of identifier and workflow configuration
 executed sequentially. Multiple configuration files are processed concurrently.
 The identifier determines output file names. Therefore, identifiers should be
 unique across configuration files.
 
-While existing files are not overwritten, naming conflicts are not resolved by
-appending to export file names, for example. They are, however, logged upon
-occurrence indicating that workflows should be renamed.
+Protein-protein interaction, Gene Ontology, and Reactome networks are exported
+as GraphML files named according to their corresponding workflow identifier,
+for example `configuration.graphml`, `configuration_gene_ontology.graphml`, and
+`configuration_reactome.graphml`. File names of Cytoscape styles, exported as
+XML files, match, for example `configuration.xml`,
+`configuration_gene_ontology.xml`, and `configuration_reactome.xml`. Communities
+of protein-protein interaction networks are indexed in descending order of the
+number of proteins they contain, for example `configuration_1.graphml`.
+
+Results of different statistical analyses are exported as separate TSV files,
+for example `configuration_gene_ontology.tsv`, `configuration_reactome.tsv`,
+`configuration_measurement_enrichment.tsv`, and
+`configuration_measurement_location.tsv`.
+
+Events during workflow execution are logged to `diana.log`, at a level specified
+in the command line call, informing about attempted or completed tasks and
+warning about file naming conflicts, indicating that workflows should be renamed
+as they are not resolved. Existing files are not overwritten. Instead, the
+export is omitted. Logs also contain the process ID of a workflow.
 
 ---
 
@@ -489,7 +505,6 @@ each must be satisfied for an interaction to be incorporated.
       },
       "IntAct": {
         "neighbors": 0
-
    },
       "MINT": {
         "neighbors": 0
@@ -2073,6 +2088,7 @@ setting for `"ratio"`, a two-fold decrease or increase. The remaining relative
 quantities are derived from the corresponding distribution represented in the
 protein-protein interaction network, specific to the time of measurement and
 type of post-translational modification.
+
 
 ## Protein-Protein Interaction Network
 

@@ -1815,9 +1815,9 @@ def main() -> None:
     logging.basicConfig(
         filename=f"{os.path.splitext(os.path.basename(sys.argv[0]))[0]}.log",
         filemode="w",
-        format="%(asctime)s %(levelname)s PID %(process)d %(name)s: "
+        format="%(asctime)s %(levelname)s %(name)s (PID %(process)d): "
         "%(message)s",
-        datefmt="%H:%M:%S",
+        datefmt="%Y-%m-%d %H:%M:%S",
         level=args.logging,
         encoding="utf-8")
 
