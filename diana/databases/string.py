@@ -105,4 +105,4 @@ def get_protein_interactions(
                         for primary_interactor_b in primary_accession.get(
                                 interactor_b, {interactor_b}):
                             yield (primary_interactor_a, primary_interactor_b,
-                                   row["combined_score"] / 1000)
+                                   row["combined_score"] / 1000.0)

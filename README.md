@@ -491,7 +491,8 @@ transferred from secondary accessions.
 The interface to sources of protein-protein interactions for the protein-protein
 interaction network. The protein-protein interaction network is exported only if
 any source is queried. Database-specific requirements can be defined, where
-each must be satisfied for an interaction to be incorporated.
+each must be satisfied for an interaction to be incorporated. Notably, this
+also applies to different STRING channels.
 
 ```json
 {
