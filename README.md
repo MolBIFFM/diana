@@ -492,7 +492,7 @@ The interface to sources of protein-protein interactions for the protein-protein
 interaction network. The protein-protein interaction network is exported only if
 any source is queried. Database-specific requirements can be defined, where
 each must be satisfied for an interaction to be incorporated. Notably, this
-also applies to STRING scores.
+also applies to STRING scores by default.
 
 ```json
 {
@@ -915,6 +915,22 @@ setting is `false`.
 }
 ```
 The version of STRING to query. The default setting is `11.5`.
+
+```json
+{
+  "configuration": {
+    "protein-protein interactions": {
+      "STRING": {
+        "any score": false
+      }
+    }
+  }
+}
+```
+Whether to include a protein-protein interaction if it meets any of the
+specified score thresholds rather than all. By default, all thresholds must be
+met, which is consistent with interfaces for other protein-protein interaction
+databases but not the STRING web interface.
 
 ---
 

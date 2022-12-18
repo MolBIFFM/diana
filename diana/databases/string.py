@@ -23,7 +23,8 @@ def get_protein_interactions(
         combined_score: float = 0.0,
         physical: bool = False,
         organism: int = 9606,
-        version: float = 11.5) -> Iterator[tuple[str, str, float]]:
+        version: float = 11.5,
+        any_score: bool = False) -> Iterator[tuple[str, str, float]]:
     """
     Yields protein-protein interactions from STRING.
 
@@ -46,6 +47,8 @@ def get_protein_interactions(
         physical: If True, yield only physical interactions.
         organism: The NCBI taxonomy identifier for the organism of interest.
         version: The version of the STRING database.
+        any_score: If true, include a protein-protein interaction if it meets
+            any threshold else only if it meets all.
 
     Yields:
         Pairs of interacting proteins and the combined STRING score associated
@@ -96,8 +99,10 @@ def get_protein_interactions(
             header=0,
             usecols=["protein1", "protein2"] + list(thresholds),
     ):
-        if all(row[column] / 1000 >= thresholds[column]
-               for column in thresholds):
+        if ((any_score and any(row[column] / 1000 >= thresholds[column]
+                               for column in thresholds)) or
+                all(row[column] / 1000 >= thresholds[column]
+                    for column in thresholds)):
             for interactor_a in uniprot_id.get(row["protein1"], set()):
                 for interactor_b in uniprot_id.get(row["protein2"], set()):
                     for primary_interactor_a in primary_accession.get(

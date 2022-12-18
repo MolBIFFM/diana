@@ -1016,7 +1016,8 @@ def get_neighbors_from_string(network: nx.Graph,
                               combined_score: float = 0.0,
                               physical: bool = False,
                               organism: int = 9606,
-                              version: float = 11.5) -> set[str]:
+                              version: float = 11.5,
+                              any_score: bool = False) -> set[str]:
     """
     Add proteins interacting with proteins in a protein-protein interaction
     network from STRING to the network.
@@ -1041,6 +1042,8 @@ def get_neighbors_from_string(network: nx.Graph,
         physical: If True, consider only physical interactions.
         organism: The NCBI taxonomy identifier for the organism of interest.
         version: The version of the STRING database.
+        any_score: If true, include a protein-protein interaction if it meets
+            any threshold else only if it meets all.
 
     Returns:
         Neighbors of the protein-protein interaction network in STRING.
@@ -1051,8 +1054,8 @@ def get_neighbors_from_string(network: nx.Graph,
             neighborhood, neighborhood_transferred, fusion, cooccurence,
             homology, coexpression, coexpression_transferred, experiments,
             experiments_transferred, database, database_transferred, textmining,
-            textmining_transferred, combined_score, physical, organism,
-            version):
+            textmining_transferred, combined_score, physical, organism, version,
+            any_score):
         # https://www.uniprot.org/help/accession_numbers
         # https://www.uniprot.org/help/alternative_products
         if (interactor_a in network and interactor_b not in network and
@@ -1089,7 +1092,8 @@ def add_protein_interactions_from_string(network: nx.Graph,
                                          combined_score: float = 0.0,
                                          physical: bool = False,
                                          organism: int = 9606,
-                                         version: float = 11.5) -> None:
+                                         version: float = 11.5,
+                                         any_score: bool = False) -> None:
     """
     Adds protein-protein interactions from STRING to a protein-protein
     interaction network.
@@ -1114,13 +1118,15 @@ def add_protein_interactions_from_string(network: nx.Graph,
         physical: If True, add only physical interactions.
         organism: The NCBI taxonomy identifier for the organism of interest.
         version: The version of the STRING database.
+        any_score: If true, include a protein-protein interaction if it meets
+            any threshold else only if it meets all.
     """
     for interactor_a, interactor_b, score in string.get_protein_interactions(
             neighborhood, neighborhood_transferred, fusion, cooccurence,
             homology, coexpression, coexpression_transferred, experiments,
             experiments_transferred, database, database_transferred, textmining,
-            textmining_transferred, combined_score, physical, organism,
-            version):
+            textmining_transferred, combined_score, physical, organism, version,
+            any_score):
         if (interactor_a in network and interactor_b in network and
                 interactor_a != interactor_b):
             if network.has_edge(interactor_a, interactor_b):

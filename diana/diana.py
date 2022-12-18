@@ -352,7 +352,8 @@ def process_workflow(identifier: str, configuration: Mapping[str, Any]) -> None:
                         ["STRING"].get("organism", 9606),
                         version=configuration["protein-protein interactions"]
                         ["STRING"].get("version", 11.5),
-                    ))
+                        any_score=configuration["protein-protein interactions"]
+                        ["STRING"].get("any score", False)))
 
             network.add_nodes_from(interacting_proteins)
             nodes_to_remove = set(network.nodes())
@@ -484,7 +485,8 @@ def process_workflow(identifier: str, configuration: Mapping[str, Any]) -> None:
                 ["STRING"].get("organism", 9606),
                 version=configuration["protein-protein interactions"]
                 ["STRING"].get("version", 11.5),
-            )
+                any_score=configuration["protein-protein interactions"]
+                ["STRING"].get("any score", False))
 
         if any(
                 protein_interaction_network.get_modifications(network, time)
