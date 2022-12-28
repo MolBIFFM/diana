@@ -2167,7 +2167,7 @@ Annotations of proteins contain the following information:
 Proteins are represented by their primary UniProt accession. `"gene"` and
 `"protein"` refer to the gene and protein names listed in UniProt, respectively.
 
-Submitted Mass spectrometric measurements, expressed as binary logarithms of the
+Submitted mass spectrometric measurements, expressed as binary logarithms of the
 corresponding ratios, are represented by keys consisting of three or four
 components, depending on whether the corresponding measurements are
 protein- or site-specific. The first number refers to the specified time of
