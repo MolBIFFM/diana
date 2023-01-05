@@ -22,9 +22,9 @@ interactions from [BioGRID](https://thebiogrid.org/),
 [STRING](https://string-db.org/).
 
 Statistical network analysis assesses the distribution of measurements across
-densely interacting portions of protein-protein interaction networks. Different
-enrichment analyses considering an entire protein-protein interaction network or
-its individual portions with respect to
+densely interacting portions of the protein-protein interaction network.
+Different enrichment analyses considering the entire protein-protein interaction
+network or its individual portions with respect to
 [Gene Ontology](http://geneontology.org/) terms and
 [Reactome](https://reactome.org/) pathways relate annotation of functional
 modules with mass-spectrometry data to determine sets of interacting proteins of
