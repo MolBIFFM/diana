@@ -29,8 +29,7 @@ network or its individual portions with respect to
 [Reactome](https://reactome.org/) pathways relate annotation of functional
 modules with mass-spectrometry data to determine sets of interacting proteins of
 interest for downstream analysis and configurable network visualization in
-[Cytoscape](https://cytoscape.org/) of the protein-protein interaction network
-itself and its annotation.
+[Cytoscape](https://cytoscape.org/).
 
 ## Setup
 External dependencies, consisting of [NetworkX](https://networkx.org/),
