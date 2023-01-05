@@ -7,16 +7,19 @@ DIANA is a command line application for **d**ata **i**ntegration **a**nd
 **n**etwork **a**nalysis for post-translational modification mass spectrometry
 data.
 
+Upon infection, numerous host proteins exhibit measurable changes in
+post-translational modification, motivating the identification of associated
+cellular processes relevant to host response.
+
 DIANA facilitates customizable analysis of differential post-translational
 modification at distinct times of measurement as captured by mass-spectrometry
 data in the context of protein-protein interaction networks assembled from
-multiple input data sets and neighboring proteins. Protein-protein interactions
-from [BioGRID](https://thebiogrid.org/),
+multiple input data sets and neighboring proteins, incorporating protein-protein
+interactions from [BioGRID](https://thebiogrid.org/),
 [CORUM](http://mips.helmholtz-muenchen.de/corum/),
 [IntAct](https://www.ebi.ac.uk/intact/home),
 [MINT](https://mint.bio.uniroma2.it/), [Reactome](https://reactome.org/), and
-[STRING](https://string-db.org/) are incorporated from specific queries to each
-database.
+[STRING](https://string-db.org/).
 
 Statistical network analysis assesses the distribution of measurements across
 densely interacting portions of protein-protein interaction networks detected
@@ -24,8 +27,8 @@ by modularity optimization. Different enrichment analyses considering an entire
 protein-protein interaction network or its individual portions with respect to
 [Gene Ontology](http://geneontology.org/) terms and
 [Reactome](https://reactome.org/) pathways relate annotation of functional
-modules with mass-spectrometry data to determine relevant sets of interacting
-proteins for downstream analysis and configurable network visualization in
+modules with mass-spectrometry data to determine sets of interacting proteins of
+interest for downstream analysis and configurable network visualization in
 [Cytoscape](https://cytoscape.org/) of the protein-protein interaction network
 itself and its annotation.
 
