@@ -7,9 +7,9 @@ DIANA is a command line application for **d**ata **i**ntegration **a**nd
 **n**etwork **a**nalysis for post-translational modification mass spectrometry
 data.
 
-Upon infection, numerous host proteins exhibit measurable changes in
-post-translational modification, motivating the identification of associated
-cellular processes relevant to host response.
+Upon infection by different pathogens, measurable changes in post-translational
+modification of numerous host proteins occur, motivating the identification of
+associated cellular processes relevant to host response.
 
 DIANA facilitates customizable analysis of differential post-translational
 modification at distinct times of measurement as captured by mass-spectrometry
