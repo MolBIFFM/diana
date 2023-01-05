@@ -23,7 +23,7 @@ densely interacting portions of protein-protein interaction networks detected
 by modularity optimization. Different enrichment analyses considering an entire
 protein-protein interaction network or its individual portions with respect to
 [Gene Ontology](http://geneontology.org/) terms and
-[Reactome](https://reactome.org/) relate annotation of functional
+[Reactome](https://reactome.org/) pathways relate annotation of functional
 modules with mass-spectrometry data to determine relevant sets of interacting
 proteins for downstream analysis and configurable network visualization in
 [Cytoscape](https://cytoscape.org/) of the protein-protein interaction network
