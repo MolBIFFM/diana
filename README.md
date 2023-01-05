@@ -7,22 +7,27 @@ DIANA is a command line application facilitating **D**ata **I**ntegration
 **A**nd **N**etwork **A**nalysis for post-translational modification mass
 spectrometry data.
 
-The pipeline automates customizable analysis of mass-spectrometry data capturing
-differential post-translational modification in the context of protein-protein
-interaction networks assembled from thousands of input proteins, incorporating
-interactions from [BioGRID](https://thebiogrid.org/),
+DIANA facilitates customizable analysis of differential post-translational
+modification at distinct times of measurement as captured by mass-spectrometry
+data in the context of protein-protein interaction networks assembled from
+multiple input data sets and neighboring proteins. Protein-protein interactions
+from [BioGRID](https://thebiogrid.org/),
 [CORUM](http://mips.helmholtz-muenchen.de/corum/),
 [IntAct](https://www.ebi.ac.uk/intact/home),
 [MINT](https://mint.bio.uniroma2.it/), [Reactome](https://reactome.org/), and
-[STRING](https://string-db.org/).
+[STRING](https://string-db.org/) are incorporated from specific queries to each
+database.
 
-Network analysis assesses the distribution of proteins associated with
-distinctive mass-spectrometry measurements across densely interacting portions
-of protein-protein interaction networks along with local enrichment of
+Statistical network analysis assesses the distribution of measurements across
+densely interacting portions of protein-protein interaction networks detected
+by modularity optimization. Different enrichment analyses considering an entire
+protein-protein interaction network or its individual portions with respect to
 [Gene Ontology](http://geneontology.org/) terms and
-[Reactome](https://reactome.org/) pathways, relating mass-spectrometry data with
-annotation of protein function to identify relevant subsets of proteins for
-downstream analysis in [Cytoscape](https://cytoscape.org/).
+[Reactome](https://reactome.org/) relate annotation of functional
+modules with mass-spectrometry data to determine relevant sets of interacting
+proteins for downstream analysis and configurable network visualization in
+[Cytoscape](https://cytoscape.org/) of the protein-protein interaction network
+itself and its annotation.
 
 ## Setup
 External dependencies, consisting of [NetworkX](https://networkx.org/),
@@ -33,8 +38,8 @@ installed using pip by running the following command
 pip3 install -r diana/requirements.txt
 ```
 
-For input of data by spreadsheet, pandas dependencies may need to be installed
-additionally.
+For input of mass-spectrometry data by spreadsheet, pandas dependencies may need
+to be installed additionally.
 
 DIANA is currently developed using Python 3.10.7, Ubuntu 22.10 and Cytoscape
 3.9.1. Source code is formatted automatically using YAPF 0.32.0.
