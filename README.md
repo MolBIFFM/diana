@@ -3,9 +3,9 @@
 ![](https://github.com/lucasfein/diana/actions/workflows/mypy.yml/badge.svg)
 ![](https://github.com/lucasfein/diana/actions/workflows/pytype.yml/badge.svg)
 
-DIANA is a command line application facilitating **D**ata **I**ntegration
-**A**nd **N**etwork **A**nalysis for post-translational modification mass
-spectrometry data.
+DIANA is a command line application for **d**ata **i**ntegration **a**nd
+**n**etwork **a**nalysis for post-translational modification mass spectrometry
+data.
 
 DIANA facilitates customizable analysis of differential post-translational
 modification at distinct times of measurement as captured by mass-spectrometry
