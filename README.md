@@ -7,29 +7,31 @@ DIANA is a command line application for **d**ata **i**ntegration **a**nd
 **n**etwork **a**nalysis for post-translational modification mass spectrometry
 data.
 
-DIANA facilitates customizable analysis of differential post-translational
-modification at distinct times of measurement as captured by mass-spectrometry
-data in the context of protein-protein interaction networks assembled from
-multiple input data sets and neighboring proteins, incorporating protein-protein
-interactions from [BioGRID](https://thebiogrid.org/),
+DIANA automates modular analysis of differential post-translational modification
+as captured by mass-spectrometry in the context of the protein-protein
+interaction network assembled from multiple input data sets, incorporating
+protein-protein interactions and neighboring proteins from
+[BioGRID](https://thebiogrid.org/),
 [CORUM](http://mips.helmholtz-muenchen.de/corum/),
 [IntAct](https://www.ebi.ac.uk/intact/home),
 [MINT](https://mint.bio.uniroma2.it/), [Reactome](https://reactome.org/), and
 [STRING](https://string-db.org/).
 
-Statistical network analysis assesses the distribution of measurements across
-densely interacting portions of the protein-protein interaction network.
-Different enrichment analyses considering the entire protein-protein interaction
-network or its individual portions with respect to
-[Gene Ontology](http://geneontology.org/) terms and
-[Reactome](https://reactome.org/) pathways relate annotation of functional
-modules with mass-spectrometry data to determine sets of interacting proteins of
-interest for downstream analysis and configurable network visualization in
-[Cytoscape](https://cytoscape.org/).
+Network analysis assesses the distribution of mass spectrometry measurements
+across densely interacting communities of the protein-protein interaction
+network as well as local enrichment of [Gene Ontology](http://geneontology.org/)
+terms and [Reactome](https://reactome.org/) pathways indicating cellular
+processes represented in these communities to determine individual groups of
+associated proteins for separate downstream analysis as well as customizable
+network visualization in [Cytoscape](https://cytoscape.org/) from mass
+spectrometry data containing thousands of proteins.
 
-Examples of mass spectrometry data sets concern changes in post-translational
-modification of host proteins upon infection by different pathogens indicating
-cellular processes associated with host response.
+While the pipeline is applicable to other proteomics data, its general approach
+was developed primarily for the analysis of mass-spectrometry data covering
+changes in post-translational modification of host proteins following infection
+by different pathogens at distinct times of measurement to facilitate
+examination of post-translational modification in connection to cellular
+processes associated with host response.
 
 ## Setup
 External dependencies, consisting of [NetworkX](https://networkx.org/),
@@ -2292,8 +2294,8 @@ DIANA accesses the following resources:
 - Ashburner, M. et al. (2000) **Gene Ontology: tool for the unification of**
   **biology**, *Nat. Genet.*, 25, 25-29.
 
-- The Gene Ontology Consortium (2021) **The Gene Ontology resource: enriching**
-  **a GOld mine**, *Nucleic Acids Res.*, 49, D325-D334.
+- Gene Ontology Consortium (2021) **The Gene Ontology resource: enriching a**
+  **GOld mine**, *Nucleic Acids Res.*, 49, D325-D334.
 
 - Gillespie, M. et al. (2022) **The reactome pathway knowledgebase 2022**,
   *Nucleic Acids Res.*, 50, D687-D692.
