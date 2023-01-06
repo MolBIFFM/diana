@@ -2294,8 +2294,8 @@ DIANA accesses the following resources:
 - Ashburner, M. et al. (2000) **Gene Ontology: tool for the unification of**
   **biology**, *Nat. Genet.*, 25, 25-29.
 
-- Gene Ontology Consortium (2021) **The Gene Ontology resource: enriching a**
-  **GOld mine**, *Nucleic Acids Res.*, 49, D325-D334.
+- The Gene Ontology Consortium (2021) **The Gene Ontology resource: enriching**
+  **a GOld mine**, *Nucleic Acids Res.*, 49, D325-D334.
 
 - Gillespie, M. et al. (2022) **The reactome pathway knowledgebase 2022**,
   *Nucleic Acids Res.*, 50, D687-D692.
