@@ -9,7 +9,7 @@ data.
 
 DIANA automates modular analysis of differential post-translational modification
 as captured by mass-spectrometry in the context of the protein-protein
-interaction network assembled from multiple input data sets, incorporating
+interaction network induced by multiple input data sets, incorporating
 protein-protein interactions and neighboring proteins from
 [BioGRID](https://thebiogrid.org/),
 [CORUM](http://mips.helmholtz-muenchen.de/corum/),
