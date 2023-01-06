@@ -7,10 +7,10 @@ DIANA is a command line application for **d**ata **i**ntegration **a**nd
 **n**etwork **a**nalysis for post-translational modification mass spectrometry
 data.
 
-DIANA automates modular analysis of differential post-translational modification
-of proteins as captured by mass-spectrometry in the context of the
-protein-protein interaction network induced by multiple input data sets,
-incorporating protein-protein interactions and neighboring proteins from
+DIANA automates modular analysis of post-translational modification of proteins
+as captured by mass-spectrometry in the context of the protein-protein
+interaction network assembled from multiple input data sets, incorporating
+protein-protein interactions and neighboring proteins from
 [BioGRID](https://thebiogrid.org/),
 [CORUM](http://mips.helmholtz-muenchen.de/corum/),
 [IntAct](https://www.ebi.ac.uk/intact/home),
@@ -26,12 +26,11 @@ associated proteins for separate downstream analysis as well as customizable
 network visualization in [Cytoscape](https://cytoscape.org/) from mass
 spectrometry data containing thousands of proteins.
 
-While the pipeline is applicable to other proteomics data, its general approach
-was developed primarily for the analysis of mass-spectrometry data covering
-changes in post-translational modification of host proteins following infection
-by different pathogens at distinct times of measurement to facilitate
-examination of post-translational modification in connection to cellular
-processes associated with host response.
+This integrative approach was developed primarily for the analysis of
+mass-spectrometry data covering changes in post-translational modification of
+host proteins following infection by different pathogens at distinct times of
+measurement to facilitate examination of differential post-translational
+modification in connection to cellular processes associated with host response.
 
 ## Setup
 External dependencies, consisting of [NetworkX](https://networkx.org/),
