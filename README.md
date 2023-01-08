@@ -27,12 +27,12 @@ proteins for separate downstream analysis as well as customizable network
 visualization in [Cytoscape](https://cytoscape.org/) from mass spectrometry data
 comprising thousands of proteins.
 
-This integrative approach of utilizing network structure in statistical analysis
-was developed primarily for mass-spectrometry data covering changes in
-post-translational modification of host proteins following infection by
-different pathogens at distinct times of measurement to facilitate examination
-of differential post-translational modification in connection to cellular
-processes associated with host response.
+This integrative approach of utilizing network structure for comprehensive
+statistical analysis was developed primarily for mass-spectrometry data covering
+changes in post-translational modification of host proteins following infection
+by different pathogens at distinct times of measurement to facilitate
+examination of differential post-translational modification in connection to
+cellular processes associated with host response.
 
 ## Setup
 External dependencies, consisting of [NetworkX](https://networkx.org/),
