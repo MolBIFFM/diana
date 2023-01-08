@@ -9,8 +9,8 @@ data.
 
 DIANA automates modular analysis of post-translational modification of proteins
 as captured by mass-spectrometry in the context of the protein-protein
-interaction network assembled from multiple input data sets, incorporating
-protein-protein interactions and neighboring proteins from
+interaction network, combining multiple input data sets and incorporating
+protein-protein interactions as well as neighboring proteins from
 [BioGRID](https://thebiogrid.org/),
 [CORUM](http://mips.helmholtz-muenchen.de/corum/),
 [IntAct](https://www.ebi.ac.uk/intact/home),
@@ -21,11 +21,11 @@ Network analysis assesses the distribution of mass spectrometry measurements
 across densely interacting communities of the protein-protein interaction
 network as well as localized enrichment of
 [Gene Ontology](http://geneontology.org/) terms and
-[Reactome](https://reactome.org/) pathways indicating cellular processes
+[Reactome](https://reactome.org/) pathways, indicating cellular processes
 represented in these communities to determine individual groups of associated
 proteins for separate downstream analysis as well as customizable network
 visualization in [Cytoscape](https://cytoscape.org/) from mass spectrometry data
-containing thousands of proteins.
+comprising thousands of proteins.
 
 This integrative approach of utilizing network structure in statistical analysis
 was developed primarily for mass-spectrometry data covering changes in
@@ -1154,10 +1154,10 @@ If `true`, assess enrichment, otherwise depletion. The default setting is
   }
 }
 ```
-The procedure to correct p-values for multiple testing with respect to the false
-discovery rate or family-wise error rate. The default setting is
-`"Benjamini-Yekutieli"`. Available settings are `"Benjamini-Hochberg"`,
-`"Benjamini-Yekutieli"`, `"Holm"` and `"Hommel"`.
+The procedure to correct p-values for testing multiple Gene Ontology terms or
+Reactome pathways with respect to the false discovery or family-wise error rate.
+The default setting is `"Benjamini-Yekutieli"`. Available settings are
+`"Benjamini-Hochberg"`, `"Benjamini-Yekutieli"`, `"Holm"` and `"Hommel"`.
 
 ```json
 {
@@ -1536,10 +1536,10 @@ If `true`, assess enrichment, otherwise depletion. The default setting is
   }
 }
 ```
-The procedure to correct p-values for multiple testing with respect to the false
-discovery rate or family-wise error rate. The default setting is
-`"Benjamini-Yekutieli"`. Available settings are `"Benjamini-Hochberg"`,
-`"Benjamini-Yekutieli"`, `"Holm"` and `"Hommel"`.
+The procedure to correct p-values for testing testing multiple Gene Ontology
+terms or Reactome pathways with respect to the false discovery or family-wise
+error rate. The default setting is `"Benjamini-Yekutieli"`. Available settings
+are `"Benjamini-Hochberg"`, `"Benjamini-Yekutieli"`, `"Holm"` and `"Hommel"`.
 
 ```json
 {
@@ -1728,8 +1728,10 @@ The default setting is `true`.
   }
 }
 ```
-The procedure to correct p-values for multiple testing with respect to the false
-discovery rate or family-wise error rate. The default setting is
+The procedure to correct p-values for testing testing either multiple
+communities and Gene Ontology terms, Reactome pathways or combinations of times
+of measurement and types of post-translational modification with respect to the
+false discovery rate or family-wise error rate. The default setting is
 `"Benjamini-Yekutieli"`. Available settings are `"Benjamini-Hochberg"`,
 `"Benjamini-Yekutieli"`, `"Holm"` and `"Hommel"`.
 
