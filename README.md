@@ -19,14 +19,16 @@ protein-protein interactions and neighboring proteins from
 
 Network analysis assesses the distribution of mass spectrometry measurements
 across densely interacting communities of the protein-protein interaction
-network as well as local enrichment of [Gene Ontology](http://geneontology.org/)
-terms and [Reactome](https://reactome.org/) pathways indicating cellular
-processes represented in these communities to determine individual groups of
-associated proteins for separate downstream analysis as well as customizable
-network visualization in [Cytoscape](https://cytoscape.org/) from mass
-spectrometry data containing thousands of proteins.
+network as well as localized enrichment of
+[Gene Ontology](http://geneontology.org/) terms and
+[Reactome](https://reactome.org/) pathways indicating cellular processes
+represented in these communities to determine individual groups of associated
+proteins for separate downstream analysis as well as customizable network
+visualization in [Cytoscape](https://cytoscape.org/) from mass spectrometry data
+containing thousands of proteins.
 
-This integrative approach was developed primarily for the analysis of
+This integrative approach of utilizing network structure to complement
+statistical analysis was developed primarily for the analysis of
 mass-spectrometry data covering changes in post-translational modification of
 host proteins following infection by different pathogens at distinct times of
 measurement to facilitate examination of differential post-translational
