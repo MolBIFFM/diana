@@ -1,6 +1,6 @@
 """
-DIANA: data integration and network analysis for post-translational modification
-mass spectrometry data
+DIANA: data integration and network analysis of post-translational modification
+based on mass spectrometry data
 """
 import argparse
 import concurrent.futures
@@ -1788,8 +1788,8 @@ def process_configuration_file(configuration_file: str) -> None:
 def main() -> None:
     """Concurrent workflow execution."""
     parser = argparse.ArgumentParser(
-        description="DIANA: data integration and network analysis for "
-        "post-translational modification mass spectrometry data")
+        description="DIANA: data integration and network analysis of "
+        "post-translational modification based on mass spectrometry data")
 
     parser.add_argument("-c",
                         "--configuration",
