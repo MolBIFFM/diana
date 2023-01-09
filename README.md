@@ -2389,6 +2389,6 @@ Specifically, this concerns implementations of
 
 ---
 
-DIANA is developed by Jens Rieser and Lucas Fein in the Molecular Bioinformatics
-group at Goethe-University Frankfurt under supervision of Dr. Jörg Ackermann and
+DIANA is developed by Lucas Fein and Jens Rieser in the Molecular Bioinformatics
+Group at Goethe University Frankfurt under supervision of Dr. Jörg Ackermann and
 Prof. Dr. Ina Koch.
