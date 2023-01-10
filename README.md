@@ -8,10 +8,9 @@ DIANA is a command line application for **d**ata **i**ntegration **a**nd
 spectrometry data.
 
 Different types of post-translational modification of proteins modulate cellular
-processes in conjunction. Mass spectrometry data sets capturing
-differential post-translational modification comprise measurements corresponding
-to individual modification sites of thousands of proteins, motivating holistic
-assessment of cellular processes concerned.
+processes in conjunction. Mass spectrometry data sets capturing differential
+post-translational modification comprise measurements corresponding to thousands
+of proteins, motivating holistic assessment of cellular processes concerned.
 
 DIANA automates modular analysis of mass spectrometry data in the context of
 protein-protein interaction networks. The approach combines multiple mass
@@ -22,19 +21,25 @@ neighboring proteins from the databases [BioGRID](https://thebiogrid.org/),
 [MINT](https://mint.bio.uniroma2.it/), [Reactome](https://reactome.org/), and
 [STRING](https://string-db.org/).
 
-Network analysis assesses the distribution of measurements across densely
-interacting communities of the protein-protein interaction network as well as
-localized enrichment of [Gene Ontology](http://geneontology.org/) terms and
-[Reactome](https://reactome.org/) pathways to highlight affected cellular
-processes and determine individual groups of associated proteins for separate
-downstream assessment as well as customizable network visualization in
+Network analysis indicates the distribution of measurements across densely
+interacting communities of the assembled protein-protein interaction network.
+Additional assessment of localized enrichment with respect to
+[Gene Ontology](http://geneontology.org/) terms and
+[Reactome](https://reactome.org/) pathways highlights affected cellular
+processes and determines individual groups of associated proteins for separate
+downstream analysis as well as network visualization in
 [Cytoscape](https://cytoscape.org/).
 
-This integrative approach utilizing network structure to compartmentalize
+This integrative approach of utilizing network structure to compartmentalize
 statistical analysis was developed primarily for data covering host proteins
-following infection by different pathogens to facilitate examination of changes
-in post-translational modification in connection to cellular processes
-associated with host response.
+following infection by different pathogens. It facilitates comprehensive
+examination of changes in post-translational modification in connection to
+cellular processes associated with host response.
+
+Application of the pipeline to data of phosphorylation in epithelial cells
+infected by *Shigella flexneri*, for example, identifies a small group of
+proteins associated with the actin cytoskeleton and Rho GTPase signaling
+exhibiting particularly large changes.
 
 ## Setup
 External dependencies, consisting of [NetworkX](https://networkx.org/),
@@ -1157,9 +1162,9 @@ If `true`, assess enrichment, otherwise depletion. The default setting is
 }
 ```
 The procedure to correct p-values for testing multiple Gene Ontology terms or
-Reactome pathways with respect to the false discovery or family-wise error rate.
-The default setting is `"Benjamini-Yekutieli"`. Available settings are
-`"Benjamini-Hochberg"`, `"Benjamini-Yekutieli"`, `"Holm"` and `"Hommel"`.
+Reactome pathways. The default setting is `"Benjamini-Yekutieli"`. Available
+settings are `"Benjamini-Hochberg"`, `"Benjamini-Yekutieli"`, `"Holm"` and
+`"Hommel"`.
 
 ```json
 {
@@ -1539,9 +1544,9 @@ If `true`, assess enrichment, otherwise depletion. The default setting is
 }
 ```
 The procedure to correct p-values for testing testing multiple Gene Ontology
-terms or Reactome pathways with respect to the false discovery or family-wise
-error rate. The default setting is `"Benjamini-Yekutieli"`. Available settings
-are `"Benjamini-Hochberg"`, `"Benjamini-Yekutieli"`, `"Holm"` and `"Hommel"`.
+terms or Reactome pathways. The default setting is `"Benjamini-Yekutieli"`.
+Available settings are `"Benjamini-Hochberg"`, `"Benjamini-Yekutieli"`, `"Holm"`
+and `"Hommel"`.
 
 ```json
 {
@@ -1732,9 +1737,8 @@ The default setting is `true`.
 ```
 The procedure to correct p-values for testing testing either multiple
 communities and Gene Ontology terms, Reactome pathways or combinations of times
-of measurement and types of post-translational modification with respect to the
-false discovery rate or family-wise error rate. The default setting is
-`"Benjamini-Yekutieli"`. Available settings are `"Benjamini-Hochberg"`,
+of measurement and types of post-translational modification. The default setting
+is `"Benjamini-Yekutieli"`. Available settings are `"Benjamini-Hochberg"`,
 `"Benjamini-Yekutieli"`, `"Holm"` and `"Hommel"`.
 
 ```json
