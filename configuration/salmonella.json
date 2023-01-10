@@ -109,26 +109,20 @@
       }
     },
     "Gene Ontology enrichment": {
-      "PTMs": ["P", "U"],
       "p": 0.05
     },
     "Reactome enrichment": {
-      "PTMs": ["P", "U"],
       "p": 0.05
     },
     "Gene Ontology network": {
-      "PTMs": ["P", "U"]
     },
     "Reactome network": {
-      "PTMs": ["P", "U"]
     },
     "community detection": {
       "Gene Ontology enrichment": {
-        "PTMs": ["P", "U"],
         "p": 0.05
       },
       "Reactome enrichment": {
-        "PTMs": ["P", "U"],
         "p": 0.05
       },
       "measurement enrichment": {
