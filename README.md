@@ -2376,7 +2376,7 @@ plugins for it:
 - Su, G. et al. (2010) **GLay: community structure analysis of biological**
   **networks**, *Bioinformatics*, 26, 3135 – 3137.
 
-This project aims to extend upon analyses enabled by combining them.
+This project aims to extend upon analyses enabled by combining these tools.
 
 ---
 
