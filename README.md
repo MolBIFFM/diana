@@ -2307,7 +2307,8 @@ phosphorylation or ubiquitination of host proteins in response to infection by
   **Phosphorylation During *Shigella flexneri* Infection Revealed by**
   **Phosphoproteomics**, *Mol. Cell. Proteom.*, 12, 2952 – 2968.
 
-Examples given here refer to these workflows.
+Results presented here refer to these examples.
+
 ---
 
 DIANA accesses the following resources:
@@ -2376,6 +2377,7 @@ plugins for:
   **networks**, *Bioinformatics*, 26, 3135 – 3137.
 
 This project aims to extend upon analyses enabled by combining them.
+
 ---
 
 Research observing communities of protein-protein interaction networks relevant
