@@ -2237,8 +2237,8 @@ p-value of the test for enrichment of the term by the submitted proteins.
 annotated with the term and `"associated proteins"` refers to the
 space-separated accessions of these proteins.
 
-The p-value in this case corresponds to the enrichment of the Gene Ontology term
-among proteins exhibiting a two-fold change at any phosphorylation or
+The p-value in this example corresponds to the enrichment of the Gene Ontology
+term among proteins exhibiting a two-fold change at any phosphorylation or
 ubiquitination site either 30 or 120 minutes after infection by *Salmonella*
 *Typhimurium* with respect to the protein-protein interaction network.
 
@@ -2272,8 +2272,8 @@ p-value of the test for enrichment of the pathway by the submitted proteins.
 annotated with the pathway and `"associate proteins"` refers to the
 space-separated accessions of these proteins.
 
-The p-value in this case corresponds to the enrichment of the Reactome pathway
-among proteins exhibiting a two-fold change at any phosphorylation or
+The p-value in this example corresponds to the enrichment of the Reactome
+pathway among proteins exhibiting a two-fold change at any phosphorylation or
 ubiquitination site either 30 or 120 minutes after infection by *Salmonella*
 *Typhimurium* with respect to the protein-protein interaction network.
 
