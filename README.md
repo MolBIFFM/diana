@@ -75,8 +75,7 @@ enrichment of Gene Ontology terms and Reactome pathways.
 
 ```mermaid
 flowchart
-  ptm-ms-data(post-translational modification mass spectrometry data) -->
-    proteins(proteins)
+  ptm-ms-data(mass spectrometry data) --> proteins(proteins)
   ptm-ms-data --> ptm(post-translational modifications)
 
   proteins --> uniprot[(UniProt)]
@@ -122,8 +121,9 @@ XML files, match, for example `configuration.xml`,
 of protein-protein interaction networks are indexed in descending order of the
 number of proteins they contain, for example `configuration_1.graphml`.
 
-Results of different statistical analyses are exported as separate TSV files,
-for example `configuration_gene_ontology.tsv`, `configuration_reactome.tsv`,
+Results of different statistical analyses including accessions of decisive
+proteins are exported as separate TSV files, for example
+`configuration_gene_ontology.tsv`, `configuration_reactome.tsv`,
 `configuration_measurement_enrichment.tsv`, and
 `configuration_measurement_location.tsv`.
 

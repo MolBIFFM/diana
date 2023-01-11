@@ -910,8 +910,10 @@ def process_workflow(identifier: str, configuration: Mapping[str, Any]) -> None:
                   encoding="utf-8") as gene_ontology_table:
             gene_ontology_writer = csv.writer(gene_ontology_table,
                                               dialect="excel-tab")
-            gene_ontology_writer.writerow(
-                ["network", "term", "name", "p-value"])
+            gene_ontology_writer.writerow([
+                "network", "term", "name", "p-value", "number of proteins",
+                "number of associated proteins", "associated proteins"
+            ])
 
             if "PTMs" in configuration.get("Gene Ontology enrichment", {}):
                 if configuration["Gene Ontology enrichment"].get(
@@ -1019,13 +1021,16 @@ def process_workflow(identifier: str, configuration: Mapping[str, Any]) -> None:
                             "namespaces", [])
                     ])
 
-                for (term, name), p in sorted(
+                for (term, name), (p, prt) in sorted(
                         gene_ontology_enrichment[frozenset(proteins)].items(),
-                        key=lambda item: item[1]):
+                        key=lambda item: item[0][0]):
                     if p <= configuration["Gene Ontology enrichment"].get(
                             "p", 1.0):
-                        gene_ontology_writer.writerow(
-                            ["network", term, name, p])
+                        gene_ontology_writer.writerow([
+                            "network", term, name, p,
+                            network.number_of_nodes(),
+                            len(prt), " ".join(sorted(prt))
+                        ])
 
             elif "Gene Ontology enrichment" in configuration:
                 gene_ontology_enrichment = gene_ontology.get_enrichment(
@@ -1048,13 +1053,17 @@ def process_workflow(identifier: str, configuration: Mapping[str, Any]) -> None:
                     ])
 
                 for (term,
-                     name), p in sorted(gene_ontology_enrichment[frozenset(
-                         network.nodes())].items(),
-                                        key=lambda item: item[1]):
+                     name), (p,
+                             prt) in sorted(gene_ontology_enrichment[frozenset(
+                                 network.nodes())].items(),
+                                            key=lambda item: item[0][0]):
                     if p <= configuration["Gene Ontology enrichment"].get(
                             "p", 1.0):
-                        gene_ontology_writer.writerow(
-                            ["network", term, name, p])
+                        gene_ontology_writer.writerow([
+                            "network", term, name, p,
+                            network.number_of_nodes(),
+                            len(prt), " ".join(sorted(prt))
+                        ])
 
             if "PTMs" in configuration.get("community detection",
                                            {}).get("Gene Ontology enrichment",
@@ -1208,15 +1217,18 @@ def process_workflow(identifier: str, configuration: Mapping[str, Any]) -> None:
                         key=lambda community: int(community.number_of_nodes()),
                         reverse=True),
                                               start=1):
-                    for (term,
-                         name), p in sorted(gene_ontology_enrichment[frozenset(
-                             subsets[community])].items(),
-                                            key=lambda item: item[1]):
+                    for (term, name), (p, prt) in sorted(
+                            gene_ontology_enrichment[frozenset(
+                                subsets[community])].items(),
+                            key=lambda item: item[0][0]):
                         if p <= configuration["community detection"][
                                 "Gene Ontology enrichment"].get("p", 1.0):
                             export[community] = True
-                            gene_ontology_writer.writerow(
-                                [f"community {k}", term, name, p])
+                            gene_ontology_writer.writerow([
+                                f"community {k}", term, name, p,
+                                community.number_of_nodes(),
+                                len(prt), " ".join(sorted(prt))
+                            ])
 
             elif "Gene Ontology enrichment" in configuration.get(
                     "community detection", {}):
@@ -1248,15 +1260,18 @@ def process_workflow(identifier: str, configuration: Mapping[str, Any]) -> None:
                         key=lambda community: int(community.number_of_nodes()),
                         reverse=True),
                                               start=1):
-                    for (term,
-                         name), p in sorted(gene_ontology_enrichment[frozenset(
-                             community.nodes())].items(),
-                                            key=lambda item: item[1]):
+                    for (term, name), (p, prt) in sorted(
+                            gene_ontology_enrichment[frozenset(
+                                community.nodes())].items(),
+                            key=lambda item: item[0][0]):
                         if p <= configuration["community detection"][
                                 "Gene Ontology enrichment"].get("p", 1.0):
                             export[community] = True
-                            gene_ontology_writer.writerow(
-                                [f"community {k}", term, name, p])
+                            gene_ontology_writer.writerow([
+                                f"community {k}", term, name, p,
+                                community.number_of_nodes(),
+                                len(prt), " ".join(sorted(prt))
+                            ])
     else:
         logger.warning(
             "Gene Ontology enrichment test results are not exported due to "
@@ -1273,7 +1288,10 @@ def process_workflow(identifier: str, configuration: Mapping[str, Any]) -> None:
                   newline="",
                   encoding="utf-8") as reactome_table:
             reactome_writer = csv.writer(reactome_table, dialect="excel-tab")
-            reactome_writer.writerow(["network", "pathway", "name", "p-value"])
+            reactome_writer.writerow([
+                "network", "pathway", "name", "p-value", "number of proteins",
+                "number of associated proteins", "associated proteins"
+            ])
 
             if "PTMs" in configuration.get("Reactome enrichment", {}):
                 if configuration["Reactome enrichment"].get(
@@ -1372,11 +1390,15 @@ def process_workflow(identifier: str, configuration: Mapping[str, Any]) -> None:
                     organism=configuration["Reactome enrichment"].get(
                         "organism", 9606))
 
-                for (pathway, name), p in sorted(
+                for (pathway, name), (p, prt) in sorted(
                         reactome_enrichment[frozenset(proteins)].items(),
-                        key=lambda item: item[1]):
+                        key=lambda item: item[0][0]):
                     if p <= configuration["Reactome enrichment"].get("p", 1.0):
-                        reactome_writer.writerow(["network", pathway, name, p])
+                        reactome_writer.writerow([
+                            "network", pathway, name, p,
+                            network.number_of_nodes(),
+                            len(prt), " ".join(sorted(prt))
+                        ])
 
             elif "Reactome enrichment" in configuration:
                 reactome_enrichment = reactome.get_enrichment(
@@ -1393,11 +1415,15 @@ def process_workflow(identifier: str, configuration: Mapping[str, Any]) -> None:
                     organism=configuration["Reactome enrichment"].get(
                         "organism", 9606))
 
-                for (pathway, name), p in sorted(reactome_enrichment[frozenset(
-                        network.nodes())].items(),
-                                                 key=lambda item: item[1]):
+                for (pathway, name), (p, prt) in sorted(
+                        reactome_enrichment[frozenset(network.nodes())].items(),
+                        key=lambda item: item[0][0]):
                     if p <= configuration["Reactome enrichment"].get("p", 1.0):
-                        reactome_writer.writerow(["network", pathway, name, p])
+                        reactome_writer.writerow([
+                            "network", pathway, name, p,
+                            network.number_of_nodes(),
+                            len(prt), " ".join(sorted(prt))
+                        ])
 
             if "PTMs" in configuration.get("community detection",
                                            {}).get("Reactome enrichment", {}):
@@ -1543,14 +1569,18 @@ def process_workflow(identifier: str, configuration: Mapping[str, Any]) -> None:
                         reverse=True),
                                               start=1):
                     for (pathway,
-                         name), p in sorted(reactome_enrichment[frozenset(
-                             subsets[community])].items(),
-                                            key=lambda item: item[1]):
+                         name), (p,
+                                 prt) in sorted(reactome_enrichment[frozenset(
+                                     subsets[community])].items(),
+                                                key=lambda item: item[0][0]):
                         if p <= configuration["community detection"][
                                 "Reactome enrichment"].get("p", 1.0):
                             export[community] = True
-                            reactome_writer.writerow(
-                                [f"community {k}", pathway, name, p])
+                            reactome_writer.writerow([
+                                f"community {k}", pathway, name, p,
+                                community.number_of_nodes(),
+                                len(prt), " ".join(sorted(prt))
+                            ])
 
             elif "Reactome enrichment" in configuration:
                 reactome_enrichment = reactome.get_enrichment(
@@ -1576,14 +1606,18 @@ def process_workflow(identifier: str, configuration: Mapping[str, Any]) -> None:
                         reverse=True),
                                               start=1):
                     for (pathway,
-                         name), p in sorted(reactome_enrichment[frozenset(
-                             community.nodes())].items(),
-                                            key=lambda item: item[1]):
+                         name), (p,
+                                 prt) in sorted(reactome_enrichment[frozenset(
+                                     community.nodes())].items(),
+                                                key=lambda item: item[0][0]):
                         if p <= configuration["community detection"][
                                 "Reactome enrichment"].get("p", 1.0):
                             export[community] = True
-                            reactome_writer.writerow(
-                                [f"community {k}", pathway, name, p])
+                            reactome_writer.writerow([
+                                f"community {k}", pathway, name, p,
+                                community.number_of_nodes(),
+                                len(prt), " ".join(sorted(prt))
+                            ])
 
     else:
         logger.warning(
@@ -1601,10 +1635,12 @@ def process_workflow(identifier: str, configuration: Mapping[str, Any]) -> None:
                   encoding="utf-8") as measurement_enrichment_table:
             measurement_enrichment_writer = csv.writer(
                 measurement_enrichment_table, dialect="excel-tab")
-            measurement_enrichment_writer.writerow(
-                ["community", "time", "PTM", "p-value"])
+            measurement_enrichment_writer.writerow([
+                "community", "time", "PTM", "p-value", "number of proteins",
+                "number of associated proteins", "associated proteins"
+            ])
 
-            measurements = {
+            measurement_ranges = {
                 modification:
                 default.MEASUREMENT_RANGE.get(score,
                                               default.MEASUREMENT_RANGE[None])
@@ -1615,12 +1651,12 @@ def process_workflow(identifier: str, configuration: Mapping[str, Any]) -> None:
             for modification, measurement_range in configuration[
                     "community detection"]["measurement enrichment"].get(
                         "measurement", {}).items():
-                measurements[modification] = measurement_range
+                measurement_ranges[modification] = measurement_range
 
             enrichment = protein_interaction_network.get_enrichment(
                 network,
                 communities,
-                measurements=measurements,
+                measurement_ranges=measurement_ranges,
                 measurement_score={
                     modification:
                     score.MEASUREMENT_SCORE.get(measurement_score,
@@ -1661,14 +1697,17 @@ def process_workflow(identifier: str, configuration: Mapping[str, Any]) -> None:
                     reverse=True),
                                           start=1):
                 for time in enrichment[community]:
-                    for modification, p in sorted(
+                    for modification, (p, prt) in sorted(
                             enrichment[community][time].items(),
-                            key=lambda item: item[1]):
+                            key=lambda item: item[0][0]):
                         if p <= configuration["community detection"][
                                 "measurement enrichment"].get("p", 1.0):
                             export[community] = True
-                            measurement_enrichment_writer.writerow(
-                                [f"community {k}", time, modification, p])
+                            measurement_enrichment_writer.writerow([
+                                f"community {k}", time, modification, p,
+                                community.number_of_nodes(),
+                                len(prt), " ".join(sorted(prt))
+                            ])
     else:
         logger.warning(
             "Measurement enrichment test results are not exported due to "
@@ -1686,7 +1725,7 @@ def process_workflow(identifier: str, configuration: Mapping[str, Any]) -> None:
             measurement_location_writer = csv.writer(measurement_location_table,
                                                      dialect="excel-tab")
             measurement_location_writer.writerow(
-                ["community", "time", "PTM", "p-value"])
+                ["community", "time", "PTM", "p-value", "number of proteins"])
 
             location = protein_interaction_network.get_location(
                 network,
@@ -1728,12 +1767,14 @@ def process_workflow(identifier: str, configuration: Mapping[str, Any]) -> None:
                 for time in location[community]:
                     for modification, p in sorted(
                             location[community][time].items(),
-                            key=lambda item: item[1]):
+                            key=lambda item: item[0][0]):
                         if p <= configuration["community detection"][
                                 "measurement location"].get("p", 1.0):
                             export[community] = True
-                            measurement_location_writer.writerow(
-                                [f"community {k}", time, modification, p])
+                            measurement_location_writer.writerow([
+                                f"community {k}", time, modification, p,
+                                community.number_of_nodes()
+                            ])
 
     else:
         logger.warning(
@@ -1817,7 +1858,7 @@ def main() -> None:
     logging.basicConfig(
         filename=f"{os.path.splitext(os.path.basename(sys.argv[0]))[0]}.log",
         filemode="w",
-        format="%(asctime)s %(levelname)s %(name)s (PID %(process)d): "
+        format="%(asctime)s %(levelname)s %(name)s (PID: %(process)d): "
         "%(message)s",
         datefmt="%Y-%m-%d %H:%M:%S",
         level=args.logging,

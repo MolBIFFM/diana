@@ -142,7 +142,7 @@ def get_enrichment(
     organism: int = 9606,
     namespaces: Collection[Literal["cellular_component", "molecular_function",
                                    "biological_process"]] = frozenset()
-) -> dict[frozenset[str], dict[tuple[str, str], float]]:
+) -> dict[frozenset[str], dict[tuple[str, str], tuple[float, frozenset[str]]]]:
     """
     Test sets of proteins for enrichment of Gene Ontology terms.
 
@@ -161,7 +161,7 @@ def get_enrichment(
 
     Returns:
         Corrected p-value for the enrichment of each Gene Ontology term by each
-        network.
+        network and associated proteins.
     """
     name = {}
     go_id: dict[str, set[str]] = {}
@@ -173,59 +173,61 @@ def get_enrichment(
                     go_id[alt_id] = set()
                 go_id[alt_id].add(term["id"])
 
-    annotation: dict[str, set[str]] = {}
+    annotations: dict[str, set[str]] = {}
     for protein, annotated_term in get_annotation(
             organism, convert_namespaces(namespaces)):
         if any(not reference[i if len(reference) == len(proteins) else 0] or
                protein in reference[i if len(reference) == len(proteins) else 0]
                for i in range(len(reference))):
             for primary_term in go_id.get(annotated_term, {annotated_term}):
-                if primary_term not in annotation:
-                    annotation[primary_term] = set()
-                annotation[primary_term].add(protein)
+                if primary_term not in annotations:
+                    annotations[primary_term] = set()
+                annotations[primary_term].add(protein)
 
-    annotation = {term: annot for term, annot in annotation.items() if annot}
-
-    annotated_proteins = set.union(*annotation.values())
-
-    annotated_network_proteins = {
-        prt: len(
-            annotated_proteins.intersection(reference[i if len(reference) ==
-                                                      len(proteins) else 0]
-                                           ).intersection(prt)
-            if not reference[i if len(reference) == len(proteins) else 0] else
-            annotated_proteins.intersection(prt))
-        for i, prt in enumerate(proteins)
+    annotations = {
+        term: annotation
+        for term, annotation in annotations.items()
+        if annotation
     }
 
-    network_intersection = {
+    annotated_proteins = set.union(*annotations.values())
+
+    annotated_prt = {
+        prt: annotated_proteins.intersection(
+            reference[i if len(reference) ==
+                      len(proteins) else 0]).intersection(prt)
+        if reference[i if len(reference) == len(proteins) else 0] else
+        annotated_proteins.intersection(prt) for i, prt in enumerate(proteins)
+    }
+
+    prt_intersection = {
         prt: {
-            term: len(
-                annot.intersection(reference[i if len(reference) ==
-                                             len(proteins) else 0]
-                                  ).intersection(prt)
-                if not reference[i if len(reference) == len(proteins) else 0]
-                else annot.intersection(prt))
-            for term, annot in annotation.items()
+            term: annotation.intersection(
+                reference[i if len(reference) ==
+                          len(proteins) else 0]).intersection(prt)
+            if reference[i if len(reference) == len(proteins) else 0] else
+            annotation.intersection(prt)
+            for term, annotation in annotations.items()
         } for i, prt in enumerate(proteins)
     }
 
     p_value = multiple_testing_correction({(prt, term): enrichment_test(
-        network_intersection[prt][term],
+        len(prt_intersection[prt][term]),
         len(
             annotated_proteins.intersection(reference[i if len(reference) ==
                                                       len(proteins) else 0])
-            if not reference[i if len(reference) == len(proteins) else 0] else
-            annotated_proteins),
+            if reference[i if len(reference) ==
+                         len(proteins) else 0] else annotated_proteins),
         len(
-            annot.intersection(reference[i if len(reference) ==
-                                         len(proteins) else 0])
-            if not reference[i if len(reference) == len(proteins) else 0] else
-            annot),
-        annotated_network_proteins[prt]) for term, annot in annotation.items()
+            annotation.intersection(reference[i if len(reference) ==
+                                              len(proteins) else 0])
+            if reference[i if len(reference) ==
+                         len(proteins) else 0] else annotation),
+        len(annotated_prt[prt])) for term, annotation in annotations.items()
                                            for i, prt in enumerate(proteins)})
 
     return {
-        prt: {(term, name[term]): p_value[(prt, term)] for term in annotation
-             } for prt in proteins
+        prt: {(term, name[term]):
+              (p_value[(prt, term)], frozenset(prt_intersection[prt][term]))
+              for term in annotations} for prt in proteins
     }

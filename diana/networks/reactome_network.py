@@ -47,44 +47,46 @@ def get_network(proteins: Iterable[str],
         if child in network and parent in network:
             network.add_edge(child, parent)
 
-    annotation: dict[str, set[str]] = {}
+    annotations: dict[str, set[str]] = {}
     for protein, pathway in reactome.get_pathway_annotation(organism):
-        if pathway not in annotation:
-            annotation[pathway] = set()
+        if pathway not in annotations:
+            annotations[pathway] = set()
 
         if not reference or protein in reference:
-            annotation[pathway].add(protein)
+            annotations[pathway].add(protein)
 
     network.remove_nodes_from([
         pathway for pathway in network
-        if pathway not in annotation or not annotation[pathway]
+        if pathway not in annotations or not annotations[pathway]
     ])
 
-    annotation = {
-        pathway: annot for pathway, annot in annotation.items() if annot
+    annotations = {
+        pathway: annotation
+        for pathway, annotation in annotations.items()
+        if annotation
     }
 
-    annotated_proteins = set.union(*annotation.values())
+    annotated_proteins = set.union(*annotations.values())
 
-    network_intersection = {
-        pathway: annot.intersection(proteins)
-        for pathway, annot in annotation.items()
+    prt_intersection = {
+        pathway: annotation.intersection(proteins)
+        for pathway, annotation in annotations.items()
     }
 
     p_value = multiple_testing_correction({
-        pathway: enrichment_test(len(network_intersection[pathway]),
+        pathway: enrichment_test(len(prt_intersection[pathway]),
                                  len(annotated_proteins),
-                                 len(annotation[pathway]),
+                                 len(annotations[pathway]),
                                  len(annotated_proteins.intersection(proteins)))
         for pathway in network
     })
 
     for node in network:
         network.nodes[node]["p-value"] = p_value[node]
-        network.nodes[node]["number of proteins"] = len(
-            network_intersection[node])
-        network.nodes[node]["proteins"] = " ".join(
-            sorted(network_intersection[node]))
+        network.nodes[node]["number of associated proteins"] = len(
+            prt_intersection[node])
+        network.nodes[node]["associated proteins"] = " ".join(
+            sorted(prt_intersection[node]))
 
     return network
 
