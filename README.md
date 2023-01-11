@@ -2360,7 +2360,7 @@ DIANA utilizes the following external libraries:
 ---
 
 Development of DIANA was inspired by previous work utilizing Cytoscape and
-plugins for:
+plugins for it:
 
 - Maere, S. et al. (2005) ***BiNGO*: a Cytoscape plugin to assess**
   **overrepresentation of Gene Ontology categories in Biological Networks**,
