@@ -2307,7 +2307,7 @@ phosphorylation or ubiquitination of host proteins in response to infection by
   **Phosphorylation During *Shigella flexneri* Infection Revealed by**
   **Phosphoproteomics**, *Mol. Cell. Proteom.*, 12, 2952 – 2968.
 
-Results presented here refer to these examples.
+Examples presented here refer to these workflows.
 
 ---
 
