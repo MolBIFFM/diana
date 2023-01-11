@@ -2275,8 +2275,8 @@ information:
 
 ## References
 
-The configuration files in this repository specify workflows for data sets as
-supplemented with the following publications which examine differential
+Configuration files in this repository specify examples of workflows for data
+sets supplemented with the following publications which examine differential
 phosphorylation or ubiquitination of host proteins in response to infection by
 [*Salmonella Typhimurium*](configuration/salmonella.json),
 [SARS-CoV-2](configuration/sars-cov-2.json), and
@@ -2346,8 +2346,8 @@ DIANA utilizes the following external libraries:
 
 ---
 
-Development of DIANA was inspired by previous work utilizing Cytoscape and the
-following plugins and aims to extend upon analyses enabled by combining them:
+Development of DIANA was inspired by previous work utilizing Cytoscape and
+plugins for it and aims to extend upon analyses enabled by combining them:
 
 - Maere, S. et al. (2005) ***BiNGO*: a Cytoscape plugin to assess**
   **overrepresentation of Gene Ontology categories in Biological Networks**,
@@ -2365,11 +2365,11 @@ following plugins and aims to extend upon analyses enabled by combining them:
 
 ---
 
-Integrative research observing communities of protein-protein interaction
-networks relevant to protein function includes:
+Research observing communities of protein-protein interaction networks relevant
+to cellular processes includes:
 
 - Chen, J. and Yuan, B. (2006) **Detecting functional modules in the yeast**
-  **protein–protein interaction network**, *Bioinformatics*, 22, 2283 – 2290.
+  **protein-protein interaction network**, *Bioinformatics*, 22, 2283 – 2290.
 
 - Zhang, S. et al. (2010) **Determining modular organization of protein**
   **interaction networks by maximizing modularity density**, *BMC Syst. Biol.*,
@@ -2378,7 +2378,7 @@ networks relevant to protein function includes:
 ---
 
 Reviews concerning measurement of differential post-translational modification
-by mass spectrometry include:
+using mass spectrometry include:
 
 - Olsen, J. V. and Mann, M. (2013) **Status of Large-scale Analysis of**
   **Post-translational Modifications by Mass Spectrometry**, *Mol. Cell.*
