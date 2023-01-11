@@ -2223,19 +2223,24 @@ Annotations of Gene Ontology terms contain the following information:
     transduction</data>
   <data key="namespace">biological process</data>
   <data key="p-value">0.015326500062106879</data>
-  <data key="number of proteins">21</data>
-  <data key="proteins">O15085 O60292 P98174 Q07960 Q12774 Q13009 Q13459 Q14344
-    Q15311 Q52LW3 Q5T5U3 Q6XZF7 Q92619 Q96PE2 Q9C0H5 Q9H0H5 Q9NRY4 Q9P107 Q9P227
-    Q9ULL1 Q9Y3L3</data>
+  <data key="number of associated proteins">21</data>
+  <data key="associated proteins">O15085 O60292 P98174 Q07960 Q12774 Q13009
+    Q13459 Q14344 Q15311 Q52LW3 Q5T5U3 Q6XZF7 Q92619 Q96PE2 Q9C0H5 Q9H0H5 Q9NRY4
+    Q9P107 Q9P227 Q9ULL1 Q9Y3L3</data>
 </node>
 ```
 
 Terms are represented by their primary Gene Ontology ID. `"term"` refers to the
 term and `"namespace"` to its namespace. `"p-value"` refers to the corrected
 p-value of the test for enrichment of the term by the submitted proteins.
-`"number of proteins"` refers to the number of submitted proteins annotated with
-the term and `"proteins"` refers to the space-separated accessions of these
-proteins.
+`"number of associated proteins"` refers to the number of submitted proteins
+annotated with the term and `"associated proteins"` refers to the
+space-separated accessions of these proteins.
+
+The p-value in this case corresponds to the enrichment of the Gene Ontology term
+among proteins exhibiting a two-fold change at any phosphorylation or
+ubiquitination site either 30 or 120 minutes after infection by *Salmonella*
+*Typhimurium* with respect to the protein-protein interaction network.
 
 Directed hierarchical relationships of Gene Ontology terms contain no additional
 information:
@@ -2252,19 +2257,25 @@ Annotations of Reactome pathways contain the following information:
 <node id="R-HSA-73887">
   <data key="pathway">Death Receptor Signalling</data>
   <data key="p-value">0.013079279836317752</data>
-  <data key="number of proteins">28</data>
-  <data key="proteins">A5YM69 O15085 P19838 P25445 P41743 P52565 P62258 P62979
-    P63244 P98170 P98174 Q12774 Q12933 Q13009 Q13501 Q13547 Q14344 Q5VV41 Q92934
-    Q96BN8 Q96PE2 Q9BYM8 Q9H0F6 Q9NQC3 Q9NY61 Q9NYJ8 Q9UBN6 Q9Y4K3</data>
+  <data key="number of associated proteins">28</data>
+  <data key="associated proteins">A5YM69 O15085 P19838 P25445 P41743 P52565
+    P62258 P62979 P63244 P98170 P98174 Q12774 Q12933 Q13009 Q13501 Q13547 Q14344
+    Q5VV41 Q92934 Q96BN8 Q96PE2 Q9BYM8 Q9H0F6 Q9NQC3 Q9NY61 Q9NYJ8 Q9UBN6 Q9Y4K3
+  </data>
 </node>
 ```
 
 Pathways are represented by their stable Reactome pathway identifier.
 `"pathway"` refers to the pathway name. `"p-value"` refers to the corrected
 p-value of the test for enrichment of the pathway by the submitted proteins.
-`"number of proteins"` refers to the number of submitted proteins annotated with
-the pathway and `"proteins"` refers to the space-separated accessions of these
-proteins.
+`"number of associated proteins"` refers to the number of submitted proteins
+annotated with the pathway and `"associate proteins"` refers to the
+space-separated accessions of these proteins.
+
+The p-value in this case corresponds to the enrichment of the Reactome pathway
+among proteins exhibiting a two-fold change at any phosphorylation or
+ubiquitination site either 30 or 120 minutes after infection by *Salmonella*
+*Typhimurium* with respect to the protein-protein interaction network.
 
 Directed hierarchical relationships of Reactome pathways contain no additional
 information:
@@ -2296,6 +2307,7 @@ phosphorylation or ubiquitination of host proteins in response to infection by
   **Phosphorylation During *Shigella flexneri* Infection Revealed by**
   **Phosphoproteomics**, *Mol. Cell. Proteom.*, 12, 2952 – 2968.
 
+Examples given here refer to these workflows.
 ---
 
 DIANA accesses the following resources:
@@ -2347,7 +2359,7 @@ DIANA utilizes the following external libraries:
 ---
 
 Development of DIANA was inspired by previous work utilizing Cytoscape and
-plugins for it and aims to extend upon analyses enabled by combining them:
+plugins for:
 
 - Maere, S. et al. (2005) ***BiNGO*: a Cytoscape plugin to assess**
   **overrepresentation of Gene Ontology categories in Biological Networks**,
@@ -2363,6 +2375,7 @@ plugins for it and aims to extend upon analyses enabled by combining them:
 - Su, G. et al. (2010) **GLay: community structure analysis of biological**
   **networks**, *Bioinformatics*, 26, 3135 – 3137.
 
+This project aims to extend upon analyses enabled by combining them.
 ---
 
 Research observing communities of protein-protein interaction networks relevant
@@ -2397,5 +2410,5 @@ Specifically, this concerns implementations of
 ---
 
 DIANA is developed by Lucas Fein and Jens Rieser in the Molecular Bioinformatics
-Group at Goethe University Frankfurt under supervision of Dr. Jörg Ackermann and
-Prof. Dr. Ina Koch.
+Group at Goethe University Frankfurt under supervision of Jörg Ackermann and Ina
+Koch.

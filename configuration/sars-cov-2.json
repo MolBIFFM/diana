@@ -66,8 +66,10 @@
       "p": 0.05
     },
     "Gene Ontology network": {
+      "PTMs": ["P", "U"]
     },
     "Reactome network": {
+      "PTMs": ["P", "U"]
     },
     "community detection": {
       "Gene Ontology enrichment": {
