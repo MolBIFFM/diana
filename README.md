@@ -2293,19 +2293,20 @@ phosphorylation or ubiquitination of host proteins in response to infection by
 [SARS-CoV-2](configuration/sars-cov-2.json), and
 [*Shigella flexneri*](configuration/shigella.json):
 
-- Fiskin, E. et al. (2016) **Global Analysis of Host and Bacterial**
-  **Ubiquitinome in Response to *Salmonella* Typhimurium Infection**, *Mol.*
-  *Cell*, 62, 967 – 981.
+- Fiskin, E. et al. (2016) Global Analysis of Host and Bacterial Ubiquitinome in
+  Response to *Salmonella* Typhimurium Infection. *Molecular Cell*, 62, 967 –
+  981.
 
-- Hahn, M. et al. (2021) **SIK2 orchestrates actin-dependent host response**
-  **upon *Salmonella* infection**, *Proc. Natl. Acad. Sci. U.S.A.*, 118.
+- Hahn, M. et al. (2021) SIK2 orchestrates actin-dependent host response upon
+  *Salmonella* infection. *Proceedings of the National Academy of Sciences*,
+  118.
 
-- Klann K. et al. (2020) **Growth Factor Receptor Signaling Inhibition**
-  **Prevents SARS-CoV-2 Replication**, *Mol. Cell*, 80, 164 – 174.
+- Klann K. et al. (2020) Growth Factor Receptor Signaling Inhibition Prevents
+  SARS-CoV-2 Replication. *Molecular Cell*, 80, 164 – 174.
 
-- Schmutz, C. et al. (2013) **Systems-Level Overview of Host Protein**
-  **Phosphorylation During *Shigella flexneri* Infection Revealed by**
-  **Phosphoproteomics**, *Mol. Cell. Proteom.*, 12, 2952 – 2968.
+- Schmutz, C. et al. (2013) Systems-Level Overview of Host Protein
+  Phosphorylation During *Shigella flexneri* Infection Revealed by
+  Phosphoproteomics. *Molecular & Cellular Proteomics*, 12, 2952 – 2968.
 
 Examples presented here refer to these workflows.
 
@@ -2313,94 +2314,94 @@ Examples presented here refer to these workflows.
 
 DIANA accesses the following resources:
 
-- Ashburner, M. et al. (2000) **Gene Ontology: tool for the unification of**
-  **biology**, *Nat. Genet.*, 25, 25 – 29.
+- Ashburner, M. et al. (2000) Gene Ontology: tool for the unification of
+  biology. *Nature Genetics*, 25, 25 – 29.
 
-- The Gene Ontology Consortium (2021) **The Gene Ontology resource: enriching**
-  **a GOld mine**, *Nucleic Acids Res.*, 49, D325 – D334.
+- The Gene Ontology Consortium (2021) The Gene Ontology resource: enriching a
+  GOld mine. *Nucleic Acids Research*, 49, D325 – D334.
 
-- Gillespie, M. et al. (2022) **The reactome pathway knowledgebase 2022**,
-  *Nucleic Acids Res.*, 50, D687 – D692.
+- Gillespie, M. et al. (2022) The reactome pathway knowledgebase 2022. *Nucleic*
+  *Acids Research*, 50, D687 – D692.
 
-- Giurgiu, M. et al. (2019) **CORUM: the comprehensive resource of mammalian**
-  **protein complexes-2019**, *Nucleic Acids Res.*, 47, D559 – D563.
+- Giurgiu, M. et al. (2019) CORUM: the comprehensive resource of mammalian
+  protein complexes – 2019. *Nucleic Acids Research*, 47, D559 – D563.
 
-- Licata, L. et al. (2012) **MINT, the molecular interaction database: 2012**
-  **update**, *Nucleic Acids Res.*, 40, D857 – D861.
+- Licata, L. et al. (2012) MINT, the molecular interaction database: 2012
+  update. *Nucleic Acids Research*, 40, D857 – D861.
 
-- Orchard, S. et al. (2014) **The MIntAct project-IntAct as a common curation**
-  **platform for 11 molecular interaction databases**, *Nucleic Acids Res.*, 42,
+- Orchard, S. et al. (2014) The MIntAct project-IntAct as a common curation
+  platform for 11 molecular interaction databases. *Nucleic Acids Research*, 42,
   D358 – D363.
 
-- Oughtred, R. et al. (2018) **The BioGRID database: A comprehensive**
-  **biomedical resource of curated protein, genetic, and chemical**
-  **interactions**, *Protein Sci.*, 30, 187 – 200.
+- Oughtred, R. et al. (2018) The BioGRID database: A comprehensive biomedical
+  resource of curated protein, genetic, and chemical interactions. *Protein*
+  *Science*, 30, 187 – 200.
 
-- Szklarczyk, D. et al. (2019) **STRING v11: protein-protein association**
-  **networks with increased coverage, supporting functional discovery in**
-  **genome-wide experimental datasets**, *Nucleic Acids Res.*, 47, D607 – D613.
+- Szklarczyk, D. et al. (2019) STRING v11: protein-protein association networks
+  with increased coverage, supporting functional discovery in genome-wide
+  experimental datasets. *Nucleic Acids Research*, 47, D607 – D613.
 
-- The UniProt Consortium (2021) **UniProt: the universal protein knowledgebase**
-  **in 2021**, *Nucleic Acids Res.*, 49, D480 – D489.
+- The UniProt Consortium (2021) UniProt: the universal protein knowledgebase in
+  in 2021. *Nucleic Acids Research*, 49, D480 – D489.
 
 ---
 
 DIANA utilizes the following external libraries:
 
-- Hagberg, A. A. et al. (2008) **Exploring network structure, dynamics, and**
-  **function using NetworkX**, *Proceedings of the 7th Python in Science*
+- Hagberg, A. A. et al. (2008) Exploring network structure, dynamics, and
+  function using NetworkX. *Proceedings of the 7th Python in Science*
   *Conference*, 11 – 15.
 
-- McKinney, W. (2010) **Data Structures for Statistical Computing in Python**,
+- McKinney, W. (2010) Data Structures for Statistical Computing in Python.
   *Proceedings of the 9th Python in Science Conference*, 56 – 61.
 
-- Virtanen, P. et al. (2020)  **SciPy 1.0: Fundamental Algorithms for**
-  **Scientific Computing in Python**, *Nat. Methods*, 17, 261 – 272.
+- Virtanen, P. et al. (2020) SciPy 1.0: Fundamental Algorithms for Scientific
+  Computing in Python. *Nature Methods*, 17, 261 – 272.
 
 ---
 
 Development of DIANA was inspired by previous work utilizing Cytoscape and
 plugins for it:
 
-- Maere, S. et al. (2005) ***BiNGO*: a Cytoscape plugin to assess**
-  **overrepresentation of Gene Ontology categories in Biological Networks**,
+- Maere, S. et al. (2005) *BiNGO*: a Cytoscape plugin to assess
+  overrepresentation of Gene Ontology categories in Biological Networks.
   *Bioinformatics*, 21, 3448 – 3449.
 
-- Morris, J. H. et al. (2011) ***clusterMaker*: a multi-algorithm clustering**
-  **plugin for Cytoscape**, *BMC Bioinform.*, 12.
+- Morris, J. H. et al. (2011) *clusterMaker*: a multi-algorithm clustering
+  plugin for Cytoscape. *BMC Bioinformatics*, 12.
 
-- Shannon, P. et al. (2003) **Cytoscape: a software environment for integrated**
-  **models of biomolecular interaction networks**, *Genome Res.*, 13,
-  2498 – 2504.
+- Shannon, P. et al. (2003) Cytoscape: a software environment for integrated
+  models of biomolecular interaction networks. *Genome Research*, 13, 2498 –
+  2504.
 
-- Su, G. et al. (2010) **GLay: community structure analysis of biological**
-  **networks**, *Bioinformatics*, 26, 3135 – 3137.
+- Su, G. et al. (2010) GLay: community structure analysis of biological
+  networks. *Bioinformatics*, 26, 3135 – 3137.
 
 This project aims to extend upon analyses enabled by combining these tools.
-
----
-
-Research observing communities of protein-protein interaction networks relevant
-to cellular processes includes:
-
-- Chen, J. and Yuan, B. (2006) **Detecting functional modules in the yeast**
-  **protein-protein interaction network**, *Bioinformatics*, 22, 2283 – 2290.
-
-- Zhang, S. et al. (2010) **Determining modular organization of protein**
-  **interaction networks by maximizing modularity density**, *BMC Syst. Biol.*,
-  4, S10.
 
 ---
 
 Reviews concerning measurement of differential post-translational modification
 using mass spectrometry include:
 
-- Olsen, J. V. and Mann, M. (2013) **Status of Large-scale Analysis of**
-  **Post-translational Modifications by Mass Spectrometry**, *Mol. Cell.*
-  *Proteom.*, 12, 3444 – 3452.
+- Olsen, J. V. and Mann, M. (2013) Status of Large-scale Analysis of
+  Post-translational Modifications by Mass Spectrometry. *Molecular & Cellular*
+  *Proteomics*, 12, 3444 – 3452.
 
-- Witze, E. S. et al. (2007) **Mapping protein post-translational**
-  **modifications with mass spectrometry**, *Nat. Methods*, 4, 798 – 806.
+- Witze, E. S. et al. (2007) Mapping protein post-translational modifications
+  with mass spectrometry. *Nature Methods*, 4, 798 – 806.
+
+---
+
+Research observing communities of protein-protein interaction networks
+representing functional modules includes:
+
+- Chen, J. and Yuan, B. (2006) Detecting functional modules in the yeast
+  protein-protein interaction network. *Bioinformatics*, 22, 2283 – 2290.
+
+- Zhang, S. et al. (2010) Determining modular organization of protein
+  interaction networks by maximizing modularity density. *BMC Systems Biology*,
+  4, S10.
 
 ---
 
