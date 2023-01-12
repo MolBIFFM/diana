@@ -6,8 +6,8 @@ def benjamini_hochberg(p: Mapping[Hashable, float]) -> dict[Hashable, float]:
     """
     Benjamini-Hochberg method for multiple testing correction.
 
-    Goeman, J. J. and Solari, A (2014) Multiple hypothesis testing in genomics,
-        Stat. in Med., 33, 1946-1978.
+    Goeman, J. J. and Solari, A (2014) Multiple hypothesis testing in genomics.
+        Statistics in Medicine, 33, 1946 – 1978.
 
     Args:
         p: Keyed p-values.
@@ -35,8 +35,8 @@ def benjamini_yekutieli(p: Mapping[Hashable, float]) -> dict[Hashable, float]:
     """
     Benjamini-Yekutieli method for multiple testing correction.
 
-    Goeman, J. J. and Solari, A (2014) Multiple hypothesis testing in genomics,
-        Stat. in Med., 33, 1946-1978.
+    Goeman, J. J. and Solari, A (2014) Multiple hypothesis testing in genomics.
+        Statistics in Medicine, 33, 1946 – 1978.
 
     Args:
         p: Keyed p-values.
@@ -65,8 +65,8 @@ def holm(p: Mapping[Hashable, float]) -> dict[Hashable, float]:
     """
     Holm method for multiple testing correction.
 
-    Goeman, J. J. and Solari, A (2014) Multiple hypothesis testing in genomics,
-        Stat. in Med., 33, 1946-1978.
+    Goeman, J. J. and Solari, A (2014) Multiple hypothesis testing in genomics.
+        Statistics in Medicine, 33, 1946 – 1978.
 
     Args:
         p: Keyed p-values.
@@ -94,8 +94,8 @@ def hommel(p: Mapping[Hashable, float]) -> dict[Hashable, float]:
     """
     Multiple testing correction according to Hommel's inequality.
 
-    Goeman, J. J. and Solari, A (2014) Multiple hypothesis testing in genomics,
-        Stat. in Med., 33, 1946-1978.
+    Goeman, J. J. and Solari, A (2014) Multiple hypothesis testing in genomics.
+        Statistics in Medicine, 33, 1946 – 1978.
 
     Args:
         p: Keyed p-values.
