@@ -2330,7 +2330,7 @@ DIANA accesses the following resources:
 
 - Orchard, S. et al. (2014) **The MIntAct project-IntAct as a common curation**
   **platform for 11 molecular interaction databases**, *Nucleic Acids Res.*, 42,
-  D358-D363.
+  D358 – D363.
 
 - Oughtred, R. et al. (2018) **The BioGRID database: A comprehensive**
   **biomedical resource of curated protein, genetic, and chemical**
