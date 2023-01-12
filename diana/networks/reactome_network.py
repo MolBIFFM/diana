@@ -103,7 +103,7 @@ def get_pathway_sizes(network: nx.Graph) -> dict[str, int]:
         network associated with any pathway in Reactome.
     """
     return {
-        pathway: network.nodes[pathway]["number of proteins"]
+        pathway: network.nodes[pathway]["number of associated proteins"]
         for pathway in network
     }
 
