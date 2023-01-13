@@ -190,7 +190,7 @@ analysis can be used as input.
 ```json
 {
   "configuration": {
-    "PTM-MS": {
+    "MS": {
       "0": {
         "PTM": {
           "organism": 9606
@@ -216,7 +216,7 @@ completely supported setting is `9606`, corresponding to Homo sapiens.
 ```json
 {
   "configuration": {
-    "PTM-MS": {
+    "MS": {
       "0": {
         "PTM": {
           "file": null
@@ -232,7 +232,7 @@ data.
 ```json
 {
   "configuration": {
-    "PTM-MS": {
+    "MS": {
       "0": {
         "PTM": {
           "accession column": null
@@ -250,7 +250,7 @@ secondary accessions.
 ```json
 {
   "configuration": {
-    "PTM-MS": {
+    "MS": {
       "0": {
         "PTM": {
           "accession format": "^(.+)$"
@@ -267,7 +267,7 @@ the entry. The default setting is `"^(.+)$"`, corresponding to the entire entry.
 ```json
 {
   "configuration": {
-    "PTM-MS": {
+    "MS": {
       "0": {
         "PTM": {
           "sheet": 1
@@ -283,7 +283,7 @@ corresponding to the first spreadsheet in the file.
 ```json
 {
   "configuration": {
-    "PTM-MS": {
+    "MS": {
       "0": {
         "PTM": {
           "header": 1
@@ -299,7 +299,7 @@ setting is `1`, corresponding to the first line of the sheet.
 ```json
 {
   "configuration": {
-    "PTM-MS": {
+    "MS": {
       "0": {
         "PTM": {
           "position column": null
@@ -319,7 +319,7 @@ associated with the corresponding protein.
 ```json
 {
   "configuration": {
-    "PTM-MS": {
+    "MS": {
       "0": {
         "PTM": {
           "position format": "^(.+)$"
@@ -336,7 +336,7 @@ setting is `"^(.+)$"`, corresponding to the entire entry.
 ```json
 {
   "configuration": {
-    "PTM-MS": {
+    "MS": {
       "0": {
         "PTM": {
           "replicate columns": []
@@ -352,7 +352,7 @@ A list of columns to extract replicate measurements from. The default setting is
 ```json
 {
   "configuration": {
-    "PTM-MS": {
+    "MS": {
       "0": {
         "PTM": {
           "replicate format": "^(.+)$"
@@ -369,7 +369,7 @@ setting is `"^(.+)$"`, corresponding to the entire entry.
 ```json
 {
   "configuration": {
-    "PTM-MS": {
+    "MS": {
       "0": {
         "PTM": {
           "replicates": 1
@@ -385,7 +385,7 @@ measurement. The default setting is `1`.
 ```json
 {
   "configuration": {
-    "PTM-MS": {
+    "MS": {
       "0": {
         "PTM": {
           "sites": 5
@@ -401,7 +401,7 @@ largest absolute measurement. The default setting is `5`.
 ```json
 {
   "configuration": {
-    "PTM-MS": {
+    "MS": {
       "0": {
         "PTM": {
           "site prioritization": "absolute"
@@ -420,7 +420,7 @@ measurements constituting either increase or decrease, respectively.
 ```json
 {
   "configuration": {
-    "PTM-MS": {
+    "MS": {
       "0": {
         "PTM": {
           "site order": "measurement"
@@ -438,7 +438,7 @@ logarithm ordering sites in ascending order. Available settings are
 ```json
 {
   "configuration": {
-    "PTM-MS": {
+    "MS": {
       "0": {
         "PTM": {
           "replicate average": "mean"
@@ -458,7 +458,7 @@ setting is `"mean"`. Available settings are `"mean"`, `"median"`, `"maximum"`,
 ```json
 {
   "configuration": {
-    "PTM-MS": {
+    "MS": {
       "0": {
         "PTM": {
           "logarithm": null

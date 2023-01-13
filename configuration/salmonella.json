@@ -1,6 +1,6 @@
 {
   "salmonella": {
-    "PTM-MS": {
+    "MS": {
       "30": {
         "P": {
           "file": "data/salmonella/phosphorylation/Supplementary_Table_01.xlsx",

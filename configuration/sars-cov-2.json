@@ -1,6 +1,6 @@
 {
   "sars-cov-2": {
-    "PTM-MS": {
+    "MS": {
       "60": {
         "P": {
           "file": "data/sars-cov-2/phosphorylation/1-s2.0-S1097276520305499-mmc2.xlsx",
