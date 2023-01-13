@@ -8,9 +8,10 @@ DIANA is a command line application for **d**ata **i**ntegration **a**nd
 spectrometry data.
 
 Different types of post-translational modification of proteins modulate cellular
-processes in conjunction. Mass spectrometry data sets capturing differential
-post-translational modification comprise measurements corresponding to thousands
-of proteins, motivating holistic assessment of cellular processes concerned.
+processes in conjunction. Mass spectrometry data sets, capturing differential
+post-translational modifications, comprise measurements corresponding to
+thousands of proteins, motivating holistic assessment of cellular processes
+concerned.
 
 DIANA automates modular analysis of mass spectrometry data in the context of
 protein-protein interaction networks. The approach combines multiple mass
