@@ -1163,9 +1163,9 @@ If `true`, assess enrichment, otherwise depletion. The default setting is
 }
 ```
 The procedure to correct p-values for testing multiple Gene Ontology terms or
-Reactome pathways. The default setting is `"Benjamini-Yekutieli"`. Available
-settings are `"Benjamini-Hochberg"`, `"Benjamini-Yekutieli"`, `"Holm"` and
-`"Hommel"`.
+Reactome pathways controlling either the false discovery or family-wise error
+rate. The default setting is `"Benjamini-Yekutieli"`. Available settings are
+`"Benjamini-Hochberg"`, `"Benjamini-Yekutieli"`, `"Holm"` and `"Hommel"`.
 
 ```json
 {
@@ -1545,9 +1545,9 @@ If `true`, assess enrichment, otherwise depletion. The default setting is
 }
 ```
 The procedure to correct p-values for testing testing multiple Gene Ontology
-terms or Reactome pathways. The default setting is `"Benjamini-Yekutieli"`.
-Available settings are `"Benjamini-Hochberg"`, `"Benjamini-Yekutieli"`, `"Holm"`
-and `"Hommel"`.
+terms or Reactome pathways controlling either the false discovery or family-wise
+error rate. The default setting is `"Benjamini-Yekutieli"`. Available settings
+are `"Benjamini-Hochberg"`, `"Benjamini-Yekutieli"`, `"Holm"` and `"Hommel"`.
 
 ```json
 {
@@ -1736,10 +1736,11 @@ The default setting is `true`.
   }
 }
 ```
-The procedure to correct p-values for testing testing either multiple
-communities and Gene Ontology terms, Reactome pathways or combinations of times
-of measurement and types of post-translational modification. The default setting
-is `"Benjamini-Yekutieli"`. Available settings are `"Benjamini-Hochberg"`,
+The procedure to correct p-values for testing either multiple communities and
+Gene Ontology terms, Reactome pathways or combinations of times of measurement
+and types of post-translational modification controlling either the false
+discovery or family-wise error rate. The default setting is
+`"Benjamini-Yekutieli"`. Available settings are `"Benjamini-Hochberg"`,
 `"Benjamini-Yekutieli"`, `"Holm"` and `"Hommel"`.
 
 ```json
