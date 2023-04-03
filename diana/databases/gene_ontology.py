@@ -1,6 +1,6 @@
 """The interface for the Gene Ontology database."""
 from typing import (Callable, Collection, Container, Hashable, Iterable,
-                    Iterator, Literal, Mapping, Sequence)
+                    Iterator, Literal, Mapping, Optional, Sequence)
 
 import scipy.stats
 from access import iterate
@@ -10,15 +10,18 @@ from databases import uniprot
 ORGANISM: dict[str, dict[int, str]] = {"files": {9606: "human"}}
 
 
-def get_ontology(namespaces: Container[Literal[
-    "cellular_component", "molecular_function",
-    "biological_process"]] = ()) -> Iterator[dict[str, str | tuple[str, ...]]]:
+def get_ontology(
+    namespaces: Container[Literal["cellular_component", "molecular_function",
+                                  "biological_process"]] = (),
+    file_ontology: Optional[str] = None
+) -> Iterator[dict[str, str | tuple[str, ...]]]:
     """
     Yields Gene Ontology terms from the given namespaces.
 
     Args:
         namespaces: The Gene Ontology namespaces to consider terms from. If
             empty, any namespace is considered.
+        file_ontology: The optional local file location to parse terms from.
 
     Yields:
         Mappings containing a Gene Ontology terms' GO ID, name, namespace,
@@ -33,7 +36,8 @@ def get_ontology(namespaces: Container[Literal[
     is_a: list[str] = []
     alt_id: list[str] = []
 
-    for line in iterate.txt("http://purl.obolibrary.org/obo/go.obo"):
+    for line in iterate.txt("http://purl.obolibrary.org/obo/go.obo"
+                            if file_ontology is None else file_ontology):
         if line in ("[Term]", "[Typedef]"):
             if (not namespaces or
                     term.get("id") and term.get("namespace") in namespaces):
@@ -66,9 +70,11 @@ def get_ontology(namespaces: Container[Literal[
 
 
 def get_annotation(
-    organism: int = 9606,
-    namespaces: Container[Literal["C", "F", "P"]] = ()
-) -> Iterator[tuple[str, str]]:
+        organism: int = 9606,
+        namespaces: Container[Literal["C", "F", "P"]] = (),
+        file_annotation: Optional[str] = None,
+        file_annotation_isoform: Optional[str] = None,
+        file_uniprot: Optional[str] = None) -> Iterator[tuple[str, str]]:
     """
     Yields Gene Ontology annotations within specified namespaces.
 
@@ -76,15 +82,21 @@ def get_annotation(
         organism: The NCBI taxonomy identifier for the organism of interest.
         namespace: The Gene Ontology namespace identifiers. If empty, any
             namespace is considered.
+        file_annotation: The optional local file location to parse annotations
+            from.
+        file_annotation: The optional local file location to parse isoform
+            annotations from.
+        file_uniprot: The optional local file location to parse accessions from.
 
     Yields:
         Pairs of protein accessions and Gene Ontology term identifiers.
     """
-    primary_accession = uniprot.get_primary_accession(organism)
+    primary_accession = uniprot.get_primary_accession(organism, file_uniprot)
 
     for row in iterate.tabular_txt(
             "http://geneontology.org/gene-associations/"
-            f"goa_{ORGANISM['files'][organism]}.gaf.gz",
+            f"goa_{ORGANISM['files'][organism]}.gaf.gz"
+            if file_annotation is None else file_annotation,
             skiprows=41,
             delimiter="\t",
             usecols=[0, 1, 4, 8, 12]):
@@ -96,7 +108,8 @@ def get_annotation(
 
     for row in iterate.tabular_txt(
             "http://geneontology.org/gene-associations/"
-            f"goa_{ORGANISM['files'][organism]}_isoform.gaf.gz",
+            f"goa_{ORGANISM['files'][organism]}_isoform.gaf.gz"
+            if file_annotation_isoform is None else file_annotation_isoform,
             skiprows=41,
             delimiter="\t",
             usecols=[0, 4, 8, 12, 16]):
@@ -141,7 +154,11 @@ def get_enrichment(
         Hashable, float]] = correction.benjamini_yekutieli,
     organism: int = 9606,
     namespaces: Collection[Literal["cellular_component", "molecular_function",
-                                   "biological_process"]] = frozenset()
+                                   "biological_process"]] = frozenset(),
+    file_ontology: Optional[str] = None,
+    file_annotation: Optional[str] = None,
+    file_annotation_isoform: Optional[str] = None,
+    file_uniprot: Optional[str] = None
 ) -> dict[frozenset[str], dict[tuple[str, str], tuple[float, frozenset[str]]]]:
     """
     Test sets of proteins for enrichment of Gene Ontology terms.
@@ -158,6 +175,12 @@ def get_enrichment(
         organism: The NCBI taxonomy identifier for the organism of interest.
         namespaces: The Gene Ontology namespaces to consider. If empty, any
             namespace is considered.
+        file_ontology: The optional local file location to parse terms from.
+        file_annotation: The optional local file location to parse annotations
+            from.
+        file_annotation: The optional local file location to parse isoform
+            annotations from.
+        file_uniprot: The optional local file location to parse accessions from.
 
     Returns:
         Corrected p-value for the enrichment of each Gene Ontology term by each
@@ -165,7 +188,7 @@ def get_enrichment(
     """
     name = {}
     go_id: dict[str, set[str]] = {}
-    for term in get_ontology(namespaces):
+    for term in get_ontology(namespaces, file_ontology):
         if isinstance(term["id"], str) and isinstance(term["name"], str):
             name[term["id"]] = term["name"]
             for alt_id in term["alt_id"]:
@@ -175,7 +198,8 @@ def get_enrichment(
 
     annotations: dict[str, set[str]] = {}
     for protein, annotated_term in get_annotation(
-            organism, convert_namespaces(namespaces)):
+            organism, convert_namespaces(namespaces), file_annotation,
+            file_annotation_isoform, file_uniprot):
         if any(not reference[i if len(reference) == len(proteins) else 0] or
                protein in reference[i if len(reference) == len(proteins) else 0]
                for i in range(len(reference))):

@@ -28,21 +28,27 @@
           "FRET",
           "PCA",
           "Two-hybrid"
-        ]
+        ],
+        "file": "data/biogrid/BIOGRID-ORGANISM-Homo_sapiens-4.4.220.tab3.txt"
       },
       "CORUM": {
+        "file": "data/corum/allComplexes.txt"
       },
       "IntAct": {
-        "score": 0.27
+        "score": 0.27,
+        "file": "data/intact/intact.txt"
       },
       "MINT": {
-        "score": 0.27
+        "score": 0.27,
+        "file": "data/mint/species\\ human"
       },
       "Reactome": {
+        "file": "data/reactome/reactome.homo_sapiens.interactions.tab-delimited.txt"
       },
       "STRING": {
         "experiments score": 0.7,
-        "combined score": 0.7
+        "combined score": 0.7,
+        "file": "data/string/9606.protein.links.full.v11.5.txt"
       }
     },
     "Cytoscape": {
@@ -84,6 +90,19 @@
       "measurement location": {
         "p": 0.05
       }
+    },
+    "Gene Ontology": {
+      "file ontology": "data/gene_ontology/go.obo",
+      "file annotation": "data/gene_ontology/goa_human.gaf",
+      "file annotation isoform": "data/gene_ontology/goa_human_isoform.gaf"
+    },
+    "Reactome": {
+      "file pathways": "data/reactome/ReactomePathways.txt",
+      "file pathways relation": "data/reactome/ReactomePathwaysRelation.txt",
+      "file accession map": "data/reactome/UniProt2Reactome_All_Levels.txt"
+    },
+    "UniProt": {
+      "file": "data/uniprot/uniprot_sprot_human.dat"
     }
   }
 }

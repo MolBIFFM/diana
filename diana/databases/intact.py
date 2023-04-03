@@ -12,7 +12,9 @@ def get_protein_interactions(
         interaction_detection_methods: Optional[Container[str]] = None,
         interaction_types: Optional[Container[str]] = None,
         psi_mi_score: float = 0.0,
-        organism: int = 9606) -> Iterator[tuple[str, str, float]]:
+        organism: int = 9606,
+        file: Optional[str] = None,
+        file_uniprot: Optional[str] = None) -> Iterator[tuple[str, str, float]]:
     """
     Yields protein-protein interactions from IntAct.
 
@@ -24,16 +26,18 @@ def get_protein_interactions(
             interaction type. If none are specified, any are accepted.
         psi_mi_score: The PSI-MI score threshold.
         organism: The NCBI taxonomy identifier for the organism of interest.
+        file: The optional local file location to parse interactions from.
+        file_uniprot: The optional local file location to parse accessions from.
 
     Yields:
         Pairs of interacting proteins and the PSI-MI score associated with the
         interaction.
     """
-    primary_accession = uniprot.get_primary_accession(organism)
+    primary_accession = uniprot.get_primary_accession(organism, file_uniprot)
 
     for row in iterate.tabular_txt(
             "ftp://ftp.ebi.ac.uk/pub/databases/intact/current/psimitab/"
-            "intact.zip",
+            "intact.zip" if file is None else file,
             file_from_zip_archive=re.compile(r"^intact\.txt$"),
             delimiter="\t",
             header=0,

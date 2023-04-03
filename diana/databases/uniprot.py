@@ -1,5 +1,5 @@
 """The interface for the UniProt database."""
-from typing import Iterator
+from typing import Iterator, Optional
 
 from access import iterate
 
@@ -7,12 +7,15 @@ ORGANISM = {"files": {9606: "human"}}
 
 
 def get_swiss_prot_entries(
-        organism: int = 9606) -> Iterator[tuple[tuple[str, ...], str, str]]:
+        organism: int = 9606,
+        file: Optional[str] = None
+) -> Iterator[tuple[tuple[str, ...], str, str]]:
     """
     Yields Swiss-Prot entries.
 
     Args:
         organism: The NCBI taxonomy identifier for the organism of interest.
+        file: The optional local file location to parse accessions from.
 
     Yields:
         UniProt accessions, gene name and protein name of each entry.
@@ -24,7 +27,8 @@ def get_swiss_prot_entries(
     for line in iterate.txt(
             "https://ftp.uniprot.org/pub/databases/uniprot/current_release/"
             "knowledgebase/taxonomic_divisions/"
-            f"uniprot_sprot_{ORGANISM['files'][organism]}.dat.gz"):
+            f"uniprot_sprot_{ORGANISM['files'][organism]}.dat.gz"
+            if file is None else file):
 
         if line.startswith("AC") and len(line.split(maxsplit=1)) == 2:
             accessions.extend(line.split(maxsplit=1)[1].rstrip(";").split("; "))
@@ -73,18 +77,21 @@ def get_swiss_prot_entries(
             rec_name = False
 
 
-def get_primary_accession(organism: int = 9606) -> dict[str, frozenset[str]]:
+def get_primary_accession(
+        organism: int = 9606,
+        file: Optional[str] = None) -> dict[str, frozenset[str]]:
     """
     Returns a map of primary UniProt accessions.
 
     Args:
         organism: The NCBI taxonomy identifier for the organism of interest.
+        file: The optional local file location to parse accessions from.
 
     Returns:
         A map of any secondary UniProt accessions to its primary equivalents.
     """
     primary_accession: dict[str, set[str]] = {}
-    for accessions, _, _ in get_swiss_prot_entries(organism):
+    for accessions, _, _ in get_swiss_prot_entries(organism, file):
         for i, accession in enumerate(accessions):
             if i > 0:
                 if accession not in primary_accession:

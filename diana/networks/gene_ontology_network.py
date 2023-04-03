@@ -24,7 +24,11 @@ def get_network(proteins: Iterable[str],
                 multiple_testing_correction: Callable[
                     [dict[Hashable, float]],
                     Mapping[Hashable, float]] = correction.benjamini_yekutieli,
-                organism: int = 9606) -> nx.DiGraph:
+                organism: int = 9606,
+                file_ontology: Optional[str] = None,
+                file_annotation: Optional[str] = None,
+                file_annotation_isoform: Optional[str] = None,
+                file_uniprot: Optional[str] = None) -> nx.DiGraph:
     """
     Assemble a Gene Ontology network from proteins.
 
@@ -40,13 +44,19 @@ def get_network(proteins: Iterable[str],
         multiple_testing_correction: The procedure to correct for testing of
             multiple terms.
         organism: The NCBI taxonomy identifier for the organism of interest.
+        file_ontology: The optional local file location to parse terms from.
+        file_annotation: The optional local file location to parse annotations
+            from.
+        file_annotation: The optional local file location to parse isoform
+            annotations from.
+        file_uniprot: The optional local file location to parse accessions from.
 
     Returns:
         The Gene Ontology network.
     """
     network = nx.DiGraph()
     go_id: dict[str, set[str]] = {}
-    for term in gene_ontology.get_ontology(namespaces):
+    for term in gene_ontology.get_ontology(namespaces, file_ontology):
         if isinstance(term["id"], str) and isinstance(term["namespace"], str):
             network.add_node(term["id"])
             network.nodes[term["id"]]["term"] = term["name"]
@@ -63,7 +73,8 @@ def get_network(proteins: Iterable[str],
 
     annotations: dict[str, set[str]] = {}
     for protein, annotated_term in gene_ontology.get_annotation(
-            organism, gene_ontology.convert_namespaces(namespaces)):
+            organism, gene_ontology.convert_namespaces(namespaces),
+            file_annotation, file_annotation_isoform, file_uniprot):
         for primary_term in go_id.get(annotated_term, {annotated_term}):
             if primary_term not in annotations:
                 annotations[primary_term] = set()

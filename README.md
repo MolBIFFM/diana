@@ -243,8 +243,8 @@ data.
   }
 }
 ```
-The table column to extract UniProt protein accessions from. Accessions are
-mapped to primary UniProt accessions or discarded if not present in Swiss-Prot.
+The table column to extract UniProt protein accessions from. UniProt accessions
+are mapped to primary accessions or discarded if not present in Swiss-Prot.
 Isoform identifiers are maintained on primary, but not transferred from
 secondary accessions.
 
@@ -572,7 +572,6 @@ from the input proteins in the corresponding database. The default setting is
 The NCBI taxonomy ID for the organism of interest. The default and currently
 only completely supported setting is `9606`, corresponding to Homo sapiens.
 
-
 ```json
 {
   "configuration": {
@@ -647,6 +646,20 @@ corresponding to the latest version.
 {
   "configuration": {
     "protein-protein interactions": {
+      "BioGRID": {
+        "file": null
+      }
+    }
+  }
+}
+```
+The optional local file location to parse protein-protein interactions from. The
+default setting is `null`, downloading the required file automatically.
+
+```json
+{
+  "configuration": {
+    "protein-protein interactions": {
       "CORUM": {
         "purification methods": []
       }
@@ -656,6 +669,20 @@ corresponding to the latest version.
 ```
 A list of accepted PSI-MI identifiers or terms for protein complex purification
 methods. The default setting is `[]`, corresponding to any annotation.
+
+```json
+{
+  "configuration": {
+    "protein-protein interactions": {
+      "CORUM": {
+        "file": null
+      }
+    }
+  }
+}
+```
+The optional local file location to parse protein-protein interactions from. The
+default setting is `null`, downloading the required file automatically.
 
 ```json
 {
@@ -711,6 +738,23 @@ A PSI-MI score threshold. The default setting is `0.0`.
 {
   "configuration": {
     "protein-protein interactions": {
+      "Intact": {
+        "file": null
+      },
+      "MINT": {
+        "file": null
+      }
+    }
+  }
+}
+```
+The optional local file location to parse protein-protein interactions from. The
+default setting is `null`, downloading the required file automatically.
+
+```json
+{
+  "configuration": {
+    "protein-protein interactions": {
       "Reactome": {
         "interaction context": []
       }
@@ -734,6 +778,20 @@ corresponding to any annotation.
 ```
 A list of accepted interaction type annotations. The default setting is `[]`,
 corresponding to any annotation.
+
+```json
+{
+  "configuration": {
+    "protein-protein interactions": {
+      "Reactome": {
+        "file": null
+      }
+    }
+  }
+}
+```
+The optional local file location to parse protein-protein interactions from. The
+default setting is `null`, downloading the required file automatically.
 
 ```json
 {
@@ -949,6 +1007,21 @@ Whether to include a protein-protein interaction if it meets any of the
 specified score thresholds rather than all. By default, all thresholds must be
 met, which is consistent with interfaces for other protein-protein interaction
 databases but not the STRING web interface.
+
+```json
+{
+  "configuration": {
+    "protein-protein interactions": {
+      "STRING": {
+        "file": null
+      }
+    }
+  }
+}
+
+```
+The optional local file location to parse protein-protein interactions from. The
+default setting is `null`, downloading the required file automatically.
 
 ---
 
@@ -1310,7 +1383,6 @@ binary logarithms of the setting for `"ratio"`, a two-fold decrease or increase.
 The remaining relative quantities are derived from the corresponding
 distribution represented in the protein-protein interaction network, specific to
 the time of measurement and type of post-translational modification.
-
 
 ```json
 {
@@ -1689,8 +1761,6 @@ form. A community is exported if it is significant according to any of the
 conducted tests subject to correction for multiple testing. Communities are
 exported in descending order of the number of proteins they consist of and
 enumerated accordingly.
-
-
 
 ```json
 {
@@ -2126,6 +2196,99 @@ quantities are derived from the corresponding distribution represented in the
 protein-protein interaction network, specific to the time of measurement and
 type of post-translational modification.
 
+---
+
+By default files are downloaded automatically as temporary files as required
+during concurrent workflow execution but, alternatively, may be specified
+locally.
+
+```json
+{
+  "configuration": {
+    "UniProt": {
+      "file": null
+    }
+  }
+}
+```
+The optional local file location to parse UniProt protein accessions from. The
+default setting is `null`, downloading the required file automatically.
+
+```json
+{
+  "configuration": {
+    "Gene Ontology": {
+      "file ontology": null
+    }
+  }
+}
+```
+The optional local file location to parse Gene Ontology terms from. The default
+setting is `null`, downloading the required file automatically.
+
+```json
+{
+  "configuration": {
+    "Gene Ontology": {
+      "file annotation": null
+    }
+  }
+}
+```
+The optional local file location to parse Gene Ontology annotations from. The
+default setting is `null`, downloading the required file automatically.
+
+```json
+{
+  "configuration": {
+    "Gene Ontology": {
+      "file annotation isoform": null
+    }
+  }
+}
+```
+The optional local file location to parse Gene Ontology isoform annotations
+from. The default setting is `null`, downloading the required file
+automatically.
+
+```json
+{
+  "configuration": {
+    "Reactome": {
+      "file pathways": null
+    }
+  }
+}
+```
+The optional local file location to parse Reactome pathways from. The default
+setting is `null`, downloading the required file automatically.
+
+```json
+{
+  "configuration": {
+    "Reactome": {
+      "file pathways relation": null
+    }
+  }
+}
+```
+The optional local file location to parse Reactome pathway relations from. The
+default setting is `null`, downloading the required file automatically.
+
+```json
+{
+  "configuration": {
+    "Reactome": {
+      "file accession map": null
+    }
+  }
+}
+```
+The optional local file location to parse associations of Reactome pathways
+with UniProt protein accessions from. The default setting is `null`, downloading
+the required file automatically.
+
+---
 
 ## Protein-Protein Interaction Network
 
@@ -2327,8 +2490,8 @@ DIANA accesses the following resources:
 - Gillespie, M. et al. (2022) The reactome pathway knowledgebase 2022. *Nucleic*
   *Acids Research*, 50, D687 – D692.
 
-- Giurgiu, M. et al. (2019) CORUM: the comprehensive resource of mammalian
-  protein complexes – 2019. *Nucleic Acids Research*, 47, D559 – D563.
+- Tsitsiridis, G. et al. (2023) CORUM: the comprehensive resource of mammalian
+  protein complexes – 2022. *Nucleic Acids Research*, 51, D539 – D545.
 
 - Licata, L. et al. (2012) MINT, the molecular interaction database: 2012
   update. *Nucleic Acids Research*, 40, D857 – D861.
@@ -2364,8 +2527,8 @@ DIANA utilizes the following external libraries:
 
 ---
 
-Development of DIANA was inspired by previous work utilizing Cytoscape and
-plugins for it:
+Development of DIANA was inspired by previous work using Cytoscape and plugins
+for it:
 
 - Maere, S. et al. (2005) *BiNGO*: a Cytoscape plugin to assess
   overrepresentation of Gene Ontology categories in Biological Networks.
@@ -2394,18 +2557,6 @@ using mass spectrometry include:
 
 - Witze, E. S. et al. (2007) Mapping protein post-translational modifications
   with mass spectrometry. *Nature Methods*, 4, 798 – 806.
-
----
-
-Research observing communities of protein-protein interaction networks
-representing functional modules includes:
-
-- Chen, J. and Yuan, B. (2006) Detecting functional modules in the yeast
-  protein-protein interaction network. *Bioinformatics*, 22, 2283 – 2290.
-
-- Zhang, S. et al. (2010) Determining modular organization of protein
-  interaction networks by maximizing modularity density. *BMC Systems Biology*,
-  4, S10.
 
 ---
 

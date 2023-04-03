@@ -10,9 +10,10 @@ ORGANISM: dict[str, dict[int, str]] = {"data": {9606: "Homo sapiens"}}
 
 
 def get_protein_interactions(
-    purification_methods: Optional[Container[str]] = None,
-    organism: int = 9606,
-) -> Iterator[tuple[str, str]]:
+        purification_methods: Optional[Container[str]] = None,
+        organism: int = 9606,
+        file: Optional[str] = None,
+        file_uniprot: Optional[str] = None) -> Iterator[tuple[str, str]]:
     """
     Yields protein-protein interactions from CORUM.
 
@@ -21,15 +22,17 @@ def get_protein_interactions(
             protein complex purification method. If none are specified, any are
             accepted.
         organism: The NCBI taxonomy identifier for the organism of interest.
+        file: The optional local file location to parse interactions from.
+        file_uniprot: The optional local file location to parse accessions from.
 
     Yields:
         Pairs of interacting proteins.
     """
-    primary_accession = uniprot.get_primary_accession(organism)
+    primary_accession = uniprot.get_primary_accession(organism, file_uniprot)
 
     for row in iterate.tabular_txt(
             "https://mips.helmholtz-muenchen.de/corum/download/releases/"
-            "current/allComplexes.txt.zip",
+            "current/allComplexes.txt.zip" if file is None else file,
             file_from_zip_archive=re.compile(r"^allComplexes\.txt\.zip$"),
             delimiter="\t",
             header=0,

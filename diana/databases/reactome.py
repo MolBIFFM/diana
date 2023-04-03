@@ -18,10 +18,11 @@ ORGANISM: dict[str, dict[int, str]] = {
 
 
 def get_protein_interactions(
-    interaction_type: Optional[Container[str]] = None,
-    interaction_context: Optional[Container[str]] = None,
-    organism: int = 9606,
-) -> Iterator[tuple[str, str]]:
+        interaction_type: Optional[Container[str]] = None,
+        interaction_context: Optional[Container[str]] = None,
+        organism: int = 9606,
+        file: Optional[str] = None,
+        file_uniprot: Optional[str] = None) -> Iterator[tuple[str, str]]:
     """
     Yields protein-protein interactions from Reactome.
 
@@ -31,16 +32,18 @@ def get_protein_interactions(
         interaction_context: The accepted interaction context annotation. If
             none are specified, any are accepted.
         organism: The NCBI taxonomy identifier for the organism of interest.
+        file: The optional local file location to parse interactions from.
+        file_uniprot: The optional local file location to parse accessions from.
 
     Yields:
         Pairs of interacting proteins.
     """
-    primary_accession = uniprot.get_primary_accession(organism)
+    primary_accession = uniprot.get_primary_accession(organism, file_uniprot)
 
     for row in iterate.tabular_txt(
             "https://reactome.org/download/current/interactors/"
             f"reactome.{ORGANISM['files'][organism]}.interactions."
-            "tab-delimited.txt",
+            "tab-delimited.txt" if file is None else file,
             delimiter="\t",
             header=0,
             usecols=[
@@ -75,54 +78,73 @@ def get_protein_interactions(
                         yield (primary_interactor_a, primary_interactor_b)
 
 
-def get_pathways(organism: int = 9606) -> Iterator[tuple[str, str]]:
+def get_pathways(
+        organism: int = 9606,
+        file_pathways: Optional[str] = None) -> Iterator[tuple[str, str]]:
     """
     Yields Reactome pathways.
 
     Args:
         organism: The NCBI taxonomy identifier for the organism of interest.
+        file_pathways: The optional local file location to parse pathways
+            from.
 
     Yields:
         Pairs of stable pathway identifier and pathway name.
     """
     for row in iterate.tabular_txt(
-            "https://reactome.org/download/current/ReactomePathways.txt",
+            "https://reactome.org/download/current/ReactomePathways.txt"
+            if file_pathways is None else file_pathways,
             delimiter="\t",
             usecols=[0, 1, 2]):
         if row[2] == ORGANISM["data"][organism]:
             yield (row[0], row[1])
 
 
-def get_pathway_relations() -> Iterator[tuple[str, str]]:
+def get_pathway_relations(
+        file_pathways_relation: Optional[str] = None
+) -> Iterator[tuple[str, str]]:
     """
     Yields Reactome pathway relations.
+
+    Args:
+        file_pathways_relation: The optional local file location to parse
+            pathway relations from.
 
     Yields:
         Pairs of parent and child stable pathway identifiers.
     """
     for row in iterate.tabular_txt(
             "https://reactome.org/download/current/"
-            "ReactomePathwaysRelation.txt",
+            "ReactomePathwaysRelation.txt"
+            if file_pathways_relation is None else file_pathways_relation,
             delimiter="\t",
             usecols=[0, 1]):
         yield (row[0], row[1])
 
 
-def get_pathway_annotation(organism: int = 9606) -> Iterator[tuple[str, str]]:
+def get_pathway_annotation(
+        organism: int = 9606,
+        file_accession_map: Optional[str] = None,
+        file_uniprot: Optional[str] = None) -> Iterator[tuple[str, str]]:
     """
     Yields Reactome pathway annotations.
 
     Args:
         organism: The NCBI taxonomy identifier for the organism of interest.
+        file_accession_map: The optional local file location to parse accession
+            associations from.
+        file_uniprot: The optional local file location to parse accessions from.
 
     Yields:
         Pairs of protein accession and stable pathway identifier.
     """
-    primary_accession = uniprot.get_primary_accession(organism)
+    primary_accession = uniprot.get_primary_accession(organism, file_uniprot)
 
     for row in iterate.tabular_txt(
             "https://reactome.org/download/current/"
-            "UniProt2Reactome_All_Levels.txt",
+            "UniProt2Reactome_All_Levels.txt"
+            if file_accession_map is None else file_accession_map,
             delimiter="\t",
             usecols=[0, 1, 5]):
         if row[2] == ORGANISM["data"][organism]:
@@ -139,6 +161,9 @@ def get_enrichment(
     multiple_testing_correction: Callable[[dict[Hashable, float]], Mapping[
         Hashable, float]] = correction.benjamini_yekutieli,
     organism: int = 9606,
+    file_pathways: Optional[str] = None,
+    file_accession_map: Optional[str] = None,
+    file_uniprot: Optional[str] = None
 ) -> dict[frozenset[str], dict[tuple[str, str], tuple[float, frozenset[str]]]]:
     """
     Test sets of proteins for enrichment of Reactome pathways.
@@ -153,17 +178,23 @@ def get_enrichment(
         multiple_testing_correction: The procedure to correct for multiple
             testing of multiple pathways and sets of proteins.
         organism: The NCBI taxonomy identifier for the organism of interest.
+        file_pathways: The optional local file location to parse pathways
+            from.
+        file_accession_map: The optional local file location to parse accession
+            associations from.
+        file_uniprot: The optional local file location to parse accessions from.
 
     Returns:
         Corrected p-value for the enrichment of each Reactome pathway by
         each network and associated proteins.
     """
     name = {}
-    for pathway, pathway_name in get_pathways(organism):
+    for pathway, pathway_name in get_pathways(organism, file_pathways):
         name[pathway] = pathway_name
 
     annotations: dict[str, set[str]] = {}
-    for protein, pathway in get_pathway_annotation(organism):
+    for protein, pathway in get_pathway_annotation(organism, file_accession_map,
+                                                   file_uniprot):
         if any(not reference[i if len(reference) == len(proteins) else 0] or
                protein in reference[i if len(reference) == len(proteins) else 0]
                for i in range(len(reference))):

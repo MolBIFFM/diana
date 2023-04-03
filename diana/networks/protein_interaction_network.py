@@ -285,7 +285,9 @@ def add_sites_from_table(
                     f"{time} {modification} S{s} R{m}"] = measurement
 
 
-def map_proteins(network: nx.Graph, organism: int = 9606) -> frozenset[str]:
+def map_proteins(network: nx.Graph,
+                 organism: int = 9606,
+                 file: Optional[str] = None) -> frozenset[str]:
     """
     Map proteins in a protein-protein interaction network to their primary
     UniProt identifiers and remove proteins not present in Swiss-Prot for the
@@ -295,13 +297,15 @@ def map_proteins(network: nx.Graph, organism: int = 9606) -> frozenset[str]:
     Args:
         network: The protein-protein interaction network to map proteins from.
         organism: The NCBI taxonomy identifier for the organism of interest.
+        file: The optional local file location to parse accessions from.
 
     Returns:
         The proteins not present in the queried portion of Swiss-Prot specific
         to the organism of interest.
     """
     mapping, gene_name, protein_name = {}, {}, {}
-    for accessions, gene, protein in uniprot.get_swiss_prot_entries(organism):
+    for accessions, gene, protein in uniprot.get_swiss_prot_entries(
+            organism, file):
         for node in network:
             if node.split("-")[0] in accessions:
                 if "-" in node and accessions.index(node.split("-")[0]) == 0:
@@ -642,7 +646,9 @@ def get_neighbors_from_biogrid(
         interaction_throughput: Optional[Container[str]] = None,
         multi_validated_physical: bool = False,
         organism: int = 9606,
-        version: Optional[str] = None) -> set[str]:
+        version: Optional[str] = None,
+        file: Optional[str] = None,
+        file_uniprot: Optional[str] = None) -> set[str]:
     """
     Returns proteins interacting with proteins in a protein-protein interaction
     network from BioGRID.
@@ -660,6 +666,8 @@ def get_neighbors_from_biogrid(
         organism: The NCBI taxonomy identifier for the organism of interest.
         version: The version of the BioGRID database, if not specified or not
             consisting of three entries, the latest.
+        file: The optional local file location to parse interactions from.
+        file_uniprot: The optional local file location to parse accessions from.
 
     Returns:
         Neighbors of the protein-protein interaction network in BioGRID.
@@ -667,8 +675,8 @@ def get_neighbors_from_biogrid(
     neighbors = set()
     for interactor_a, interactor_b in biogrid.get_protein_interactions(
             experimental_system, experimental_system_type,
-            interaction_throughput, multi_validated_physical, organism,
-            version):
+            interaction_throughput, multi_validated_physical, organism, version,
+            file, file_uniprot):
         # https://www.uniprot.org/help/accession_numbers
         # https://www.uniprot.org/help/alternative_products
         if (interactor_a in network and interactor_b not in network and
@@ -694,7 +702,9 @@ def add_protein_interactions_from_biogrid(
         interaction_throughput: Optional[Container[str]] = None,
         multi_validated_physical: bool = False,
         organism: int = 9606,
-        version: Optional[str] = None) -> None:
+        version: Optional[str] = None,
+        file: Optional[str] = None,
+        file_uniprot: Optional[str] = None) -> None:
     """
     Adds protein-protein interactions from BioGRID to a protein-protein
     interaction network.
@@ -712,11 +722,13 @@ def add_protein_interactions_from_biogrid(
         organism: The NCBI taxonomy identifier for the organism of interest.
         version: The version of the BioGRID database, if not specified or not
             consisting of three entries, the latest.
+        file: The optional local file location to parse interactions from.
+        file_uniprot: The optional local file location to parse accessions from.
     """
     for interactor_a, interactor_b in biogrid.get_protein_interactions(
             experimental_system, experimental_system_type,
-            interaction_throughput, multi_validated_physical, organism,
-            version):
+            interaction_throughput, multi_validated_physical, organism, version,
+            file, file_uniprot):
         if (interactor_a in network and interactor_b in network and
                 interactor_a != interactor_b):
             network.add_edge(interactor_a, interactor_b)
@@ -726,7 +738,9 @@ def add_protein_interactions_from_biogrid(
 def get_neighbors_from_corum(network: nx.Graph,
                              purification_methods: Optional[
                                  Container[str]] = None,
-                             organism: int = 9606) -> set[str]:
+                             organism: int = 9606,
+                             file: Optional[str] = None,
+                             file_uniprot: Optional[str] = None) -> set[str]:
     """
     Returns proteins interacting with proteins in a protein-protein interaction
     network from CORUM.
@@ -737,13 +751,15 @@ def get_neighbors_from_corum(network: nx.Graph,
             protein complex purification method. If none are specified, any are
             accepted.
         organism: The NCBI taxonomy identifier for the organism of interest.
+        file: The optional local file location to parse interactions from.
+        file_uniprot: The optional local file location to parse accessions from.
 
     Returns:
         Neighbors of the protein-protein interaction network in CORUM.
     """
     neighbors = set()
     for interactor_a, interactor_b in corum.get_protein_interactions(
-            purification_methods, organism):
+            purification_methods, organism, file, file_uniprot):
         # https://www.uniprot.org/help/accession_numbers
         # https://www.uniprot.org/help/alternative_products
         if (interactor_a in network and interactor_b not in network and
@@ -763,10 +779,12 @@ def get_neighbors_from_corum(network: nx.Graph,
     return neighbors
 
 
-def add_protein_interactions_from_corum(network: nx.Graph,
-                                        purification_methods: Optional[
-                                            Container[str]] = None,
-                                        organism: int = 9606) -> None:
+def add_protein_interactions_from_corum(
+        network: nx.Graph,
+        purification_methods: Optional[Container[str]] = None,
+        organism: int = 9606,
+        file: Optional[str] = None,
+        file_uniprot: Optional[str] = None) -> None:
     """
     Adds protein-protein interactions from CORUM to a protein-protein
     interaction network.
@@ -777,9 +795,11 @@ def add_protein_interactions_from_corum(network: nx.Graph,
             protein complex purification method. If none are specified, any are
             accepted.
         organism: The NCBI taxonomy identifier for the organism of interest.
+        file: The optional local file location to parse interactions from.
+        file_uniprot: The optional local file location to parse accessions from.
     """
     for interactor_a, interactor_b in corum.get_protein_interactions(
-            purification_methods, organism):
+            purification_methods, organism, file, file_uniprot):
         if (interactor_a in network and interactor_b in network and
                 interactor_a != interactor_b):
             network.add_edge(interactor_a, interactor_b)
@@ -791,7 +811,9 @@ def get_neighbors_from_intact(
         interaction_detection_methods: Optional[Container[str]] = None,
         interaction_types: Optional[Container[str]] = None,
         psi_mi_score: float = 0.0,
-        organism: int = 9606) -> set[str]:
+        organism: int = 9606,
+        file: Optional[str] = None,
+        file_uniprot: Optional[str] = None) -> set[str]:
     """
     Returns proteins interacting with proteins in a protein-protein interaction
     network from IntAct to the network.
@@ -805,6 +827,8 @@ def get_neighbors_from_intact(
             interaction type. If none are specified, any are accepted.
         psi_mi_score: The PSI-MI score threshold.
         organism: The NCBI taxonomy identifier for the organism of interest.
+        file: The optional local file location to parse interactions from.
+        file_uniprot: The optional local file location to parse accessions from.
 
     Returns:
         Neighbors of the protein-protein interaction network in IntAct.
@@ -812,7 +836,7 @@ def get_neighbors_from_intact(
     neighbors = set()
     for interactor_a, interactor_b, _ in intact.get_protein_interactions(
             interaction_detection_methods, interaction_types, psi_mi_score,
-            organism):
+            organism, file, file_uniprot):
         # https://www.uniprot.org/help/accession_numbers
         # https://www.uniprot.org/help/alternative_products
         if (interactor_a in network and interactor_b not in network and
@@ -837,7 +861,9 @@ def add_protein_interactions_from_intact(
         interaction_detection_methods: Optional[Container[str]] = None,
         interaction_types: Optional[Container[str]] = None,
         psi_mi_score: float = 0.0,
-        organism: int = 9606) -> None:
+        organism: int = 9606,
+        file: Optional[str] = None,
+        file_uniprot: Optional[str] = None) -> None:
     """
     Adds protein-protein interactions from IntAct to a protein-protein
     interaction network.
@@ -851,10 +877,12 @@ def add_protein_interactions_from_intact(
             interaction type. If none are specified, any are accepted.
         psi_mi_score: The PSI-MI score threshold.
         organism: The NCBI taxonomy identifier for the organism of interest.
+        file: The optional local file location to parse interactions from.
+        file_uniprot: The optional local file location to parse accessions from.
     """
     for interactor_a, interactor_b, score in intact.get_protein_interactions(
             interaction_detection_methods, interaction_types, psi_mi_score,
-            organism):
+            organism, file, file_uniprot):
         if (interactor_a in network and interactor_b in network and
                 interactor_a != interactor_b):
             if network.has_edge(interactor_a, interactor_b):
@@ -871,7 +899,9 @@ def get_neighbors_from_mint(network: nx.Graph,
                                 Container[str]] = None,
                             interaction_types: Optional[Container[str]] = None,
                             psi_mi_score: float = 0.0,
-                            organism: int = 9606) -> set[str]:
+                            organism: int = 9606,
+                            file: Optional[str] = None,
+                            file_uniprot: Optional[str] = None) -> set[str]:
     """
     Returns proteins interacting with proteins in a protein-protein interaction
     network from MINT.
@@ -885,6 +915,8 @@ def get_neighbors_from_mint(network: nx.Graph,
             interaction type. If none are specified, any are accepted.
         psi_mi_score: The PSI-MI score threshold.
         organism: The NCBI taxonomy identifier for the organism of interest.
+        file: The optional local file location to parse interactions from.
+        file_uniprot: The optional local file location to parse accessions from.
 
     Returns:
         Neighbors of the protein-protein interaction network in MINT.
@@ -892,7 +924,7 @@ def get_neighbors_from_mint(network: nx.Graph,
     neighbors = set()
     for interactor_a, interactor_b, _ in mint.get_protein_interactions(
             interaction_detection_methods, interaction_types, psi_mi_score,
-            organism):
+            organism, file, file_uniprot):
         # https://www.uniprot.org/help/accession_numbers
         # https://www.uniprot.org/help/alternative_products
         if (interactor_a in network and interactor_b not in network and
@@ -917,7 +949,9 @@ def add_protein_interactions_from_mint(
         interaction_detection_methods: Optional[Container[str]] = None,
         interaction_types: Optional[Container[str]] = None,
         psi_mi_score: float = 0.0,
-        organism: int = 9606) -> None:
+        organism: int = 9606,
+        file: Optional[str] = None,
+        file_uniprot: Optional[str] = None) -> None:
     """
     Adds protein-protein interactions from MINT to a protein-protein interaction
     network.
@@ -931,10 +965,12 @@ def add_protein_interactions_from_mint(
             interaction type. If none are specified, any are accepted.
         psi_mi_score: The PSI-MI score threshold.
         organism: The NCBI taxonomy identifier for the organism of interest.
+        file: The optional local file location to parse interactions from.
+        file_uniprot: The optional local file location to parse accessions from.
     """
     for interactor_a, interactor_b, score in mint.get_protein_interactions(
             interaction_detection_methods, interaction_types, psi_mi_score,
-            organism):
+            organism, file, file_uniprot):
         if (interactor_a in network and interactor_b in network and
                 interactor_a != interactor_b):
             if network.has_edge(interactor_a, interactor_b):
@@ -950,7 +986,9 @@ def get_neighbors_from_reactome(
         network: nx.Graph,
         interaction_type: Optional[Container[str]] = None,
         interaction_context: Optional[Container[str]] = None,
-        organism: int = 9606) -> set[str]:
+        organism: int = 9606,
+        file: Optional[str] = None,
+        file_uniprot: Optional[str] = None) -> set[str]:
     """
     Returns proteins interacting with proteins in a protein-protein interaction
     network from Reactome.
@@ -962,6 +1000,8 @@ def get_neighbors_from_reactome(
         interaction_context: The accepted interaction context annotation.
             If none are specified, any are accepted.
         organism: The NCBI taxonomy identifier for the organism of interest.
+        file: The optional local file location to parse interactions from.
+        file_uniprot: The optional local file location to parse accessions from.
 
     Returns:
         Neighbors of the protein-protein interaction network in Reactome.
@@ -969,7 +1009,8 @@ def get_neighbors_from_reactome(
     neighbors = set()
 
     for interactor_a, interactor_b in reactome.get_protein_interactions(
-            interaction_type, interaction_context, organism):
+            interaction_type, interaction_context, organism, file,
+            file_uniprot):
         # https://www.uniprot.org/help/accession_numbers
         # https://www.uniprot.org/help/alternative_products
         if (interactor_a in network and interactor_b not in network and
@@ -990,11 +1031,12 @@ def get_neighbors_from_reactome(
 
 
 def add_protein_interactions_from_reactome(
-    network: nx.Graph,
-    interaction_type: Optional[Container[str]] = None,
-    interaction_context: Optional[Container[str]] = None,
-    organism: int = 9606,
-) -> None:
+        network: nx.Graph,
+        interaction_type: Optional[Container[str]] = None,
+        interaction_context: Optional[Container[str]] = None,
+        organism: int = 9606,
+        file: Optional[str] = None,
+        file_uniprot: Optional[str] = None) -> None:
     """
     Adds protein-protein interactions from Reactome to a protein-protein
     interaction network.
@@ -1006,9 +1048,12 @@ def add_protein_interactions_from_reactome(
         interaction_context: The accepted interaction context annotation.
             If none are specified, any are accepted.
         organism: The NCBI taxonomy identifier for the organism of interest.
+        file: The optional local file location to parse interactions from.
+        file_uniprot: The optional local file location to parse accessions from.
     """
     for interactor_a, interactor_b in reactome.get_protein_interactions(
-            interaction_type, interaction_context, organism):
+            interaction_type, interaction_context, organism, file,
+            file_uniprot):
         if (interactor_a in network and interactor_b in network and
                 interactor_a != interactor_b):
             network.add_edge(interactor_a, interactor_b)
@@ -1033,7 +1078,9 @@ def get_neighbors_from_string(network: nx.Graph,
                               physical: bool = False,
                               organism: int = 9606,
                               version: float = 11.5,
-                              any_score: bool = False) -> set[str]:
+                              any_score: bool = False,
+                              file: Optional[str] = None,
+                              file_uniprot: Optional[str] = None) -> set[str]:
     """
     Add proteins interacting with proteins in a protein-protein interaction
     network from STRING to the network.
@@ -1060,6 +1107,8 @@ def get_neighbors_from_string(network: nx.Graph,
         version: The version of the STRING database.
         any_score: If true, include a protein-protein interaction if it meets
             any threshold else only if it meets all.
+        file: The optional local file location to parse interactions from.
+        file_uniprot: The optional local file location to parse accessions from.
 
     Returns:
         Neighbors of the protein-protein interaction network in STRING.
@@ -1071,7 +1120,7 @@ def get_neighbors_from_string(network: nx.Graph,
             homology, coexpression, coexpression_transferred, experiments,
             experiments_transferred, database, database_transferred, textmining,
             textmining_transferred, combined_score, physical, organism, version,
-            any_score):
+            any_score, file, file_uniprot):
         # https://www.uniprot.org/help/accession_numbers
         # https://www.uniprot.org/help/alternative_products
         if (interactor_a in network and interactor_b not in network and
@@ -1091,25 +1140,28 @@ def get_neighbors_from_string(network: nx.Graph,
     return neighbors
 
 
-def add_protein_interactions_from_string(network: nx.Graph,
-                                         neighborhood: float = 0.0,
-                                         neighborhood_transferred: float = 0.0,
-                                         fusion: float = 0.0,
-                                         cooccurence: float = 0.0,
-                                         homology: float = 0.0,
-                                         coexpression: float = 0.0,
-                                         coexpression_transferred: float = 0.0,
-                                         experiments: float = 0.0,
-                                         experiments_transferred: float = 0.0,
-                                         database: float = 0.0,
-                                         database_transferred: float = 0.0,
-                                         textmining: float = 0.0,
-                                         textmining_transferred: float = 0.0,
-                                         combined_score: float = 0.0,
-                                         physical: bool = False,
-                                         organism: int = 9606,
-                                         version: float = 11.5,
-                                         any_score: bool = False) -> None:
+def add_protein_interactions_from_string(
+        network: nx.Graph,
+        neighborhood: float = 0.0,
+        neighborhood_transferred: float = 0.0,
+        fusion: float = 0.0,
+        cooccurence: float = 0.0,
+        homology: float = 0.0,
+        coexpression: float = 0.0,
+        coexpression_transferred: float = 0.0,
+        experiments: float = 0.0,
+        experiments_transferred: float = 0.0,
+        database: float = 0.0,
+        database_transferred: float = 0.0,
+        textmining: float = 0.0,
+        textmining_transferred: float = 0.0,
+        combined_score: float = 0.0,
+        physical: bool = False,
+        organism: int = 9606,
+        version: float = 11.5,
+        any_score: bool = False,
+        file: Optional[str] = None,
+        file_uniprot: Optional[str] = None) -> None:
     """
     Adds protein-protein interactions from STRING to a protein-protein
     interaction network.
@@ -1136,13 +1188,15 @@ def add_protein_interactions_from_string(network: nx.Graph,
         version: The version of the STRING database.
         any_score: If true, include a protein-protein interaction if it meets
             any threshold else only if it meets all.
+        file: The optional local file location to parse interactions from.
+        file_uniprot: The optional local file location to parse accessions from.
     """
     for interactor_a, interactor_b, score in string.get_protein_interactions(
             neighborhood, neighborhood_transferred, fusion, cooccurence,
             homology, coexpression, coexpression_transferred, experiments,
             experiments_transferred, database, database_transferred, textmining,
             textmining_transferred, combined_score, physical, organism, version,
-            any_score):
+            any_score, file, file_uniprot):
         if (interactor_a in network and interactor_b in network and
                 interactor_a != interactor_b):
             if network.has_edge(interactor_a, interactor_b):

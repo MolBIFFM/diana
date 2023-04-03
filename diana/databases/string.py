@@ -1,5 +1,5 @@
 """The interface for the STRING database."""
-from typing import Iterator
+from typing import Iterator, Optional
 
 from access import iterate
 
@@ -24,7 +24,9 @@ def get_protein_interactions(
         physical: bool = False,
         organism: int = 9606,
         version: float = 11.5,
-        any_score: bool = False) -> Iterator[tuple[str, str, float]]:
+        any_score: bool = False,
+        file: Optional[str] = None,
+        file_uniprot: Optional[str] = None) -> Iterator[tuple[str, str, float]]:
     """
     Yields protein-protein interactions from STRING.
 
@@ -49,6 +51,8 @@ def get_protein_interactions(
         version: The version of the STRING database.
         any_score: If true, include a protein-protein interaction if it meets
             any threshold else only if it meets all.
+        file: The optional local file location to parse interactions from.
+        file_uniprot: The optional local file location to parse accessions from.
 
     Yields:
         Pairs of interacting proteins and the combined STRING score associated
@@ -57,7 +61,8 @@ def get_protein_interactions(
     uniprot_id: dict[str, set[str]] = {}
     for row in iterate.tabular_txt(
             f"https://stringdb-static.org/download/protein.aliases.v{version}/"
-            f"{organism}.protein.aliases.v{version}.txt.gz",
+            f"{organism}.protein.aliases.v{version}.txt.gz"
+            if file is None else file,
             delimiter="\t",
             skiprows=1,
             usecols=[0, 1, 2],
@@ -86,7 +91,7 @@ def get_protein_interactions(
     }
     thresholds["combined_score"] = combined_score
 
-    primary_accession = uniprot.get_primary_accession(organism)
+    primary_accession = uniprot.get_primary_accession(organism, file_uniprot)
 
     for row in iterate.tabular_txt(
             "https://stringdb-static.org/download/"

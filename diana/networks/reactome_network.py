@@ -20,7 +20,11 @@ def get_network(proteins: Iterable[str],
                 multiple_testing_correction: Callable[
                     [dict[Hashable, float]],
                     Mapping[Hashable, float]] = correction.benjamini_yekutieli,
-                organism: int = 9606) -> nx.DiGraph:
+                organism: int = 9606,
+                file_pathways: Optional[str] = None,
+                file_pathways_relation: Optional[str] = None,
+                file_accession_map: Optional[str] = None,
+                file_uniprot: Optional[str] = None) -> nx.DiGraph:
     """
     Assemble a Reactome network from proteins.
 
@@ -34,21 +38,29 @@ def get_network(proteins: Iterable[str],
         multiple_testing_correction: The procedure to correct for testing of
             multiple pathways.
         organism: The NCBI taxonomy identifier for the organism of interest.
+        file_pathways: The optional local file location to parse pathways
+            from.
+        file_pathways_relation: The optional local file location to parse
+            pathway relations from.
+        file_accession_map: The optional local file location to parse accession
+            associations from.
+        file_uniprot: The optional local file location to parse accessions from.
 
     Returns:
         The Reactome network.
     """
     network = nx.DiGraph()
-    for pathway, name in reactome.get_pathways(organism):
+    for pathway, name in reactome.get_pathways(organism, file_pathways):
         network.add_node(pathway)
         network.nodes[pathway]["pathway"] = name
 
-    for child, parent in reactome.get_pathway_relations():
+    for child, parent in reactome.get_pathway_relations(file_pathways_relation):
         if child in network and parent in network:
             network.add_edge(child, parent)
 
     annotations: dict[str, set[str]] = {}
-    for protein, pathway in reactome.get_pathway_annotation(organism):
+    for protein, pathway in reactome.get_pathway_annotation(
+            organism, file_accession_map, file_uniprot):
         if pathway not in annotations:
             annotations[pathway] = set()
 

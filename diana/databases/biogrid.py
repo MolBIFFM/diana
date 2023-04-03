@@ -15,7 +15,9 @@ def get_protein_interactions(
         interaction_throughput: Optional[Container[str]] = None,
         multi_validated_physical: bool = False,
         organism: int = 9606,
-        version: Optional[str] = None) -> Iterator[tuple[str, str]]:
+        version: Optional[str] = None,
+        file: Optional[str] = None,
+        file_uniprot: Optional[str] = None) -> Iterator[tuple[str, str]]:
     """
     Yields protein-protein interactions from BioGRID.
 
@@ -31,24 +33,25 @@ def get_protein_interactions(
         organism: The NCBI taxonomy identifier for the organism of interest.
         version: The version of the BioGRID database, if not specified or not
             consisting of three entries, the latest.
+        file: The optional local file location to parse interactions from.
+        file_uniprot: The optional local file location to parse accessions from.
 
     Yields:
         Pairs of interacting proteins.
     """
-    primary_accession = uniprot.get_primary_accession(organism)
+    primary_accession = uniprot.get_primary_accession(organism, file_uniprot)
 
     for row in iterate.tabular_txt(
-        ("https://downloads.thebiogrid.org/Download/BioGRID/Release-Archive/"
-         f"BIOGRID-{version}/BIOGRID-MV-Physical-{version}.tab3.zip"
-         if multi_validated_physical else
-         "https://downloads.thebiogrid.org/Download/BioGRID/Release-Archive/"
-         f"BIOGRID-{version}/BIOGRID-ORGANISM-{version}.tab3.zip")
-            if version is not None and
-            re.match(r"^[0-9]\.[0-9]\.[0-9]{2,3}$", version) else
-        ("https://downloads.thebiogrid.org/Download/BioGRID/Latest-Release/"
-         "BIOGRID-MV-Physical-LATEST.tab3.zip" if multi_validated_physical else
-         "https://downloads.thebiogrid.org/Download/BioGRID/Latest-Release/"
-         "BIOGRID-ORGANISM-LATEST.tab3.zip"),
+        (("https://downloads.thebiogrid.org/Download/BioGRID/Release-Archive/"
+          f"BIOGRID-{version}/BIOGRID-MV-Physical-{version}.tab3.zip"
+          if multi_validated_physical else
+          "https://downloads.thebiogrid.org/Download/BioGRID/Release-Archive/"
+          f"BIOGRID-{version}/BIOGRID-ORGANISM-{version}.tab3.zip") if version
+         is not None and re.match(r"^[0-9]\.[0-9]\.[0-9]{2,3}$", version) else
+         ("https://downloads.thebiogrid.org/Download/BioGRID/Latest-Release/"
+          "BIOGRID-MV-Physical-LATEST.tab3.zip" if multi_validated_physical else
+          "https://downloads.thebiogrid.org/Download/BioGRID/Latest-Release/"
+          "BIOGRID-ORGANISM-LATEST.tab3.zip")) if file is None else file,
             file_from_zip_archive=re.compile(
                 r"^BIOGRID-MV-Physical-[0-9]\.[0-9]\.[0-9]{2,3}\.tab3\.txt$"
                 if multi_validated_physical else

@@ -15,82 +15,102 @@ import pandas as pd
 from access import decompress, download
 
 
-def txt(url: str,
+def txt(file: str,
         file_from_zip_archive: Optional[re.Pattern[str]] = None,
         buffering: int = 1048576,
         pause: float = 60.0) -> Iterator[str]:
     """
-    Downloads, iterates and subsequently removes the file at a given URL.
+    Downloads, iterates and subsequently removes the file at a given path.
 
     Args:
-        url: The file location.
+        file: The file location.
         file_from_zip_archive: The file from the zip archive to extract.
         buffering: The buffer size to process download, decompression
             and iteration of the file at.
         pause: The number of seconds to wait after a failed download.
 
     Yields:
-        Lines of the file at a given URL.
+        Lines of the file at a given path.
     """
-    if not os.path.exists(
-            os.path.join(
-                tempfile.gettempdir(),
-                f"{os.path.splitext(os.path.basename(sys.argv[0]))[0]}-"
-                f"{os.getpid()}")):
-        os.mkdir(
-            os.path.join(
-                tempfile.gettempdir(),
-                f"{os.path.splitext(os.path.basename(sys.argv[0]))[0]}-"
-                f"{os.getpid()}"))
+    if urllib.parse.urlparse(file).scheme in ("ftp", "http", "https"):
+        if not os.path.exists(
+                os.path.join(
+                    tempfile.gettempdir(),
+                    f"{os.path.splitext(os.path.basename(sys.argv[0]))[0]}-"
+                    f"{os.getpid()}")):
+            os.mkdir(
+                os.path.join(
+                    tempfile.gettempdir(),
+                    f"{os.path.splitext(os.path.basename(sys.argv[0]))[0]}-"
+                    f"{os.getpid()}"))
 
-    local_file_name = os.path.join(
-        tempfile.gettempdir(),
-        f"{os.path.splitext(os.path.basename(sys.argv[0]))[0]}-"
-        f"{os.getpid()}",
-        os.path.split(urllib.parse.urlparse(url).path)[1],
-    )
+        local_file_name = os.path.join(
+            tempfile.gettempdir(),
+            f"{os.path.splitext(os.path.basename(sys.argv[0]))[0]}-"
+            f"{os.getpid()}",
+            os.path.split(urllib.parse.urlparse(file).path)[1],
+        )
 
-    while True:
-        try:
-            if not os.path.exists(local_file_name):
-                download.download_file(url,
-                                       local_file_name,
-                                       buffering,
-                                       pause=pause)
+        while True:
+            try:
+                if not os.path.exists(local_file_name):
+                    download.download_file(file,
+                                           local_file_name,
+                                           buffering,
+                                           pause=pause)
 
-            file_name_extension = os.path.splitext(local_file_name)[1]
+                file_name_extension = os.path.splitext(local_file_name)[1]
 
-            if file_name_extension == ".gz":
-                local_file_name = decompress.decompress_gzip_file(
-                    local_file_name, buffering)
-            elif file_name_extension == ".zip":
-                local_file_name = decompress.decompress_zip_file(
-                    local_file_name, file_from_zip_archive)
-            break
+                if file_name_extension == ".gz":
+                    local_file_name = decompress.decompress_gzip_file(
+                        local_file_name, buffering)
+                elif file_name_extension == ".zip":
+                    local_file_name = decompress.decompress_zip_file(
+                        local_file_name, file_from_zip_archive)
+                break
 
-        except (gzip.BadGzipFile, zipfile.BadZipFile):
-            time.sleep(pause)
+            except (gzip.BadGzipFile, zipfile.BadZipFile):
+                time.sleep(pause)
+
+    elif os.path.isfile(file):
+        local_file_name = file
+
+        file_name_extension = os.path.splitext(local_file_name)[1]
+
+        if file_name_extension == ".gz":
+            local_file_name = decompress.decompress_gzip_file(
+                local_file_name, buffering)
+        elif file_name_extension == ".zip":
+            local_file_name = decompress.decompress_zip_file(
+                local_file_name, file_from_zip_archive)
+
+    else:
+        return
 
     with open(local_file_name, buffering=buffering,
               encoding="utf-8") as local_file:
         for line in local_file:
             yield line.rstrip("\n")
 
-    os.remove(local_file_name)
+    if urllib.parse.urlparse(file).scheme in ("ftp", "http", "https"):
+        os.remove(local_file_name)
 
-    if not os.listdir(
-            os.path.join(
-                tempfile.gettempdir(),
-                f"{os.path.splitext(os.path.basename(sys.argv[0]))[0]}-"
-                f"{os.getpid()}")):
-        os.rmdir(
-            os.path.join(
-                tempfile.gettempdir(),
-                f"{os.path.splitext(os.path.basename(sys.argv[0]))[0]}-"
-                f"{os.getpid()}"))
+        if not os.listdir(
+                os.path.join(
+                    tempfile.gettempdir(),
+                    f"{os.path.splitext(os.path.basename(sys.argv[0]))[0]}-"
+                    f"{os.getpid()}")):
+            os.rmdir(
+                os.path.join(
+                    tempfile.gettempdir(),
+                    f"{os.path.splitext(os.path.basename(sys.argv[0]))[0]}-"
+                    f"{os.getpid()}"))
+
+    elif os.path.isfile(file) and not os.path.samefile(file, local_file_name):
+        os.remove(local_file_name)
 
 
-def tabular_txt(url: str,
+def tabular_txt(file: str,
                 file_from_zip_archive: Optional[re.Pattern[str]] = None,
                 delimiter: str = "",
                 header: int = 0,
@@ -100,10 +120,10 @@ def tabular_txt(url: str,
                 rows: int = 8192,
                 pause: float = 60.0) -> Iterator[pd.Series]:
     """
-    Downloads, iterates and subsequently removes the tabular file at a URL.
+    Downloads, iterates and subsequently removes the tabular file at a path.
 
     Args:
-        url: The file location.
+        file: The file location.
         file_from_zip_archive: The file from the zip archive to extract.
         delimiter: The delimiter separating values from different columns.
         header: The line number of the table header.
@@ -112,45 +132,62 @@ def tabular_txt(url: str,
         chunksize: The buffer size to process download and gzip decompression of
             the file with.
         rows: The number of rows to read at once from the table.
-        pause: The number of seconds to wait after a failed or download.
+        pause: The number of seconds to wait after a failed download.
 
     Yields:
-        Rows of the file at a given URL.
+        Rows of the file at a given path.
     """
-    if not os.path.exists(
-            os.path.join(
-                tempfile.gettempdir(),
-                f"{os.path.splitext(os.path.basename(sys.argv[0]))[0]}"
-                f"-{os.getpid()}")):
-        os.mkdir(
-            os.path.join(
-                tempfile.gettempdir(),
-                f"{os.path.splitext(os.path.basename(sys.argv[0]))[0]}-"
-                f"{os.getpid()}"))
+    if urllib.parse.urlparse(file).scheme in ("ftp", "http", "https"):
+        if not os.path.exists(
+                os.path.join(
+                    tempfile.gettempdir(),
+                    f"{os.path.splitext(os.path.basename(sys.argv[0]))[0]}"
+                    f"-{os.getpid()}")):
+            os.mkdir(
+                os.path.join(
+                    tempfile.gettempdir(),
+                    f"{os.path.splitext(os.path.basename(sys.argv[0]))[0]}-"
+                    f"{os.getpid()}"))
 
-    local_file_name = os.path.join(
-        tempfile.gettempdir(),
-        f"{os.path.splitext(os.path.basename(sys.argv[0]))[0]}-{os.getpid()}",
-        os.path.split(urllib.parse.urlparse(url).path)[1],
-    )
+        local_file_name = os.path.join(
+            tempfile.gettempdir(),
+            f"{os.path.splitext(os.path.basename(sys.argv[0]))[0]}-"
+            f"{os.getpid()}",
+            os.path.split(urllib.parse.urlparse(file).path)[1],
+        )
 
-    while True:
-        try:
-            if not os.path.exists(local_file_name):
-                download.download_file(url, local_file_name, chunksize)
+        while True:
+            try:
+                if not os.path.exists(local_file_name):
+                    download.download_file(file, local_file_name, chunksize)
 
-            file_name_extension = os.path.splitext(local_file_name)[1]
+                file_name_extension = os.path.splitext(local_file_name)[1]
 
-            if file_name_extension == ".gz":
-                local_file_name = decompress.decompress_gzip_file(
-                    local_file_name, chunksize)
-            elif file_name_extension == ".zip":
-                local_file_name = decompress.decompress_zip_file(
-                    local_file_name, file_from_zip_archive)
-            break
+                if file_name_extension == ".gz":
+                    local_file_name = decompress.decompress_gzip_file(
+                        local_file_name, chunksize)
+                elif file_name_extension == ".zip":
+                    local_file_name = decompress.decompress_zip_file(
+                        local_file_name, file_from_zip_archive)
+                break
 
-        except (gzip.BadGzipFile, zipfile.BadZipFile):
-            time.sleep(pause)
+            except (gzip.BadGzipFile, zipfile.BadZipFile):
+                time.sleep(pause)
+
+    elif os.path.isfile(file):
+        local_file_name = file
+
+        file_name_extension = os.path.splitext(local_file_name)[1]
+
+        if file_name_extension == ".gz":
+            local_file_name = decompress.decompress_gzip_file(
+                local_file_name, chunksize)
+        elif file_name_extension == ".zip":
+            local_file_name = decompress.decompress_zip_file(
+                local_file_name, file_from_zip_archive)
+
+    else:
+        return
 
     if not delimiter:
         if os.path.splitext(local_file_name)[1] == ".csv":
@@ -167,15 +204,19 @@ def tabular_txt(url: str,
         for _, row in chunk.iterrows():
             yield row
 
-    os.remove(local_file_name)
+    if urllib.parse.urlparse(file).scheme in ("ftp", "http", "https"):
+        os.remove(local_file_name)
 
-    if not os.listdir(
-            os.path.join(
-                tempfile.gettempdir(),
-                f"{os.path.splitext(os.path.basename(sys.argv[0]))[0]}-"
-                f"{os.getpid()}")):
-        os.rmdir(
-            os.path.join(
-                tempfile.gettempdir(),
-                f"{os.path.splitext(os.path.basename(sys.argv[0]))[0]}-"
-                f"{os.getpid()}"))
+        if not os.listdir(
+                os.path.join(
+                    tempfile.gettempdir(),
+                    f"{os.path.splitext(os.path.basename(sys.argv[0]))[0]}-"
+                    f"{os.getpid()}")):
+            os.rmdir(
+                os.path.join(
+                    tempfile.gettempdir(),
+                    f"{os.path.splitext(os.path.basename(sys.argv[0]))[0]}-"
+                    f"{os.getpid()}"))
+
+    elif os.path.isfile(file) and not os.path.samefile(file, local_file_name):
+        os.remove(local_file_name)
