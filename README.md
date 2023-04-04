@@ -2527,36 +2527,11 @@ DIANA utilizes the following external libraries:
 
 ---
 
-Development of DIANA was inspired by previous work using Cytoscape and plugins
-for it:
-
-- Maere, S. et al. (2005) *BiNGO*: a Cytoscape plugin to assess
-  overrepresentation of Gene Ontology categories in Biological Networks.
-  *Bioinformatics*, 21, 3448 – 3449.
-
-- Morris, J. H. et al. (2011) *clusterMaker*: a multi-algorithm clustering
-  plugin for Cytoscape. *BMC Bioinformatics*, 12.
+DIANA produces style specifications for Cytoscape.
 
 - Shannon, P. et al. (2003) Cytoscape: a software environment for integrated
   models of biomolecular interaction networks. *Genome Research*, 13, 2498 –
   2504.
-
-- Su, G. et al. (2010) GLay: community structure analysis of biological
-  networks. *Bioinformatics*, 26, 3135 – 3137.
-
-This project aims to extend upon analyses enabled by combining these tools.
-
----
-
-Reviews concerning measurement of differential post-translational modification
-using mass spectrometry include:
-
-- Olsen, J. V. and Mann, M. (2013) Status of Large-scale Analysis of
-  Post-translational Modifications by Mass Spectrometry. *Molecular & Cellular*
-  *Proteomics*, 12, 3444 – 3452.
-
-- Witze, E. S. et al. (2007) Mapping protein post-translational modifications
-  with mass spectrometry. *Nature Methods*, 4, 798 – 806.
 
 ---
 
