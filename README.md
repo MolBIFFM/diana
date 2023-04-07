@@ -2524,8 +2524,8 @@ DIANA accesses the following resources:
   with increased coverage, supporting functional discovery in genome-wide
   experimental datasets. *Nucleic Acids Research*, 47, D607 – D613.
 
-- The UniProt Consortium (2021) UniProt: the universal protein knowledgebase in
-  in 2021. *Nucleic Acids Research*, 49, D480 – D489.
+- The UniProt Consortium (2023) UniProt: the Universal Protein Knowledgebase in
+  2023\. *Nucleic Acids Research*, 49, D480 – D489.
 
 ---
 
