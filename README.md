@@ -1035,8 +1035,9 @@ default setting is `null`, downloading the required file automatically.
 }
 
 ```
-The optional local file location to parse UniProt accessions from. The default
-setting is `null`, downloading the required file automatically.
+The optional local file location to parse associations of STRING and UniProt
+accessions from. The default setting is `null`, downloading the required file
+automatically.
 
 ---
 
@@ -2300,7 +2301,7 @@ default setting is `null`, downloading the required file automatically.
 }
 ```
 The optional local file location to parse associations of Reactome pathways
-with UniProt protein accessions from. The default setting is `null`, downloading
+and UniProt protein accessions from. The default setting is `null`, downloading
 the required file automatically.
 
 ---
