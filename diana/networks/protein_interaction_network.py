@@ -26,7 +26,7 @@ def get_network() -> nx.Graph:
 
 def add_proteins_from_table(
         network: nx.Graph,
-        file_name: str,
+        file: str,
         protein_accession_column: int | str,
         replicate_columns: Collection[int] | Collection[str],
         protein_accession_format: re.Pattern[str] = re.compile("^(.+)$"),
@@ -43,7 +43,7 @@ def add_proteins_from_table(
 
     Args:
         network: The protein-protein interaction network.
-        file_name: The file location of the file.
+        file: The file location of the file.
         protein_accession_column: The column containing UniProt protein
             accessions.
         replicate_columns: The columns containing replicates of measurements.
@@ -61,7 +61,7 @@ def add_proteins_from_table(
         measurement_score: The function to convert the measurements
             reported to their binary logarithm.
     """
-    if os.path.splitext(file_name)[1].lstrip(".") in (
+    if os.path.splitext(file)[1].lstrip(".") in (
             "xls",
             "xlsx",
             "xlsm",
@@ -71,7 +71,7 @@ def add_proteins_from_table(
             "odt",
     ):
         table = pd.read_excel(
-            file_name,
+            file,
             sheet_name=sheet_name,
             header=header,
             usecols=[protein_accession_column] + list(replicate_columns),
@@ -82,7 +82,7 @@ def add_proteins_from_table(
         )
     else:
         table = pd.read_table(
-            file_name,
+            file,
             header=header,
             usecols=[protein_accession_column] + list(replicate_columns),
             dtype={
@@ -127,7 +127,7 @@ def add_proteins_from_table(
 
 def add_sites_from_table(
     network: nx.Graph,
-    file_name: str,
+    file: str,
     protein_accession_column: int | str,
     position_column: int | str,
     replicate_columns: Collection[int] | Collection[str],
@@ -153,7 +153,7 @@ def add_sites_from_table(
 
     Args:
         network: The protein-protein interaction network.
-        file_name: The file location of the file.
+        file: The file location of the file.
         protein_accession_column: The column containing UniProt protein
             accessions.
         position_column: The column containing sites corresponding to
@@ -183,7 +183,7 @@ def add_sites_from_table(
         site_order: A function of a measurement to derive a
             representative value for site order.
     """
-    if os.path.splitext(file_name)[1].lstrip(".") in (
+    if os.path.splitext(file)[1].lstrip(".") in (
             "xls",
             "xlsx",
             "xlsm",
@@ -193,7 +193,7 @@ def add_sites_from_table(
             "odt",
     ):
         table = pd.read_excel(
-            file_name,
+            file,
             sheet_name=sheet_name,
             header=header,
             usecols=[protein_accession_column, position_column] +
@@ -206,7 +206,7 @@ def add_sites_from_table(
         )
     else:
         table = pd.read_table(
-            file_name,
+            file,
             header=header,
             usecols=[protein_accession_column, position_column] +
             list(replicate_columns),
@@ -1080,6 +1080,7 @@ def get_neighbors_from_string(network: nx.Graph,
                               version: float = 11.5,
                               any_score: bool = False,
                               file: Optional[str] = None,
+                              file_accession_map: Optional[str] = None,
                               file_uniprot: Optional[str] = None) -> set[str]:
     """
     Add proteins interacting with proteins in a protein-protein interaction
@@ -1108,6 +1109,8 @@ def get_neighbors_from_string(network: nx.Graph,
         any_score: If true, include a protein-protein interaction if it meets
             any threshold else only if it meets all.
         file: The optional local file location to parse interactions from.
+        file_accession_map: The optional local file location to parse UniProt
+            accessions from.
         file_uniprot: The optional local file location to parse accessions from.
 
     Returns:
@@ -1120,7 +1123,7 @@ def get_neighbors_from_string(network: nx.Graph,
             homology, coexpression, coexpression_transferred, experiments,
             experiments_transferred, database, database_transferred, textmining,
             textmining_transferred, combined_score, physical, organism, version,
-            any_score, file, file_uniprot):
+            any_score, file, file_accession_map, file_uniprot):
         # https://www.uniprot.org/help/accession_numbers
         # https://www.uniprot.org/help/alternative_products
         if (interactor_a in network and interactor_b not in network and
@@ -1161,6 +1164,7 @@ def add_protein_interactions_from_string(
         version: float = 11.5,
         any_score: bool = False,
         file: Optional[str] = None,
+        file_accession_map: Optional[str] = None,
         file_uniprot: Optional[str] = None) -> None:
     """
     Adds protein-protein interactions from STRING to a protein-protein
@@ -1189,6 +1193,8 @@ def add_protein_interactions_from_string(
         any_score: If true, include a protein-protein interaction if it meets
             any threshold else only if it meets all.
         file: The optional local file location to parse interactions from.
+        file_accession_map: The optional local file location to parse UniProt
+            accessions from.
         file_uniprot: The optional local file location to parse accessions from.
     """
     for interactor_a, interactor_b, score in string.get_protein_interactions(
@@ -1196,7 +1202,7 @@ def add_protein_interactions_from_string(
             homology, coexpression, coexpression_transferred, experiments,
             experiments_transferred, database, database_transferred, textmining,
             textmining_transferred, combined_score, physical, organism, version,
-            any_score, file, file_uniprot):
+            any_score, file, file_accession_map, file_uniprot):
         if (interactor_a in network and interactor_b in network and
                 interactor_a != interactor_b):
             if network.has_edge(interactor_a, interactor_b):

@@ -97,7 +97,8 @@
       "STRING": {
         "experiments score": 0.7,
         "combined score": 0.7,
-        "file": "data/string/9606.protein.links.full.v11.5.txt"
+        "file": "data/string/9606.protein.links.full.v11.5.txt",
+        "file accession map": "data/string/9606.protein.aliases.v11.5.txt"
       }
     },
     "Cytoscape": {

@@ -1,4 +1,5 @@
 """The interface for the CORUM database."""
+import os
 import re
 from typing import Container, Iterator, Optional
 
@@ -32,7 +33,8 @@ def get_protein_interactions(
 
     for row in iterate.tabular_txt(
             "https://mips.helmholtz-muenchen.de/corum/download/releases/"
-            "current/allComplexes.txt.zip" if file is None else file,
+            "current/allComplexes.txt.zip"
+            if file is None or not os.path.isfile(file) else file,
             file_from_zip_archive=re.compile(r"^allComplexes\.txt\.zip$"),
             delimiter="\t",
             header=0,

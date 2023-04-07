@@ -1,4 +1,5 @@
 """The interface for the Gene Ontology database."""
+import os
 from typing import (Callable, Collection, Container, Hashable, Iterable,
                     Iterator, Literal, Mapping, Optional, Sequence)
 
@@ -36,8 +37,9 @@ def get_ontology(
     is_a: list[str] = []
     alt_id: list[str] = []
 
-    for line in iterate.txt("http://purl.obolibrary.org/obo/go.obo"
-                            if file_ontology is None else file_ontology):
+    for line in iterate.txt(
+            "http://purl.obolibrary.org/obo/go.obo" if file_ontology is None or
+            not os.path.isfile(file_ontology) else file_ontology):
         if line in ("[Term]", "[Typedef]"):
             if (not namespaces or
                     term.get("id") and term.get("namespace") in namespaces):
@@ -96,7 +98,8 @@ def get_annotation(
     for row in iterate.tabular_txt(
             "http://geneontology.org/gene-associations/"
             f"goa_{ORGANISM['files'][organism]}.gaf.gz"
-            if file_annotation is None else file_annotation,
+            if file_annotation is None or not os.path.isfile(file_annotation)
+            else file_annotation,
             skiprows=41,
             delimiter="\t",
             usecols=[0, 1, 4, 8, 12]):
@@ -109,7 +112,9 @@ def get_annotation(
     for row in iterate.tabular_txt(
             "http://geneontology.org/gene-associations/"
             f"goa_{ORGANISM['files'][organism]}_isoform.gaf.gz"
-            if file_annotation_isoform is None else file_annotation_isoform,
+            if file_annotation_isoform is None or
+            not os.path.isfile(file_annotation_isoform) else
+            file_annotation_isoform,
             skiprows=41,
             delimiter="\t",
             usecols=[0, 4, 8, 12, 16]):

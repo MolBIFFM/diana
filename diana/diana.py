@@ -69,7 +69,7 @@ def process_workflow(identifier: str, configuration: Mapping[str, Any]) -> None:
             if configuration["MS"][time][modification].get("position column"):
                 protein_interaction_network.add_sites_from_table(
                     network,
-                    file_name=configuration["MS"][time][modification]["file"],
+                    file=configuration["MS"][time][modification]["file"],
                     protein_accession_column=configuration["MS"][time]
                     [modification]["accession column"],
                     protein_accession_format=re.compile(
@@ -112,7 +112,7 @@ def process_workflow(identifier: str, configuration: Mapping[str, Any]) -> None:
             else:
                 protein_interaction_network.add_proteins_from_table(
                     network,
-                    file_name=configuration["MS"][time][modification]["file"],
+                    file=configuration["MS"][time][modification]["file"],
                     protein_accession_column=configuration["MS"][time]
                     [modification]["accession column"],
                     protein_accession_format=re.compile(
@@ -194,8 +194,22 @@ def process_workflow(identifier: str, configuration: Mapping[str, Any]) -> None:
                     "protein-protein interactions"] and configuration[
                         "protein-protein interactions"]["BioGRID"].get(
                             "neighbors", 0) > neighbors:
-                logger.info("Adding neighbors of order %d from BioGRID.",
-                            neighbors)
+                if configuration["protein-protein interactions"]["BioGRID"].get(
+                        "file") and os.path.isfile(
+                            configuration["protein-protein interactions"]
+                            ["BioGRID"]["file"]):
+                    logger.info(
+                        "Adding neighbors of order %d from BioGRID from %s.",
+                        neighbors, configuration["protein-protein interactions"]
+                        ["BioGRID"]["file"])
+                else:
+                    if configuration["protein-protein interactions"][
+                            "BioGRID"].get("file"):
+                        logger.warning(
+                            "File specified for BioGRID does not exist.")
+
+                    logger.info("Adding neighbors of order %d from BioGRID.",
+                                neighbors)
 
                 interacting_proteins.update(
                     protein_interaction_network.get_neighbors_from_biogrid(
@@ -218,14 +232,29 @@ def process_workflow(identifier: str, configuration: Mapping[str, Any]) -> None:
                         ["BioGRID"].get("version"),
                         file=configuration["protein-protein interactions"]
                         ["BioGRID"].get("file"),
-                    file_uniprot=configuration.get("UniProt", {}).get("file")))
+                        file_uniprot=configuration.get("UniProt",
+                                                       {}).get("file")))
 
             if "CORUM" in configuration[
                     "protein-protein interactions"] and configuration[
                         "protein-protein interactions"]["CORUM"].get(
                             "neighbors", 0) > neighbors:
-                logger.info("Adding neighbors of order %d from CORUM.",
-                            neighbors)
+                if configuration["protein-protein interactions"]["CORUM"].get(
+                        "file") and os.path.isfile(
+                            configuration["protein-protein interactions"]
+                            ["CORUM"]["file"]):
+                    logger.info(
+                        "Adding neighbors of order %d from CORUM from %s.",
+                        neighbors, configuration["protein-protein interactions"]
+                        ["CORUM"]["file"])
+                else:
+                    if configuration["protein-protein interactions"][
+                            "CORUM"].get("file"):
+                        logger.warning(
+                            "File specified for CORUM does not exist.")
+
+                    logger.info("Adding neighbors of order %d from CORUM.",
+                                neighbors)
 
                 interacting_proteins.update(
                     protein_interaction_network.get_neighbors_from_corum(
@@ -233,16 +262,31 @@ def process_workflow(identifier: str, configuration: Mapping[str, Any]) -> None:
                         purification_methods=configuration[
                             "protein-protein interactions"]["CORUM"].get(
                                 "purification methods", []),
-                    file=configuration["protein-protein interactions"]
-                    ["CORUM"].get("file"),
-                    file_uniprot=configuration.get("UniProt", {}).get("file")))
+                        file=configuration["protein-protein interactions"]
+                        ["CORUM"].get("file"),
+                        file_uniprot=configuration.get("UniProt",
+                                                       {}).get("file")))
 
             if "IntAct" in configuration[
                     "protein-protein interactions"] and configuration[
                         "protein-protein interactions"]["IntAct"].get(
                             "neighbors", 0) > neighbors:
-                logger.info("Adding neighbors of order %d from IntAct.",
-                            neighbors)
+                if configuration["protein-protein interactions"]["IntAct"].get(
+                        "file") and os.path.isfile(
+                            configuration["protein-protein interactions"]
+                            ["IntAct"]["file"]):
+                    logger.info(
+                        "Adding neighbors of order %d from IntAct from %s.",
+                        neighbors, configuration["protein-protein interactions"]
+                        ["IntAct"]["file"])
+                else:
+                    if configuration["protein-protein interactions"][
+                            "IntAct"].get("file"):
+                        logger.warning(
+                            "File specified for IntAct does not exist.")
+
+                    logger.info("Adding neighbors of order %d from IntAct.",
+                                neighbors)
 
                 interacting_proteins.update(
                     protein_interaction_network.get_neighbors_from_intact(
@@ -267,8 +311,22 @@ def process_workflow(identifier: str, configuration: Mapping[str, Any]) -> None:
                     "protein-protein interactions"] and configuration[
                         "protein-protein interactions"]["MINT"].get(
                             "neighbors", 0) > neighbors:
-                logger.info("Adding neighbors of order %d from MINT.",
-                            neighbors)
+                if configuration["protein-protein interactions"]["MINT"].get(
+                        "file") and os.path.isfile(
+                            configuration["protein-protein interactions"]
+                            ["MINT"]["file"]):
+                    logger.info(
+                        "Adding neighbors of order %d from MINT from %s.",
+                        neighbors, configuration["protein-protein interactions"]
+                        ["MINT"]["file"])
+                else:
+                    if configuration["protein-protein interactions"][
+                            "MINT"].get("file"):
+                        logger.warning(
+                            "File specified for MINT does not exist.")
+
+                    logger.info("Adding neighbors of order %d from MINT.",
+                                neighbors)
 
                 interacting_proteins.update(
                     protein_interaction_network.get_neighbors_from_mint(
@@ -293,8 +351,22 @@ def process_workflow(identifier: str, configuration: Mapping[str, Any]) -> None:
                     "protein-protein interactions"] and configuration[
                         "protein-protein interactions"]["Reactome"].get(
                             "neighbors", 0) > neighbors:
-                logger.info("Adding neighbors of order %d from Reactome.",
-                            neighbors)
+                if configuration["protein-protein interactions"][
+                        "Reactome"].get("file") and os.path.isfile(
+                            configuration["protein-protein interactions"]
+                            ["Reactome"]["file"]):
+                    logger.info(
+                        "Adding neighbors of order %d from Reactome from %s.",
+                        neighbors, configuration["protein-protein interactions"]
+                        ["Reactome"]["file"])
+                else:
+                    if configuration["protein-protein interactions"][
+                            "Reactome"].get("file"):
+                        logger.warning(
+                            "File specified for Reactome does not exist.")
+
+                    logger.info("Adding neighbors of order %d from Reactome.",
+                                neighbors)
 
                 interacting_proteins.update(
                     protein_interaction_network.get_neighbors_from_reactome(
@@ -316,8 +388,22 @@ def process_workflow(identifier: str, configuration: Mapping[str, Any]) -> None:
                     "protein-protein interactions"] and configuration[
                         "protein-protein interactions"]["STRING"].get(
                             "neighbors", 0) > neighbors:
-                logger.info("Adding neighbors of order %d from STRING.",
-                            neighbors)
+                if configuration["protein-protein interactions"]["STRING"].get(
+                        "file") and os.path.isfile(
+                            configuration["protein-protein interactions"]
+                            ["STRING"]["file"]):
+                    logger.info(
+                        "Adding neighbors of order %d from STRING from %s.",
+                        neighbors, configuration["protein-protein interactions"]
+                        ["STRING"]["file"])
+                else:
+                    if configuration["protein-protein interactions"][
+                            "STRING"].get("file"):
+                        logger.warning(
+                            "File specified for STRING does not exist.")
+
+                    logger.info("Adding neighbors of order %d from STRING.",
+                                neighbors)
 
                 interacting_proteins.update(
                     protein_interaction_network.get_neighbors_from_string(
@@ -370,6 +456,9 @@ def process_workflow(identifier: str, configuration: Mapping[str, Any]) -> None:
                         ["STRING"].get("any score", False),
                         file=configuration["protein-protein interactions"]
                         ["STRING"].get("file"),
+                        file_accession_map=configuration[
+                            "protein-protein interactions"]["STRING"].get(
+                                "file accession map"),
                         file_uniprot=configuration.get("UniProt",
                                                        {}).get("file")))
 
@@ -385,7 +474,20 @@ def process_workflow(identifier: str, configuration: Mapping[str, Any]) -> None:
             network.remove_nodes_from(nodes_to_remove)
 
         if "BioGRID" in configuration["protein-protein interactions"]:
-            logger.info("Adding protein-protein interactions from BioGRID.")
+            if configuration["protein-protein interactions"]["BioGRID"].get(
+                    "file") and os.path.isfile(
+                        configuration["protein-protein interactions"]["BioGRID"]
+                        ["file"]):
+                logger.info(
+                    "Adding protein-protein interactions from BioGRID from %s.",
+                    configuration["protein-protein interactions"]["BioGRID"]
+                    ["file"])
+            else:
+                if configuration["protein-protein interactions"]["BioGRID"].get(
+                        "file"):
+                    logger.warning("File specified for BioGRID does not exist.")
+
+                logger.info("Adding protein-protein interactions from BioGRID.")
 
             protein_interaction_network.add_protein_interactions_from_biogrid(
                 network,
@@ -410,7 +512,20 @@ def process_workflow(identifier: str, configuration: Mapping[str, Any]) -> None:
                 file_uniprot=configuration.get("UniProt", {}).get("file"))
 
         if "CORUM" in configuration["protein-protein interactions"]:
-            logger.info("Adding protein-protein interactions from CORUM.")
+            if configuration["protein-protein interactions"]["CORUM"].get(
+                    "file") and os.path.isfile(
+                        configuration["protein-protein interactions"]["CORUM"]
+                        ["file"]):
+                logger.info(
+                    "Adding protein-protein interactions from CORUM from %s.",
+                    configuration["protein-protein interactions"]["CORUM"]
+                    ["file"])
+            else:
+                if configuration["protein-protein interactions"]["CORUM"].get(
+                        "file"):
+                    logger.warning("File specified for CORUM does not exist.")
+
+                logger.info("Adding protein-protein interactions from CORUM.")
 
             protein_interaction_network.add_protein_interactions_from_corum(
                 network,
@@ -422,7 +537,20 @@ def process_workflow(identifier: str, configuration: Mapping[str, Any]) -> None:
                 file_uniprot=configuration.get("UniProt", {}).get("file"))
 
         if "IntAct" in configuration["protein-protein interactions"]:
-            logger.info("Adding protein-protein interactions from IntAct.")
+            if configuration["protein-protein interactions"]["IntAct"].get(
+                    "file") and os.path.isfile(
+                        configuration["protein-protein interactions"]["IntAct"]
+                        ["file"]):
+                logger.info(
+                    "Adding protein-protein interactions from IntAct from %s.",
+                    configuration["protein-protein interactions"]["IntAct"]
+                    ["file"])
+            else:
+                if configuration["protein-protein interactions"]["IntAct"].get(
+                        "file"):
+                    logger.warning("File specified for IntAct does not exist.")
+
+                logger.info("Adding protein-protein interactions from IntAct.")
 
             protein_interaction_network.add_protein_interactions_from_intact(
                 network,
@@ -440,7 +568,20 @@ def process_workflow(identifier: str, configuration: Mapping[str, Any]) -> None:
                 file_uniprot=configuration.get("UniProt", {}).get("file"))
 
         if "MINT" in configuration["protein-protein interactions"]:
-            logger.info("Adding protein-protein interactions from MINT.")
+            if configuration["protein-protein interactions"]["MINT"].get(
+                    "file") and os.path.isfile(
+                        configuration["protein-protein interactions"]["MINT"]
+                        ["file"]):
+                logger.info(
+                    "Adding protein-protein interactions from MINT from %s.",
+                    configuration["protein-protein interactions"]["MINT"]
+                    ["file"])
+            else:
+                if configuration["protein-protein interactions"]["MINT"].get(
+                        "file"):
+                    logger.warning("File specified for MINT does not exist.")
+
+                logger.info("Adding protein-protein interactions from MINT.")
 
             protein_interaction_network.add_protein_interactions_from_mint(
                 network,
@@ -458,7 +599,22 @@ def process_workflow(identifier: str, configuration: Mapping[str, Any]) -> None:
                 file_uniprot=configuration.get("UniProt", {}).get("file"))
 
         if "Reactome" in configuration["protein-protein interactions"]:
-            logger.info("Adding protein-protein interactions from Reactome.")
+            if configuration["protein-protein interactions"]["Reactome"].get(
+                    "file") and os.path.isfile(
+                        configuration["protein-protein interactions"]
+                        ["Reactome"]["file"]):
+                logger.info(
+                    "Adding protein-protein interactions from Reactome from "
+                    "%s.", configuration["protein-protein interactions"]
+                    ["Reactome"]["file"])
+            else:
+                if configuration["protein-protein interactions"][
+                        "Reactome"].get("file"):
+                    logger.warning(
+                        "File specified for Reactome does not exist.")
+
+                logger.info(
+                    "Adding protein-protein interactions from Reactome.")
 
             protein_interaction_network.add_protein_interactions_from_reactome(
                 network,
@@ -474,7 +630,20 @@ def process_workflow(identifier: str, configuration: Mapping[str, Any]) -> None:
                 file_uniprot=configuration.get("UniProt", {}).get("file"))
 
         if "STRING" in configuration["protein-protein interactions"]:
-            logger.info("Adding protein-protein interactions from STRING.")
+            if configuration["protein-protein interactions"]["STRING"].get(
+                    "file") and os.path.isfile(
+                        configuration["protein-protein interactions"]["STRING"]
+                        ["file"]):
+                logger.info(
+                    "Adding protein-protein interactions from STRING from %s.",
+                    configuration["protein-protein interactions"]["STRING"]
+                    ["file"])
+            else:
+                if configuration["protein-protein interactions"]["STRING"].get(
+                        "file"):
+                    logger.warning("File specified for STRING does not exist.")
+
+                logger.info("Adding protein-protein interactions from STRING.")
 
             protein_interaction_network.add_protein_interactions_from_string(
                 network,
@@ -521,6 +690,8 @@ def process_workflow(identifier: str, configuration: Mapping[str, Any]) -> None:
                 ["STRING"].get("any score", False),
                 file=configuration["protein-protein interactions"]
                 ["STRING"].get("file"),
+                file_accession_map=configuration["protein-protein interactions"]
+                ["STRING"].get("file accession map"),
                 file_uniprot=configuration.get("UniProt", {}).get("file"))
 
         if any(
@@ -605,10 +776,10 @@ def process_workflow(identifier: str, configuration: Mapping[str, Any]) -> None:
                     confidence_score_average=average.CONFIDENCE_SCORE_AVERAGE[
                         configuration["Cytoscape"].get("edge transparency")])
 
-                file_name = protein_interaction_network_style.export(
+                file = protein_interaction_network_style.export(
                     styles, identifier)
 
-                if file_name is None:
+                if file is None:
                     logger.warning(
                         "The Cytoscape styles for the protein-protein "
                         "interaction network were not exported due to naming "
@@ -616,18 +787,18 @@ def process_workflow(identifier: str, configuration: Mapping[str, Any]) -> None:
                 else:
                     logger.info(
                         "The Cytoscape styles for the protein-protein "
-                        "interaction network were exported to %s.", file_name)
+                        "interaction network were exported to %s.", file)
 
-        file_name = protein_interaction_network.export(network, identifier)
+        file = protein_interaction_network.export(network, identifier)
 
-        if file_name is None:
+        if file is None:
             logger.warning(
                 "The protein-protein interaction network was not exported due "
                 "to naming conflict.")
         else:
             logger.info(
                 "The protein-protein interaction network was exported to %s.",
-                file_name)
+                file)
 
     if "Gene Ontology network" in configuration:
         logger.info("Assembling the Gene Ontology network.")
@@ -764,31 +935,30 @@ def process_workflow(identifier: str, configuration: Mapping[str, Any]) -> None:
                     "Gene Ontology", {}).get("file annotation isoform"),
                 file_uniprot=configuration.get("UniProt", {}).get("file"))
 
-        file_name = gene_ontology_network.export(ontology_network,
-                                                 f"{identifier}_gene_ontology")
+        file = gene_ontology_network.export(ontology_network,
+                                            f"{identifier}_gene_ontology")
 
-        if file_name is None:
+        if file is None:
             logger.warning(
                 "The Gene Ontology network was not exported due to naming "
                 "conflict.")
         else:
-            logger.info("The Gene Ontology network was exported to %s.",
-                        file_name)
+            logger.info("The Gene Ontology network was exported to %s.", file)
 
         if "Cytoscape" in configuration:
             ontology_network_styles = gene_ontology_network_style.get_styles(
                 ontology_network)
-            file_name = gene_ontology_network_style.export(
+            file = gene_ontology_network_style.export(
                 ontology_network_styles, f"{identifier}_gene_ontology")
 
-            if file_name is None:
+            if file is None:
                 logger.warning(
                     "The Cytoscape style for the Gene Ontology network was not "
                     "exported due to naming conflict.")
             else:
                 logger.info(
                     "The Cytoscape style for the Gene Ontology network was "
-                    "exported to %s.", file_name)
+                    "exported to %s.", file)
 
     if "Reactome network" in configuration:
         logger.info("Assembling the Reactome network.")
@@ -911,29 +1081,29 @@ def process_workflow(identifier: str, configuration: Mapping[str, Any]) -> None:
                     "Reactome", {}).get("file accession map"),
                 file_uniprot=configuration.get("UniProt", {}).get("file"))
 
-        file_name = reactome_network.export(pathway_network,
-                                            f"{identifier}_reactome")
+        file = reactome_network.export(pathway_network,
+                                       f"{identifier}_reactome")
 
-        if file_name is None:
+        if file is None:
             logger.warning(
                 "The Reactome network was not exported due to naming conflict.")
         else:
-            logger.info("The Reactome network was exported to %s.", file_name)
+            logger.info("The Reactome network was exported to %s.", file)
 
         if "Cytoscape" in configuration:
             pathway_network_styles = reactome_network_style.get_styles(
                 pathway_network)
-            file_name = reactome_network_style.export(pathway_network_styles,
-                                                      f"{identifier}_reactome")
+            file = reactome_network_style.export(pathway_network_styles,
+                                                 f"{identifier}_reactome")
 
-            if file_name is None:
+            if file is None:
                 logger.warning(
                     "The Cytoscape style for the Gene Ontology network was not "
                     "exported due to naming conflict.")
             else:
                 logger.info(
                     "The Cytoscape style for the Gene Ontology network was "
-                    "exported to %s.", file_name)
+                    "exported to %s.", file)
 
     if "community detection" in configuration:
         logger.info("Identifying communities.")
@@ -1892,19 +2062,19 @@ def process_workflow(identifier: str, configuration: Mapping[str, Any]) -> None:
             "Measurement location test results are not exported due to naming "
             "conflict.")
 
-    file_names = []
+    files = []
     for k, community in enumerate(sorted(
             communities,
             key=lambda community: int(community.number_of_nodes()),
             reverse=True),
                                   start=1):
         if export[community]:
-            file_names.append(
+            files.append(
                 protein_interaction_network.export(community,
                                                    f"{identifier}_{k}"))
 
     if any(export):
-        if any(file_name is None for file_name in file_names):
+        if any(file is None for file in files):
             logger.warning(
                 "Communities of the protein-protein interaction network were "
                 "not exported due to naming conflicts.")

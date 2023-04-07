@@ -1,4 +1,5 @@
 """The interface for the STRING database."""
+import os
 from typing import Iterator, Optional
 
 from access import iterate
@@ -26,6 +27,7 @@ def get_protein_interactions(
         version: float = 11.5,
         any_score: bool = False,
         file: Optional[str] = None,
+        file_accession_map: Optional[str] = None,
         file_uniprot: Optional[str] = None) -> Iterator[tuple[str, str, float]]:
     """
     Yields protein-protein interactions from STRING.
@@ -52,6 +54,8 @@ def get_protein_interactions(
         any_score: If true, include a protein-protein interaction if it meets
             any threshold else only if it meets all.
         file: The optional local file location to parse interactions from.
+        file_accession_map: The optional local file location to parse UniProt
+            accessions from.
         file_uniprot: The optional local file location to parse accessions from.
 
     Yields:
@@ -62,7 +66,8 @@ def get_protein_interactions(
     for row in iterate.tabular_txt(
             f"https://stringdb-static.org/download/protein.aliases.v{version}/"
             f"{organism}.protein.aliases.v{version}.txt.gz"
-            if file is None else file,
+            if file_accession_map is None or
+            not os.path.isfile(file_accession_map) else file_accession_map,
             delimiter="\t",
             skiprows=1,
             usecols=[0, 1, 2],
@@ -94,12 +99,13 @@ def get_protein_interactions(
     primary_accession = uniprot.get_primary_accession(organism, file_uniprot)
 
     for row in iterate.tabular_txt(
-            "https://stringdb-static.org/download/"
-            f"protein.physical.links.full.v{version}/"
-            f"{organism}.protein.links.full.v{version}.txt.gz"
-            if physical else "https://stringdb-static.org/download/"
-            f"protein.links.full.v{version}/"
-            f"{organism}.protein.links.full.v{version}.txt.gz",
+        ("https://stringdb-static.org/download/"
+         f"protein.physical.links.full.v{version}/"
+         f"{organism}.protein.links.full.v{version}.txt.gz"
+         if physical else "https://stringdb-static.org/download/"
+         f"protein.links.full.v{version}/"
+         f"{organism}.protein.links.full.v{version}.txt.gz")
+            if file is None or not os.path.isfile(file) else file,
             delimiter=" ",
             header=0,
             usecols=["protein1", "protein2"] + list(thresholds),

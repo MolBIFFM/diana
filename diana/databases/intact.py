@@ -1,4 +1,5 @@
 """The interface for the IntAct database."""
+import os
 import re
 from typing import Container, Iterator, Optional
 
@@ -37,7 +38,7 @@ def get_protein_interactions(
 
     for row in iterate.tabular_txt(
             "ftp://ftp.ebi.ac.uk/pub/databases/intact/current/psimitab/"
-            "intact.zip" if file is None else file,
+            "intact.zip" if file is None or not os.path.isfile(file) else file,
             file_from_zip_archive=re.compile(r"^intact\.txt$"),
             delimiter="\t",
             header=0,

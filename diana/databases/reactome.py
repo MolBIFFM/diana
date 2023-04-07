@@ -1,4 +1,5 @@
 """The interface for the Reactome database."""
+import os
 from typing import (Callable, Container, Hashable, Iterable, Iterator, Mapping,
                     Optional, Sequence)
 
@@ -43,7 +44,8 @@ def get_protein_interactions(
     for row in iterate.tabular_txt(
             "https://reactome.org/download/current/interactors/"
             f"reactome.{ORGANISM['files'][organism]}.interactions."
-            "tab-delimited.txt" if file is None else file,
+            "tab-delimited.txt"
+            if file is None or not os.path.isfile(file) else file,
             delimiter="\t",
             header=0,
             usecols=[
@@ -94,7 +96,8 @@ def get_pathways(
     """
     for row in iterate.tabular_txt(
             "https://reactome.org/download/current/ReactomePathways.txt"
-            if file_pathways is None else file_pathways,
+            if file_pathways is None or not os.path.isfile(file_pathways) else
+            file_pathways,
             delimiter="\t",
             usecols=[0, 1, 2]):
         if row[2] == ORGANISM["data"][organism]:
@@ -116,8 +119,9 @@ def get_pathway_relations(
     """
     for row in iterate.tabular_txt(
             "https://reactome.org/download/current/"
-            "ReactomePathwaysRelation.txt"
-            if file_pathways_relation is None else file_pathways_relation,
+            "ReactomePathwaysRelation.txt" if file_pathways_relation is None or
+            not os.path.isfile(file_pathways_relation) else
+            file_pathways_relation,
             delimiter="\t",
             usecols=[0, 1]):
         yield (row[0], row[1])
@@ -143,8 +147,8 @@ def get_pathway_annotation(
 
     for row in iterate.tabular_txt(
             "https://reactome.org/download/current/"
-            "UniProt2Reactome_All_Levels.txt"
-            if file_accession_map is None else file_accession_map,
+            "UniProt2Reactome_All_Levels.txt" if file_accession_map is None or
+            not os.path.isfile(file_accession_map) else file_accession_map,
             delimiter="\t",
             usecols=[0, 1, 5]):
         if row[2] == ORGANISM["data"][organism]:

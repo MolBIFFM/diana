@@ -1,4 +1,5 @@
 """The interface for the MINT database."""
+import os
 from typing import Container, Iterator, Optional
 
 from access import iterate
@@ -39,7 +40,8 @@ def get_protein_interactions(
     for row in iterate.tabular_txt(
             "https://www.ebi.ac.uk/Tools/webservices/psicquic/mint/"
             "webservices/current/search/query/"
-            f"{ORGANISM['files'][organism]}" if file is None else file,
+            f"{ORGANISM['files'][organism]}"
+            if file is None or not os.path.isfile(file) else file,
             delimiter="\t",
             header=0,
             usecols=[

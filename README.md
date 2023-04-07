@@ -1023,6 +1023,21 @@ databases but not the STRING web interface.
 The optional local file location to parse protein-protein interactions from. The
 default setting is `null`, downloading the required file automatically.
 
+```json
+{
+  "configuration": {
+    "protein-protein interactions": {
+      "STRING": {
+        "file accession map": null
+      }
+    }
+  }
+}
+
+```
+The optional local file location to parse UniProt accessions from. The default
+setting is `null`, downloading the required file automatically.
+
 ---
 
 The specification of Cytoscape styles. If not present, Cytoscape styles are not

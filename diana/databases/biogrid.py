@@ -1,4 +1,5 @@
 """The interface for the BioGRID database."""
+import os
 import re
 from typing import Container, Iterator, Optional
 
@@ -51,7 +52,8 @@ def get_protein_interactions(
          ("https://downloads.thebiogrid.org/Download/BioGRID/Latest-Release/"
           "BIOGRID-MV-Physical-LATEST.tab3.zip" if multi_validated_physical else
           "https://downloads.thebiogrid.org/Download/BioGRID/Latest-Release/"
-          "BIOGRID-ORGANISM-LATEST.tab3.zip")) if file is None else file,
+          "BIOGRID-ORGANISM-LATEST.tab3.zip"))
+            if file is None or not os.path.isfile(file) else file,
             file_from_zip_archive=re.compile(
                 r"^BIOGRID-MV-Physical-[0-9]\.[0-9]\.[0-9]{2,3}\.tab3\.txt$"
                 if multi_validated_physical else
