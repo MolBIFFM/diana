@@ -818,10 +818,11 @@ def process_workflow(identifier: str, configuration: Mapping[str, Any]) -> None:
                             score.MEASUREMENT_SCORE[
                                 configuration["Gene Ontology network"].get(
                                     "score", {}).get(m)]
-                            (configuration["Gene Ontology network"].get(
-                                "measurement", default.MEASUREMENT_RANGE[
-                                    configuration["Gene Ontology network"].get(
-                                        "score", {}).get(m)])[0],
+                            (configuration["Gene Ontology network"].
+                             get("measurement", {}).get(
+                                 m, default.MEASUREMENT_RANGE[
+                                     configuration["Gene Ontology network"].get(
+                                         "score", {}).get(m)])[0],
                              protein_interaction_network.get_measurements(
                                  network, time, m, average.SITE_AVERAGE[
                                      configuration["Gene Ontology network"].get(
@@ -836,9 +837,10 @@ def process_workflow(identifier: str, configuration: Mapping[str, Any]) -> None:
                                 configuration["Gene Ontology network"].get(
                                     "score", {}).get(m)]
                             (configuration["Gene Ontology network"].get(
-                                "measurement", default.MEASUREMENT_RANGE[
-                                    configuration["Gene Ontology network"].get(
-                                        "score", {}).get(m)])[1],
+                                "measurement", {}).get(
+                                    m, default.MEASUREMENT_RANGE[configuration[
+                                        "Gene Ontology network"].get(
+                                            "score", {}).get(m)])[1],
                              protein_interaction_network.get_measurements(
                                  network, time, m, average.SITE_AVERAGE[
                                      configuration["Gene Ontology network"].get(
@@ -885,7 +887,7 @@ def process_workflow(identifier: str, configuration: Mapping[str, Any]) -> None:
                 proteins,
                 reference=network.nodes()
                 if not configuration["Gene Ontology network"].get(
-                    "annotation", False) else [],
+                    "annotation", False) else None,
                 namespaces=[
                     namespace.replace(" ", "_")
                     for namespace in configuration["Gene Ontology network"].get(
@@ -978,9 +980,10 @@ def process_workflow(identifier: str, configuration: Mapping[str, Any]) -> None:
                                 configuration["Reactome network"].get(
                                     "score", {}).get(m)]
                             (configuration["Reactome network"].get(
-                                "measurement", default.MEASUREMENT_RANGE[
-                                    configuration["Reactome network"].get(
-                                        "score", {}).get(m)])[0],
+                                "measurement", {}).get(
+                                    m, default.MEASUREMENT_RANGE[
+                                        configuration["Reactome network"].get(
+                                            "score", {}).get(m)])[0],
                              protein_interaction_network.get_measurements(
                                  network, time, m, average.SITE_AVERAGE[
                                      configuration["Reactome network"].get(
@@ -990,15 +993,15 @@ def process_workflow(identifier: str, configuration: Mapping[str, Any]) -> None:
                                  average.REPLICATE_AVERAGE[
                                      configuration["Reactome network"].get(
                                          "replicate average",
-                                         {}).get(m,
-                                                 "mean")])),
+                                         {}).get(m, "mean")])),
                             score.MEASUREMENT_SCORE[
                                 configuration["Reactome network"].get(
                                     "score", {}).get(m)]
                             (configuration["Reactome network"].get(
-                                "measurement", default.MEASUREMENT_RANGE[
-                                    configuration["Reactome network"].get(
-                                        "score", {}).get(m)])[1],
+                                "measurement", {}).get(
+                                    m, default.MEASUREMENT_RANGE[
+                                        configuration["Reactome network"].get(
+                                            "score", {}).get(m)])[1],
                              protein_interaction_network.get_measurements(
                                  network, time, m, average.SITE_AVERAGE[
                                      configuration["Reactome network"].get(
@@ -1043,7 +1046,7 @@ def process_workflow(identifier: str, configuration: Mapping[str, Any]) -> None:
                 proteins,
                 reference=network.nodes() if
                 not configuration["Reactome network"].get("annotation", False)
-                else [],
+                else None,
                 enrichment_test=test.ENRICHMENT_TEST[(
                     configuration["Reactome network"].get(
                         "test", "hypergeometric"),
@@ -1165,10 +1168,11 @@ def process_workflow(identifier: str, configuration: Mapping[str, Any]) -> None:
                                     "Gene Ontology enrichment"].get(
                                         "score", {}).get(m)]
                                 (configuration["Gene Ontology enrichment"].get(
-                                    "measurement",
-                                    default.MEASUREMENT_RANGE[configuration[
-                                        "Gene Ontology enrichment"].get(
-                                            "score", {}).get(m)])[0],
+                                    "measurement", {}).get(
+                                        m,
+                                        default.MEASUREMENT_RANGE[configuration[
+                                            "Gene Ontology enrichment"].get(
+                                                "score", {}).get(m)])[0],
                                  protein_interaction_network.get_measurements(
                                      network, time, m,
                                      average.SITE_AVERAGE[configuration[
@@ -1184,10 +1188,11 @@ def process_workflow(identifier: str, configuration: Mapping[str, Any]) -> None:
                                     "Gene Ontology enrichment"].get(
                                         "score", {}).get(m)]
                                 (configuration["Gene Ontology enrichment"].get(
-                                    "measurement",
-                                    default.MEASUREMENT_RANGE[configuration[
-                                        "Gene Ontology enrichment"].get(
-                                            "score", {}).get(m)])[1],
+                                    "measurement", {}).get(
+                                        m,
+                                        default.MEASUREMENT_RANGE[configuration[
+                                            "Gene Ontology enrichment"].get(
+                                                "score", {}).get(m)])[1],
                                  protein_interaction_network.get_measurements(
                                      network, time, m,
                                      average.SITE_AVERAGE[configuration[
@@ -1337,12 +1342,12 @@ def process_workflow(identifier: str, configuration: Mapping[str, Any]) -> None:
                                             "score", {}).get(m)]
                                     (configuration["community detection"]
                                      ["Gene Ontology enrichment"].get(
-                                         "measurement",
-                                         default.MEASUREMENT_RANGE[
-                                             configuration[
-                                                 "community detection"]
-                                             ["Gene Ontology enrichment"].get(
-                                                 "score", {}).get(m)])[0],
+                                         "measurement", {}).get(
+                                             m, default.MEASUREMENT_RANGE[
+                                                 configuration[
+                                                     "community detection"]
+                                                 ["Gene Ontology enrichment"].
+                                                 get("score", {}).get(m)])[0],
                                      protein_interaction_network.
                                      get_measurements(
                                          network, time, m, average.SITE_AVERAGE[
@@ -1364,12 +1369,12 @@ def process_workflow(identifier: str, configuration: Mapping[str, Any]) -> None:
                                             "score", {}).get(m)]
                                     (configuration["community detection"]
                                      ["Gene Ontology enrichment"].get(
-                                         "measurement",
-                                         default.MEASUREMENT_RANGE[
-                                             configuration[
-                                                 "community detection"]
-                                             ["Gene Ontology enrichment"].get(
-                                                 "score", {}).get(m)])[1],
+                                         "measurement", {}).get(
+                                             m, default.MEASUREMENT_RANGE[
+                                                 configuration[
+                                                     "community detection"]
+                                                 ["Gene Ontology enrichment"].
+                                                 get("score", {}).get(m)])[1],
                                      protein_interaction_network.
                                      get_measurements(
                                          network, time, m, average.SITE_AVERAGE[
@@ -1571,10 +1576,11 @@ def process_workflow(identifier: str, configuration: Mapping[str, Any]) -> None:
                                     configuration["Reactome enrichment"].get(
                                         "score", {}).get(m)]
                                 (configuration["Reactome enrichment"].get(
-                                    "measurement",
-                                    default.MEASUREMENT_RANGE[configuration[
-                                        "Reactome enrichment"].get(
-                                            "score", {}).get(m)])[0],
+                                    "measurement", {}).get(
+                                        m,
+                                        default.MEASUREMENT_RANGE[configuration[
+                                            "Reactome enrichment"].get(
+                                                "score", {}).get(m)])[0],
                                  protein_interaction_network.get_measurements(
                                      network, time, m,
                                      average.SITE_AVERAGE[configuration[
@@ -1590,10 +1596,11 @@ def process_workflow(identifier: str, configuration: Mapping[str, Any]) -> None:
                                     configuration["Reactome enrichment"].get(
                                         "score", {}).get(m)]
                                 (configuration["Reactome enrichment"].get(
-                                    "measurement",
-                                    default.MEASUREMENT_RANGE[configuration[
-                                        "Reactome enrichment"].get(
-                                            "score", {}).get(m)])[1],
+                                    "measurement", {}).get(
+                                        m,
+                                        default.MEASUREMENT_RANGE[configuration[
+                                            "Reactome enrichment"].get(
+                                                "score", {}).get(m)])[1],
                                  protein_interaction_network.get_measurements(
                                      network, time, m,
                                      average.SITE_AVERAGE[configuration[
@@ -1720,12 +1727,12 @@ def process_workflow(identifier: str, configuration: Mapping[str, Any]) -> None:
                                             "score", {}).get(m)]
                                     (configuration["community detection"]
                                      ["Reactome enrichment"].get(
-                                         "measurement",
-                                         default.MEASUREMENT_RANGE[
-                                             configuration[
-                                                 "community detection"]
-                                             ["Reactome enrichment"].get(
-                                                 "score", {}).get(m)])[0],
+                                         "measurement", {}).get(
+                                             m, default.MEASUREMENT_RANGE[
+                                                 configuration[
+                                                     "community detection"]
+                                                 ["Reactome enrichment"].get(
+                                                     "score", {}).get(m)])[0],
                                      protein_interaction_network.
                                      get_measurements(
                                          network, time, m, average.SITE_AVERAGE[
@@ -1747,12 +1754,12 @@ def process_workflow(identifier: str, configuration: Mapping[str, Any]) -> None:
                                             "score", {}).get(m)]
                                     (configuration["community detection"]
                                      ["Reactome enrichment"].get(
-                                         "measurement",
-                                         default.MEASUREMENT_RANGE[
-                                             configuration[
-                                                 "community detection"]
-                                             ["Reactome enrichment"].get(
-                                                 "score", {}).get(m)])[1],
+                                         "measurement", {}).get(
+                                             m, default.MEASUREMENT_RANGE[
+                                                 configuration[
+                                                     "community detection"]
+                                                 ["Reactome enrichment"].get(
+                                                     "score", {}).get(m)])[1],
                                      protein_interaction_network.
                                      get_measurements(
                                          network, time, m, average.SITE_AVERAGE[

@@ -515,10 +515,12 @@ def get_styles(
                     f"{time} {node_size_modification}", "float", {
                         min(measurements):
                             (COMPONENTS["node"]["visualProperty"]["NODE_SIZE"]
-                             ["default"] * min(measurements),) * 3,
+                             ["default"] * math.pow(2.0, min(measurements)),) *
+                            3,
                         max(measurements):
                             (COMPONENTS["node"]["visualProperty"]["NODE_SIZE"]
-                             ["default"] * max(measurements),) * 3
+                             ["default"] * math.pow(2.0, max(measurements)),) *
+                            3
                     })
 
         node_shape_modifications = [

@@ -432,8 +432,8 @@ def get_styles(network: nx.Graph) -> ET.ElementTree:
     if isinstance(COMPONENTS["node"]["visualProperty"]["NODE_SIZE"]["default"],
                   float):
         elements.add_continuous_mapping(
-            visual_properties["node"]["NODE_SIZE"], "number of proteins",
-            "integer", {
+            visual_properties["node"]["NODE_SIZE"],
+            "number of associated proteins", "integer", {
                 0: (COMPONENTS["node"]["visualProperty"]["NODE_SIZE"]
                     ["default"], COMPONENTS["node"]["visualProperty"]
                     ["NODE_SIZE"]["default"],
@@ -441,7 +441,7 @@ def get_styles(network: nx.Graph) -> ET.ElementTree:
                    ),
                 max_number_proteins:
                     (COMPONENTS["node"]["visualProperty"]["NODE_SIZE"]
-                     ["default"] + 10.0 * math.sqrt(max_number_proteins),) * 3
+                     ["default"] + math.sqrt(max_number_proteins),) * 3
             })
 
     ET.indent(styles)

@@ -89,7 +89,7 @@
       },
       "MINT": {
         "score": 0.27,
-        "file": "data/mint/species\\ human"
+        "file": "data/mint/species_human.txt"
       },
       "Reactome": {
         "file": "data/reactome/reactome.homo_sapiens.interactions.tab-delimited.txt"
@@ -110,9 +110,6 @@
       },
       "node shape": {
         "PTMs": ["P", "U"]
-      },
-      "node size": {
-        "PTM": "P"
       }
     },
     "Gene Ontology enrichment": {
