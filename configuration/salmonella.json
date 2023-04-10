@@ -80,9 +80,6 @@
         ],
         "file": "data/biogrid/BIOGRID-ORGANISM-Homo_sapiens-4.4.220.tab3.txt"
       },
-      "CORUM": {
-        "file": "data/corum/allComplexes.txt"
-      },
       "IntAct": {
         "score": 0.27,
         "file": "data/intact/intact.txt"
