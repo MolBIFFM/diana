@@ -1101,12 +1101,12 @@ def process_workflow(identifier: str, configuration: Mapping[str, Any]) -> None:
 
             if file is None:
                 logger.warning(
-                    "The Cytoscape style for the Gene Ontology network was not "
+                    "The Cytoscape style for the Reactome network was not "
                     "exported due to naming conflict.")
             else:
                 logger.info(
-                    "The Cytoscape style for the Gene Ontology network was "
-                    "exported to %s.", file)
+                    "The Cytoscape style for the Reactome network was exported "
+                    "to %s.", file)
 
     if "community detection" in configuration:
         logger.info("Identifying communities.")
