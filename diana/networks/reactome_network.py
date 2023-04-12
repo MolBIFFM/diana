@@ -54,8 +54,8 @@ def get_network(proteins: Iterable[str],
         network.add_node(pathway)
         network.nodes[pathway]["pathway"] = name
 
-    for child, parent in reactome.get_pathway_relations(file_pathways_relation):
-        if child in network and parent in network:
+    for parent, child in reactome.get_pathway_relations(file_pathways_relation):
+        if parent in network and child in network:
             network.add_edge(child, parent)
 
     annotations: dict[str, set[str]] = {}
