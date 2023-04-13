@@ -2234,7 +2234,9 @@ default setting is `null`, downloading the required file automatically.
 {
   "configuration": {
     "Gene Ontology": {
-      "file ontology": null
+      "file": {
+        "ontology": null
+      }
     }
   }
 }
@@ -2246,7 +2248,9 @@ setting is `null`, downloading the required file automatically.
 {
   "configuration": {
     "Gene Ontology": {
-      "file annotation": null
+      "file": {
+        "annotation": null
+      }
     }
   }
 }
@@ -2258,7 +2262,9 @@ default setting is `null`, downloading the required file automatically.
 {
   "configuration": {
     "Gene Ontology": {
-      "file annotation isoform": null
+      "file": {
+        "annotation isoform": null
+      }
     }
   }
 }
@@ -2271,7 +2277,9 @@ automatically.
 {
   "configuration": {
     "Reactome": {
-      "file pathways": null
+      "file": {
+        "pathways": null
+      }
     }
   }
 }
@@ -2283,7 +2291,9 @@ setting is `null`, downloading the required file automatically.
 {
   "configuration": {
     "Reactome": {
-      "file pathways relation": null
+      "file": {
+        "pathways relation": null
+      }
     }
   }
 }
@@ -2295,7 +2305,9 @@ default setting is `null`, downloading the required file automatically.
 {
   "configuration": {
     "Reactome": {
-      "file accession map": null
+      "file": {
+        "accession map": null
+      }
     }
   }
 }

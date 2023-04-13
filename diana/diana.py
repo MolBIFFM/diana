@@ -138,13 +138,16 @@ def process_workflow(identifier: str, configuration: Mapping[str, Any]) -> None:
                         modification].get("logarithm")])
 
     for i, item in enumerate(configuration.get("networks", {})):
-
         if not (item.get("network") and os.path.isfile(item["network"])):
             if not item.get("network"):
-                logger.warning("File for network %d is not specified.", i)
+                logger.warning(
+                    "File for protein-protein interaction network %d is not "
+                    "specified.", i)
 
             elif not os.path.isfile(item["network"]):
-                logger.warning("File for network %d does not exist.", i)
+                logger.warning(
+                    "File for protein-protein interaction network %d does not "
+                    "exist.", i)
 
             continue
 
@@ -165,6 +168,14 @@ def process_workflow(identifier: str, configuration: Mapping[str, Any]) -> None:
                     r"([OPQ][0-9][A-Z0-9]{3}[0-9]|[A-NR-Z][0-9]"
                     r"([A-Z][A-Z0-9]{2}[0-9]){1,2})(-[1-9][0-9]+)?",
                     protein_accession))
+
+    if configuration.get("UniProt", {}).get("file"):
+        if os.path.isfile(configuration["UniProt"]["file"]):
+            logger.info("Parsing UniProt protein accessions from %s.",
+                        configuration["UniProt"]["file"])
+        else:
+            logger.warning(
+                "File specified for UniProt protein accessions does not exist.")
 
     nodes_to_remove = set(network.nodes())
     for organism in set(
@@ -206,7 +217,9 @@ def process_workflow(identifier: str, configuration: Mapping[str, Any]) -> None:
                     if configuration["protein-protein interactions"][
                             "BioGRID"].get("file"):
                         logger.warning(
-                            "File specified for BioGRID does not exist.")
+                            "File specified for protein-protein interactions "
+                            "from BioGRID does not exist."
+                        )
 
                     logger.info("Adding neighbors of order %d from BioGRID.",
                                 neighbors)
@@ -251,7 +264,9 @@ def process_workflow(identifier: str, configuration: Mapping[str, Any]) -> None:
                     if configuration["protein-protein interactions"][
                             "CORUM"].get("file"):
                         logger.warning(
-                            "File specified for CORUM does not exist.")
+                            "File specified for protein-protein interactions "
+                            "from CORUM does not exist."
+                        )
 
                     logger.info("Adding neighbors of order %d from CORUM.",
                                 neighbors)
@@ -283,7 +298,9 @@ def process_workflow(identifier: str, configuration: Mapping[str, Any]) -> None:
                     if configuration["protein-protein interactions"][
                             "IntAct"].get("file"):
                         logger.warning(
-                            "File specified for IntAct does not exist.")
+                            "File specified for protein-protein interactions "
+                            "from IntAct does not exist."
+                        )
 
                     logger.info("Adding neighbors of order %d from IntAct.",
                                 neighbors)
@@ -323,7 +340,9 @@ def process_workflow(identifier: str, configuration: Mapping[str, Any]) -> None:
                     if configuration["protein-protein interactions"][
                             "MINT"].get("file"):
                         logger.warning(
-                            "File specified for MINT does not exist.")
+                            "File specified for protein-protein interactions "
+                            "from MINT does not exist."
+                        )
 
                     logger.info("Adding neighbors of order %d from MINT.",
                                 neighbors)
@@ -363,7 +382,9 @@ def process_workflow(identifier: str, configuration: Mapping[str, Any]) -> None:
                     if configuration["protein-protein interactions"][
                             "Reactome"].get("file"):
                         logger.warning(
-                            "File specified for Reactome does not exist.")
+                            "File specified for protein-protein interactions "
+                            "from Reactome does not exist."
+                        )
 
                     logger.info("Adding neighbors of order %d from Reactome.",
                                 neighbors)
@@ -400,7 +421,9 @@ def process_workflow(identifier: str, configuration: Mapping[str, Any]) -> None:
                     if configuration["protein-protein interactions"][
                             "STRING"].get("file"):
                         logger.warning(
-                            "File specified for STRING does not exist.")
+                            "File specified for protein-protein interactions "
+                            "from STRING does not exist."
+                        )
 
                     logger.info("Adding neighbors of order %d from STRING.",
                                 neighbors)
@@ -485,7 +508,10 @@ def process_workflow(identifier: str, configuration: Mapping[str, Any]) -> None:
             else:
                 if configuration["protein-protein interactions"]["BioGRID"].get(
                         "file"):
-                    logger.warning("File specified for BioGRID does not exist.")
+                    logger.warning(
+                        "File specified for protein-protein interactions from "
+                        "BioGRID does not exist."
+                    )
 
                 logger.info("Adding protein-protein interactions from BioGRID.")
 
@@ -523,7 +549,10 @@ def process_workflow(identifier: str, configuration: Mapping[str, Any]) -> None:
             else:
                 if configuration["protein-protein interactions"]["CORUM"].get(
                         "file"):
-                    logger.warning("File specified for CORUM does not exist.")
+                    logger.warning(
+                        "File specified for protein-protein interactions from "
+                        "CORUM does not exist."
+                    )
 
                 logger.info("Adding protein-protein interactions from CORUM.")
 
@@ -548,7 +577,10 @@ def process_workflow(identifier: str, configuration: Mapping[str, Any]) -> None:
             else:
                 if configuration["protein-protein interactions"]["IntAct"].get(
                         "file"):
-                    logger.warning("File specified for IntAct does not exist.")
+                    logger.warning(
+                        "File specified for protein-protein interactions from "
+                        "IntAct does not exist."
+                    )
 
                 logger.info("Adding protein-protein interactions from IntAct.")
 
@@ -579,7 +611,10 @@ def process_workflow(identifier: str, configuration: Mapping[str, Any]) -> None:
             else:
                 if configuration["protein-protein interactions"]["MINT"].get(
                         "file"):
-                    logger.warning("File specified for MINT does not exist.")
+                    logger.warning(
+                        "File specified for protein-protein interactions from "
+                        "MINT does not exist."
+                    )
 
                 logger.info("Adding protein-protein interactions from MINT.")
 
@@ -611,7 +646,9 @@ def process_workflow(identifier: str, configuration: Mapping[str, Any]) -> None:
                 if configuration["protein-protein interactions"][
                         "Reactome"].get("file"):
                     logger.warning(
-                        "File specified for Reactome does not exist.")
+                        "File specified for protein-protein interactions from "
+                        "Reactome does not exist."
+                    )
 
                 logger.info(
                     "Adding protein-protein interactions from Reactome.")
@@ -641,7 +678,10 @@ def process_workflow(identifier: str, configuration: Mapping[str, Any]) -> None:
             else:
                 if configuration["protein-protein interactions"]["STRING"].get(
                         "file"):
-                    logger.warning("File specified for STRING does not exist.")
+                    logger.warning(
+                        "File specified for protein-protein interactions from "
+                        "STRING does not exist."
+                    )
 
                 logger.info("Adding protein-protein interactions from STRING.")
 
@@ -800,6 +840,64 @@ def process_workflow(identifier: str, configuration: Mapping[str, Any]) -> None:
                 "The protein-protein interaction network was exported to %s.",
                 file)
 
+    if configuration.get("Gene Ontology", {}).get("file", {}).get("ontology"):
+        if os.path.isfile(configuration["Gene Ontology"]["file"]["ontology"]):
+            logger.info("Parsing Gene Ontology from %s.",
+                        configuration["Gene Ontology"]["file"]["ontology"])
+        else:
+            logger.warning("File specified for Gene Ontology does not exist.")
+
+    if configuration.get("Gene Ontology", {}).get("file", {}).get("annotation"):
+        if os.path.isfile(configuration["Gene Ontology"]["file"]["annotation"]):
+            logger.info("Parsing Gene Ontology annotation from %s.",
+                        configuration["Gene Ontology"]["file"]["annotation"])
+        else:
+            logger.warning(
+                "File specified for Gene Ontology annotation does not exist.")
+
+    if configuration.get("Gene Ontology", {}).get("file",
+                                                  {}).get("annotation isoform"):
+        if os.path.isfile(
+                configuration["Gene Ontology"]["file"]["annotation isoform"]):
+            logger.info(
+                "Parsing Gene Ontology isoform annotation from %s.",
+                configuration["Gene Ontology"]["file"]["annotation isoform"])
+        else:
+            logger.warning(
+                "File specified for Gene Ontology isoform annotation does not "
+                "exist."
+            )
+
+    if configuration.get("Reactome", {}).get("file", {}).get("pathways"):
+        if os.path.isfile(configuration["Reactome"]["file"]["pathways"]):
+            logger.info("Parsing Reactome pathways from %s.",
+                        configuration["Reactome"]["file"]["pathways"])
+        else:
+            logger.warning(
+                "File specified for Reactome pathways does not exist.")
+
+    if configuration.get("Reactome", {}).get("file",
+                                             {}).get("pathways relation"):
+        if os.path.isfile(
+                configuration["Reactome"]["file"]["pathways relation"]):
+            logger.info("Parsing Reactome pathway relations from %s.",
+                        configuration["Reactome"]["file"]["pathways relation"])
+        else:
+            logger.warning(
+                "File specified for Reactome pathway relations does not exist.")
+
+    if configuration.get("Reactome", {}).get("file", {}).get("accession map"):
+        if os.path.isfile(configuration["Reactome"]["file"]["accession map"]):
+            logger.info(
+                "Parsing associations of Reactome pathways and UniProt protein "
+                "accessions from %s.",
+                configuration["Reactome"]["file"]["pathways relation"])
+        else:
+            logger.warning(
+                "File specified associations of Reactome pathways and UniProt "
+                "protein accessions does not exist."
+            )
+
     if "Gene Ontology network" in configuration:
         logger.info("Assembling the Gene Ontology network.")
 
@@ -904,11 +1002,14 @@ def process_workflow(identifier: str, configuration: Mapping[str, Any]) -> None:
                 organism=configuration["Gene Ontology network"].get(
                     "organism", 9606),
                 file_ontology=configuration.get("Gene Ontology",
-                                                {}).get("file ontology"),
+                                                {}).get("file",
+                                                        {}).get("ontology"),
                 file_annotation=configuration.get("Gene Ontology",
-                                                  {}).get("file annotation"),
+                                                  {}).get("file",
+                                                          {}).get("annotation"),
                 file_annotation_isoform=configuration.get(
-                    "Gene Ontology", {}).get("file annotation isoform"),
+                    "Gene Ontology", {}).get("file",
+                                             {}).get("annotation isoform"),
                 file_uniprot=configuration.get("UniProt", {}).get("file"))
 
         else:
@@ -930,11 +1031,14 @@ def process_workflow(identifier: str, configuration: Mapping[str, Any]) -> None:
                 organism=configuration["Gene Ontology network"].get(
                     "organism", 9606),
                 file_ontology=configuration.get("Gene Ontology",
-                                                {}).get("file ontology"),
+                                                {}).get("file",
+                                                        {}).get("ontology"),
                 file_annotation=configuration.get("Gene Ontology",
-                                                  {}).get("file annotation"),
+                                                  {}).get("file",
+                                                          {}).get("annotation"),
                 file_annotation_isoform=configuration.get(
-                    "Gene Ontology", {}).get("file annotation isoform"),
+                    "Gene Ontology", {}).get("file",
+                                             {}).get("annotation isoform"),
                 file_uniprot=configuration.get("UniProt", {}).get("file"))
 
         file = gene_ontology_network.export(ontology_network,
@@ -1057,11 +1161,12 @@ def process_workflow(identifier: str, configuration: Mapping[str, Any]) -> None:
                 organism=configuration["Reactome network"].get(
                     "organism", 9606),
                 file_pathways=configuration.get("Reactome",
-                                                {}).get("file pathways"),
-                file_pathways_relation=configuration.get(
-                    "Reactome", {}).get("file pathways relation"),
-                file_accession_map=configuration.get(
-                    "Reactome", {}).get("file accession map"),
+                                                {}).get("file",
+                                                        {}).get("pathways"),
+                file_pathways_relation=configuration.get("Reactome", {}).get(
+                    "file", {}).get("pathways relation"),
+                file_accession_map=configuration.get("Reactome", {}).get(
+                    "file", {}).get("accession map"),
                 file_uniprot=configuration.get("UniProt", {}).get("file"))
 
         else:
@@ -1077,11 +1182,12 @@ def process_workflow(identifier: str, configuration: Mapping[str, Any]) -> None:
                 organism=configuration["Reactome network"].get(
                     "organism", 9606),
                 file_pathways=configuration.get("Reactome",
-                                                {}).get("file pathways"),
-                file_pathways_relation=configuration.get(
-                    "Reactome", {}).get("file pathways relation"),
-                file_accession_map=configuration.get(
-                    "Reactome", {}).get("file accession map"),
+                                                {}).get("file",
+                                                        {}).get("pathways"),
+                file_pathways_relation=configuration.get("Reactome", {}).get(
+                    "file", {}).get("pathways relation"),
+                file_accession_map=configuration.get("Reactome", {}).get(
+                    "file", {}).get("accession map"),
                 file_uniprot=configuration.get("UniProt", {}).get("file"))
 
         file = reactome_network.export(pathway_network,
@@ -1259,11 +1365,13 @@ def process_workflow(identifier: str, configuration: Mapping[str, Any]) -> None:
                             "namespaces", [])
                     ],
                     file_ontology=configuration.get("Gene Ontology",
-                                                    {}).get("file ontology"),
-                    file_annotation=configuration.get(
-                        "Gene Ontology", {}).get("file annotation"),
+                                                    {}).get("file",
+                                                            {}).get("ontology"),
+                    file_annotation=configuration.get("Gene Ontology", {}).get(
+                        "file", {}).get("annotation"),
                     file_annotation_isoform=configuration.get(
-                        "Gene Ontology", {}).get("file annotation isoform"),
+                        "Gene Ontology", {}).get("file",
+                                                 {}).get("annotation isoform"),
                     file_uniprot=configuration.get("UniProt", {}).get("file"))
 
                 for (term, name), (p, prt) in sorted(
@@ -1297,11 +1405,13 @@ def process_workflow(identifier: str, configuration: Mapping[str, Any]) -> None:
                             "namespaces", [])
                     ],
                     file_ontology=configuration.get("Gene Ontology",
-                                                    {}).get("file ontology"),
-                    file_annotation=configuration.get(
-                        "Gene Ontology", {}).get("file annotation"),
+                                                    {}).get("file",
+                                                            {}).get("ontology"),
+                    file_annotation=configuration.get("Gene Ontology", {}).get(
+                        "file", {}).get("annotation"),
                     file_annotation_isoform=configuration.get(
-                        "Gene Ontology", {}).get("file annotation isoform"),
+                        "Gene Ontology", {}).get("file",
+                                                 {}).get("annotation isoform"),
                     file_uniprot=configuration.get("UniProt", {}).get("file"))
 
                 for (term,
@@ -1464,11 +1574,13 @@ def process_workflow(identifier: str, configuration: Mapping[str, Any]) -> None:
                         ["Gene Ontology enrichment"].get("namespaces", [])
                     ],
                     file_ontology=configuration.get("Gene Ontology",
-                                                    {}).get("file ontology"),
-                    file_annotation=configuration.get(
-                        "Gene Ontology", {}).get("file annotation"),
+                                                    {}).get("file",
+                                                            {}).get("ontology"),
+                    file_annotation=configuration.get("Gene Ontology", {}).get(
+                        "file", {}).get("annotation"),
                     file_annotation_isoform=configuration.get(
-                        "Gene Ontology", {}).get("file annotation isoform"),
+                        "Gene Ontology", {}).get("file",
+                                                 {}).get("annotation isoform"),
                     file_uniprot=configuration.get("UniProt", {}).get("file"))
 
                 for k, community in enumerate(sorted(
@@ -1514,11 +1626,13 @@ def process_workflow(identifier: str, configuration: Mapping[str, Any]) -> None:
                         ["Gene Ontology enrichment"].get("namespaces", [])
                     ],
                     file_ontology=configuration.get("Gene Ontology",
-                                                    {}).get("file ontology"),
-                    file_annotation=configuration.get(
-                        "Gene Ontology", {}).get("file annotation"),
+                                                    {}).get("file",
+                                                            {}).get("ontology"),
+                    file_annotation=configuration.get("Gene Ontology", {}).get(
+                        "file", {}).get("annotation"),
                     file_annotation_isoform=configuration.get(
-                        "Gene Ontology", {}).get("file annotation isoform"),
+                        "Gene Ontology", {}).get("file",
+                                                 {}).get("annotation isoform"),
                     file_uniprot=configuration.get("UniProt", {}).get("file"))
 
                 for k, community in enumerate(sorted(
@@ -1658,9 +1772,10 @@ def process_workflow(identifier: str, configuration: Mapping[str, Any]) -> None:
                     organism=configuration["Reactome enrichment"].get(
                         "organism", 9606),
                     file_pathways=configuration.get("Reactome",
-                                                    {}).get("file pathways"),
-                    file_accession_map=configuration.get(
-                        "Reactome", {}).get("file accession map"),
+                                                    {}).get("file",
+                                                            {}).get("pathways"),
+                    file_accession_map=configuration.get("Reactome", {}).get(
+                        "file", {}).get("accession map"),
                     file_uniprot=configuration.get("UniProt", {}).get("file"))
 
                 for (pathway, name), (p, prt) in sorted(
@@ -1688,9 +1803,10 @@ def process_workflow(identifier: str, configuration: Mapping[str, Any]) -> None:
                     organism=configuration["Reactome enrichment"].get(
                         "organism", 9606),
                     file_pathways=configuration.get("Reactome",
-                                                    {}).get("file pathways"),
-                    file_accession_map=configuration.get(
-                        "Reactome", {}).get("file accession map"),
+                                                    {}).get("file",
+                                                            {}).get("pathways"),
+                    file_accession_map=configuration.get("Reactome", {}).get(
+                        "file", {}).get("accession map"),
                     file_uniprot=configuration.get("UniProt", {}).get("file"))
 
                 for (pathway, name), (p, prt) in sorted(
@@ -1841,9 +1957,10 @@ def process_workflow(identifier: str, configuration: Mapping[str, Any]) -> None:
                     organism=configuration["community detection"]
                     ["Reactome enrichment"].get("organism", 9606),
                     file_pathways=configuration.get("Reactome",
-                                                    {}).get("file pathways"),
-                    file_accession_map=configuration.get(
-                        "Reactome", {}).get("file accession map"),
+                                                    {}).get("file",
+                                                            {}).get("pathways"),
+                    file_accession_map=configuration.get("Reactome", {}).get(
+                        "file", {}).get("accession map"),
                     file_uniprot=configuration.get("UniProt", {}).get("file"))
 
                 for k, community in enumerate(sorted(
@@ -1883,9 +2000,10 @@ def process_workflow(identifier: str, configuration: Mapping[str, Any]) -> None:
                     organism=configuration["community detection"]
                     ["Reactome enrichment"].get("organism", 9606),
                     file_pathways=configuration.get("Reactome",
-                                                    {}).get("file pathways"),
-                    file_accession_map=configuration.get(
-                        "Reactome", {}).get("file accession map"),
+                                                    {}).get("file",
+                                                            {}).get("pathways"),
+                    file_accession_map=configuration.get("Reactome", {}).get(
+                        "file", {}).get("accession map"),
                     file_uniprot=configuration.get("UniProt", {}).get("file"))
 
                 for k, community in enumerate(sorted(
