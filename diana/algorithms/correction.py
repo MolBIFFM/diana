@@ -19,12 +19,14 @@ def benjamini_hochberg(p: Mapping[Hashable, float]) -> dict[Hashable, float]:
 
     p_sorted = dict(sorted(p.items(), key=lambda item: item[1], reverse=True))
 
+    # Ensure the order of p-values is maintained by adjustment.
     pj = 0.0
     for i, (key, pi) in enumerate(p_sorted.items()):
         if i and pi / (m - i) > pj / (m - i + 1):
             p_sorted[key] = pj * (m - i) / (m - i + 1)
         pj = p_sorted[key]
 
+    # Rescale the p-values to adjust for multiple testing.
     return {
         key: min(m * pi / (m - i), 1.0)
         for i, (key, pi) in enumerate(p_sorted.items())
@@ -49,12 +51,14 @@ def benjamini_yekutieli(p: Mapping[Hashable, float]) -> dict[Hashable, float]:
 
     p_sorted = dict(sorted(p.items(), key=lambda item: item[1], reverse=True))
 
+    # Ensure the order of p-values is maintained by adjustment.
     pj = 0.0
     for i, (key, pi) in enumerate(p_sorted.items()):
         if i and pi / (m - i) > pj / (m - i + 1):
             p_sorted[key] = pj * (m - i) / (m - i + 1)
         pj = p_sorted[key]
 
+    # Rescale the p-values to adjust for multiple testing.
     return {
         key: min(m * l * pi / (m - i), 1.0)
         for i, (key, pi) in enumerate(p_sorted.items())
@@ -78,12 +82,14 @@ def holm(p: Mapping[Hashable, float]) -> dict[Hashable, float]:
 
     p_sorted = dict(sorted(p.items(), key=lambda item: item[1]))
 
+    # Ensure the order of p-values is maintained by adjustment.
     pj = 0.0
     for i, (key, pi) in enumerate(p_sorted.items()):
         if i and (m - i) * pi < (m - i - 1) * pj:
             p_sorted[key] = (m - i - 1) * pj / (m - i)
         pj = p_sorted[key]
 
+    # Rescale the p-values to adjust for multiple testing.
     return {
         key: min((m - i) * pi, 1.0)
         for i, (key, pi) in enumerate(p_sorted.items())
@@ -106,6 +112,7 @@ def hommel(p: Mapping[Hashable, float]) -> dict[Hashable, float]:
     m = len(p)
     l = sum(1 / k for k in range(1, m + 1))
 
+    # Rescale the p-values to adjust for multiple testing.
     return {
         key: min(m * l * pi / i, 1.0) for i, (key, pi) in enumerate(
             sorted(p.items(), key=lambda item: item[1]), start=1)

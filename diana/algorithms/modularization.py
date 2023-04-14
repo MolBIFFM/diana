@@ -52,6 +52,8 @@ def clauset_newman_moore(network: nx.Graph,
 
     a = {i: k[i] / (2.0 * m) for i in adj_matrix}
 
+    # While modularity can be increased progressively merge the two connected
+    # communities yielding the largest increase in modularity.
     max_entry = -1.0
     for i in delta_q:
         for j in delta_q[i]:
@@ -144,6 +146,9 @@ def louvain(network: nx.Graph,
     """
     communities = [{i: {i} for i in network.nodes()}]
 
+    # While modularity can be increased iteratively move each node to its
+    # adjacent community that maximizes increase in modularity and subsequently
+    # aggregate each community into a single node.
     community_aggregation = True
     while community_aggregation:
         community_aggregation = False
