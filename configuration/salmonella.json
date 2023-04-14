@@ -1,6 +1,6 @@
 {
   "salmonella": {
-    "MS": {
+    "mass spectrometry": {
       "30": {
         "P": {
           "file": "data/salmonella/phosphorylation/Supplementary_Table_01.xlsx",
@@ -103,13 +103,13 @@
     },
     "Cytoscape": {
       "bar chart": {
-        "PTMs": ["P", "U"]
+        "post-translational modifications": ["P", "U"]
       },
       "node color": {
-        "PTMs": ["P", "U"]
+        "post-translational modifications": ["P", "U"]
       },
       "node shape": {
-        "PTMs": ["P", "U"]
+        "post-translational modifications": ["P", "U"]
       }
     },
     "Gene Ontology enrichment": {
@@ -119,10 +119,10 @@
       "p": 0.05
     },
     "Gene Ontology network": {
-      "PTMs": ["P", "U"]
+      "post-translational modifications": ["P", "U"]
     },
     "Reactome network": {
-      "PTMs": ["P", "U"]
+      "post-translational modifications": ["P", "U"]
     },
     "community detection": {
       "Gene Ontology enrichment": {

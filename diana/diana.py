@@ -35,26 +35,27 @@ def process_workflow(identifier: str, configuration: Mapping[str, Any]) -> None:
     logger = logging.getLogger(identifier)
     network = protein_interaction_network.get_network()
 
-    for time in configuration.get("MS", {}):
-        for modification in configuration["MS"][time]:
-            if not (configuration["MS"][time][modification].get("file") and
-                    os.path.isfile(
-                        configuration["MS"][time][modification]["file"]) and
-                    configuration["MS"][time][modification].get(
-                        "accession column")):
-                if not configuration["MS"][time][modification].get("file"):
+    for time in configuration.get("mass spectrometry", {}):
+        for modification in configuration["mass spectrometry"][time]:
+            if not (configuration["mass spectrometry"][time][modification].get(
+                    "file") and os.path.isfile(
+                        configuration["mass spectrometry"][time][modification]
+                        ["file"]) and configuration["mass spectrometry"][time]
+                    [modification].get("accession column")):
+                if not configuration["mass spectrometry"][time][
+                        modification].get("file"):
                     logger.warning(
                         "File for modification %s at time %s is not specified.",
                         modification, time)
 
-                elif not os.path.isfile(
-                        configuration["MS"][time][modification]["file"]):
+                elif not os.path.isfile(configuration["mass spectrometry"][time]
+                                        [modification]["file"]):
                     logger.warning(
                         "File specified for modification %s at time %s does "
                         "not exist.", modification, time)
 
-                elif not configuration["MS"][time][modification].get(
-                        "accession column"):
+                elif not configuration["mass spectrometry"][time][
+                        modification].get("accession column"):
                     logger.warning(
                         "Accession column for modification %s at time %s is "
                         "not specified.", modification, time)
@@ -64,78 +65,85 @@ def process_workflow(identifier: str, configuration: Mapping[str, Any]) -> None:
             logger.info(
                 "Adding proteins for modification %s at time %s from %s.",
                 modification, time,
-                configuration["MS"][time][modification]["file"])
+                configuration["mass spectrometry"][time][modification]["file"])
 
-            if configuration["MS"][time][modification].get("position column"):
+            if configuration["mass spectrometry"][time][modification].get(
+                    "position column"):
                 protein_interaction_network.add_sites_from_table(
                     network,
-                    file=configuration["MS"][time][modification]["file"],
-                    protein_accession_column=configuration["MS"][time]
-                    [modification]["accession column"],
+                    file=configuration["mass spectrometry"][time][modification]
+                    ["file"],
+                    protein_accession_column=configuration["mass spectrometry"]
+                    [time][modification]["accession column"],
                     protein_accession_format=re.compile(
-                        configuration["MS"][time][modification].get(
-                            "accession format", "^(.+)$")),
-                    position_column=configuration["MS"][time][modification]
-                    ["position column"],
+                        configuration["mass spectrometry"][time]
+                        [modification].get("accession format", "^(.+)$")),
+                    position_column=configuration["mass spectrometry"][time]
+                    [modification]["position column"],
                     position_format=re.compile(
-                        configuration["MS"][time][modification].get(
-                            "position format", "^(.+)$")),
-                    replicate_columns=configuration["MS"][time][modification]
-                    ["replicate columns"],
+                        configuration["mass spectrometry"][time]
+                        [modification].get("position format", "^(.+)$")),
+                    replicate_columns=configuration["mass spectrometry"][time]
+                    [modification]["replicate columns"],
                     replicate_format=re.compile(
-                        configuration["MS"][time][modification].get(
-                            "replicate format", "^(.+)$")),
-                    sheet_name=configuration["MS"][time][modification].get(
-                        "sheet", 1) - 1 if isinstance(
-                            configuration["MS"][time][modification].get(
-                                "sheet", 1), int) else
-                    configuration["MS"][time][modification]["sheet"],
-                    header=configuration["MS"][time][modification].get(
-                        "header", 1) - 1,
+                        configuration["mass spectrometry"][time]
+                        [modification].get("replicate format", "^(.+)$")),
+                    sheet_name=configuration["mass spectrometry"][time]
+                    [modification].get("sheet", 1) - 1 if isinstance(
+                        configuration["mass spectrometry"][time]
+                        [modification].get("sheet", 1),
+                        int) else configuration["mass spectrometry"][time]
+                    [modification]["sheet"],
+                    header=configuration["mass spectrometry"][time]
+                    [modification].get("header", 1) - 1,
                     time=int(time) if time.isnumeric() else 0,
                     modification=modification,
-                    number_sites=configuration["MS"][time][modification].get(
-                        "sites", 5),
-                    number_replicates=configuration["MS"][time]
+                    number_sites=configuration["mass spectrometry"][time]
+                    [modification].get("sites", 5),
+                    number_replicates=configuration["mass spectrometry"][time]
                     [modification].get("replicates", 1),
                     replicate_average=average.REPLICATE_AVERAGE[
-                        configuration["MS"][time][modification].get(
-                            "replicate average", "mean")],
-                    measurement_score=score.LOGARITHM[configuration["MS"][time][
-                        modification].get("logarithm")],
+                        configuration["mass spectrometry"][time]
+                        [modification].get("replicate average", "mean")],
+                    measurement_score=score.LOGARITHM[
+                        configuration["mass spectrometry"][time]
+                        [modification].get("logarithm")],
                     site_prioritization=prioritization.SITE_PRIORITIZATION[
-                        configuration["MS"][time][modification].get(
-                            "site prioritization", "absolute")],
+                        configuration["mass spectrometry"][time]
+                        [modification].get("site prioritization", "absolute")],
                     site_order=order.SITE_ORDER[
-                        configuration["MS"][time][modification].get(
-                            "site order", "measurement")])
+                        configuration["mass spectrometry"][time]
+                        [modification].get("site order", "measurement")])
             else:
                 protein_interaction_network.add_proteins_from_table(
                     network,
-                    file=configuration["MS"][time][modification]["file"],
-                    protein_accession_column=configuration["MS"][time]
-                    [modification]["accession column"],
+                    file=configuration["mass spectrometry"][time][modification]
+                    ["file"],
+                    protein_accession_column=configuration["mass spectrometry"]
+                    [time][modification]["accession column"],
                     protein_accession_format=re.compile(
-                        configuration["MS"][time][modification].get(
-                            "accession format", "^(.+)$")),
-                    replicate_columns=configuration["MS"][time][modification]
-                    ["replicate columns"],
+                        configuration["mass spectrometry"][time]
+                        [modification].get("accession format", "^(.+)$")),
+                    replicate_columns=configuration["mass spectrometry"][time]
+                    [modification]["replicate columns"],
                     replicate_format=re.compile(
-                        configuration["MS"][time][modification].get(
-                            "replicate format", "^(.+)$")),
-                    sheet_name=configuration["MS"][time][modification].get(
-                        "sheet", 1) - 1 if isinstance(
-                            configuration["MS"][time][modification].get(
-                                "sheet", 1), int) else
-                    configuration["MS"][time][modification]["sheet"],
-                    header=configuration["MS"][time][modification].get(
-                        "header", 1) - 1,
+                        configuration["mass spectrometry"][time]
+                        [modification].get("replicate format", "^(.+)$")),
+                    sheet_name=configuration["mass spectrometry"][time]
+                    [modification].get("sheet", 1) - 1 if isinstance(
+                        configuration["mass spectrometry"][time]
+                        [modification].get("sheet", 1),
+                        int) else configuration["mass spectrometry"][time]
+                    [modification]["sheet"],
+                    header=configuration["mass spectrometry"][time]
+                    [modification].get("header", 1) - 1,
                     time=int(time) if time.isnumeric() else 0,
                     modification=modification,
-                    number_replicates=configuration["MS"][time]
+                    number_replicates=configuration["mass spectrometry"][time]
                     [modification].get("replicates", 1),
-                    measurement_score=score.LOGARITHM[configuration["MS"][time][
-                        modification].get("logarithm")])
+                    measurement_score=score.LOGARITHM[
+                        configuration["mass spectrometry"][time]
+                        [modification].get("logarithm")])
 
     for i, item in enumerate(configuration.get("networks", {})):
         if not (item.get("network") and os.path.isfile(item["network"])):
@@ -179,13 +187,15 @@ def process_workflow(identifier: str, configuration: Mapping[str, Any]) -> None:
 
     nodes_to_remove = set(network.nodes())
     for organism in set(
-            configuration.get("MS", {}).get(time, {}).get(modification, {}).get(
-                "organism", 9606) for time in configuration.get("MS", {}) for
-            modification in configuration.get("MS", {}).get(time, {})) | set(
-                item.get("organism", 9606)
-                for item in configuration.get("networks", {})) | set(
+            configuration.get("mass spectrometry", {}).get(time, {}).get(
+                modification, {}).get("organism", 9606)
+            for time in configuration.get("mass spectrometry", {})
+            for modification in configuration.get("mass spectrometry", {}).get(
+                time, {})) | set(
                     item.get("organism", 9606)
-                    for item in configuration.get("proteins", {})):
+                    for item in configuration.get("networks", {})) | set(
+                        item.get("organism", 9606)
+                        for item in configuration.get("proteins", {})):
         nodes_to_remove.intersection_update(
             protein_interaction_network.map_proteins(network,
                                                      organism,
@@ -218,8 +228,7 @@ def process_workflow(identifier: str, configuration: Mapping[str, Any]) -> None:
                             "BioGRID"].get("file"):
                         logger.warning(
                             "File specified for protein-protein interactions "
-                            "from BioGRID does not exist."
-                        )
+                            "from BioGRID does not exist.")
 
                     logger.info("Adding neighbors of order %d from BioGRID.",
                                 neighbors)
@@ -265,8 +274,7 @@ def process_workflow(identifier: str, configuration: Mapping[str, Any]) -> None:
                             "CORUM"].get("file"):
                         logger.warning(
                             "File specified for protein-protein interactions "
-                            "from CORUM does not exist."
-                        )
+                            "from CORUM does not exist.")
 
                     logger.info("Adding neighbors of order %d from CORUM.",
                                 neighbors)
@@ -299,8 +307,7 @@ def process_workflow(identifier: str, configuration: Mapping[str, Any]) -> None:
                             "IntAct"].get("file"):
                         logger.warning(
                             "File specified for protein-protein interactions "
-                            "from IntAct does not exist."
-                        )
+                            "from IntAct does not exist.")
 
                     logger.info("Adding neighbors of order %d from IntAct.",
                                 neighbors)
@@ -341,8 +348,7 @@ def process_workflow(identifier: str, configuration: Mapping[str, Any]) -> None:
                             "MINT"].get("file"):
                         logger.warning(
                             "File specified for protein-protein interactions "
-                            "from MINT does not exist."
-                        )
+                            "from MINT does not exist.")
 
                     logger.info("Adding neighbors of order %d from MINT.",
                                 neighbors)
@@ -383,8 +389,7 @@ def process_workflow(identifier: str, configuration: Mapping[str, Any]) -> None:
                             "Reactome"].get("file"):
                         logger.warning(
                             "File specified for protein-protein interactions "
-                            "from Reactome does not exist."
-                        )
+                            "from Reactome does not exist.")
 
                     logger.info("Adding neighbors of order %d from Reactome.",
                                 neighbors)
@@ -422,8 +427,7 @@ def process_workflow(identifier: str, configuration: Mapping[str, Any]) -> None:
                             "STRING"].get("file"):
                         logger.warning(
                             "File specified for protein-protein interactions "
-                            "from STRING does not exist."
-                        )
+                            "from STRING does not exist.")
 
                     logger.info("Adding neighbors of order %d from STRING.",
                                 neighbors)
@@ -510,8 +514,7 @@ def process_workflow(identifier: str, configuration: Mapping[str, Any]) -> None:
                         "file"):
                     logger.warning(
                         "File specified for protein-protein interactions from "
-                        "BioGRID does not exist."
-                    )
+                        "BioGRID does not exist.")
 
                 logger.info("Adding protein-protein interactions from BioGRID.")
 
@@ -551,8 +554,7 @@ def process_workflow(identifier: str, configuration: Mapping[str, Any]) -> None:
                         "file"):
                     logger.warning(
                         "File specified for protein-protein interactions from "
-                        "CORUM does not exist."
-                    )
+                        "CORUM does not exist.")
 
                 logger.info("Adding protein-protein interactions from CORUM.")
 
@@ -579,8 +581,7 @@ def process_workflow(identifier: str, configuration: Mapping[str, Any]) -> None:
                         "file"):
                     logger.warning(
                         "File specified for protein-protein interactions from "
-                        "IntAct does not exist."
-                    )
+                        "IntAct does not exist.")
 
                 logger.info("Adding protein-protein interactions from IntAct.")
 
@@ -613,8 +614,7 @@ def process_workflow(identifier: str, configuration: Mapping[str, Any]) -> None:
                         "file"):
                     logger.warning(
                         "File specified for protein-protein interactions from "
-                        "MINT does not exist."
-                    )
+                        "MINT does not exist.")
 
                 logger.info("Adding protein-protein interactions from MINT.")
 
@@ -647,8 +647,7 @@ def process_workflow(identifier: str, configuration: Mapping[str, Any]) -> None:
                         "Reactome"].get("file"):
                     logger.warning(
                         "File specified for protein-protein interactions from "
-                        "Reactome does not exist."
-                    )
+                        "Reactome does not exist.")
 
                 logger.info(
                     "Adding protein-protein interactions from Reactome.")
@@ -680,8 +679,7 @@ def process_workflow(identifier: str, configuration: Mapping[str, Any]) -> None:
                         "file"):
                     logger.warning(
                         "File specified for protein-protein interactions from "
-                        "STRING does not exist."
-                    )
+                        "STRING does not exist.")
 
                 logger.info("Adding protein-protein interactions from STRING.")
 
@@ -785,13 +783,17 @@ def process_workflow(identifier: str, configuration: Mapping[str, Any]) -> None:
                 styles = protein_interaction_network_style.get_styles(
                     network,
                     node_shape_modifications=configuration["Cytoscape"].get(
-                        "node shape", {}).get("PTMs", []),
+                        "node shape",
+                        {}).get("post-translational modifications", []),
                     node_color_modifications=configuration["Cytoscape"].get(
-                        "node color", {}).get("PTMs", []),
+                        "node color",
+                        {}).get("post-translational modifications", []),
                     node_size_modification=configuration["Cytoscape"].get(
-                        "node size", {}).get("PTM", None),
+                        "node size", {}).get("post-translational modification",
+                                             None),
                     bar_chart_modifications=configuration["Cytoscape"].get(
-                        "bar chart", {}).get("PTMs", []),
+                        "bar chart", {}).get("post-translational modifications",
+                                             []),
                     measurement_score={
                         modification: score.MEASUREMENT_SCORE.get(
                             measurement_score, score.MEASUREMENT_SCORE[None])
@@ -865,8 +867,7 @@ def process_workflow(identifier: str, configuration: Mapping[str, Any]) -> None:
         else:
             logger.warning(
                 "File specified for Gene Ontology isoform annotation does not "
-                "exist."
-            )
+                "exist.")
 
     if configuration.get("Reactome", {}).get("file", {}).get("pathways"):
         if os.path.isfile(configuration["Reactome"]["file"]["pathways"]):
@@ -895,13 +896,13 @@ def process_workflow(identifier: str, configuration: Mapping[str, Any]) -> None:
         else:
             logger.warning(
                 "File specified associations of Reactome pathways and UniProt "
-                "protein accessions does not exist."
-            )
+                "protein accessions does not exist.")
 
     if "Gene Ontology network" in configuration:
         logger.info("Assembling the Gene Ontology network.")
 
-        if "PTMs" in configuration["Gene Ontology network"]:
+        if "post-translational modifications" in configuration[
+                "Gene Ontology network"]:
             if configuration["Gene Ontology network"].get(
                     "intersection", False):
                 proteins = set(network.nodes())
@@ -909,7 +910,8 @@ def process_workflow(identifier: str, configuration: Mapping[str, Any]) -> None:
                 proteins = set()
 
             for time in protein_interaction_network.get_times(network):
-                for m in configuration["Gene Ontology network"].get("PTMs", []):
+                for m in configuration["Gene Ontology network"].get(
+                        "post-translational modifications", []):
                     if m in protein_interaction_network.get_modifications(
                             network, time):
                         measurement_range = (
@@ -1069,14 +1071,16 @@ def process_workflow(identifier: str, configuration: Mapping[str, Any]) -> None:
     if "Reactome network" in configuration:
         logger.info("Assembling the Reactome network.")
 
-        if "PTMs" in configuration["Reactome network"]:
+        if "post-translational modifications" in configuration[
+                "Reactome network"]:
             if configuration["Reactome network"].get("intersection", False):
                 proteins = set(network.nodes())
             else:
                 proteins = set()
 
             for time in protein_interaction_network.get_times(network):
-                for m in configuration["Reactome network"].get("PTMs", []):
+                for m in configuration["Reactome network"].get(
+                        "post-translational modifications", []):
                     if m in protein_interaction_network.get_modifications(
                             network, time):
                         measurement_range = (
@@ -1257,7 +1261,8 @@ def process_workflow(identifier: str, configuration: Mapping[str, Any]) -> None:
                 "number of associated proteins", "associated proteins"
             ])
 
-            if "PTMs" in configuration.get("Gene Ontology enrichment", {}):
+            if "post-translational modifications" in configuration.get(
+                    "Gene Ontology enrichment", {}):
                 if configuration["Gene Ontology enrichment"].get(
                         "intersection", False):
                     proteins = set(network.nodes())
@@ -1266,7 +1271,7 @@ def process_workflow(identifier: str, configuration: Mapping[str, Any]) -> None:
 
                 for time in protein_interaction_network.get_times(network):
                     for m in configuration["Gene Ontology enrichment"].get(
-                            "PTMs", []):
+                            "post-translational modifications", []):
                         if m in protein_interaction_network.get_modifications(
                                 network, time):
                             measurement_range = (
@@ -1427,8 +1432,8 @@ def process_workflow(identifier: str, configuration: Mapping[str, Any]) -> None:
                             len(prt), " ".join(sorted(prt))
                         ])
 
-            if "PTMs" in configuration.get("community detection",
-                                           {}).get("Gene Ontology enrichment",
+            if "post-translational modifications" in configuration.get(
+                    "community detection", {}).get("Gene Ontology enrichment",
                                                    {}):
                 if configuration["community detection"][
                         "Gene Ontology enrichment"].get("intersection", False):
@@ -1441,7 +1446,8 @@ def process_workflow(identifier: str, configuration: Mapping[str, Any]) -> None:
 
                 for time in protein_interaction_network.get_times(network):
                     for m in configuration["community detection"][
-                            "Gene Ontology enrichment"].get("PTMs", []):
+                            "Gene Ontology enrichment"].get(
+                                "post-translational modifications", []):
                         if m in protein_interaction_network.get_modifications(
                                 network, time):
                             for community in subsets:
@@ -1673,7 +1679,8 @@ def process_workflow(identifier: str, configuration: Mapping[str, Any]) -> None:
                 "number of associated proteins", "associated proteins"
             ])
 
-            if "PTMs" in configuration.get("Reactome enrichment", {}):
+            if "post-translational modifications" in configuration.get(
+                    "Reactome enrichment", {}):
                 if configuration["Reactome enrichment"].get(
                         "intersection", False):
                     proteins = set(network.nodes())
@@ -1682,7 +1689,7 @@ def process_workflow(identifier: str, configuration: Mapping[str, Any]) -> None:
 
                 for time in protein_interaction_network.get_times(network):
                     for m in configuration["Reactome enrichment"].get(
-                            "PTMs", []):
+                            "post-translational modifications", []):
                         if m in protein_interaction_network.get_modifications(
                                 network, time):
                             measurement_range = (
@@ -1819,8 +1826,8 @@ def process_workflow(identifier: str, configuration: Mapping[str, Any]) -> None:
                             len(prt), " ".join(sorted(prt))
                         ])
 
-            if "PTMs" in configuration.get("community detection",
-                                           {}).get("Reactome enrichment", {}):
+            if "post-translational modifications" in configuration.get(
+                    "community detection", {}).get("Reactome enrichment", {}):
                 if configuration["community detection"][
                         "Reactome enrichment"].get("intersection", False):
                     subsets = {
@@ -1832,7 +1839,8 @@ def process_workflow(identifier: str, configuration: Mapping[str, Any]) -> None:
 
                 for time in protein_interaction_network.get_times(network):
                     for m in configuration["community detection"][
-                            "Reactome enrichment"].get("PTMs", []):
+                            "Reactome enrichment"].get(
+                                "post-translational modifications", []):
                         if m in protein_interaction_network.get_modifications(
                                 network, time):
                             for community in subsets:
@@ -2042,7 +2050,8 @@ def process_workflow(identifier: str, configuration: Mapping[str, Any]) -> None:
             measurement_enrichment_writer = csv.writer(
                 measurement_enrichment_table, dialect="excel-tab")
             measurement_enrichment_writer.writerow([
-                "community", "time", "PTM", "p-value", "number of proteins",
+                "community", "time", "post-translational modification",
+                "p-value", "number of proteins",
                 "number of associated proteins", "associated proteins"
             ])
 
@@ -2130,8 +2139,10 @@ def process_workflow(identifier: str, configuration: Mapping[str, Any]) -> None:
                   encoding="utf-8") as measurement_location_table:
             measurement_location_writer = csv.writer(measurement_location_table,
                                                      dialect="excel-tab")
-            measurement_location_writer.writerow(
-                ["community", "time", "PTM", "p-value", "number of proteins"])
+            measurement_location_writer.writerow([
+                "community", "time", "post-translational modification",
+                "p-value", "number of proteins"
+            ])
 
             location = protein_interaction_network.get_location(
                 network,

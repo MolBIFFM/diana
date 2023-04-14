@@ -172,8 +172,8 @@ flowchart
 ```
 
 In the interest of supporting different averages and network analysis of
-comparable quantitative proteomics data without site-specificity, the
-organization of measurements by modification site is optional.
+comparable quantitative data without site-specificity, the organization of
+measurements by modification site is optional.
 
 ```mermaid
 flowchart
@@ -191,9 +191,9 @@ analysis can be used as input.
 ```json
 {
   "configuration": {
-    "MS": {
+    "mass spectrometry": {
       "0": {
-        "PTM": {
+        "post-translational modification": {
           "organism": 9606
         }
       }
@@ -217,9 +217,9 @@ completely supported setting is `9606`, corresponding to Homo sapiens.
 ```json
 {
   "configuration": {
-    "MS": {
+    "mass spectrometry": {
       "0": {
-        "PTM": {
+        "post-translational modification": {
           "file": null
         }
       }
@@ -233,9 +233,9 @@ data.
 ```json
 {
   "configuration": {
-    "MS": {
+    "mass spectrometry": {
       "0": {
-        "PTM": {
+        "post-translational modification": {
           "accession column": null
         }
       }
@@ -251,9 +251,9 @@ secondary accessions.
 ```json
 {
   "configuration": {
-    "MS": {
+    "mass spectrometry": {
       "0": {
-        "PTM": {
+        "post-translational modification": {
           "accession format": "^(.+)$"
         }
       }
@@ -268,9 +268,9 @@ the entry. The default setting is `"^(.+)$"`, corresponding to the entire entry.
 ```json
 {
   "configuration": {
-    "MS": {
+    "mass spectrometry": {
       "0": {
-        "PTM": {
+        "post-translational modification": {
           "sheet": 1
         }
       }
@@ -284,9 +284,9 @@ corresponding to the first spreadsheet in the file.
 ```json
 {
   "configuration": {
-    "MS": {
+    "mass spectrometry": {
       "0": {
-        "PTM": {
+        "post-translational modification": {
           "header": 1
         }
       }
@@ -300,9 +300,9 @@ setting is `1`, corresponding to the first line of the sheet.
 ```json
 {
   "configuration": {
-    "MS": {
+    "mass spectrometry": {
       "0": {
-        "PTM": {
+        "post-translational modification": {
           "position column": null
         }
       }
@@ -320,9 +320,9 @@ associated with the corresponding protein.
 ```json
 {
   "configuration": {
-    "MS": {
+    "mass spectrometry": {
       "0": {
-        "PTM": {
+        "post-translational modification": {
           "position format": "^(.+)$"
         }
       }
@@ -337,9 +337,9 @@ setting is `"^(.+)$"`, corresponding to the entire entry.
 ```json
 {
   "configuration": {
-    "MS": {
+    "mass spectrometry": {
       "0": {
-        "PTM": {
+        "post-translational modification": {
           "replicate columns": []
         }
       }
@@ -353,9 +353,9 @@ A list of columns to extract replicate measurements from. The default setting is
 ```json
 {
   "configuration": {
-    "MS": {
+    "mass spectrometry": {
       "0": {
-        "PTM": {
+        "post-translational modification": {
           "replicate format": "^(.+)$"
         }
       }
@@ -370,9 +370,9 @@ setting is `"^(.+)$"`, corresponding to the entire entry.
 ```json
 {
   "configuration": {
-    "MS": {
+    "mass spectrometry": {
       "0": {
-        "PTM": {
+        "post-translational modification": {
           "replicates": 1
         }
       }
@@ -386,9 +386,9 @@ measurement. The default setting is `1`.
 ```json
 {
   "configuration": {
-    "MS": {
+    "mass spectrometry": {
       "0": {
-        "PTM": {
+        "post-translational modification": {
           "sites": 5
         }
       }
@@ -402,9 +402,9 @@ largest absolute measurement. The default setting is `5`.
 ```json
 {
   "configuration": {
-    "MS": {
+    "mass spectrometry": {
       "0": {
-        "PTM": {
+        "post-translational modification": {
           "site prioritization": "absolute"
         }
       }
@@ -421,9 +421,9 @@ measurements constituting either increase or decrease, respectively.
 ```json
 {
   "configuration": {
-    "MS": {
+    "mass spectrometry": {
       "0": {
-        "PTM": {
+        "post-translational modification": {
           "site order": "measurement"
         }
       }
@@ -439,9 +439,9 @@ logarithm ordering sites in ascending order. Available settings are
 ```json
 {
   "configuration": {
-    "MS": {
+    "mass spectrometry": {
       "0": {
-        "PTM": {
+        "post-translational modification": {
           "replicate average": "mean"
         }
       }
@@ -459,9 +459,9 @@ setting is `"mean"`. Available settings are `"mean"`, `"median"`, `"maximum"`,
 ```json
 {
   "configuration": {
-    "MS": {
+    "mass spectrometry": {
       "0": {
-        "PTM": {
+        "post-translational modification": {
           "logarithm": null
         }
       }
@@ -1049,7 +1049,7 @@ exported.
   "configuration": {
     "Cytoscape": {
       "site average": {
-        "PTM": "maximum absolute logarithm"
+        "post-translational modification": "maximum absolute logarithm"
       }
     }
   }
@@ -1067,7 +1067,7 @@ corresponding to the largest absolute measurement. Available settings are
   "configuration": {
     "Cytoscape": {
       "replicate average": {
-        "PTM": "mean"
+        "post-translational modification": "mean"
       }
     }
   }
@@ -1085,7 +1085,7 @@ mean of replicates. Available settings are `"mean"`, `"median"`, `"maximum"`,
   "configuration": {
     "Cytoscape": {
       "score": {
-        "PTM": null
+        "post-translational modification": null
       }
     }
   }
@@ -1102,7 +1102,7 @@ across the protein-protein interaction network, if applicable.
   "configuration": {
     "Cytoscape": {
       "bar chart": {
-        "PTMs": [],
+        "post-translational modifications": [],
       }
     }
   }
@@ -1118,7 +1118,7 @@ specified.
   "configuration": {
     "Cytoscape": {
       "node color": {
-        "PTMs": [],
+        "post-translational modifications": [],
       }
     }
   }
@@ -1135,7 +1135,7 @@ specified.
     "Cytoscape": {
       "node color": {
         "measurement": {
-          "PTM": [-1.0, 1.0]
+          "post-translational modification": [-1.0, 1.0]
         }
       }
     }
@@ -1158,7 +1158,7 @@ post-translational modification.
   "configuration": {
     "Cytoscape": {
       "node shape": {
-        "PTMs": [],
+        "post-translational modifications": [],
       }
     }
   }
@@ -1173,7 +1173,7 @@ represented in order. By default, no modifications are specified.
   "configuration": {
     "Cytoscape": {
       "node size": {
-        "PTM": null,
+        "post-translational modification": null,
       }
     }
   }
@@ -1290,10 +1290,10 @@ completely supported setting is `9606`, corresponding to Homo sapiens.
 {
   "configuration": {
     "Gene Ontology enrichment": {
-      "PTMs": []
+      "post-translational modifications": []
     },
     "Reactome enrichment": {
-      "PTMs": []
+      "post-translational modifications": []
     }
   }
 }
@@ -1311,12 +1311,12 @@ absolute or relative range of protein-specific measurements.
   "configuration": {
     "Gene Ontology enrichment": {
       "site average": {
-        "PTM": "maximum absolute logarithm"
+        "post-translational modification": "maximum absolute logarithm"
       }
     },
     "Reactome enrichment": {
       "site average": {
-        "PTM": "maximum absolute logarithm"
+        "post-translational modification": "maximum absolute logarithm"
       }
     }
   }
@@ -1334,12 +1334,12 @@ largest absolute measurement. Available settings are `"mean"`, `"median"`,
   "configuration": {
     "Gene Ontology enrichment": {
       "replicate average": {
-        "PTM": "mean"
+        "post-translational modification": "mean"
       }
     },
     "Reactome enrichment": {
       "replicate average": {
-        "PTM": "mean"
+        "post-translational modification": "mean"
       }
     }
   }
@@ -1357,12 +1357,12 @@ Available settings are `"mean"`, `"median"`, `"maximum"`,
   "configuration": {
     "Gene Ontology enrichment": {
       "score": {
-        "PTM": null
+        "post-translational modification": null
       }
     },
     "Reactome enrichment": {
       "score": {
-        "PTM": null
+        "post-translational modification": null
       }
     }
   }
@@ -1379,12 +1379,12 @@ across the protein-protein interaction network, if applicable.
   "configuration": {
     "Gene Ontology enrichment": {
       "measurement": {
-        "PTM": [-1.0, 1.0]
+        "post-translational modification": [-1.0, 1.0]
       }
     },
     "Reactome enrichment": {
       "measurement": {
-        "PTM": [-1.0, 1.0]
+        "post-translational modification": [-1.0, 1.0]
       }
     }
   }
@@ -1462,10 +1462,10 @@ of proteins from the protein-protein interaction network.
 {
   "configuration": {
     "Gene Ontology network": {
-      "PTMs": []
+      "post-translational modifications": []
     },
     "Reactome network": {
-      "PTMs": []
+      "post-translational modifications": []
     }
   }
 }
@@ -1483,12 +1483,12 @@ measurements.
   "configuration": {
     "Gene Ontology network": {
       "site average": {
-        "PTM": "maximum absolute logarithm"
+        "post-translational modification": "maximum absolute logarithm"
       }
     },
     "Reactome network": {
       "site average": {
-        "PTM": "maximum absolute logarithm"
+        "post-translational modification": "maximum absolute logarithm"
       }
     }
   }
@@ -1506,12 +1506,12 @@ absolute measurement. Available settings are `"mean"`, `"median"`, `"maximum"`,
   "configuration": {
     "Gene Ontology network": {
       "replicate average": {
-        "PTM": "mean"
+        "post-translational modification": "mean"
       }
     },
     "Reactome network": {
       "replicate average": {
-        "PTM": "mean"
+        "post-translational modification": "mean"
       }
     }
   }
@@ -1529,12 +1529,12 @@ settings are `"mean"`, `"median"`, `"maximum"`, `"maximum absolute logarithm"`,
   "configuration": {
     "Gene Ontology network": {
       "score": {
-        "PTM": null
+        "post-translational modification": null
       }
     },
     "Reactome network": {
       "score": {
-        "PTM": null
+        "post-translational modification": null
       }
     }
   }
@@ -1551,12 +1551,12 @@ across the protein-protein interaction network, if applicable.
   "configuration": {
     "Gene Ontology network": {
       "measurement": {
-        "PTM": [-1.0, 1.0]
+        "post-translational modification": [-1.0, 1.0]
       }
     },
     "Reactome network": {
       "measurement": {
-        "PTM": [-1.0, 1.0]
+        "post-translational modification": [-1.0, 1.0]
       }
     }
   }
@@ -1964,10 +1964,10 @@ The default setting is `false`. Takes precedence over `"annotation"`.
   "configuration": {
     "community detection": {
       "Gene Ontology enrichment": {
-        "PTMs": []
+        "post-translational modifications": []
       },
       "Reactome enrichment": {
-        "PTMs": []
+        "post-translational modifications": []
       }
     }
   }
@@ -1988,12 +1988,12 @@ measurements.
     "community detection": {
       "Gene Ontology enrichment": {
         "site average": {
-          "PTM": "maximum absolute logarithm"
+          "post-translational modification": "maximum absolute logarithm"
         }
       },
       "Reactome enrichment": {
         "site average": {
-          "PTM": "maximum absolute logarithm"
+          "post-translational modification": "maximum absolute logarithm"
         }
       }
     }
@@ -2013,12 +2013,12 @@ absolute measurement. Available settings are `"mean"`, `"median"`, `"maximum"`,
     "community detection": {
       "Gene Ontology enrichment": {
         "replicate average": {
-          "PTM": "mean"
+          "post-translational modification": "mean"
         }
       },
       "Reactome enrichment": {
         "replicate average": {
-          "PTM": "mean"
+          "post-translational modification": "mean"
         }
       }
     }
@@ -2038,12 +2038,12 @@ settings are `"mean"`, `"median"`, `"maximum"`, `"maximum absolute logarithm"`,
     "community detection": {
       "Gene Ontology enrichment": {
         "score": {
-          "PTM": null
+          "post-translational modification": null
         }
       },
       "Reactome enrichment": {
         "score": {
-          "PTM": null
+          "post-translational modification": null
         }
       }
     }
@@ -2062,12 +2062,12 @@ across each community of the protein-protein interaction network, if applicable.
     "community detection": {
       "Gene Ontology enrichment": {
         "measurement": {
-          "PTM": [-1.0, 1.0]
+          "post-translational modification": [-1.0, 1.0]
         }
       },
       "Reactome enrichment": {
         "measurement": {
-          "PTM": [-1.0, 1.0]
+          "post-translational modification": [-1.0, 1.0]
         }
       }
     }
@@ -2124,12 +2124,12 @@ corresponding to any namespace.
     "community detection": {
       "measurement enrichment": {
         "site average": {
-          "PTM": "maximum absolute logarithm"
+          "post-translational modification": "maximum absolute logarithm"
         }
       },
       "measurement location": {
         "site average": {
-          "PTM": "maximum absolute logarithm"
+          "post-translational modification": "maximum absolute logarithm"
         }
       }
     }
@@ -2150,12 +2150,12 @@ separately.
     "community detection": {
       "measurement enrichment": {
         "replicate average": {
-          "PTM": "mean"
+          "post-translational modification": "mean"
         }
       },
       "measurement location": {
         "replicate average": {
-          "PTM": "mean"
+          "post-translational modification": "mean"
         }
       }
     }
@@ -2175,7 +2175,7 @@ to consider replicates separately.
     "community detection": {
       "measurement enrichment": {
         "score": {
-          "PTM": null
+          "post-translational modification": null
         }
       }
     }
@@ -2194,7 +2194,7 @@ across each community of the protein-protein interaction network, if applicable.
     "community detection": {
       "measurement enrichment": {
         "measurement": {
-          "PTM": [-1.0, 1.0]
+          "post-translational modification": [-1.0, 1.0]
         }
       }
     }

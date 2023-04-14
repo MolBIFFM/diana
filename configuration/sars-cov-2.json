@@ -1,6 +1,6 @@
 {
   "sars-cov-2": {
-    "MS": {
+    "mass spectrometry": {
       "60": {
         "P": {
           "file": "data/sars-cov-2/phosphorylation/1-s2.0-S1097276520305499-mmc2.xlsx",
@@ -54,13 +54,13 @@
     },
     "Cytoscape": {
       "bar chart": {
-        "PTMs": ["P"]
+        "post-translational modifications": ["P"]
       },
       "node color": {
-        "PTMs": ["P"]
+        "post-translational modifications": ["P"]
       },
       "node shape": {
-        "PTMs": ["P"]
+        "post-translational modifications": ["P"]
       }
     },
     "Gene Ontology enrichment": {
@@ -70,10 +70,10 @@
       "p": 0.05
     },
     "Gene Ontology network": {
-      "PTMs": ["P", "U"]
+      "post-translational modifications": ["P", "U"]
     },
     "Reactome network": {
-      "PTMs": ["P", "U"]
+      "post-translational modifications": ["P", "U"]
     },
     "community detection": {
       "Gene Ontology enrichment": {

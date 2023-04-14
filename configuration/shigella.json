@@ -1,6 +1,6 @@
 {
   "shigella": {
-    "MS": {
+    "mass spectrometry": {
       "15": {
         "P": {
           "file": "data/shigella/phosphorylation/mcp.M113.029918-2.xls",
@@ -97,13 +97,13 @@
     },
     "Cytoscape": {
       "bar chart": {
-        "PTMs": ["P"]
+        "post-translational modifications": ["P"]
       },
       "node color": {
-        "PTMs": ["P"]
+        "post-translational modifications": ["P"]
       },
       "node shape": {
-        "PTMs": ["P"]
+        "post-translational modifications": ["P"]
       }
     },
     "Gene Ontology enrichment": {
@@ -113,10 +113,10 @@
       "p": 0.05
     },
     "Gene Ontology network": {
-      "PTMs": ["P"]
+      "post-translational modifications": ["P"]
     },
     "Reactome network": {
-      "PTMs": ["P"]
+      "post-translational modifications": ["P"]
     },
     "community detection": {
       "Gene Ontology enrichment": {
