@@ -891,7 +891,7 @@ def process_workflow(identifier: str, configuration: Mapping[str, Any]) -> None:
             logger.info(
                 "Parsing associations of Reactome pathways and UniProt protein "
                 "accessions from %s.",
-                configuration["Reactome"]["file"]["pathways relation"])
+                configuration["Reactome"]["file"]["accession map"])
         else:
             logger.warning(
                 "File specified associations of Reactome pathways and UniProt "
