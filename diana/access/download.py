@@ -22,12 +22,14 @@ def download_file(url: str,
         pause: The number of seconds to pause before reattempting a erroneous
             download.
     """
+    # Request using script name as user agent.
     request = urllib.request.Request(
         url,
         headers={
             "User-Agent": os.path.splitext(os.path.basename(sys.argv[0]))[0]
         })
 
+    # Download the file.
     while True:
         try:
             with urllib.request.urlopen(

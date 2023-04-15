@@ -29,8 +29,6 @@ def clauset_newman_moore(network: nx.Graph,
     Returns:
         The communities of the network.
     """
-    communities = {i: {i} for i in network.nodes()}
-
     adj_matrix = {
         i: {j: network.edges[i, j][weight] for j in nx.neighbors(network, i)
            } for i in network.nodes()
@@ -41,6 +39,7 @@ def clauset_newman_moore(network: nx.Graph,
     k = {i: sum(adj_matrix[i].values()) for i in adj_matrix}
     m = sum(k.values()) / 2.0
 
+    # Compute the increases in modularity from merging communities.
     delta_q = {
         i: {
             j: (1.0 / (2.0 * m) - resolution * k[i] * k[j] /
@@ -52,8 +51,13 @@ def clauset_newman_moore(network: nx.Graph,
 
     a = {i: k[i] / (2.0 * m) for i in adj_matrix}
 
-    # While modularity can be increased progressively merge the two connected
-    # communities yielding the largest increase in modularity.
+    # Initialize communities as individual nodes.
+    communities = {i: {i} for i in network.nodes()}
+
+    # While modularity can be increased progressively merge the pair of
+    # connected communities yielding the largest increase in modularity.
+
+    # Determine the pair of communities to merge initially.
     max_entry = -1.0
     for i in delta_q:
         for j in delta_q[i]:
@@ -62,6 +66,7 @@ def clauset_newman_moore(network: nx.Graph,
                 max_i, max_j = i, j
 
     while delta_q[max_i][max_j] > 0.0:
+        # Merge the communities.
         communities[max_j].update(communities[max_i])
         del communities[max_i]
 
@@ -69,6 +74,7 @@ def clauset_newman_moore(network: nx.Graph,
             i: {j: delta_q[i][j] for j in delta_q[i]} for i in delta_q
         }
 
+        # Update the connectivity of communities to reflect the merge.
         for n in connected[max_i] & connected[max_j]:
             if n < max_j:
                 delta_q_prime[max_j][n] = delta_q[max_i][n] + delta_q[max_j][n]
@@ -91,6 +97,8 @@ def clauset_newman_moore(network: nx.Graph,
             connected[max_j].add(n)
             connected[n].add(max_j)
 
+        # Compute the increases in modularity from merging communities to
+        # reflect the merge.
         for n in connected[max_j] - connected[max_i] - {max_i}:
             if n < max_j:
                 delta_q_prime[max_j][
@@ -109,6 +117,7 @@ def clauset_newman_moore(network: nx.Graph,
 
         a[max_j] += a[max_i]
 
+        # Determine the pair of communities to merge subsequently.
         max_entry = -1.0
         for i in delta_q:
             for j in delta_q[i]:
@@ -116,6 +125,7 @@ def clauset_newman_moore(network: nx.Graph,
                     max_entry = delta_q[i][j]
                     max_i, max_j = i, j
 
+    # Return the communities as sets of nodes.
     return list(communities.values())
 
 
@@ -144,11 +154,12 @@ def louvain(network: nx.Graph,
     Returns:
         The communities of the network.
     """
+    # Initialize communities as individual nodes.
     communities = [{i: {i} for i in network.nodes()}]
 
     # While modularity can be increased iteratively move each node to its
     # adjacent community that maximizes increase in modularity and subsequently
-    # aggregate each community into a single node.
+    # aggregate each community into a node.
     community_aggregation = True
     while community_aggregation:
         community_aggregation = False
@@ -183,6 +194,8 @@ def louvain(network: nx.Graph,
         while modularity_optimization:
             modularity_optimization = False
 
+            # Compute increases in modularity and move nodes to adjacent
+            # communities to increase modularity.
             for i in adj_matrix:
                 for n in adj_matrix[i]:
                     sigma_tot[community[i]] -= adj_matrix[i][n]
@@ -249,6 +262,8 @@ def louvain(network: nx.Graph,
 
                         community[i] = community[max_j]
 
+        # Aggregate communities into nodes connected with cumulative edge
+        # weights.
         if community_aggregation:
             for ci in communities[1]:
                 if communities[1][ci]:
@@ -277,4 +292,5 @@ def louvain(network: nx.Graph,
                     if weights[ci][cj]:
                         network.add_edge(ci, cj, weight=weights[ci][cj])
 
+    # Return the communities as sets of nodes.
     return [community for community in communities[0].values() if community]

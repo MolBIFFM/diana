@@ -34,8 +34,10 @@ def get_protein_interactions(
         Pairs of interacting proteins and the PSI-MI score associated with the
         interaction.
     """
+    # Compile a map from secondary to primary UniProt protein accessions.
     primary_accession = uniprot.get_primary_accession(organism, file_uniprot)
 
+    # Yield pairs of interacting proteins from IntAct.
     for row in iterate.tabular_txt(
             "ftp://ftp.ebi.ac.uk/pub/databases/intact/current/psimitab/"
             "intact.zip" if file is None or not os.path.isfile(file) else file,

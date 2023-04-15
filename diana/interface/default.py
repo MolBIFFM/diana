@@ -2,6 +2,7 @@
 
 from typing import Optional
 
+# Default values of measurement ranges for different scores.
 MEASUREMENT_RANGE: dict[Optional[str], tuple[float, float]] = {
     None: (-1.0, 1.0),
     "quantile": (0.25, 0.75),

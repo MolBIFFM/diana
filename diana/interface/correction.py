@@ -3,6 +3,7 @@ from typing import Callable, Hashable, Mapping
 
 from algorithms import correction
 
+# Multiple testing correction procedures.
 CORRECTION: dict[str, Callable[[Mapping[Hashable, float]],
                                dict[Hashable, float]]] = {
                                    "Benjamini-Hochberg":

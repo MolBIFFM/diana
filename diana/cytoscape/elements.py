@@ -1,4 +1,4 @@
-"""Additions to Cytoscape style element trees."""
+"""Attachments to Cytoscape style element trees."""
 import xml.etree.ElementTree as ET
 from typing import Literal
 
@@ -15,6 +15,7 @@ def add_dependency(parent: ET.Element, name: str, value: bool) -> ET.Element:
     Returns:
         The dependency element.
     """
+    # Compile the element representing the dependency.
     return ET.SubElement(parent,
                          "dependency",
                          attrib={
@@ -39,6 +40,7 @@ def add_visual_property(parent: ET.Element, name: str,
     Returns:
         The visual property element.
     """
+    # Compile the element representing the visual property.
     return ET.SubElement(
         parent,
         "visualProperty",
@@ -74,6 +76,7 @@ def add_continuous_mapping(
     Returns:
         The visual property element the continuous mapping is attached to.
     """
+    # Compile the element tree representing the continuous attribute mapping.
     continuous_mapping = ET.SubElement(parent,
                                        "continuousMapping",
                                        attrib={
@@ -111,6 +114,7 @@ def add_discrete_mapping(parent: ET.Element, attribute_name: str,
     Returns:
         The visual property element the discrete mapping is attached to.
     """
+    # Compile the element tree representing the discrete attribute mapping.
     discrete_mapping = ET.SubElement(parent,
                                      "discreteMapping",
                                      attrib={
@@ -147,6 +151,7 @@ def add_passthrough_mapping(
     Returns:
         The visual property element the passthrough mapping is attached to.
     """
+    # Compile the element representing the continuous attribute mapping.
     return ET.SubElement(parent,
                          "passthroughMapping",
                          attrib={

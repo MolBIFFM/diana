@@ -21,6 +21,7 @@ def get_network() -> nx.Graph:
         The protein-protein interaction network.
 
     """
+    # Return an initialized protein-protein interaction network.
     return nx.Graph()
 
 
@@ -61,6 +62,7 @@ def add_proteins_from_table(
         measurement_score: The function to convert the measurements
             reported to their binary logarithm.
     """
+    # Parse proteins from a spreadsheet.
     if os.path.splitext(file)[1].lstrip(".") in (
             "xls",
             "xlsx",
@@ -80,6 +82,8 @@ def add_proteins_from_table(
                 **{column: str for column in replicate_columns},
             },
         )
+
+    # Parse proteins from a tabular file.
     else:
         table = pd.read_table(
             file,
@@ -91,6 +95,8 @@ def add_proteins_from_table(
             },
         )
 
+    # Parse protein accessions and measurements from the table asserting an
+    # applicable replicate threshold.
     proteins: dict[str, tuple[float, ...]] = {}
     for _, row in table.iterrows():
         if pd.isna(row[protein_accession_column]):
@@ -119,6 +125,8 @@ def add_proteins_from_table(
                         measurement_score(measurement)
                         for measurement in measurements)
 
+    # Add protein accessions to the protein-protein interaction network and
+    # annotate nodes with measurements.
     network.add_nodes_from(proteins)
     for protein, replicates in proteins.items():
         for r, replicate in enumerate(replicates, start=1):
@@ -183,6 +191,7 @@ def add_sites_from_table(
         site_order: A function of a measurement to derive a
             representative value for site order.
     """
+    # Parse proteins from a spreadsheet.
     if os.path.splitext(file)[1].lstrip(".") in (
             "xls",
             "xlsx",
@@ -204,6 +213,8 @@ def add_sites_from_table(
                 **{column: str for column in replicate_columns},
             },
         )
+
+    # Parse proteins from a tabular file.
     else:
         table = pd.read_table(
             file,
@@ -217,6 +228,8 @@ def add_sites_from_table(
             },
         )
 
+    # Parse protein accessions, positions of modification sites, and
+    # measurements from the table asserting an applicable replicate threshold.
     proteins: dict[str, dict[int, tuple[float, ...]]] = {}
     for _, row in table.iterrows():
         if pd.isna(row[protein_accession_column]):
@@ -235,9 +248,14 @@ def add_sites_from_table(
         else:
             positions = []
 
+        # The row contains more protein accessions than positions of
+        # modification sites.
         if len(protein_accessions) > len(positions):
             positions.extend(
                 [0 for _ in range(len(positions), len(protein_accessions))])
+
+        # The row contains less protein accessions than positions of
+        # modification sites.
         elif len(protein_accessions) < len(positions):
             positions = positions[:len(protein_accessions)]
 
@@ -263,6 +281,8 @@ def add_sites_from_table(
                         measurement_score(measurement)
                         for measurement in measurements)
 
+    # Add protein accessions to the protein-protein interaction network and
+    # annotate nodes with measurements.
     network.add_nodes_from(proteins)
     for protein, sites in proteins.items():
         for s, (_, replicates) in enumerate(sorted(
@@ -303,6 +323,9 @@ def map_proteins(network: nx.Graph,
         The proteins not present in the queried portion of Swiss-Prot specific
         to the organism of interest.
     """
+    # Compile a map from UniProt protein accessions present in the
+    # protein-protein interaction network to primary UniProt protein accessions
+    # and associated gene and protein names.
     mapping, gene_name, protein_name = {}, {}, {}
     for accessions, gene, protein in uniprot.get_swiss_prot_entries(
             organism, file):
@@ -317,13 +340,17 @@ def map_proteins(network: nx.Graph,
                     gene_name[accessions[0]] = gene
                     protein_name[accessions[0]] = protein
 
+    # Relabel nodes of the protein-protein interaction network to their
+    # associated primary UniProt protein accession.
     nx.relabel_nodes(network, mapping, copy=False)
 
+    # Annotate nodes of the protein-protein interaction network with
     for protein, name in protein_name.items():
         if protein in network:
             network.nodes[protein]["protein"] = name
             network.nodes[protein]["gene"] = gene_name[protein]
 
+    # Return nodes not associated with primary UniProt protein accessions.
     return frozenset(set(network).difference(mapping))
 
 
@@ -349,14 +376,18 @@ def get_proteins(
             site-specific measurements.
         replicate_average: A function to derive site-specific measurements from
             replicates.
-        measurement_range: A range that is to be exceeded by combined
+        measurement_range: A range that is to be exceeded by average
             measurements of the proteins.
 
     Returns:
-        Proteins whose combined measurement of a particular type of
+        Proteins the average measurement of which for a particular type of
         post-translational modification at a particular time of measurement
         exceeds the specified range.
     """
+    # Return the set of proteins from the protein-protein interaction network the
+    # average site or replicate measurements of which for a particular type of
+    # post-translational modification and time of measurement are all at most a
+    # lower or at least an upper threshold.
     proteins = []
     for protein in network:
         sites = [[
@@ -407,6 +438,8 @@ def get_times(network: nx.Graph) -> tuple[int, ...]:
         The times of measurement associated with any measurements of any protein
         in the protein-protein interaction network.
     """
+    # Return times of measurement extracted from identifiers for measurements
+    # from node annotations of a protein-protein interaction network.
     return tuple(
         sorted(
             set(
@@ -438,9 +471,13 @@ def get_modifications(network: nx.Graph,
         measurements of any protein in the protein-protein interaction network
         at a particular time of measurement.
     """
+    # Each modification is either protein- or site-specific.
     if not (proteins or sites):
         return ()
 
+    # Return identifiers for types of post-translational modification extracted
+    # from identifiers for measurements from node annotations of a
+    # protein-protein interaction network.
     return tuple(
         sorted(
             set(
@@ -477,9 +514,13 @@ def is_modification(network: nx.Graph,
         the protein-protein interaction network at the time of measurement, else
         false.
     """
+    # Each modification is either protein- or site-specific.
     if not (proteins or sites):
         return False
 
+    # Indicate whether the identifier corresponds to an identifier of a protein-
+    # or site-specific type of post-translational modification represented in
+    # the protein-protein interaction network.
     return any(
         re.fullmatch(
             fr"{time} {modification} (S[0-9]+ )?R[0-9]+" if proteins and sites
@@ -508,6 +549,9 @@ def get_sites(network: nx.Graph, time: int, modification: str,
         network for a particular type of post-translational modification at a
         particular time of measurement.
     """
+    # Return the maximum number of modification sites for a particular type of
+    # post-translational modification and time of modification associated with
+    # any protein represented in the protein-protein interaction network.
     return max(
         int(attribute.split(" ")[2].replace("S", "")) if re.
         fullmatch(fr"{time} {modification} S[0-9]+ R[0-9]+", attribute) else
@@ -524,7 +568,7 @@ def set_measurements(
 ) -> None:
     """
     Annotate proteins in a protein-protein interaction network with aggregates
-    and summary of measurements.
+    and categorization of measurements.
 
     Args:
         network: The protein-protein interaction network.
@@ -537,9 +581,16 @@ def set_measurements(
         measurement_score: Modification-specific functions used convert the
             measurement range bounds to their binary logarithm.
     """
+    # Compile the set of times of measurement represented in the protein-protein
+    # interaction network.
     times = get_times(network)
+
+    # Compile a map from times of measurement to types of post-translational
+    # modification represented in the protein-protein interaction network.
     modifications = {time: get_modifications(network, time) for time in times}
 
+    # Compile a map from times of measurement and types of post-translational
+    # modifications to measurement ranges.
     measurement_range = {
         time: {
             modification:
@@ -571,6 +622,8 @@ def set_measurements(
         } for time in times
     }
 
+    # Annotate nodes of the protein-protein interaction network with
+    # categorization of
     for time in times:
         for prt in network:
             summary = {}
@@ -672,6 +725,8 @@ def get_neighbors_from_biogrid(
     Returns:
         Neighbors of the protein-protein interaction network in BioGRID.
     """
+    # Return the set of proteins from BioGRID not represented but interacting
+    # with proteins in the protein-protein interaction network.
     neighbors = set()
     for interactor_a, interactor_b in biogrid.get_protein_interactions(
             experimental_system, experimental_system_type,
@@ -725,6 +780,8 @@ def add_protein_interactions_from_biogrid(
         file: The optional local file location to parse interactions from.
         file_uniprot: The optional local file location to parse accessions from.
     """
+    # Add protein-protein interactions between different proteins from BioGRID
+    # to the protein-protein interaction network.
     for interactor_a, interactor_b in biogrid.get_protein_interactions(
             experimental_system, experimental_system_type,
             interaction_throughput, multi_validated_physical, organism, version,
@@ -757,6 +814,8 @@ def get_neighbors_from_corum(network: nx.Graph,
     Returns:
         Neighbors of the protein-protein interaction network in CORUM.
     """
+    # Return the set of proteins from CORUM not represented but interacting with
+    # proteins in the protein-protein interaction network.
     neighbors = set()
     for interactor_a, interactor_b in corum.get_protein_interactions(
             purification_methods, organism, file, file_uniprot):
@@ -798,6 +857,8 @@ def add_protein_interactions_from_corum(
         file: The optional local file location to parse interactions from.
         file_uniprot: The optional local file location to parse accessions from.
     """
+    # Add protein-protein interactions between different proteins from CORUM to
+    # the protein-protein interaction network.
     for interactor_a, interactor_b in corum.get_protein_interactions(
             purification_methods, organism, file, file_uniprot):
         if (interactor_a in network and interactor_b in network and
@@ -833,6 +894,8 @@ def get_neighbors_from_intact(
     Returns:
         Neighbors of the protein-protein interaction network in IntAct.
     """
+    # Return the set of proteins from IntAct not represented but interacting
+    # with proteins in the protein-protein interaction network.
     neighbors = set()
     for interactor_a, interactor_b, _ in intact.get_protein_interactions(
             interaction_detection_methods, interaction_types, psi_mi_score,
@@ -880,6 +943,8 @@ def add_protein_interactions_from_intact(
         file: The optional local file location to parse interactions from.
         file_uniprot: The optional local file location to parse accessions from.
     """
+    # Add protein-protein interactions between different proteins from IntAct to
+    # the protein-protein interaction network.
     for interactor_a, interactor_b, score in intact.get_protein_interactions(
             interaction_detection_methods, interaction_types, psi_mi_score,
             organism, file, file_uniprot):
@@ -921,6 +986,8 @@ def get_neighbors_from_mint(network: nx.Graph,
     Returns:
         Neighbors of the protein-protein interaction network in MINT.
     """
+    # Return the set of proteins from MINT not represented but interacting with
+    # proteins in the protein-protein interaction network.
     neighbors = set()
     for interactor_a, interactor_b, _ in mint.get_protein_interactions(
             interaction_detection_methods, interaction_types, psi_mi_score,
@@ -968,6 +1035,8 @@ def add_protein_interactions_from_mint(
         file: The optional local file location to parse interactions from.
         file_uniprot: The optional local file location to parse accessions from.
     """
+    # Add protein-protein interactions between different proteins from MINT to
+    # the protein-protein interaction network.
     for interactor_a, interactor_b, score in mint.get_protein_interactions(
             interaction_detection_methods, interaction_types, psi_mi_score,
             organism, file, file_uniprot):
@@ -1006,8 +1075,9 @@ def get_neighbors_from_reactome(
     Returns:
         Neighbors of the protein-protein interaction network in Reactome.
     """
+    # Return the set of proteins from Reactome not represented but interacting
+    # with proteins in the protein-protein interaction network.
     neighbors = set()
-
     for interactor_a, interactor_b in reactome.get_protein_interactions(
             interaction_type, interaction_context, organism, file,
             file_uniprot):
@@ -1051,6 +1121,8 @@ def add_protein_interactions_from_reactome(
         file: The optional local file location to parse interactions from.
         file_uniprot: The optional local file location to parse accessions from.
     """
+    # Add protein-protein interactions between different proteins from Reactome
+    # to the protein-protein interaction network.
     for interactor_a, interactor_b in reactome.get_protein_interactions(
             interaction_type, interaction_context, organism, file,
             file_uniprot):
@@ -1116,8 +1188,9 @@ def get_neighbors_from_string(network: nx.Graph,
     Returns:
         Neighbors of the protein-protein interaction network in STRING.
     """
+    # Return the set of proteins from STRING not represented but interacting
+    # with proteins in the protein-protein interaction network.
     neighbors = set()
-
     for interactor_a, interactor_b, _ in string.get_protein_interactions(
             neighborhood, neighborhood_transferred, fusion, cooccurence,
             homology, coexpression, coexpression_transferred, experiments,
@@ -1197,6 +1270,8 @@ def add_protein_interactions_from_string(
             accessions from.
         file_uniprot: The optional local file location to parse accessions from.
     """
+    # Add protein-protein interactions between different proteins from STRING
+    # to the protein-protein interaction network.
     for interactor_a, interactor_b, score in string.get_protein_interactions(
             neighborhood, neighborhood_transferred, fusion, cooccurence,
             homology, coexpression, coexpression_transferred, experiments,
@@ -1228,9 +1303,11 @@ def get_databases(
         network: The protein-protein interaction network.
 
     Returns:
-        The databases of edge scores associated with edges in the
-        protein-protein interaction network.
+        The databases of protein-protein interaction confidence scores
+        associated with edges in the protein-protein interaction network.
     """
+    # Return protein-protein interaction databases associated with edges of the
+    # protein-protein interaction network.
     return tuple(
         sorted(
             set(database for edge in network.edges()
@@ -1253,16 +1330,20 @@ def set_edge_weights(
     attribute: str = "weight",
 ) -> None:
     """
-    Set combined edge weights of a protein-protein interaction network.
+    Set average edge weights of a protein-protein interaction network.
 
     Args:
         network: The protein-protein interaction network.
-        weight: The function to derive a combined confidence score from
+        weight: The function to derive a average confidence score from
             database-specific scores.
         attribute: The attribute name of the weight.
     """
+    # Compile a set of protein-protein interaction databases associated with
+    # edges of the protein-protein interaction network.
     databases = get_databases(network)
 
+    # Annotate edges of the protein-protein interaction network with average
+    # confidence
     for edge in network.edges:
         network.edges[edge][attribute] = weight({
             database: network.edges[edge][database]
@@ -1279,6 +1360,8 @@ def remove_edge_weights(network: nx.Graph, attribute: str = "weight") -> None:
         network: The protein-protein interaction network.
         attribute: The attribute name of the weight.
     """
+    # Remove attribute from all edges of the protein-protein interaction
+    # network.
     for _, _, data in network.edges(data=True):
         if attribute in data:
             del data[attribute]
@@ -1310,14 +1393,19 @@ def get_communities(
     Returns:
         Modules of the protein-protein interaction network.
     """
+    # No communities can be detected as the network contains no edges.
     if not network.number_of_edges():
         return tuple()
 
+    # Identify communities disregarding isolate nodes.
     copied_network = network.copy()
     copied_network.remove_nodes_from(list(nx.isolates(copied_network)))
 
+    # Apply the community detection algorithm.
     communities = algorithm(copied_network, resolution, weight)
 
+    # Iteratively subdivide communities until average module size threshold is
+    # met.
     while community_size_average(
             len(community) for community in communities) > community_size:
         subdivision = False
@@ -1331,6 +1419,8 @@ def get_communities(
         if not subdivision:
             break
 
+    # Return communities as induced subgraphs of the protein-protein interaction
+    # network.
     return tuple(network.subgraph(community) for community in communities)
 
 
@@ -1358,6 +1448,8 @@ def get_measurements(
         Measurements for a particular type of post-translational
         modification at a particular time of measurement.
     """
+    # Compile the distribution of the average measurement of a particular type
+    # of post-translational modification at a particular time of measurement.
     measurements = []
     for protein in network:
         sites = [[
@@ -1435,12 +1527,18 @@ def get_enrichment(
         are not averaged, proteins with any measurement exceeding the range are
         returned.
     """
+    # Test the enrichment of average measurements a at most a lower or at least
+    # an upper threshold by communities of the protein-protein interaction
+    # network for different types of post-translational modification at
+    # different times of measurement.
     p_values: dict[Hashable, float] = {}
 
     proteins = {}
-
     for time in get_times(network):
         for modification in get_modifications(network, time):
+            # Determine the lower and upper threshold of the average measurement
+            # for a type of post-translational modification at a time of
+            # measurement.
             measurement_range = (
                 measurement_score.get(
                     modification, lambda measurement, _: measurement)(
@@ -1455,12 +1553,20 @@ def get_enrichment(
                                          site_average.get(modification),
                                          replicate_average.get(modification))))
 
+            # Determine the number of average measurements in the
+            # protein-protein interaction network associated with measurements
+            # for a type of post-translational modification at a time of
+            # measurement.
             measurements = len([
                 measurement for measurement in get_measurements(
                     network, time, modification, site_average.get(modification),
                     replicate_average.get(modification)) if measurement
             ])
 
+            # Compile a map from communities of the protein-protein interaction
+            # network to the number of average measurements from that community
+            # associated with measurements for a type of post-translational
+            # modification at a time of measurement.
             community_measurements = {
                 community: len([
                     measurement for measurement in get_measurements(
@@ -1470,6 +1576,10 @@ def get_enrichment(
                 ]) for community in communities
             }
 
+            # Determine the number of average measurements in the
+            # protein-protein interaction network associated with measurements
+            # for a type of post-translational modification at a time of
+            # measurement at most the lower or at least the upper threshold.
             target_measurements = len([
                 measurement for measurement in get_measurements(
                     network, time, modification, site_average.get(modification),
@@ -1478,6 +1588,11 @@ def get_enrichment(
                 measurement >= measurement_range[1]
             ])
 
+            # Compile a map from communities of the protein-protein interaction
+            # network to the number of average measurements from that community
+            # associated with measurements for a type of post-translational
+            # modification at a time of measurement at most the lower or at
+            # least the upper threshold.
             target_community_measurements = {
                 community: len([
                     measurement for measurement in get_measurements(
@@ -1489,6 +1604,9 @@ def get_enrichment(
                 ]) for community in communities
             }
 
+            # Compute p-values for enrichment of average measurements at most
+            # the lower or at least the upper threshold for a type of
+            # post-translational modification at a time of measurement.
             p_values.update({
                 (community, time, modification):
                 enrichment_test(target_community_measurements[community],
@@ -1497,6 +1615,9 @@ def get_enrichment(
                 for community in communities
             })
 
+            # Determine proteins associated with average measurements at most
+            # the lower or at least the upper threshold for a type of
+            # post-translational modification at a time of measurement.
             proteins.update({(community, time, modification):
                              get_proteins(community, time, modification,
                                           site_average.get(modification),
@@ -1504,8 +1625,15 @@ def get_enrichment(
                                           measurement_range)
                              for community in communities})
 
+    # Adjust p-values to correct for testing multiple communities of the
+    # protein-protein interaction network, times of measurement and types of
+    # post-translational modification.
     p_values = multiple_testing_correction(p_values)
 
+    # Return the p-values and decisive proteins associated with average
+    # measurements at most the lower or at least the upper threshold for
+    # different types of post-translational modification and times of
+    # measurement.
     return {
         community: {
             time: {
@@ -1529,9 +1657,9 @@ def get_location(
         Hashable, float]] = correction.benjamini_yekutieli,
 ) -> dict[nx.Graph, dict[int, dict[str, float]]]:
     """
-    Test communities for difference tendencies in protein-specific measurements
-    for each time of measurement and type of post-translational modification
-    with respect to the remaining protein-protein interaction network.
+    Test communities for equal location of average measurements relative to the
+    remaining protein-protein interaction network for each time of measurement
+    and type of post-translational modification.
 
     Args:
         network: The protein-protein interaction network.
@@ -1547,24 +1675,22 @@ def get_location(
             post-translational modification.
 
     Returns:
-        Corrected p-values for the difference in central tendencies in
-        protein-specific measurements of communities for each time of
-        measurement and type of post-translational modification.
+        Corrected p-values for the equality of location of average measurements
+        of communities relative to the remaining protein-protein interaction
+        network for each time of measurement and type of post-translational
+        modification.
     """
+    # Test the equality of location of average measurements of communities
+    # relative to the remaining protein-protein interaction network for
+    # different types of post-translational modification at different times of
+    # measurement.
     p_values: dict[Hashable, float] = {}
 
     for time in get_times(network):
         for modification in get_modifications(network, time):
-            network_measurements = [
-                get_measurements(
-                    nx.union_all([m
-                                  for m in communities
-                                  if m != community]), time, modification,
-                    site_average.get(modification),
-                    replicate_average.get(modification))
-                for community in communities
-            ]
-
+            # Compile the distributions of average measurements for a type of
+            # post-translational modification at a time of measurement in each
+            # community of the protein-protein interaction network.
             community_measurements = [
                 get_measurements(community, time, modification,
                                  site_average.get(modification),
@@ -1572,14 +1698,36 @@ def get_location(
                 for community in communities
             ]
 
+            # Compile the distributions of average measurements for a type of
+            # post-translational modification at a time of measurement in the
+            # remaining protein-protein interaction network relative to each
+            # community.
+            network_measurements = [
+                get_measurements(
+                    nx.union_all([c
+                                  for c in communities
+                                  if c != community]), time, modification,
+                    site_average.get(modification),
+                    replicate_average.get(modification))
+                for community in communities
+            ]
+
+            # Compute p-values for the equality of location of average
+            # measurements for a type of post-translational modification at a
+            # time of measurement of communities relative to the remaining
+            # protein-protein interaction network.
             p_values.update({(community, time, modification):
                              location_test(community_measurements[i],
                                            network_measurements[i])
                              for i, community in enumerate(communities)
                              if community_measurements[i]})
 
+    # Adjust p-values to correct for testing multiple communities of the
+    # protein-protein interaction network, times of measurement and types of
+    # post-translational modification.
     p_values = multiple_testing_correction(p_values)
 
+    # Return the p-values.
     return {
         community: {
             time: {
@@ -1604,12 +1752,15 @@ def export(network: nx.Graph, basename: str) -> Optional[str]:
         The file the protein-protein interaction network was exported to if
         there is no naming conflict.
     """
+    # Avoid overwriting an existing file.
     if os.path.isfile(f"{basename}.graphml"):
         return None
 
+    # Export the element tree of the protein-protein interaction network.
     nx.write_graphml_xml(network,
                          f"{basename}.graphml",
                          named_key_ids=True,
                          infer_numeric_types=True)
 
+    # Return the file name of the protein-protein interaction network.
     return f"{basename}.graphml"

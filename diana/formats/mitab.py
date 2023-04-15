@@ -15,6 +15,7 @@ def parse(entry: str) -> dict[str, tuple[tuple[str, Optional[str]], ...]]:
         A keyed representation of the entry, separating namespace, identifiers
         and terms
     """
+    # Parse components PSI-MI TAB terms.
     if entry == "-":
         return {}
     else:
@@ -55,6 +56,7 @@ def get_identifiers_from_namespace(entry: str,
     Returns:
         Identifiers from a namespace.
     """
+    # Extract PSI-MI TAB identifiers corresponding to a specific namespace.
     return tuple(identifier
                  for identifier, _ in parse(entry).get(namespace, [("", None)])
                  if identifier)
@@ -71,6 +73,7 @@ def get_terms_from_namespace(entry: str, namespace: str) -> tuple[str, ...]:
     Returns:
         Terms from a namespace.
     """
+    # Extract PSI-MI TAB terms corresponding to a specific namespace.
     return tuple(
         term for _, term in parse(entry).get(namespace, [("", None)]) if term)
 
@@ -88,6 +91,7 @@ def namespace_has_identifier(entry: str, namespace: str,
     Returns:
         True, if identifier is in namespace, else False.
     """
+    # Indicate whether a namespace has a specific PSI-MI TAB identifier.
     return str(identifier) in get_identifiers_from_namespace(entry, namespace)
 
 
@@ -103,6 +107,7 @@ def namespace_has_term(entry: str, namespace: str, term: int | str) -> bool:
     Returns:
         True, if term is in namespace, else False.
     """
+    # Indicate whether a namespace has a specific PSI-MI TAB term.
     return str(term) in get_terms_from_namespace(entry, namespace)
 
 
@@ -119,6 +124,7 @@ def namespace_has_any_identifier_from(
     Returns:
         True, if any identifier is in namespace, else False.
     """
+    # Indicate whether a namespace has any from specific PSI-MI TAB identifiers.
     return any(
         identifier in identifiers
         for identifier in get_identifiers_from_namespace(entry, namespace))
@@ -137,5 +143,6 @@ def namespace_has_any_term_from(entry: str, namespace: str,
     Returns:
         True, if any term is in namespace, else False.
     """
+    # Indicate whether a namespace has any from specific PSI-MI TAB terms.
     return any(
         term in terms for term in get_terms_from_namespace(entry, namespace))

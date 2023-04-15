@@ -392,6 +392,7 @@ def get_bar_chart(
     Returns:
        bar chart specification
     """
+    # Compile a string specifying a bar chart.
     bar_chart = json.dumps({
         "cy_range":
             cy_range,
@@ -452,16 +453,20 @@ def get_styles(
     Returns:
        The Cytoscape styles for the protein-protein interaction network.
     """
+    # Determine the maximum value of the average of the protein-protein
+    # interaction confidence score average.
+    max_edge_score = confidence_score_average({
+        database: 1.0
+        for database in protein_interaction_network.get_databases(network)
+    })
+
+    # Compile the element trees for style specifications of network components
+    # at different times of measurement.
     styles = ET.ElementTree(
         ET.Element("vizmap", attrib={
             "id": "VizMap",
             "documentVersion": "3.0"
         }))
-
-    max_edge_score = confidence_score_average({
-        database: 1.0
-        for database in protein_interaction_network.get_databases(network)
-    })
 
     for time in protein_interaction_network.get_times(network):
         visual_style_sub_element = ET.SubElement(styles.getroot(),
@@ -485,17 +490,24 @@ def get_styles(
                             component_sub_element, name,
                             visual_property["default"])
 
+        # Set edge transparency as a linear function of average protein-protein
+        # interaction confidence.
         elements.add_continuous_mapping(
             visual_properties["edge"]["EDGE_TRANSPARENCY"], "score", "float", {
                 0.0: (0, 0, 0),
                 max_edge_score: (255, 255, 255)
             })
 
+        # Assign the UniProt protein accession as node label.
         elements.add_passthrough_mapping(
             visual_properties["node"]["NODE_LABEL"], "name", "string")
+
+        # Assign the protein name as node tooltip.
         elements.add_passthrough_mapping(
             visual_properties["node"]["NODE_TOOLTIP"], "protein", "string")
 
+        # Scale nodes as linear function of the average measurement of a protein
+        # for the relevant modification at each time of measurement.
         if (node_size_modification is not None and
                 protein_interaction_network.is_modification(
                     network, time, node_size_modification)):
@@ -523,6 +535,8 @@ def get_styles(
                             3
                     })
 
+        # Assign node shape according to particular modifications associated
+        # with a protein.
         node_shape_modifications = [
             modification
             for m, modification in enumerate(node_shape_modifications)
@@ -578,6 +592,8 @@ def get_styles(
         elements.add_discrete_mapping(visual_properties["node"]["NODE_SHAPE"],
                                       str(time), "string", node_shape)
 
+        # Assign node color according to measurement ranges of particular
+        # modifications associated with a protein.
         node_color_modifications = [
             modification
             for m, modification in enumerate(node_color_modifications)
@@ -688,6 +704,8 @@ def get_styles(
             visual_properties["node"]["NODE_FILL_COLOR"], str(time), "string",
             node_color)
 
+        # Assign node bar charts according for particular modifications
+        # associated with a protein.
         bar_chart_modifications = [
             modification
             for m, modification in enumerate(bar_chart_modifications)
@@ -749,7 +767,11 @@ def get_styles(
                     f"{('W', 'E')[m]},{('E', 'W')[m]},c,0.00,0.00",
                 )
 
+    # Indent the representation of the element tree.
     ET.indent(styles)
+
+    # Return the styles for individual times of measurement of the
+    # protein-protein interaction network.
     return styles
 
 
@@ -766,13 +788,16 @@ def export(styles: ET.ElementTree, basename: str) -> Optional[str]:
         The file name the Cytoscape styles were exported to if there is no
         naming conflict.
     """
+    # Avoid overwriting an existing file.
     if os.path.isfile(f"{basename}.xml"):
         return None
 
+    # Export the element tree of the Cytoscape style.
     styles.write(
         f"{basename}.xml",
         encoding="utf-8",
         xml_declaration=True,
     )
 
+    # Return the file name of the Cytoscape style.
     return f"{basename}.xml"

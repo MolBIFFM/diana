@@ -28,6 +28,7 @@ def get_ontology(
         Mappings containing a Gene Ontology terms' GO ID, name, namespace,
             related terms and alternative GO IDs.
     """
+    # Yield Gene Ontology terms.
     term: dict[str, str] = {
         "id": "",
         "name": "",
@@ -93,8 +94,10 @@ def get_annotation(
     Yields:
         Pairs of protein accessions and Gene Ontology term identifiers.
     """
+    # Compile a map from secondary to primary UniProt protein accessions.
     primary_accession = uniprot.get_primary_accession(organism, file_uniprot)
 
+    # Yield Gene Ontology annotations.
     for row in iterate.tabular_txt(
             "http://geneontology.org/gene-associations/"
             f"goa_{ORGANISM['files'][organism]}.gaf.gz"
@@ -109,6 +112,7 @@ def get_annotation(
             for protein in primary_accession.get(row[1], {row[1]}):
                 yield (protein, row[2])
 
+    # Yield Gene Ontology isoform annotations.
     for row in iterate.tabular_txt(
             "http://geneontology.org/gene-associations/"
             f"goa_{ORGANISM['files'][organism]}_isoform.gaf.gz"
@@ -138,7 +142,7 @@ def convert_namespaces(
     Returns:
         The corresponding identifiers used in annotation files.
     """
-
+    # Convert Gene Ontology namespace identifiers.
     conversion: dict[Literal["cellular_component", "molecular_function",
                              "biological_process"], Literal["C", "F", "P"]] = {
                                  "cellular_component": "C",
@@ -191,6 +195,7 @@ def get_enrichment(
         Corrected p-value for the enrichment of each Gene Ontology term by each
         network and associated proteins.
     """
+    # Compile a map of alternative to primary Gene Ontology term identifiers.
     name = {}
     go_id: dict[str, set[str]] = {}
     for term in get_ontology(namespaces, file_ontology):
@@ -201,6 +206,8 @@ def get_enrichment(
                     go_id[alt_id] = set()
                 go_id[alt_id].add(term["id"])
 
+    # Compile a map of primary Gene Ontology term identifiers to UniProt
+    # accessions of annotated proteins.
     annotations: dict[str, set[str]] = {}
     for protein, annotated_term in get_annotation(
             organism, convert_namespaces(namespaces), file_annotation,
@@ -213,14 +220,18 @@ def get_enrichment(
                     annotations[primary_term] = set()
                 annotations[primary_term].add(protein)
 
+    # Discard Gene Ontology terms not associated with any proteins.
     annotations = {
         term: annotation
         for term, annotation in annotations.items()
         if annotation
     }
 
+    # Compile a reference set of proteins annotated with any Gene Ontology term.
     annotated_proteins = set.union(*annotations.values())
 
+    # Compile a map of proteins to subsets annotated with any Gene Ontology
+    # term.
     annotated_prt = {
         prt: annotated_proteins.intersection(
             reference[i if len(reference) ==
@@ -229,6 +240,8 @@ def get_enrichment(
         annotated_proteins.intersection(prt) for i, prt in enumerate(proteins)
     }
 
+    # Compile a map from proteins to subsets of proteins annotated with
+    # individual Gene Ontology terms.
     prt_intersection = {
         prt: {
             term: annotation.intersection(
@@ -240,6 +253,8 @@ def get_enrichment(
         } for i, prt in enumerate(proteins)
     }
 
+    # Compute p-values for the enrichment of individual Gene Ontology terms
+    # corrected for testing multiple sets of proteins and Gene Ontology terms.
     p_value = multiple_testing_correction({(prt, term): enrichment_test(
         len(prt_intersection[prt][term]),
         len(
@@ -255,6 +270,7 @@ def get_enrichment(
         len(annotated_prt[prt])) for term, annotation in annotations.items()
                                            for i, prt in enumerate(proteins)})
 
+    # Return p-values.
     return {
         prt: {(term, name[term]):
               (p_value[(prt, term)], frozenset(prt_intersection[prt][term]))

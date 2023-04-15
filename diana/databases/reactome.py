@@ -39,8 +39,10 @@ def get_protein_interactions(
     Yields:
         Pairs of interacting proteins.
     """
+    # Compile a map from secondary to primary UniProt protein accessions.
     primary_accession = uniprot.get_primary_accession(organism, file_uniprot)
 
+    # Yield pairs of interacting proteins from Reactome.
     for row in iterate.tabular_txt(
             "https://reactome.org/download/current/interactors/"
             f"reactome.{ORGANISM['files'][organism]}.interactions."
@@ -94,6 +96,7 @@ def get_pathways(
     Yields:
         Pairs of stable pathway identifier and pathway name.
     """
+    # Yield Reactome pathway identifiers and names.
     for row in iterate.tabular_txt(
             "https://reactome.org/download/current/ReactomePathways.txt"
             if file_pathways is None or not os.path.isfile(file_pathways) else
@@ -117,6 +120,7 @@ def get_pathway_relations(
     Yields:
         Pairs of parent and child stable pathway identifiers.
     """
+    # Yield pairs of related pathways.
     for row in iterate.tabular_txt(
             "https://reactome.org/download/current/"
             "ReactomePathwaysRelation.txt" if file_pathways_relation is None or
@@ -143,8 +147,10 @@ def get_pathway_annotation(
     Yields:
         Pairs of protein accession and stable pathway identifier.
     """
+    # Compile a map from secondary to primary UniProt protein accessions.
     primary_accession = uniprot.get_primary_accession(organism, file_uniprot)
 
+    # Yield primary UniProt protein accessions and Reactome pathway identifiers.
     for row in iterate.tabular_txt(
             "https://reactome.org/download/current/"
             "UniProt2Reactome_All_Levels.txt" if file_accession_map is None or
@@ -192,10 +198,13 @@ def get_enrichment(
         Corrected p-value for the enrichment of each Reactome pathway by
         each network and associated proteins.
     """
+    # Compile map of Reactome pathway identifiers to names.
     name = {}
     for pathway, pathway_name in get_pathways(organism, file_pathways):
         name[pathway] = pathway_name
 
+    # Compile a map fromReactome pathway identifiers to UniProt accessions of
+    # annotated proteins.
     annotations: dict[str, set[str]] = {}
     for protein, pathway in get_pathway_annotation(organism, file_accession_map,
                                                    file_uniprot):
@@ -206,14 +215,18 @@ def get_enrichment(
                 annotations[pathway] = set()
             annotations[pathway].add(protein)
 
+    # Discard Reactome pathways not associated with any proteins.
     annotations = {
         pathway: annotation
         for pathway, annotation in annotations.items()
         if annotations
     }
 
+    # Compile a reference set of proteins annotated with any Reactome pathway.
     annotated_proteins = set.union(*annotations.values())
 
+    # Compile a map from proteins to subsets of proteins annotated with any
+    # Reactome pathway.
     annotated_prt = {
         prt: annotated_proteins.intersection(
             reference[i if len(reference) ==
@@ -222,6 +235,8 @@ def get_enrichment(
         annotated_proteins.intersection(prt) for i, prt in enumerate(proteins)
     }
 
+    # Compile a map from proteins to subsets of proteins annotated with
+    # individual Reactome pathways.
     prt_intersection = {
         prt: {
             pathway: annotation.intersection(
@@ -233,6 +248,8 @@ def get_enrichment(
         } for i, prt in enumerate(proteins)
     }
 
+    # Compute p-values for the enrichment of individual Reactome pathways
+    # corrected for testing multiple sets of proteins and Reactome pathways.
     p_value = multiple_testing_correction({(prt, pathway): enrichment_test(
         len(prt_intersection[prt][pathway]),
         len(
@@ -248,6 +265,7 @@ def get_enrichment(
         len(annotated_prt[prt])) for pathway, annotation in annotations.items()
                                            for i, prt in enumerate(proteins)})
 
+    # Return p-values.
     return {
         prt: {(pathway, name[pathway]):
               (p_value[(prt, pathway)],

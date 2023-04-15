@@ -35,8 +35,10 @@ def get_protein_interactions(
         Pairs of interacting proteins and the PSI-MI score associated with the
         interaction.
     """
+    # Compile a map from secondary to primary UniProt protein accessions.
     primary_accession = uniprot.get_primary_accession(organism, file_uniprot)
 
+    # Yield pairs of interacting proteins from MINT.
     for row in iterate.tabular_txt(
             "https://www.ebi.ac.uk/Tools/webservices/psicquic/mint/"
             "webservices/current/search/query/"

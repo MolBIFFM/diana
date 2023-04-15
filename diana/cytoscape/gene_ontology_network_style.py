@@ -380,6 +380,7 @@ def get_styles(network: nx.Graph) -> ET.ElementTree:
     Returns:
         The Cytoscape style for the Gene Ontology network.
     """
+    # Compile the element tree for style specification of network components.
     styles = ET.ElementTree(
         ET.Element("vizmap", attrib={
             "id": "VizMap",
@@ -389,6 +390,7 @@ def get_styles(network: nx.Graph) -> ET.ElementTree:
     visual_style_sub_element = ET.SubElement(styles.getroot(),
                                              "visualStyle",
                                              attrib={"name": "Gene Ontology"})
+
     visual_properties: dict[str, dict[str, ET.Element]] = {}
     for component, properties in COMPONENTS.items():
         visual_properties[component] = {}
@@ -405,11 +407,15 @@ def get_styles(network: nx.Graph) -> ET.ElementTree:
                     name] = elements.add_visual_property(
                         component_sub_element, name, visual_property["default"])
 
+    # Assign the Gene Ontology term identifier as node label.
     elements.add_passthrough_mapping(visual_properties["node"]["NODE_LABEL"],
                                      "name", "string")
+
+    # Assign the Gene Ontology term description as node tooltip.
     elements.add_passthrough_mapping(visual_properties["node"]["NODE_TOOLTIP"],
                                      "term", "string")
 
+    # Assign node shape according to the Gene Ontology namespace.
     elements.add_discrete_mapping(
         visual_properties["node"]["NODE_SHAPE"], "namespace", "string", {
             "cellular component": "RECTANGLE",
@@ -417,6 +423,7 @@ def get_styles(network: nx.Graph) -> ET.ElementTree:
             "molecular function": "ELLIPSE",
         })
 
+    # Color nodes red as a linear function of p-value.
     elements.add_continuous_mapping(
         visual_properties["node"]["NODE_FILL_COLOR"], "p-value", "float", {
             0.0: (f"#{255:02X}{0:02X}{0:02X}", f"#{255:02X}{0:02X}{0:02X}",
@@ -426,6 +433,7 @@ def get_styles(network: nx.Graph) -> ET.ElementTree:
                   f"#{255:02X}{255:02X}{255:02X}")
         })
 
+    # Scale nodes as a function of the number of associated proteins.
     max_number_proteins = max(
         gene_ontology_network.get_term_sizes(network).values())
 
@@ -444,7 +452,10 @@ def get_styles(network: nx.Graph) -> ET.ElementTree:
                      ["default"] + math.sqrt(max_number_proteins),) * 3
             })
 
+    # Indent the representation of the element tree.
     ET.indent(styles)
+
+    # Return the Cytoscape style for the Gene Ontology network.
     return styles
 
 
@@ -461,13 +472,16 @@ def export(styles: ET.ElementTree, basename: str) -> Optional[str]:
         The file name the Cytoscape styles were exported to if there is no
         naming conflict.
     """
+    # Avoid overwriting an existing file.
     if os.path.isfile(f"{basename}.xml"):
         return None
 
+    # Export the element tree of the Cytoscape style.
     styles.write(
         f"{basename}.xml",
         encoding="utf-8",
         xml_declaration=True,
     )
 
+    # Return the file name of the Cytoscape style.
     return f"{basename}.xml"

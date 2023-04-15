@@ -17,6 +17,7 @@ def benjamini_hochberg(p: Mapping[Hashable, float]) -> dict[Hashable, float]:
     """
     m = len(p)
 
+    # Sort the p-values.
     p_sorted = dict(sorted(p.items(), key=lambda item: item[1], reverse=True))
 
     # Ensure the order of p-values is maintained by adjustment.
@@ -49,6 +50,7 @@ def benjamini_yekutieli(p: Mapping[Hashable, float]) -> dict[Hashable, float]:
     m = len(p)
     l = sum(1 / k for k in range(1, m + 1))
 
+    # Sort the p-values.
     p_sorted = dict(sorted(p.items(), key=lambda item: item[1], reverse=True))
 
     # Ensure the order of p-values is maintained by adjustment.
@@ -80,6 +82,7 @@ def holm(p: Mapping[Hashable, float]) -> dict[Hashable, float]:
     """
     m = len(p)
 
+    # Sort the p-values.
     p_sorted = dict(sorted(p.items(), key=lambda item: item[1]))
 
     # Ensure the order of p-values is maintained by adjustment.

@@ -3,6 +3,7 @@ from typing import Callable, Collection
 
 import scipy.stats
 
+# Hypothesis tests for enrichment.
 ENRICHMENT_TEST: dict[tuple[str, bool], Callable[
     [int, int, int, int], float]] = {
         ("binomial", False):
@@ -15,6 +16,7 @@ ENRICHMENT_TEST: dict[tuple[str, bool], Callable[
             lambda k, M, n, N: float(scipy.stats.hypergeom.sf(k - 1, M, n, N)),
     }
 
+# Hypothesis tests for equality of location.
 LOCATION_TEST: dict[tuple[str, bool, bool], Callable[
     [Collection[float], Collection[float]], float]] = {
         ("Mann-Whitney-Wilcoxon", False, False):

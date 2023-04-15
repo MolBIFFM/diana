@@ -3,6 +3,7 @@ import math
 import statistics
 from typing import Callable, Iterable, Literal, Optional
 
+# Averages for measurements at distinct modification sites.
 SITE_AVERAGE: dict[str, Callable[[Iterable[float]], float]] = {
     "maximum":
         max,
@@ -22,6 +23,7 @@ SITE_AVERAGE: dict[str, Callable[[Iterable[float]], float]] = {
         lambda sites: sum(abs(math.log2(site)) for site in sites),
 }
 
+# Averages for replicate measurements at a specific modification site.
 REPLICATE_AVERAGE: dict[str, Callable[[Iterable[float]], float]] = {
     "maximum":
         max,
@@ -44,6 +46,7 @@ REPLICATE_AVERAGE: dict[str, Callable[[Iterable[float]], float]] = {
             abs(math.log2(replicate)) for replicate in replicates),
 }
 
+# Averages for module sizes.
 MODULE_SIZE_AVERAGE: dict[str, Callable[[Iterable[int]], float]] = {
     "maximum": max,
     "mean": statistics.mean,
@@ -51,6 +54,7 @@ MODULE_SIZE_AVERAGE: dict[str, Callable[[Iterable[int]], float]] = {
     "minimum": min,
 }
 
+# Averages for protein-protein interaction confidence scores.
 CONFIDENCE_SCORE_AVERAGE: dict[Optional[str], Callable[[
     dict[Literal["BioGRID", "CORUM", "IntAct", "MINT", "Reactome", "STRING"],
          float]

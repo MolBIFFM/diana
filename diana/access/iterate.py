@@ -32,6 +32,8 @@ def txt(file: str,
     Yields:
         Lines of the file at a given path.
     """
+    # Download the file from a URL to a temporary file location and decompress
+    # the temporary file.
     if urllib.parse.urlparse(file).scheme in ("ftp", "http", "https"):
         if not os.path.exists(
                 os.path.join(
@@ -72,6 +74,7 @@ def txt(file: str,
             except (gzip.BadGzipFile, zipfile.BadZipFile):
                 time.sleep(pause)
 
+    # Decompress the local file.
     elif os.path.isfile(file):
         local_file_name = file
 
@@ -79,19 +82,21 @@ def txt(file: str,
 
         if file_name_extension == ".gz":
             local_file_name = decompress.decompress_gzip_file(
-                local_file_name, buffering)
+                local_file_name, buffering, remove=False)
         elif file_name_extension == ".zip":
             local_file_name = decompress.decompress_zip_file(
-                local_file_name, file_from_zip_archive)
+                local_file_name, file_from_zip_archive, remove=False)
 
     else:
         return
 
+    # Yield lines of the file.
     with open(local_file_name, buffering=buffering,
               encoding="utf-8") as local_file:
         for line in local_file:
             yield line.rstrip("\n")
 
+    # Remove the downloaded file from the temporary file location.
     if urllib.parse.urlparse(file).scheme in ("ftp", "http", "https"):
         os.remove(local_file_name)
 
@@ -106,6 +111,7 @@ def txt(file: str,
                     f"{os.path.splitext(os.path.basename(sys.argv[0]))[0]}-"
                     f"{os.getpid()}"))
 
+    # Remove the file decompressed from a local compressed file.
     elif os.path.isfile(file) and not os.path.samefile(file, local_file_name):
         os.remove(local_file_name)
 
@@ -137,6 +143,8 @@ def tabular_txt(file: str,
     Yields:
         Rows of the file at a given path.
     """
+    # Download the file from a URL to a temporary file location and decompress
+    # the temporary file.
     if urllib.parse.urlparse(file).scheme in ("ftp", "http", "https"):
         if not os.path.exists(
                 os.path.join(
@@ -174,6 +182,7 @@ def tabular_txt(file: str,
             except (gzip.BadGzipFile, zipfile.BadZipFile):
                 time.sleep(pause)
 
+    # Decompress the local file.
     elif os.path.isfile(file):
         local_file_name = file
 
@@ -181,20 +190,22 @@ def tabular_txt(file: str,
 
         if file_name_extension == ".gz":
             local_file_name = decompress.decompress_gzip_file(
-                local_file_name, chunksize)
+                local_file_name, chunksize, remove=False)
         elif file_name_extension == ".zip":
             local_file_name = decompress.decompress_zip_file(
-                local_file_name, file_from_zip_archive)
+                local_file_name, file_from_zip_archive, remove=False)
 
     else:
         return
 
+    # Determine the unspecified delimiter from the file extension.
     if not delimiter:
         if os.path.splitext(local_file_name)[1] == ".csv":
             delimiter = ","
         elif os.path.splitext(local_file_name)[1] == ".tsv":
             delimiter = "\t"
 
+    # Yield rows of the file.
     for chunk in pd.read_csv(local_file_name,
                              delimiter=delimiter,
                              header=header,
@@ -204,6 +215,7 @@ def tabular_txt(file: str,
         for _, row in chunk.iterrows():
             yield row
 
+    # Remove the downloaded file from the temporary file location.
     if urllib.parse.urlparse(file).scheme in ("ftp", "http", "https"):
         os.remove(local_file_name)
 
@@ -218,5 +230,6 @@ def tabular_txt(file: str,
                     f"{os.path.splitext(os.path.basename(sys.argv[0]))[0]}-"
                     f"{os.getpid()}"))
 
+    # Remove the file decompressed from a local compressed file.
     elif os.path.isfile(file) and not os.path.samefile(file, local_file_name):
         os.remove(local_file_name)

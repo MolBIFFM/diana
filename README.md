@@ -1774,9 +1774,9 @@ be compared with that of the remaining network.
 
 Results of statistical tests for enrichment or location are exported in tabular
 form. A community is exported if it is significant according to any of the
-conducted tests subject to correction for multiple testing. Communities are
-exported in descending order of the number of proteins they consist of and
-enumerated accordingly.
+conducted hypothesis tests subject to correction for multiple testing.
+Communities are exported in descending order of the number of proteins they
+consist of and enumerated accordingly.
 
 ```json
 {
@@ -2255,8 +2255,9 @@ setting is `null`, downloading the required file automatically.
   }
 }
 ```
-The optional local file location to parse Gene Ontology annotations from. The
-default setting is `null`, downloading the required file automatically.
+The optional local file location to parse Gene Ontology protein annotations
+from. The default setting is `null`, downloading the required file
+automatically.
 
 ```json
 {
@@ -2269,8 +2270,8 @@ default setting is `null`, downloading the required file automatically.
   }
 }
 ```
-The optional local file location to parse Gene Ontology isoform annotations
-from. The default setting is `null`, downloading the required file
+The optional local file location to parse Gene Ontology protein isoform
+annotations from. The default setting is `null`, downloading the required file
 automatically.
 
 ```json

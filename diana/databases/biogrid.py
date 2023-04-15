@@ -40,8 +40,10 @@ def get_protein_interactions(
     Yields:
         Pairs of interacting proteins.
     """
+    # Compile a map from secondary to primary UniProt protein accessions.
     primary_accession = uniprot.get_primary_accession(organism, file_uniprot)
 
+    # Yield pairs of interacting proteins from BioGRID.
     for row in iterate.tabular_txt(
         (("https://downloads.thebiogrid.org/Download/BioGRID/Release-Archive/"
           f"BIOGRID-{version}/BIOGRID-MV-Physical-{version}.tab3.zip"

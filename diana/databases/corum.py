@@ -29,8 +29,10 @@ def get_protein_interactions(
     Yields:
         Pairs of interacting proteins.
     """
+    # Compile a map from secondary to primary UniProt protein accessions.
     primary_accession = uniprot.get_primary_accession(organism, file_uniprot)
 
+    # Yield pairs of interacting proteins from CORUM.
     for row in iterate.tabular_txt(
             "https://mips.helmholtz-muenchen.de/corum/download/releases/"
             "current/allComplexes.txt.zip"

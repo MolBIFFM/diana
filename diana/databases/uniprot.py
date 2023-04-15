@@ -20,6 +20,8 @@ def get_swiss_prot_entries(
     Yields:
         UniProt accessions, gene name and protein name of each entry.
     """
+    # Yield primary UniProt protein accessions and associated gene and protein
+    # names.
     accessions = []
     entry_gene_name, entry_protein_name, entry_taxonomy = {}, {}, {}
     rec_name = False
@@ -90,6 +92,7 @@ def get_primary_accession(
     Returns:
         A map of any secondary UniProt accessions to its primary equivalents.
     """
+    # Compile a map from secondary to primary UniProt protein accessions.
     primary_accession: dict[str, set[str]] = {}
     for accessions, _, _ in get_swiss_prot_entries(organism, file):
         for i, accession in enumerate(accessions):

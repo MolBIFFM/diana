@@ -62,6 +62,7 @@ def get_protein_interactions(
         Pairs of interacting proteins and the combined STRING score associated
             with the interaction.
     """
+    # Compile a map from STRING protein identifiers to UniProt protein accessions.
     uniprot_id: dict[str, set[str]] = {}
     for row in iterate.tabular_txt(
             f"https://stringdb-static.org/download/protein.aliases.v{version}/"
@@ -77,6 +78,7 @@ def get_protein_interactions(
                 uniprot_id[row[0]] = set()
             uniprot_id[row[0]].add(row[1])
 
+    # Compile a map from thresholds of separate channels.
     thresholds = {
         column: threshold for column, threshold in {
             "neighborhood": neighborhood,
@@ -96,8 +98,10 @@ def get_protein_interactions(
     }
     thresholds["combined_score"] = combined_score
 
+    # Compile a map from secondary to primary UniProt protein accessions.
     primary_accession = uniprot.get_primary_accession(organism, file_uniprot)
 
+    # Yield pairs of interacting proteins from STRING.
     for row in iterate.tabular_txt(
         ("https://stringdb-static.org/download/"
          f"protein.physical.links.full.v{version}/"
