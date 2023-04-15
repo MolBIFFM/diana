@@ -8,7 +8,9 @@ import zipfile
 from typing import Optional
 
 
-def decompress_gzip_file(compressed_file_name: str, size: int = 1048576, remove: bool = True) -> str:
+def decompress_gzip_file(compressed_file_name: str,
+                         size: int = 1048576,
+                         remove: bool = True) -> str:
     """
     Decompresses a gzip compressed file and removes the compressed file.
 
@@ -36,9 +38,9 @@ def decompress_gzip_file(compressed_file_name: str, size: int = 1048576, remove:
     return decompressed_file_name
 
 
-def decompress_zip_file(
-        compressed_file_name: str,
-        file_from_zip_archive: Optional[re.Pattern[str]] = None, remove: bool = True) -> str:
+def decompress_zip_file(compressed_file_name: str,
+                        file_from_zip_archive: Optional[re.Pattern[str]] = None,
+                        remove: bool = True) -> str:
     """
     Decompresses a zip compressed file and removes the compressed file.
 

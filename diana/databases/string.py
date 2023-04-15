@@ -62,7 +62,8 @@ def get_protein_interactions(
         Pairs of interacting proteins and the combined STRING score associated
             with the interaction.
     """
-    # Compile a map from STRING protein identifiers to UniProt protein accessions.
+    # Compile a map from STRING protein identifiers to UniProt protein
+    # accessions.
     uniprot_id: dict[str, set[str]] = {}
     for row in iterate.tabular_txt(
             f"https://stringdb-static.org/download/protein.aliases.v{version}/"

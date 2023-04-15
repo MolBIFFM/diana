@@ -384,10 +384,10 @@ def get_proteins(
         post-translational modification at a particular time of measurement
         exceeds the specified range.
     """
-    # Return the set of proteins from the protein-protein interaction network the
-    # average site or replicate measurements of which for a particular type of
-    # post-translational modification and time of measurement are all at most a
-    # lower or at least an upper threshold.
+    # Return the set of proteins from the protein-protein interaction network
+    # the average site or replicate measurements of which for a particular type
+    # of post-translational modification and time of measurement are all at most
+    # a lower or at least an upper threshold.
     proteins = []
     for protein in network:
         sites = [[

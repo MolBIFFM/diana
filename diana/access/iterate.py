@@ -81,8 +81,9 @@ def txt(file: str,
         file_name_extension = os.path.splitext(local_file_name)[1]
 
         if file_name_extension == ".gz":
-            local_file_name = decompress.decompress_gzip_file(
-                local_file_name, buffering, remove=False)
+            local_file_name = decompress.decompress_gzip_file(local_file_name,
+                                                              buffering,
+                                                              remove=False)
         elif file_name_extension == ".zip":
             local_file_name = decompress.decompress_zip_file(
                 local_file_name, file_from_zip_archive, remove=False)
@@ -189,8 +190,9 @@ def tabular_txt(file: str,
         file_name_extension = os.path.splitext(local_file_name)[1]
 
         if file_name_extension == ".gz":
-            local_file_name = decompress.decompress_gzip_file(
-                local_file_name, chunksize, remove=False)
+            local_file_name = decompress.decompress_gzip_file(local_file_name,
+                                                              chunksize,
+                                                              remove=False)
         elif file_name_extension == ".zip":
             local_file_name = decompress.decompress_zip_file(
                 local_file_name, file_from_zip_archive, remove=False)
