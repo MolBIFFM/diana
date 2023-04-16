@@ -1650,13 +1650,10 @@ def get_location(
     communities: Iterable[nx.Graph],
     site_average: dict[str, Optional[Callable[[Iterable[float]], float]]],
     replicate_average: dict[str, Optional[Callable[[Iterable[float]], float]]],
-    location_test: Callable[[Collection[float], Collection[float]],
-                            float] = lambda x, y:
-    float(
-        scipy.stats.mannwhitneyu([abs(xi) for xi in x], [abs(yi) for yi in y],
-                                 use_continuity=False,
-                                 alternative="greater",
-                                 method="asymptotic").pvalue),
+    location_test: Callable[
+        [Collection[float], Collection[float]], float] = lambda x, y: float(
+            scipy.stats.mannwhitneyu(
+                x, y, use_continuity=False, method="asymptotic").pvalue),
     multiple_testing_correction: Callable[[dict[Hashable, float]], dict[
         Hashable, float]] = correction.benjamini_yekutieli,
 ) -> dict[nx.Graph, dict[int, dict[str, float]]]:
