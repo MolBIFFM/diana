@@ -2398,7 +2398,7 @@ def main() -> None:
         "--logging",
         help="logging level (default: INFO)",
         default=logging.INFO,
-        choices=["DEBUG", "INFO", "WARNING", "ERROR", "CRITICAL"])
+        choices=["INFO", "WARNING"])
 
     args = parser.parse_args()
 
