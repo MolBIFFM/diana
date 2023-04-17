@@ -71,7 +71,7 @@ def txt(file: str,
                         local_file_name, file_from_zip_archive)
                 break
 
-            except (gzip.BadGzipFile, zipfile.BadZipFile):
+            except (EOFError, gzip.BadGzipFile, zipfile.BadZipFile):
                 time.sleep(pause)
 
     # Decompress the local file.
@@ -180,7 +180,7 @@ def tabular_txt(file: str,
                         local_file_name, file_from_zip_archive)
                 break
 
-            except (gzip.BadGzipFile, zipfile.BadZipFile):
+            except (EOFError, gzip.BadGzipFile, zipfile.BadZipFile):
                 time.sleep(pause)
 
     # Decompress the local file.
