@@ -2519,8 +2519,8 @@ DIANA accesses the following resources:
 - Gillespie, M. et al. (2022) The reactome pathway knowledgebase 2022. *Nucleic*
   *Acids Research*, 50, D687 – D692.
 
-- Tsitsiridis, G. et al. (2023) CORUM: the comprehensive resource of mammalian
-  protein complexes – 2022. *Nucleic Acids Research*, 51, D539 – D545.
+- Giurgiu, M. et al. (2019) CORUM: the comprehensive resource of mammalian
+  protein complexes – 2019. *Nucleic Acids Research*, 47, D559 – D563.
 
 - Licata, L. et al. (2012) MINT, the molecular interaction database: 2012
   update. *Nucleic Acids Research*, 40, D857 – D861.
@@ -2529,7 +2529,7 @@ DIANA accesses the following resources:
   platform for 11 molecular interaction databases. *Nucleic Acids Research*, 42,
   D358 – D363.
 
-- Oughtred, R. et al. (2018) The BioGRID database: A comprehensive biomedical
+- Oughtred, R. et al. (2021) The BioGRID database: A comprehensive biomedical
   resource of curated protein, genetic, and chemical interactions. *Protein*
   *Science*, 30, 187 – 200.
 
@@ -2538,7 +2538,7 @@ DIANA accesses the following resources:
   experimental datasets. *Nucleic Acids Research*, 47, D607 – D613.
 
 - The UniProt Consortium (2023) UniProt: the Universal Protein Knowledgebase in
-  2023\. *Nucleic Acids Research*, 49, D480 – D489.
+  2023\. *Nucleic Acids Research*, 51, D523 – D531.
 
 ---
 
